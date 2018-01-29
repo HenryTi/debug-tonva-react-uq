@@ -1,5 +1,5 @@
 {
-  "name": "usql-ui",
+  "name": "ui-usql",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
