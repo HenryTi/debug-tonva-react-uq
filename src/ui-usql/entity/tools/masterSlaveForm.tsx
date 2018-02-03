@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap';
+import {nav, Page} from 'tonva-tools';
+import {List} from 'tonva-react-form';
 import {AvForm, AvField} from '../tools/reactstrap-validation';
-import {nav, Page, ListView} from 'tonva-tools';
 import AvButton from '../tools/avButton';
 import config from '../consts';
 
@@ -73,10 +74,10 @@ export class MasterSlaveForm extends React.Component<Props, State> {
         nav.push(<SlavePage arr={arr} values={row} onSlaveSubmit={this.onSlaveSubmit}  />);
     }
 
-    mapper(row:any, index:number, ex:any) {
-        return <li key={index} onClick={()=>this.onSlaveEdit(ex as Arr, row)}>
+    mapper(row:any, index:number) {
+        return <div>
             {JSON.stringify(row)}
-        </li>;
+        </div>;
     }
 
     onSlaveSubmit(arr: Arr, inValues:any, values:any) {
@@ -110,10 +111,9 @@ export class MasterSlaveForm extends React.Component<Props, State> {
                         <label>{arr.name}</label>
                         <Button size='sm' color='success' onClick={()=>this.onNew(arr)}> + </Button>
                     </div>;
-                    return <ListView key={index}
+                    return <List key={index}
                         header={header} 
-                        renderRow={this.mapper}
-                        ex={arr}
+                        item={{render:this.mapper, onClick: row=>this.onSlaveEdit(arr, row)}}
                         items={this.state.item[arr.name]} />
                 })}
                 <br />

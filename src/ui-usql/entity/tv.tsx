@@ -8,7 +8,7 @@ import {QueryPage} from './query';
 import {SheetPage} from './sheet';
 import {TuidPage} from './tuid';
 
-const tvApi = new UsqlApi('apiName');
+const tvApi = new UsqlApi('$$$', 'apiName');
 
 class Entities {
     private tuids: {[name:string]: Tuid} = {};

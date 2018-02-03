@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Button, ButtonGroup} from 'reactstrap';
-import {nav, Page, ListView} from 'tonva-tools';
+import {nav, Page} from 'tonva-tools';
+import {List} from 'tonva-react-form';
 import {Sheet} from '../tv';
 import {SchemaPage} from './schemaPage';
 import {SheetNewPage} from './sheetNew';
@@ -35,6 +36,7 @@ export class SheetPage extends React.Component<Props, State> {
             states:[]
         }
         this.sheetStateMapper = this.sheetStateMapper.bind(this);
+        this.sheetStateClick = this.sheetStateClick.bind(this);
         this.onWsReceive = this.onWsReceive.bind(this);
     }
     componentDidMount() {
@@ -70,7 +72,8 @@ export class SheetPage extends React.Component<Props, State> {
         nav.push(<SchemaPage entity={this.props.entity} />)
     }
 
-    sheetStateClick(state:any, stateName:string) {
+    sheetStateClick(state:any) {
+        let stateName = state.state==='$'? '新单':state.state;
         nav.push(<SheetStatePage sheet={this.props.entity} state={state} stateName={stateName} />);
     }
 
@@ -80,9 +83,9 @@ export class SheetPage extends React.Component<Props, State> {
 
     sheetStateMapper(row:any, index:number) {
         let stateName = row.state==='$'? '新单':row.state;
-        return <li key={index} onClick={()=>this.sheetStateClick(row, stateName)}>
+        return <div>
             {stateName} - {row.count}
-        </li>;
+        </div>;
     }
 
     render() {
@@ -97,7 +100,7 @@ export class SheetPage extends React.Component<Props, State> {
 
             <br/><br/>
             <div>状态</div>
-            <ListView items={this.state.states} renderRow={this.sheetStateMapper} />
+            <List items={this.state.states} item={{render:this.sheetStateMapper, onClick:this.sheetStateClick}} />
             <br/>
             <div>
                 <Button onClick={()=>this.archivesClick()}>已归档{props.name}</Button>

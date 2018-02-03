@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {nav, Page, ListView} from 'tonva-tools';
+import {nav, Page} from 'tonva-tools';
+import {List} from 'tonva-react-form';
 import {Sheet} from '../tv';
 import {SheetActionPage} from './sheetAction';
 
@@ -32,15 +33,15 @@ export class SheetStatePage extends React.Component<Props, State> {
     }
 
     mapper(row:any, index:number) {
-        return <li key={index} onClick={()=>this.click(row)}>
+        return <div>
             {row.processing===1? '... ' : ''}
             id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}
-        </li>;
+        </div>;
     }
     render() {
         return <Page header={this.props.stateName}>
             SheetState: {this.props.sheet.props.name}
-            <ListView items={this.state.rows} renderRow={this.mapper} />
+            <List items={this.state.rows} item={{render:this.mapper, onClick:this.click}} />
             <pre>{JSON.stringify(this.props.state, undefined, ' ')}</pre>
         </Page>;
     }

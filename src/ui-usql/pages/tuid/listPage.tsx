@@ -2,13 +2,13 @@ import * as React from 'react';
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {List} from 'tonva-react-form';
-import {Tuid} from '../tv';
+import {Tuid} from '../../entities';
 import {EditPage} from './editPage';
 import config from '../consts';
 
 interface Props {
     entity: Tuid;
-    search: string;
+    //search: string;
 }
 interface State {
     more: boolean;
@@ -25,13 +25,14 @@ export class ListPage extends React.Component<Props, State> {
         this.click = this.click.bind(this);
     }
 
-    componentDidMount() {
-        this.props.entity.search(this.props.search, 0, 30).then(res => {
+    async componentDidMount() {
+        /*
+        this.props.entity.search('this.props.search', 0, 30).then(res => {
             this.setState({
                 more: res.more,
                 rows: res.rows
             });
-        });
+        });*/
     }
 
     click(row:any) {
@@ -56,7 +57,7 @@ export class ListPage extends React.Component<Props, State> {
     }
 
     render() {
-        let type = this.props.entity.props.name;
+        let type = this.props.entity.name;
         return <Page header={'Tuid: ' + type}>
             <List items={this.state.rows} item={{render: this.mapper, onClick: this.click}} />
         </Page>;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import {nav, Page, TitleBar, ListView} from 'tonva-tools';
+import {nav, Page, TitleBar} from 'tonva-tools';
 import {Row, Col, Button, Form, FormGroup, Label, Input, 
     FormText, FormFeedback} from 'reactstrap';
 import {AvForm, AvField, AvGroup, AvInput, AvFeedback, AvRadioGroup, AvRadio} from '../tools/reactstrap-validation';

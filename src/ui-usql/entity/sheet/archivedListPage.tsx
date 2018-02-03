@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {nav, Page, ListView} from 'tonva-tools';
+import {nav, Page} from 'tonva-tools';
+import {List} from 'tonva-react-form';
 import {Sheet} from '../tv';
 import {SheetActionPage} from './sheetAction';
 import {ArchivedPage} from './archivedPage';
@@ -17,6 +18,7 @@ export class ArchivedListPage extends React.Component<Props, State> {
             rows: undefined
         }
         this.mapper = this.mapper.bind(this);
+        this.click = this.click.bind(this);
     }
 
     componentDidMount() {
@@ -32,15 +34,15 @@ export class ArchivedListPage extends React.Component<Props, State> {
     }
 
     mapper(row:any, index:number) {
-        return <li key={index} onClick={()=>this.click(row)}>
+        return <div>
             {row.processing===1? '... ' : ''}
             id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}
-        </li>;
+        </div>;
     }
     render() {
         return <Page header={this.props.sheet.props.name + ': 已归档'}>
             SheetState: {this.props.sheet.props.name}
-            <ListView items={this.state.rows} renderRow={this.mapper} />
+            <List items={this.state.rows} item={{render:this.mapper, onClick:this.click}} />
         </Page>;
     }
 }

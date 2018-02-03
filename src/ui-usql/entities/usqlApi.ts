@@ -2,18 +2,21 @@ import * as _ from 'lodash';
 import {Api, ApiBase} from 'tonva-tools';
 
 export class UsqlApi extends Api {
-    constructor(apiOwner:string, apiName:string) {
+    access:string[];
+
+    constructor(apiOwner:string, apiName:string, access:string[]) {
         let hash = document.location.hash;
         let baseUrl = hash===undefined || hash===''? 'debug/':'tv/';
         super(baseUrl, apiOwner, apiName);
+        this.access = access;
     }
 
     async update():Promise<string> {
         return await this.get('update', {});
     }
 
-    async access(acc:string[]):Promise<any> {
-        return await this.get('access', acc);
+    async loadAccess():Promise<any> {
+        return await this.get('access', this.access.join(';'));
     }
 
     async schema(name:string):Promise<any> {

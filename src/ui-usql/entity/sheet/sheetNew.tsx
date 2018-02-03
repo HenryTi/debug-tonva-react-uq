@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap';
-import {AvForm, AvField} from '../tools/reactstrap-validation';
-import {nav, Page, ListView} from 'tonva-tools';
+import {nav, Page} from 'tonva-tools';
 import {Sheet} from '../tv';
 import {MasterSlaveForm} from '../tools';
 import AvButton from '../tools/avButton';

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Button} from 'reactstrap';
-import {Page, ListView, nav} from 'tonva-tools';
+import {Page, nav} from 'tonva-tools';
+import {List} from 'tonva-react-form';
 import {Query} from '../tv';
 import {MasterSlaveForm} from '../tools';
 
@@ -80,7 +81,7 @@ class ResultPage extends React.Component<ResultProps, ResultState> {
         });
     }
     mapper(item:any, index:number) {
-        return <li key={index}>{index}: {JSON.stringify(item)}</li>;
+        return <div>{index}: {JSON.stringify(item)}</div>;
     }
     more() {
         this.loadPage();
@@ -91,7 +92,7 @@ class ResultPage extends React.Component<ResultProps, ResultState> {
             more = <Button onClick={this.more}>更多></Button>;
         }
         return <Page>
-            <ListView renderRow={this.mapper} items={this.state.items} />
+            <List item={{render:this.mapper}} items={this.state.items} />
             {more}
         </Page>;
     }

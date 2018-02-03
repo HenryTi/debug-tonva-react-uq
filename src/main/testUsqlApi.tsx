@@ -2,7 +2,7 @@ import * as React from 'react';
 import {nav, Page} from 'tonva-tools';
 import {UsqlApi} from '../ui-usql';
 
-let ua = new UsqlApi('a');
+let ua = new UsqlApi('$$$', 'a');
 
 interface State {
     updateResult: string;
