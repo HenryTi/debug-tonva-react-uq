@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {observer} from 'mobx-react';
 import {nav, Page} from 'tonva-tools';
 import {List, Muted} from 'tonva-react-form';
 import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
-import {TuidPage} from './tuid';
+import {EntitiesUIProps} from '../mapper';
+import {EntitiesUI, EntitySet, EntityUI, ActionUI, QueryUI, SheetUI, TuidUI} from '../ui';
+//import {TuidPage} from './tuid';
 
+/*
 class State {
     loading: string;
     tuids: Tuid[];
@@ -13,18 +15,23 @@ class State {
     sheets: Sheet[];
     queries: Query[];
 }
-
-@observer
-export class Main extends React.Component<{}, State> {
-    private entities: Entities;
+*/
+//@observer
+export class Main extends React.Component<EntitiesUIProps> {
+    //private ui: EntitiesUI;
 
     constructor(props) {
         super(props);
-        this.entities = new Entities('$$$/a', '*');
+        //this.ui = this.props.ui;
+        //this.entities = this.ui.entities; // new Entities('$$$/a', '*');
+        this.entityRender = this.entityRender.bind(this);
+        this.entityClick = this.entityClick.bind(this);
+
         this.actionClick = this.actionClick.bind(this);
         this.sheetClick = this.sheetClick.bind(this);
         this.queryClick = this.queryClick.bind(this);
         this.tuidClick = this.tuidClick.bind(this);
+        /*
         this.state = {
             loading: undefined,
             tuids: undefined,
@@ -32,7 +39,9 @@ export class Main extends React.Component<{}, State> {
             sheets: undefined,
             queries: undefined
         };
+        */
     }
+    /*
     async componentDidMount() {
         this.setState({
             loading: 'loading',
@@ -45,70 +54,67 @@ export class Main extends React.Component<{}, State> {
             sheets: this.entities.sheetArr,
             queries: this.entities.queryArr,
         });
+    }*/
+    
+    private entityRender(ui: TuidUI, index: number): JSX.Element {
+        let {caption} = ui;
+        return <div className="px-3 py-2">{caption}</div>
+    }
+    private async entityClick<E extends Entity, U extends EntityUI<E>>(ui:U) {
+        await ui.entity.loadSchema();
+        nav.push(<ui.mainPage ui={ui} />);
     }
     
-    private tuidItem(item: Tuid, index: number): JSX.Element {
-        let {name} = item;
-        return <div className="px-3 py-2">{name}</div>
+    private tuidRender<E extends Entity, U extends EntityUI<E>>(ui: U, index: number): JSX.Element {
+        let {caption} = ui;
+        return <div className="px-3 py-2">{caption}</div>
+    }
+    private actionRender(ui: ActionUI, index: number): JSX.Element {
+        let {caption} = ui;
+        return <div className="px-3 py-2">{caption}</div>
+    }
+    private sheetRender(ui: SheetUI, index: number): JSX.Element {
+        let {caption} = ui;
+        return <div className="px-3 py-2">{caption}</div>
+    }
+    private queryRender(ui: QueryUI, index: number): JSX.Element {
+        let {caption} = ui;
+        return <div className="px-3 py-2">{caption}</div>
     }
 
-    private actionItem(item: Action, index: number): JSX.Element {
-        let {name} = item;
-        return <div className="px-3 py-2">{name}</div>
+    private async tuidClick(ui:TuidUI) {
+        await ui.entity.loadSchema();
+        nav.push(<ui.mainPage ui={ui} />);
     }
-
-    private sheetItem(item: Sheet, index: number): JSX.Element {
-        let {name} = item;
-        return <div className="px-3 py-2">{name}</div>
+    private async actionClick(ui:ActionUI) {
+        await ui.entity.loadSchema();
+        nav.push(<ui.mainPage ui={ui} />);
     }
-
-    private queryItem(item: Query, index: number): JSX.Element {
-        let {name} = item;
-        return <div className="px-3 py-2">{name}</div>
+    private async sheetClick(ui:SheetUI) {
+        await ui.entity.loadSchema();
+        nav.push(<ui.mainPage ui={ui} />);
     }
-
-    private async tuidClick(entity:Tuid) {
-        await entity.loadSchema();
-        nav.push(<TuidPage entity={entity} />);
+    private async queryClick(ui:QueryUI) {
+        await ui.entity.loadSchema();
+        nav.push(<ui.mainPage ui={ui} />);
     }
-    private async actionClick(entity:Action) {
-        await entity.loadSchema();
-
+    private renderList<E extends Entity>(entitySet:EntitySet<E,EntityUI<E>>, caption:string) {
+        return <>
+            <List
+                header={<Muted>{entitySet.caption || caption}</Muted>}
+                items={entitySet.list} 
+                item={{render: this.entityRender, onClick:this.entityClick}} />
+            <br/>
+        </>;
     }
-    private async sheetClick(entity:Sheet) {
-        await entity.loadSchema();
-
-    }
-    private async queryClick(entity:Query) {
-        await entity.loadSchema();
-
-    }    
     render() {
-        let {loading, tuids, actions, sheets, queries} = this.state;
-        return <Page header="Tonva Usql Entities">
-            tonva
-            <div>{loading}</div>
-            <List
-                header={<Muted>Tuid</Muted>}
-                items={tuids} 
-                item={{render: this.tuidItem, onClick:this.tuidClick}} />
-            <br/>
-            <List
-                header={<Muted>Action</Muted>}
-                items={actions} 
-                item={{render: this.actionItem, onClick:this.actionClick}} />
-            <br/>
-            <List
-                header={<Muted>Sheet</Muted>}
-                items={sheets} 
-                item={{render: this.sheetItem, onClick:this.sheetClick}} />
-            <br/>
-            <List
-                header={<Muted>Query</Muted>}
-                items={queries} 
-                item={{render: this.queryItem, onClick:this.queryClick}} />
-            <br/>
+        let {ui} = this.props;
+        let {caption, tuid, action, sheet, query} = ui;
+        return <Page header={caption}>
+            {this.renderList(tuid, 'Tuid')}
+            {this.renderList(action, 'Action')}
+            {this.renderList(sheet, 'Sheet')}
+            {this.renderList(query, 'Query')}
         </Page>;
     }
 }
-

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {nav, Page} from 'tonva-tools';
-import {UsqlApi} from '../ui-usql';
+//import {UsqlApi} from '../ui-usql';
 
-let ua = new UsqlApi('$$$', 'a');
+//let ua = new UsqlApi('$$$', 'a');
 
 interface State {
     updateResult: string;
@@ -28,9 +28,9 @@ export class TestUsqlApi extends React.Component<{}, State> {
             updateResult: '开始update...',
             buttonVisible: false,
         });
-        let ret = await ua.update();
+        //let ret = await ua.update();
         this.setState({
-            updateResult: ret,
+            //updateResult: ret,
         });
     }
     render() {

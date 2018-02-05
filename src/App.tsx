@@ -1,6 +1,9 @@
 import * as React from 'react';
+import {observable} from 'mobx';
+import {observer} from 'mobx-react';
 import {nav, Page, NavView} from 'tonva-tools';
-import AppView from './main';
+//import AppHome from './main';
+import AppHome from './appHome';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -19,7 +22,7 @@ const rStyle = {textAlign: 'left', paddin: '1em 0.5em'};
 
 class App extends React.Component {
   render() {
-    return (<NavView view={<AppView />} />);
+    return (<NavView view={<AppHome />} />);
     /*
     return (
       <div className="App">

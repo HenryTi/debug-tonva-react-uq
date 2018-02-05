@@ -4,16 +4,12 @@ import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {Tuid} from '../../entities';
 //import AvButton from '../tools/avButton';
+import {EntitiesUIProps, EntityUIProps} from '../../mapper';
+import {EntitiesUI, TuidUI} from '../../ui';
 import {EditPage} from './editPage';
 import {ListPage} from './listPage';
 
-interface Props {
-    entity: Tuid;
-}
-interface State {
-
-}
-export class TuidPage extends React.Component<Props, State> {
+export class TuidPage extends React.Component<EntityUIProps<Tuid, TuidUI>> {
     constructor(props) {
         super(props);
         this.addNew = this.addNew.bind(this);
@@ -22,11 +18,11 @@ export class TuidPage extends React.Component<Props, State> {
     }
 
     addNew() {
-        nav.push(<EditPage entity={this.props.entity} item={{}} />);
+        //nav.push(<EditPage entity={this.props.entity} item={{}} />);
     }
 
     list() {
-        nav.push(<ListPage entity={this.props.entity} />);
+        //nav.push(<ListPage entity={this.props.entity} />);
     }
     /*
     handleValidSubmit(event, values) {
@@ -35,15 +31,16 @@ export class TuidPage extends React.Component<Props, State> {
     }*/
 
     render() {
-        let type = this.props.entity.name;
-        return <Page header={'Tuid: ' + type}>
+        let {entity} = this.props.ui;
+        let {name, schema} = entity;
+        return <Page header={'Tuid: ' + name}>
             <div style={{margin:'6px 15px'}}>
                 <div>
                     <Button className="m-3" color="primary" onClick={this.addNew}>新增</Button>
                     <Button className="m-3" color="primary" onClick={this.list}>清单</Button>
                 </div>
         
-                <pre>{JSON.stringify(this.props.entity.schema, undefined, ' ')}</pre>
+                <pre>{JSON.stringify(schema, undefined, ' ')}</pre>
             </div>
         </Page>;
     }
