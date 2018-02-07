@@ -2,14 +2,14 @@ import * as React from 'react';
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 //import {AvForm, AvInput} from '../tools/reactstrap-validation';
 import {nav, Page} from 'tonva-tools';
-import {Tuid} from '../../entities';
+import {Action} from '../../entities';
 //import AvButton from '../tools/avButton';
 import {EntitiesUIProps, EntityUIProps} from '../../mapper';
-import {EntitiesUI, TuidUI} from '../../ui';
-import {EditPage} from './editPage';
-import {ListPage} from './listPage';
+import {EntitiesUI, ActionUI} from '../../ui';
+//import {EditPage} from './editPage';
+//import {ListPage} from './listPage';
 
-export class TuidPage extends React.Component<EntityUIProps<Tuid, TuidUI>> {
+export class MainPage extends React.Component<EntityUIProps<Action, ActionUI>> {
     constructor(props) {
         super(props);
         this.addNew = this.addNew.bind(this);
@@ -31,9 +31,10 @@ export class TuidPage extends React.Component<EntityUIProps<Tuid, TuidUI>> {
     }*/
 
     render() {
-        let {entity} = this.props.ui;
+        let {ui} = this.props;
+        let {caption, entity} = ui;
         let {name, schema} = entity;
-        return <Page header={'Tuid: ' + name}>
+        return <Page header={caption}>
             <div style={{margin:'6px 15px'}}>
                 <div>
                     <Button className="m-3" color="primary" onClick={this.addNew}>新增</Button>

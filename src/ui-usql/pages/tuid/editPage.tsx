@@ -4,7 +4,8 @@ import {Button, FormGroup, Label, Input, Container, Col} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {TonvaForm, FormRow, SubmitResult, Fields} from 'tonva-react-form';
 import {Tuid} from '../../entities';
-//import AvButton from '../tools/avButton';
+import {EntitiesUIProps, EntityUIProps, TuidUIProps} from '../../mapper';
+import {EntitiesUI, TuidUI} from '../../ui';
 import config from '../consts';
 
 const form = config.form;
@@ -17,7 +18,7 @@ interface TvFieldPrpos {
     field: Field
 }
 interface Props {
-    entity: Tuid;
+    //entity: Tuid;
     item: any;
 }
 interface State {
@@ -28,7 +29,7 @@ let fields:Fields = {
     phone: {name:'phone', type:'string', maxLength:20 },
     owner: {name:'owner', type:'string', maxLength:100 },
 };
-export class EditPage extends React.Component<Props, State> {
+export class EditPage extends React.Component<TuidUIProps, State> {
     //private form: AvForm;
     private formRows: FormRow[];
 
@@ -37,7 +38,7 @@ export class EditPage extends React.Component<Props, State> {
         //this.addNew = this.addNew.bind(this);
         this.callback = this.callback.bind(this);
         this.handleValidSubmit = this.handleValidSubmit.bind(this);
-        this.state = {item:this.props.item||{}};
+        this.state = {item:this.props.data||{}};
         this.buildFormView();
     }
     callback() {
@@ -47,7 +48,7 @@ export class EditPage extends React.Component<Props, State> {
         return;
     }
     handleValidSubmit(event, values) {
-        let entity = this.props.entity;
+        let entity = this.props.ui.entity;
         let schema = entity.schema;
         entity.save(undefined, values).then(res => {
             let retId = res.id;
@@ -66,7 +67,7 @@ export class EditPage extends React.Component<Props, State> {
         });
     }
     render() {
-        let type = this.props.entity.name;
+        let type = this.props.ui.entity.name;
         return <Page header={'新增' + type}>
             {type}
             <TonvaForm formRows={this.formRows} onSubmit={this.submit} />
@@ -74,51 +75,9 @@ export class EditPage extends React.Component<Props, State> {
     }
 
     private buildFormView() {
-        this.formRows = [
-            {label: '申请人', field: fields.name, face: {type: 'string', placeholder: '真实姓名'}},
-        ];
-        let a = `{
-            "fields":[
-                {"name":"b1","type":"bigint","tuid":"article"},
-                {"name":"name","type":"char","size":50},
-                {"name":"d2","type":"dec","scale":2,"precision":10},
-                {"name":"discription","type":"text"}
-            ],
-            "name":"商品",
-            "type":"tuid",
-            "global":true,
-            "id":"id","unique":["name"],
-            "search":["name","discription"]
-        }`
-        this.formRows = this.props.entity.schema.fields.map(schemaField => {
-            let {name, type, tuid} = schemaField;
-            let face:any, field:any;
-            switch (type) {
-                case 'bigint':
-                    if (tuid !== undefined) {
-                        field = {name: name, type: 'id'}
-                        face = {type: 'pick-id'};
-                    }
-                    else {
-                        field = {name: name, type: 'int'}
-                        face = {type: 'number'};
-                    }
-                    break;
-                case 'char':
-                    field = {name: name, type: 'string', maxLength: schemaField.size};
-                    face = {type: 'string'};
-                    break;
-                case 'dec':
-                    field = {name: name, type: 'dec', step: 0.01};
-                    face = {type: 'number'};
-                    break;
-                case 'text':
-                    field = {name: name, type: 'string', maxLength: 1000};
-                    face = {type: 'textarea'};
-                    break;
-            }
-            return {label: name, field: field, face: face};
-        });
+        let ui = this.props.ui;
+        let entity = ui.entity;
+        this.formRows = ui.mapFields(entity.schema.fields);
     }
     /*
     <AvForm ref={form => this.form = form} style={{margin: '20px'}} 

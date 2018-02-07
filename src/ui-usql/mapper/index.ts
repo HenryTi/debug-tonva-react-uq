@@ -1,5 +1,6 @@
 import {Entities, Entity, Tuid, Action, Sheet, Query} from "../entities";
 import {EntitiesUI, EntityUI, TuidUI, ActionUI, SheetUI, QueryUI} from '../ui';
+//import { Field } from "src/ui-usql";
 
 export type FromPicked = (item:any)=>{id:number, caption?:string|JSX.Element};
 export type ItemFromId = (id:number)=>any;
@@ -14,27 +15,46 @@ export interface IdPickFace {
     itemFromId?: ItemFromId;
 }
 
-export interface FieldMapper {
-    name: string;
-    label: string;
+export type FieldMapper = (field:any) => any;
+export interface FieldMappers {
+    [name:string]: FieldMapper;
+}
+export interface FieldCompiler {
+    label?: string;
+    notes?: string;
+    placeholder?: string;
+    mapper?: FieldMapper;
+}
+export interface FieldCompilers {
+    [name:string]: FieldCompiler;
 }
 
 export interface EntityUIProps<T extends Entity, TUI extends EntityUI<T>> {
     ui: TUI;
+    data?: any;
 }
 export type UIComponent<T extends Entity, TUI extends EntityUI<T>> = new (props:EntityUIProps<T, TUI>) => React.Component<EntityUIProps<T, TUI>>;
+export type ActionUIProps = EntityUIProps<Action, ActionUI>;
+export type ActionUIComponent = new (props:ActionUIProps) => React.Component<ActionUIProps>;
+export type QueryUIProps = EntityUIProps<Query, QueryUI>;
+export type QueryUIComponent = new (props:QueryUIProps) => React.Component<QueryUIProps>;
+export type SheetUIProps = EntityUIProps<Sheet, SheetUI>;
+export type SheetUIComponent = new (props:SheetUIProps) => React.Component<SheetUIProps>;
+export type TuidUIProps = EntityUIProps<Tuid, TuidUI>;
+export type TuidUIComponent = new (props:TuidUIProps) => React.Component<TuidUIProps>;
+
 export interface EntityMapper<T extends Entity, TUI extends EntityUI<T>> {
     //name: string;
     caption?: string;
+    typeFieldMappers?: FieldMappers;
+    //fields?: FieldCompilers;
     link?: UIComponent<T, TUI>;
     mainPage?: UIComponent<T, TUI>;
 }
 export interface TuidMapper extends EntityMapper<Tuid, TuidUI> {
-    schemaMapper?: {
-        [name:string]: FieldMapper;
-    };
-    editPage?: UIComponent<Tuid, TuidUI>;
-    listPage?: UIComponent<Tuid, TuidUI>;
+    uiFields?: FieldCompilers;
+    editPage?: TuidUIComponent;
+    listPage?: TuidUIComponent;
     idPick?: IdPickFace;
 }
 
@@ -68,6 +88,8 @@ export interface MapperContainer<E extends Entity, U extends EntityUI<E>, T exte
 export interface EntitiesMapper {
     mainPage?: new (props:EntitiesUIProps) => React.Component<EntitiesUIProps>;
     caption?: string;
+
+    typeFieldMappers?: {[name:string]: FieldMapper};
 
     tuid?: MapperContainer<Tuid, TuidUI, TuidMapper>;
     action?: MapperContainer<Action, ActionUI, ActionMapper>;

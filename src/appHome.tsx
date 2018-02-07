@@ -1,8 +1,9 @@
 import * as React from 'react';
 import {EntitiesUI, Entities, defaultMapper} from './ui-usql';
+import {pageMapper} from './pages';
 
 const entities = new Entities('$$$/a', '*');
-const entitiesUI = new EntitiesUI(entities, defaultMapper);
+const entitiesUI = new EntitiesUI(entities, defaultMapper, pageMapper);
 
 interface State {
     content: JSX.Element;

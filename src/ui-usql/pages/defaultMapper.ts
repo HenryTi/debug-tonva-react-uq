@@ -1,38 +1,45 @@
 import {EntitiesMapper} from '../mapper';
 import {Main} from './main';
-import {tuidMapper} from './tuid';
-import {TuidPage} from './tuid/tuidPage';
-import {EntityLink} from './entityLink';
+import {typeFieldMappers} from './typeFieldMappers';
+import {mapperContainer as actionMapperContainer} from './action';
+import {mapperContainer as queryMapperContainer} from './query';
+import {mapperContainer as sheetMapperContainer} from './sheet';
+import {mapperContainer as tuidMapperContainer} from './tuid';
 
 export const defaultMapper:EntitiesMapper = {
     mainPage: Main,
     caption: '同花默认界面',
-    tuid: {
+    typeFieldMappers: typeFieldMappers,
+    tuid: tuidMapperContainer, 
+    /*{
         caption: '数据字典',
         mapper: {
             link: EntityLink,
             mainPage: TuidPage,
         }
-    },
-    action: {
+    },*/
+    action: actionMapperContainer,
+    /*{
         caption: '操作',
         mapper: {
             link: EntityLink,
             mainPage: undefined,
         }
-    },
-    sheet: {
+    },*/
+    sheet: sheetMapperContainer, 
+    /*{
         caption: '凭单',
         mapper: {
             link: EntityLink,
             mainPage: undefined,
         }
-    },
-    query: {
+    },*/
+    query: queryMapperContainer,
+    /*{
         caption: '查询',
         mapper: {
             link: EntityLink,
             mainPage: undefined,
         }
-    },
+    },*/
 }

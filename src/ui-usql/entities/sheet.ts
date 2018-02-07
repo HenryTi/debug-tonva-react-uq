@@ -10,6 +10,10 @@ export interface SheetAction {
 }
 
 export class Sheet extends Entity {
+    unpack(data:any):any {
+        return this.entities.unpackSheet(this.schema, data);
+    }
+
     states: SheetState[] = [];
 
     setStates(states: SheetState[]) {

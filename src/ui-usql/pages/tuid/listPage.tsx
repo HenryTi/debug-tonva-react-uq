@@ -3,18 +3,16 @@ import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {List} from 'tonva-react-form';
 import {Tuid} from '../../entities';
+import {EntitiesUIProps, TuidUIProps} from '../../mapper';
+import {EntitiesUI, TuidUI} from '../../ui';
 import {EditPage} from './editPage';
 import config from '../consts';
 
-interface Props {
-    entity: Tuid;
-    //search: string;
-}
 interface State {
     more: boolean;
     rows: any[];
 }
-export class ListPage extends React.Component<Props, State> {
+export class ListPage extends React.Component<TuidUIProps, State> {
     constructor(props) {
         super(props);
         this.state = {
@@ -36,7 +34,7 @@ export class ListPage extends React.Component<Props, State> {
     }
 
     click(row:any) {
-        nav.push(<EditPage entity={this.props.entity} item={row} />)
+        nav.push(<EditPage ui={this.props.ui} data={row} />)
     }
 
     mapper(row:any, index:number) {
@@ -57,7 +55,7 @@ export class ListPage extends React.Component<Props, State> {
     }
 
     render() {
-        let type = this.props.entity.name;
+        let type = this.props.ui.entity.name;
         return <Page header={'Tuid: ' + type}>
             <List items={this.state.rows} item={{render: this.mapper, onClick: this.click}} />
         </Page>;

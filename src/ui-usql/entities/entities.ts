@@ -186,7 +186,7 @@ export class Entities {
         result.push(ln);
     }
     
-    private unpackSheet(schema:any, data:string):any {
+    unpackSheet(schema:any, data:string):any {
         let ret = {} as any;
         if (schema === undefined || data === undefined) return;
         let fields = schema.fields;

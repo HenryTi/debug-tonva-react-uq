@@ -1,6 +1,8 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
-import {EntitiesMapper, MapperContainer, EntityMapper, ActionMapper, QueryMapper, SheetMapper, TuidMapper} from '../mapper';
+import {EntitiesMapper, FieldMapper, FieldMappers, MapperContainer, 
+    EntityMapper, ActionMapper, QueryMapper, SheetMapper, TuidMapper} from '../mapper';
 import {EntityUI} from './entityUI';
 import {ActionUI} from './actionUI';
 import {QueryUI} from './queryUI';
@@ -15,6 +17,8 @@ export class EntitiesUI {
         this.entities = entities;
         this.defaultMapper = defaultMapper;
         this.mapper = mapper || {};
+        this.typeFieldMappers = _.clone(defaultMapper.typeFieldMappers);
+        _.merge(this.typeFieldMappers, this.mapper.typeFieldMappers);
     }
 
     async loadEntities() {
@@ -25,6 +29,7 @@ export class EntitiesUI {
     entities:Entities;
     mainPage:JSX.Element;
     caption:string;
+    typeFieldMappers?: FieldMappers;
     action: EntitySet<Action, ActionUI>;
     query: EntitySet<Query, QueryUI>;
     sheet: EntitySet<Sheet, SheetUI>;
@@ -56,14 +61,26 @@ abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T exten
     protected entityArr:E[];
     protected d:MapperContainer<E, U, T>;
     protected m:MapperContainer<E, U, T>;
+    protected typeFieldMappers:FieldMappers;
     constructor(entitiesUI:EntitiesUI, entityArr:E[], d:MapperContainer<E, U, T>, m:MapperContainer<E, U, T>) {
         this.entitiesUI = entitiesUI;
         this.entityArr = entityArr;
         this.d = d || {};
         this.m = m || {};
+        this.typeFieldMappers = this.buildTypeFieldMappers(this.entitiesUI.typeFieldMappers, this.d.mapper, this.m.mapper);
+    }
+    protected buildTypeFieldMappers(tfm:FieldMappers, mapper1:T, mapper2:T):FieldMappers {
+        let dtfm = mapper1 && mapper1.typeFieldMappers;
+        let mtfm = mapper2 && mapper2.typeFieldMappers;
+        if (dtfm === undefined && mtfm === undefined)
+            return tfm;
+        let ret  = _.clone(tfm);
+        _.merge(ret, dtfm);
+        _.merge(ret, mtfm);
+        return ret;
     }
     build():EntitySet<E, U> {
-        function getMapper(mc: MapperContainer<E, U, T>):T {
+        function getMapper(name:string, mc: MapperContainer<E, U, T>):T {
             let {mapper, mappers} = mc;
             if (mappers !== undefined) return mappers[name] || mapper;
             return mapper;
@@ -72,9 +89,9 @@ abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T exten
         let {coll, list} = ret;
         for (let entity of this.entityArr) {
             let name = entity.name;
-            let mapper:T = getMapper(this.m);
-            if (mapper === undefined) mapper = getMapper(this.d);
-            let u = this.buildUI(entity, mapper);
+            let mapper1:T = getMapper(name, this.d);
+            let mapper2:T = getMapper(name, this.m);
+            let u = this.buildUI(entity, mapper1 || {} as T, mapper2 || {} as T);
             coll[name] = u;
         }
         let nameList = this.d.list;
@@ -89,19 +106,30 @@ abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T exten
         return ret;
     }
 
-    protected buildUI(entity:E, mapper:T):U {
+    protected buildUI(entity:E, mapper1:T, mapper2:T):U {
         let ret = this.createUI();
         ret.entitiesUI = this.entitiesUI;
         ret.entity = entity;
-        if (mapper === undefined) {
+        ret.caption = mapper2.caption || mapper1.caption || entity.name;
+        ret.link = mapper2.link || mapper1.link;
+        ret.mainPage = mapper2.mainPage || mapper1.mainPage;
+        ret.typeFieldMappers = this.buildTypeFieldMappers(this.typeFieldMappers, mapper1, mapper2);
 
-            ret.caption = entity.name;
+        /*
+        let nfm1 = mapper1.fields;
+        let nfm2 = mapper2.fields;
+        if (nfm1 === undefined) {
+            if (nfm2 !== undefined) 
+                ret.nameFieldMappers = nfm2;
         }
         else {
-            ret.caption = mapper.caption || entity.name;
-            ret.link = mapper.link;
-            ret.mainPage = mapper.mainPage;
+            if (nfm2 === undefined)
+                ret.nameFieldMappers = nfm1;
+            else {
+                ret.nameFieldMappers = _.merge({}, nfm1, nfm2);
+            }
         }
+        */
         return ret;
     }
 
@@ -114,8 +142,8 @@ class ActionSetBuilder extends EntitySetBuilder<Action, ActionUI, ActionMapper> 
         return ret;
     }
     protected createUI():ActionUI {return new ActionUI();}
-    protected buildUI(entity:Action, mapper:ActionMapper):ActionUI {
-        let ret = super.buildUI(entity, mapper);
+    protected buildUI(entity:Action, mapper1:ActionMapper, mapper2:ActionMapper):ActionUI {
+        let ret = super.buildUI(entity, mapper1, mapper2);
         return ret;
     }
 }
@@ -125,8 +153,8 @@ class QuerySetBuilder extends EntitySetBuilder<Query, QueryUI, QueryMapper> {
         return ret;
     }
     protected createUI():QueryUI {return new QueryUI();}
-    protected buildUI(entity:Query, mapper:QueryMapper):QueryUI {
-        let ret = super.buildUI(entity, mapper);
+    protected buildUI(entity:Query, mapper1:QueryMapper, mapper2:QueryMapper):QueryUI {
+        let ret = super.buildUI(entity, mapper1, mapper2);
         return ret;
     }
 }
@@ -136,8 +164,8 @@ class SheetSetBuilder extends EntitySetBuilder<Sheet, SheetUI, SheetMapper> {
         return ret;
     }
     protected createUI():SheetUI {return new SheetUI();}
-    protected buildUI(entity:Sheet, mapper:SheetMapper):SheetUI {
-        let ret = super.buildUI(entity, mapper);
+    protected buildUI(entity:Sheet, mapper1:SheetMapper, mapper2:SheetMapper):SheetUI {
+        let ret = super.buildUI(entity, mapper1, mapper2);
         return ret;
     }
 }
@@ -147,11 +175,25 @@ class TuidSetBuilder extends EntitySetBuilder<Tuid, TuidUI, TuidMapper> {
         return ret;
     }
     protected createUI():TuidUI {return new TuidUI();}
-    protected buildUI(entity:Tuid, mapper:TuidMapper):TuidUI {
-        let ret = super.buildUI(entity, mapper);
-        ret.editPage = mapper.editPage;
-        ret.listPage = mapper.listPage;
-        ret.idPick = mapper.idPick;
+    protected buildUI(entity:Tuid, mapper1:TuidMapper, mapper2:TuidMapper):TuidUI {
+        let ret = super.buildUI(entity, mapper1, mapper2);
+        ret.editPage = mapper2.editPage || mapper1.editPage;
+        ret.listPage = mapper2.listPage || mapper1.listPage;
+        ret.idPick = mapper2.idPick || mapper2.idPick;
+
+        let nfm1 = mapper1.uiFields;
+        let nfm2 = mapper2.uiFields;
+        if (nfm1 === undefined) {
+            if (nfm2 !== undefined) 
+                ret.nameFieldCompilers = nfm2;
+        }
+        else {
+            if (nfm2 === undefined)
+                ret.nameFieldCompilers = nfm1;
+            else {
+                ret.nameFieldCompilers = _.merge({}, nfm1, nfm2);
+            }
+        }
         return ret;
     }
 }
