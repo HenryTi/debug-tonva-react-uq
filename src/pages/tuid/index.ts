@@ -1,8 +1,8 @@
-import {MapperContainer,TuidMapper} from '../../ui-usql/mapper';
+import {MapperContainer,TuidMapper} from '../../ui-usql/ui';
 import {Tuid} from '../../ui-usql/entities';
 import {EntityUI, TuidUI} from '../../ui-usql/ui';
 import {MainPage} from './mainPage';
-//import {EntityLink} from '../entityLink';
+import {ArticleInput} from './articleInput';
 
 export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
     //caption: '数据字典',
@@ -13,7 +13,7 @@ export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
     mappers: {
         "商品inunit": {
             mainPage: MainPage,
-            uiFields: {
+            fieldFaces: {
                 'd2': {
                     label: 'd2-d2d2',
                     notes: 'd2-d2d2-notes',
@@ -23,6 +23,11 @@ export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
                     label: '名称',
                 }
             },
+        },
+        "商品": {
+            input: {
+                component: ArticleInput
+            }
         }
     },
 }

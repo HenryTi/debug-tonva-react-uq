@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Button} from 'reactstrap';
 import {Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
-import {EntitiesUIProps, SheetUIProps} from '../../mapper';
+import {EntitiesUIProps, SheetUIProps} from '../../ui';
 
 interface State {
     result: any;

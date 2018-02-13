@@ -1,4 +1,4 @@
-import {EntitiesMapper} from '../mapper';
+import {EntitiesMapper} from '../ui';
 import {Main} from './main';
 import {typeFieldMappers} from './typeFieldMappers';
 import {mapperContainer as actionMapperContainer} from './action';

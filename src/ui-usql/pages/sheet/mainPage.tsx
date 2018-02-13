@@ -3,7 +3,7 @@ import {Button, ButtonGroup} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {List} from 'tonva-react-form';
 import {Sheet} from '../../entities';
-import {EntitiesUIProps, SheetUIProps} from '../../mapper';
+import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {EntitiesUI, SheetUI} from '../../ui';
 import {SchemaPage} from './schemaPage';
 import {SheetNewPage} from './sheetNew';
@@ -104,7 +104,9 @@ export class MainPage extends React.Component<SheetUIProps, State> {
 
             <br/><br/>
             <div>状态</div>
-            <List items={this.state.states} item={{render:this.sheetStateMapper, onClick:this.sheetStateClick}} />
+            <List 
+                items={this.state.states}
+                item={{render:this.sheetStateMapper, onClick:this.sheetStateClick}} />
             <br/>
             <div>
                 <Button onClick={()=>this.archivesClick()}>已归档{name}</Button>

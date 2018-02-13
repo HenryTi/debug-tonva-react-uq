@@ -1,44 +1,66 @@
-import {UIComponent, FieldMappers, FieldMapper, FieldCompilers, FieldCompiler} from '../mapper';
+import * as _ from 'lodash';
+import {UIComponent, FieldMappers, FieldMapper, FieldFaces, FieldFace, TuidInput} from './mapper';
 import {EntitiesUI} from './entitiesUI';
 import {Entity} from '../entities';
 
-export class EntityUI<E extends Entity> {
+export abstract class EntityUI<E extends Entity> {
     entitiesUI: EntitiesUI;
-    entity: E;    
+    entity: E;
     caption: string;
     typeFieldMappers?: FieldMappers;
-    nameFieldCompilers?: FieldCompilers;
+    fieldFaces?: FieldFaces;
 
-    mapFields(schemaFields:any[]):any[] {
+    mapMain():any[] {
+        return this.mapFields(this.entity.schema.fields);
+    }
+
+    protected tfmMap(sf:any, ff:FieldFace) {
+        let ret: any;
+        let {type, tuid} = sf;
+        let tuidInput:TuidInput = {};
         let tfm = this.typeFieldMappers;
-        let nfc = this.nameFieldCompilers;
-        function tfmMap(sf:any, fc:FieldCompiler) {
-            if (fc === undefined) {
-                let fm = tfm[sf.type];
-                if (fm === undefined) {
-                    console.log('type field mapper not defined');
-                    return;
-                }
-                return fm(sf);
+        if (ff === undefined) {
+            let fm = tfm[type];
+            if (fm === undefined) {
+                console.log('type field mapper not defined');
+                return;
             }
-            else {
-                let fm = fc.mapper || tfm[sf.type];
-                if (fm === undefined) {
-                    console.log('type field mapper not defined');
-                    return;
-                }
-                let ret = fm(sf);
-                let {label, notes, placeholder} = fc;
-                if (label !== undefined) ret.label = label;
-                let face = ret.face;
-                if (face !== undefined) {
-                    if (notes !== undefined) face.notes = notes;
-                    if (placeholder !== undefined) face.placeholder = placeholder;
-                }
-                return ret;
+            ret = fm(sf);
+        }
+        else {
+            let fm = ff.mapper || tfm[type];
+            if (fm === undefined) {
+                console.log('type field mapper not defined');
+                return;
+            }
+            ret = fm(sf);
+            let {label, notes, placeholder, input} = ff;
+            if (label !== undefined) ret.label = label;
+            let face = ret.face;
+            if (face !== undefined) {
+                if (notes !== undefined) face.notes = notes;
+                if (placeholder !== undefined) face.placeholder = placeholder;
+                if (input !== undefined) _.merge(tuidInput, input);
+                face.input = tuidInput;
             }
         }
-        return schemaFields.map(sf => tfmMap(sf, nfc !== undefined&&nfc[sf.name]));
+        if (tuid !== undefined) {
+            let tuidUI = this.entitiesUI.tuid.coll[tuid];
+            if (tuidUI !== undefined) {
+                _.merge(tuidInput, tuidUI.input);
+            }
+            let input0 = this.entitiesUI.getTuidInput(tuid);
+            _.merge(tuidInput, input0);
+            ret.face.input = tuidInput;
+        }
+        return ret;
+    }
+
+    protected mapFields(schemaFields:any[]):any[] {
+        if (schemaFields === undefined) return;
+        //let tfm = this.typeFieldMappers;
+        let nfc = this.fieldFaces;
+        return schemaFields.map(sf => this.tfmMap(sf, nfc !== undefined&&nfc[sf.name]));
     }
 
     link?: UIComponent<E, EntityUI<E>>;

@@ -4,7 +4,7 @@ import {Button, FormGroup, Label, Input, Container, Col} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {TonvaForm, FormRow, SubmitResult, Fields} from 'tonva-react-form';
 import {Tuid} from '../../entities';
-import {EntitiesUIProps, EntityUIProps, TuidUIProps} from '../../mapper';
+import {EntitiesUIProps, EntityUIProps, TuidUIProps} from '../../ui';
 import {EntitiesUI, TuidUI} from '../../ui';
 import config from '../consts';
 
@@ -47,24 +47,23 @@ export class EditPage extends React.Component<TuidUIProps, State> {
     submit(values: any): Promise<SubmitResult | undefined> {
         return;
     }
-    handleValidSubmit(event, values) {
+    async handleValidSubmit(event, values) {
         let entity = this.props.ui.entity;
         let schema = entity.schema;
-        entity.save(undefined, values).then(res => {
-            let retId = res.id;
-            if (retId < 0) {
-                let unique = schema.unique;
-                if (unique !== undefined) {
-                    for (let u of unique) {
-                        //this.form.setError(u, true, '重复');
-                    }
+        let res = await entity.save(undefined, values);
+        let retId = res.id;
+        if (retId < 0) {
+            let unique = schema.unique;
+            if (unique !== undefined) {
+                for (let u of unique) {
+                    //this.form.setError(u, true, '重复');
                 }
             }
-            else {
-                let callback = this.callback;
-                nav.push(<Success callback={callback} />);
-            }
-        });
+        }
+        else {
+            let callback = this.callback;
+            nav.push(<Success callback={callback} />);
+        }
     }
     render() {
         let type = this.props.ui.entity.name;
@@ -76,8 +75,7 @@ export class EditPage extends React.Component<TuidUIProps, State> {
 
     private buildFormView() {
         let ui = this.props.ui;
-        let entity = ui.entity;
-        this.formRows = ui.mapFields(entity.schema.fields);
+        this.formRows = ui.mapMain();
     }
     /*
     <AvForm ref={form => this.form = form} style={{margin: '20px'}} 

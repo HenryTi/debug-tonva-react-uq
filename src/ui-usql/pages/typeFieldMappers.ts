@@ -1,7 +1,8 @@
-import {FieldMapper, FieldMappers} from '../mapper';
+import {FieldMapper, FieldMappers} from '../ui';
 
 export const typeFieldMappers:FieldMappers = {
     'bigint': bigInt,
+    'int': int,
     'char': char,
     'dec': dec,
     'text': text,
@@ -12,7 +13,7 @@ function bigInt(schemaField) {
     let face:any, field:any;
     if (tuid !== undefined) {
         field = {name: name, type: 'id'}
-        face = {type: 'pick-id'};
+        face = {type: 'pick-id', tuid:tuid };
     }
     else {
         field = {name: name, type: 'int'}
@@ -26,6 +27,14 @@ function char(schemaField) {
         label: name,
         field: {name: name, type: 'string', maxLength: schemaField.size},
         face: {type: 'string'}
+    };
+}
+function int(schemaField) {
+    let {name} = schemaField;
+    return {
+        label: name,
+        field: {name: name, type: 'int', step: 1}, 
+        face: {type: 'number'}
     };
 }
 function dec(schemaField) {

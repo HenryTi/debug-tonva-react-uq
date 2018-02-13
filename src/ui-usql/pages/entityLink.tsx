@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Entity} from '../entities';
-import {EntitiesUIProps, EntityUIProps} from '../mapper';
-import {EntitiesUI, EntityUI} from '../ui';
+import {EntitiesUIProps, EntityUIProps, EntitiesUI, EntityUI} from '../ui';
 
 export class EntityLink<E extends Entity, U extends EntityUI<E>> extends React.Component<EntityUIProps<E, U>> {
     render() {

@@ -1,4 +1,4 @@
-import {MapperContainer, SheetMapper} from '../../mapper';
+import {MapperContainer, SheetMapper} from '../../ui';
 import {Sheet} from '../../entities';
 import {EntityUI, SheetUI} from '../../ui';
 import {MainPage} from './mainPage';

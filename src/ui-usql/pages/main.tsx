@@ -3,8 +3,7 @@ import * as _ from 'lodash';
 import {nav, Page} from 'tonva-tools';
 import {List, Muted} from 'tonva-react-form';
 import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
-import {EntitiesUIProps} from '../mapper';
-import {EntitiesUI, EntitySet, EntityUI, ActionUI, QueryUI, SheetUI, TuidUI} from '../ui';
+import {EntitiesUIProps, EntitiesUI, EntitySet, EntityUI, ActionUI, QueryUI, SheetUI, TuidUI} from '../ui';
 //import {TuidPage} from './tuid';
 
 /*

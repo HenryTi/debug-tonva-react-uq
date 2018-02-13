@@ -3,10 +3,11 @@ import * as classNames from 'classnames';
 import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
-import {EntitiesUIProps, SheetUIProps} from '../../mapper';
+import {EntitiesUIProps, SheetUIProps} from '../../ui';
+import {MainDetails, MainDetailsForm} from '../tools';
 //import {MasterSlaveForm} from '../tools';
 //import AvButton from '../tools/avButton';
-
+/*
 interface Props {
     entity: Sheet;
     item: any;
@@ -15,8 +16,8 @@ class Item {
     id: number;
     name?: string;
     discription?: string;
-}
-
+}*/
+/*
 class PackData {
     private timeInterval:any;
     item: Item;
@@ -40,20 +41,37 @@ class PackData {
         if (this.timeInterval !== undefined) clearInterval(this.timeInterval);
     }
 }
-
-interface State {
-    data:PackData;
-}
-
-export class SheetNewPage extends React.Component<SheetUIProps, State> {
-    private packData: PackData;
+*/
+export class SheetNewPage extends React.Component<SheetUIProps> {
+    private mainDetails: MainDetails; 
+    //private packData: PackData;
     constructor(props) {
         super(props);
+        `{"fields":[
+            {"name":"id1","type":"bigint","tuid":"article"},
+            {"name":"f1","type":"dec","scale":2,"precision":12},
+            {"name":"f2","type":"dec","scale":2,"precision":12}
+        ],"name":"单据","type":"sheet",
+        "states":[{"name":"$","actions":[{"name":"s1","returns":[],"busFaces":[]},{"name":"s2","returns":[],"busFaces":[]}]},{"name":"a","actions":[{"name":"a1","returns":[{"name":"statearet1","fields":[{"name":"c","type":"int"},{"name":"state","type":"char","size":30}]},{"name":"statearet2","fields":[{"name":"dd","type":"datetime"}]}],"busFaces":[]},{"name":"a2","returns":[],"busFaces":[]}]},{"name":"b","actions":[]}],
+        "arrs":[
+            {
+                "name":"arr1",
+                "fields":[
+                    {"name":"f11","type":"char","size":50},
+                    {"name":"f12","type":"char","size":30}
+                ]
+            }
+        ]}`
+        let {ui} = this.props;
+        this.mainDetails = ui.mapMainDetails({
+            arr1: (row:any) => <div>{JSON.stringify(row)}</div>
+        });
         this.state = {
             data: undefined
         }
         this.onSubmit = this.onSubmit.bind(this);
     }
+    /*
     componentDidMount() {
         this.packData = new PackData;
         this.packData.item = {id: 1};
@@ -65,15 +83,12 @@ export class SheetNewPage extends React.Component<SheetUIProps, State> {
                 data: d
             });
         });
-    }
-
+    }*/
+    /*
     componentWillUnmount() {
         if (this.packData !== undefined) this.packData.clearInterval();
     }
 
-    callback() {
-
-    }
     async handleValidSubmit(event, values) {
         let entity = this.props.ui.entity;
         let schema = entity.schema;
@@ -92,7 +107,10 @@ export class SheetNewPage extends React.Component<SheetUIProps, State> {
             nav.push(<Success callback={callback} />);
         }
     }
+*/
+    successCallback() {
 
+    }
     async onSubmit(values) {
         let entity = this.props.ui.entity;
         let schema = entity.schema;
@@ -107,26 +125,21 @@ export class SheetNewPage extends React.Component<SheetUIProps, State> {
             }
         }
         else {
-            let callback = this.callback.bind(this);
+            let callback = this.successCallback.bind(this);
             nav.push(<Success callback={callback} />);
         }
     }
 
     render() {
-        let entity = this.props.ui.entity;
+        let {ui} = this.props;
+        let {entity} = ui;
         let {name, schema} = entity;
-        let data = this.state.data;
-        let view;
-        if (data !== undefined) {
-            let item = data.item;
-            view = <div>{item.id} {item.name} {item.discription} </div>
-        }
         return <Page header={'新' + name}>
-            {view}
-            {`<MasterSlaveForm 
-                schema={schema} 
+            <MainDetailsForm
+                entitiesUI={ui.entitiesUI}
+                mainDetails={this.mainDetails} 
                 values={{}} 
-                onSubmit={this.onSubmit} />`}
+                onSubmit={this.onSubmit}  />
         </Page>
     }
 }

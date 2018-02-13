@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
 import {EntitiesMapper, FieldMapper, FieldMappers, MapperContainer, 
-    EntityMapper, ActionMapper, QueryMapper, SheetMapper, TuidMapper} from '../mapper';
+    EntityMapper, ActionMapper, QueryMapper, SheetMapper, TuidMapper, TuidInput} from './mapper';
 import {EntityUI} from './entityUI';
 import {ActionUI} from './actionUI';
 import {QueryUI} from './queryUI';
@@ -47,6 +47,32 @@ export class EntitiesUI {
         this.query = new QuerySetBuilder(this, this.entities.queryArr, d.query, m.query).build();
         this.sheet = new SheetSetBuilder(this, this.entities.sheetArr, d.sheet, m.sheet).build();
         this.tuid = new TuidSetBuilder(this, this.entities.tuidArr, d.tuid, m.tuid).build();
+    }
+
+    getTuidInput(name:string):TuidInput {
+        let ret:TuidInput = {component:undefined};
+        let mc = this.mapper.tuid;
+        let mapper:TuidMapper, mappers:{[name:string]:TuidMapper};
+        if (mc !== undefined) {
+            mappers = mc.mappers;
+            if (mappers !== undefined)
+                mapper = mappers[name];
+            else
+                mapper = mc.mapper;
+            if (mapper !== undefined) {
+                _.merge(ret, mapper.input);
+            }
+        }
+        if (this.defaultMapper !== undefined) {
+            let tuid = this.defaultMapper.tuid;
+            if (tuid !== undefined) {
+                mapper = tuid.mapper;
+                if (mapper !== undefined) {
+                    _.merge(ret, mapper.input);
+                }
+            }
+        }
+        return ret;
     }
 }
 
@@ -115,21 +141,19 @@ abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T exten
         ret.mainPage = mapper2.mainPage || mapper1.mainPage;
         ret.typeFieldMappers = this.buildTypeFieldMappers(this.typeFieldMappers, mapper1, mapper2);
 
-        /*
-        let nfm1 = mapper1.fields;
-        let nfm2 = mapper2.fields;
+        let nfm1 = mapper1.fieldFaces;
+        let nfm2 = mapper2.fieldFaces;
         if (nfm1 === undefined) {
             if (nfm2 !== undefined) 
-                ret.nameFieldMappers = nfm2;
+                ret.fieldFaces = nfm2;
         }
         else {
             if (nfm2 === undefined)
-                ret.nameFieldMappers = nfm1;
+                ret.fieldFaces = nfm1;
             else {
-                ret.nameFieldMappers = _.merge({}, nfm1, nfm2);
+                ret.fieldFaces = _.merge({}, nfm1, nfm2);
             }
         }
-        */
         return ret;
     }
 
@@ -166,6 +190,19 @@ class SheetSetBuilder extends EntitySetBuilder<Sheet, SheetUI, SheetMapper> {
     protected createUI():SheetUI {return new SheetUI();}
     protected buildUI(entity:Sheet, mapper1:SheetMapper, mapper2:SheetMapper):SheetUI {
         let ret = super.buildUI(entity, mapper1, mapper2);
+        let nfm1 = mapper1.detailFaces;
+        let nfm2 = mapper2.detailFaces;
+        if (nfm1 === undefined) {
+            if (nfm2 !== undefined) 
+                ret.detialFaces = nfm2;
+        }
+        else {
+            if (nfm2 === undefined)
+                ret.detialFaces = nfm1;
+            else {
+                ret.detialFaces = _.merge({}, nfm1, nfm2);
+            }
+        }
         return ret;
     }
 }
@@ -179,21 +216,7 @@ class TuidSetBuilder extends EntitySetBuilder<Tuid, TuidUI, TuidMapper> {
         let ret = super.buildUI(entity, mapper1, mapper2);
         ret.editPage = mapper2.editPage || mapper1.editPage;
         ret.listPage = mapper2.listPage || mapper1.listPage;
-        ret.idPick = mapper2.idPick || mapper2.idPick;
-
-        let nfm1 = mapper1.uiFields;
-        let nfm2 = mapper2.uiFields;
-        if (nfm1 === undefined) {
-            if (nfm2 !== undefined) 
-                ret.nameFieldCompilers = nfm2;
-        }
-        else {
-            if (nfm2 === undefined)
-                ret.nameFieldCompilers = nfm1;
-            else {
-                ret.nameFieldCompilers = _.merge({}, nfm1, nfm2);
-            }
-        }
+        ret.input = mapper2.input || mapper2.input;
         return ret;
     }
 }

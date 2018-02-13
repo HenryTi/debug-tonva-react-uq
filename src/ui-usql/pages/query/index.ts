@@ -1,4 +1,4 @@
-import {MapperContainer, QueryMapper} from '../../mapper';
+import {MapperContainer, QueryMapper} from '../../ui';
 import {Query} from '../../entities';
 import {EntityUI, QueryUI} from '../../ui';
 import {MainPage} from './mainPage';

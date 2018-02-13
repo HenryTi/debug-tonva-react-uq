@@ -2,7 +2,7 @@ import * as React from 'react';
 import {nav, Page} from 'tonva-tools';
 import {List} from 'tonva-react-form';
 import {Sheet} from '../../entities';
-import {EntitiesUIProps, SheetUIProps} from '../../mapper';
+import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {EntitiesUI, SheetUI} from '../../ui';
 import {SheetActionPage} from './sheetAction';
 import {ArchivedPage} from './archivedPage';

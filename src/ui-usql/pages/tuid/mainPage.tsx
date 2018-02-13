@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {Tuid} from '../../entities';
-import {EntitiesUIProps, TuidUIProps} from '../../mapper';
+import {EntitiesUIProps, TuidUIProps} from '../../ui';
 import {EntitiesUI, TuidUI} from '../../ui';
 import {EditPage} from './editPage';
 import {ListPage} from './listPage';

@@ -4,7 +4,7 @@ import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {Tuid} from '../../ui-usql/entities';
 //import AvButton from '../tools/avButton';
-import {EntitiesUIProps, EntityUIProps} from '../../ui-usql/mapper';
+import {EntitiesUIProps, EntityUIProps} from '../../ui-usql/ui';
 import {EntitiesUI, TuidUI} from '../../ui-usql/ui';
 //import {EditPage} from './editPage';
 //import {ListPage} from './listPage';

@@ -1,32 +1,48 @@
 import {Entities, Entity, Tuid, Action, Sheet, Query} from "../entities";
-import {EntitiesUI, EntityUI, TuidUI, ActionUI, SheetUI, QueryUI} from '../ui';
-//import { Field } from "src/ui-usql";
+import {EntitiesUI} from './entitiesUI';
+import {EntityUI} from './entityUI';
+import {ActionUI} from './actionUI';
+import {QueryUI} from './queryUI';
+import {SheetUI} from './sheetUI';
+import {TuidUI} from './tuidUI';
 
-export type FromPicked = (item:any)=>{id:number, caption?:string|JSX.Element};
-export type ItemFromId = (id:number)=>any;
-export type IdPick = (face: IdPickFace, params:any) => Promise<any>;
+//export type FromPicked = (item:any)=>{id:number, caption?:string|JSX.Element};
+//export type ItemFromId = (id:number)=>any;
+//export type IdPick = (face: IdFace, params:any) => Promise<any>;
 
-export interface IdPickFace {
-    initCaption: string|JSX.Element;
-    notes?: string;
-    input: new (props:any) => React.Component;
-    pick: new (props:any) => React.Component;
-    fromPicked: FromPicked;
-    itemFromId?: ItemFromId;
+export interface TuidInput {
+    component?: TuidInputComponent;
+    inputContent?: new (props:TuidContentProps) => React.Component<TuidContentProps>;
+    search?: (pageStart:any, pageSize:number, params:any) => Promise<any[]>;
+    candidateRow?: new (props:any) => React.Component<any>;
 }
+export interface TuidContentProps {
+    id: number;
+    tuidUI: TuidUI;
+}
+export interface TuidInputProps {
+    id: number;
+    tuid: string;
+    input: TuidInput;
+    entitiesUI: EntitiesUI;
+    params: any;
+    changeId: (id:number) => void;
+}
+export type TuidInputComponent = new (props:TuidInputProps) => React.Component<TuidInputProps>;
 
 export type FieldMapper = (field:any) => any;
 export interface FieldMappers {
     [name:string]: FieldMapper;
 }
-export interface FieldCompiler {
+export interface FieldFace {
     label?: string;
     notes?: string;
     placeholder?: string;
+    input?: TuidInput;
     mapper?: FieldMapper;
 }
-export interface FieldCompilers {
-    [name:string]: FieldCompiler;
+export interface FieldFaces {
+    [name:string]: FieldFace;
 }
 
 export interface EntityUIProps<T extends Entity, TUI extends EntityUI<T>> {
@@ -44,36 +60,30 @@ export type TuidUIProps = EntityUIProps<Tuid, TuidUI>;
 export type TuidUIComponent = new (props:TuidUIProps) => React.Component<TuidUIProps>;
 
 export interface EntityMapper<T extends Entity, TUI extends EntityUI<T>> {
-    //name: string;
     caption?: string;
     typeFieldMappers?: FieldMappers;
-    //fields?: FieldCompilers;
+    fieldFaces?: FieldFaces;
     link?: UIComponent<T, TUI>;
     mainPage?: UIComponent<T, TUI>;
 }
 export interface TuidMapper extends EntityMapper<Tuid, TuidUI> {
-    uiFields?: FieldCompilers;
     editPage?: TuidUIComponent;
     listPage?: TuidUIComponent;
-    idPick?: IdPickFace;
+    input?: TuidInput;
 }
 
 export interface ActionMapper extends EntityMapper<Action, ActionUI> {
-    schemaMapper?: {
-        [name:string]: FieldMapper;
-    };
 }
 
+export interface DetailFace {
+    label?: string;
+    fields: FieldFaces;
+}
 export interface SheetMapper extends EntityMapper<Sheet, SheetUI> {
-    schemaMapper?: {
-        [name:string]: FieldMapper;
-    };
+    detailFaces?: {[detail:string]: DetailFace;}
 }
 
 export interface QueryMapper extends EntityMapper<Query, QueryUI> {
-    schemaMapper?: {
-        [name:string]: FieldMapper;
-    };
 }
 
 export interface EntitiesUIProps {

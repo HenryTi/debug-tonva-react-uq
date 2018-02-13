@@ -4,7 +4,7 @@ import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {Query} from '../../entities';
 //import AvButton from '../tools/avButton';
-import {EntitiesUIProps, EntityUIProps} from '../../mapper';
+import {EntitiesUIProps, EntityUIProps} from '../../ui';
 import {EntitiesUI, QueryUI} from '../../ui';
 //import {EditPage} from './editPage';
 //import {ListPage} from './listPage';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {nav, Page} from 'tonva-tools';
 import {List} from 'tonva-react-form';
 import {Sheet} from '../../entities';
-import {EntitiesUIProps, SheetUIProps} from '../../mapper';
+import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {SheetActionPage} from './sheetAction';
 
 interface DataProps {
@@ -18,7 +18,8 @@ export class SheetStatePage extends React.Component<SheetUIProps, State> {
         this.state = {
             rows: undefined
         }
-        this.mapper = this.mapper.bind(this);
+        this.renderRow = this.renderRow.bind(this);
+        this.click = this.click.bind(this);
     }
 
     async componentDidMount() {
@@ -36,7 +37,7 @@ export class SheetStatePage extends React.Component<SheetUIProps, State> {
         nav.push(<SheetActionPage ui={ui} data={{stateName:stateName, state:state, brief:brief}} />);
     }
 
-    mapper(row:any, index:number) {
+    renderRow(row:any, index:number) {
         return <div>
             {row.processing===1? '... ' : ''}
             id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}
@@ -48,7 +49,7 @@ export class SheetStatePage extends React.Component<SheetUIProps, State> {
         let {state, stateName} = data;
         return <Page header={stateName}>
             SheetState: {sheet.name}
-            <List items={this.state.rows} item={{render:this.mapper, onClick:this.click}} />
+            <List items={this.state.rows} item={{render:this.renderRow, onClick:this.click}} />
             <pre>{JSON.stringify(state, undefined, ' ')}</pre>
         </Page>;
     }

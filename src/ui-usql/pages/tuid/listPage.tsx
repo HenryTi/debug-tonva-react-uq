@@ -3,7 +3,7 @@ import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {List} from 'tonva-react-form';
 import {Tuid} from '../../entities';
-import {EntitiesUIProps, TuidUIProps} from '../../mapper';
+import {EntitiesUIProps, TuidUIProps} from '../../ui';
 import {EntitiesUI, TuidUI} from '../../ui';
 import {EditPage} from './editPage';
 import config from '../consts';
