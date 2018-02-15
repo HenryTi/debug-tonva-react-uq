@@ -14,6 +14,7 @@ const envs:string[][] = [
   ['ENV', env.NODE_ENV],
   ['APP_NAME', env.REACT_APP_NAME],
   ['APIHOST_CENTER', env.REACT_APP_APIHOST_CENTER],
+  ['APP_WSHOST', env.REACT_APP_WSHOST],
 ];
 const tStyle = {margin: '2em auto', borderCollapse:'collapse'};
 const rowStyle = {borderBottom: '1px solid gray'};

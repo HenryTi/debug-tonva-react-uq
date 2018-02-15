@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {nav, Page} from 'tonva-tools';
-import {List} from 'tonva-react-form';
+import {List, LMR, FA} from 'tonva-react-form';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {SheetActionPage} from './sheetAction';
@@ -38,19 +38,21 @@ export class SheetStatePage extends React.Component<SheetUIProps, State> {
     }
 
     renderRow(row:any, index:number) {
-        return <div>
+        let left = <>
             {row.processing===1? '... ' : ''}
             id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}
-        </div>;
+        </>;
+        let right = <FA className="align-self-center" name="angle-right" />;
+        return <LMR className="px-3 py-2" left={left} right={right} />;
     }
     render() {
         let {ui, data} = this.props;
         let {entity:sheet} = ui;
         let {state, stateName} = data;
-        return <Page header={stateName}>
-            SheetState: {sheet.name}
+        return <Page header={sheet.name + stateName}>
             <List items={this.state.rows} item={{render:this.renderRow, onClick:this.click}} />
-            <pre>{JSON.stringify(state, undefined, ' ')}</pre>
         </Page>;
     }
 }
+
+// <pre>{JSON.stringify(state, undefined, ' ')}</pre>

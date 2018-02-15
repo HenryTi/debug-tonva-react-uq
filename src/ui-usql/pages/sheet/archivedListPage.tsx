@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {nav, Page} from 'tonva-tools';
-import {List} from 'tonva-react-form';
+import {List, LMR, FA} from 'tonva-react-form';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {EntitiesUI, SheetUI} from '../../ui';
@@ -31,15 +31,16 @@ export class ArchivedListPage extends React.Component<SheetUIProps, State> {
     }
 
     mapper(row:any, index:number) {
-        return <div>
+        let left = <>
             {row.processing===1? '... ' : ''}
             id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}
-        </div>;
+        </>;
+        let right = <FA className="align-self-center" name="angle-right" />;
+        return <LMR className="px-3 py-2" left={left} right={right} />
     }
     render() {
         let {name} = this.props.ui.entity;
-        return <Page header={name + ': 已归档'}>
-            SheetState: {name}
+        return <Page header={'已归档' + name}>
             <List items={this.state.rows} item={{render:this.mapper, onClick:this.click}} />
         </Page>;
     }

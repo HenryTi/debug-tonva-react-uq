@@ -11,11 +11,11 @@ export class SheetUI extends EntityUI<Sheet> {
     }
     
     mapDetail(name:string, schemaFields:any, detailView:(row:any)=>JSX.Element):any {
-        let nfc = this.detialFaces[name];
-        let fields = schemaFields.map(sf => this.tfmMap(sf, nfc !== undefined&&nfc.fields[sf.name]));
+        let nfc = this.detialFaces && this.detialFaces[name];
+        let fields = schemaFields.map(sf => this.tfmMap(sf, nfc&&nfc.fields[sf.name]));
         return {
             name: name,
-            label: nfc.label,
+            label: nfc&&nfc.label,
             fields: fields,
             renderRow: detailView || defaultRenderRow,
         }

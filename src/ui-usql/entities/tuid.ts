@@ -8,18 +8,28 @@ export class Tuid extends Entity {
     private waitingIds: number[] = [];          // 等待loading的
     private cache = observable.shallowMap();    // 已经缓冲的
 
-    useId(id:number) {
+    private moveToHead(id:number) {
+        let index = this.queue.findIndex(v => v === id);
+        this.queue.splice(index, 1);
+        this.queue.push(id);
+    }
+    getId(id:number):any {
+        return this.cache.get(String(id));
+    }
+    useId(id:number):void {
         let key = String(id);
-        if (this.cache.has(key) === true ||
-            this.waitingIds.findIndex(v => v === id) >= 0) 
-        {
-            // 如果已经缓冲, 或者cached，或者waiting
-            let index = this.queue.findIndex(v => v === id);
-            this.queue.splice(index, 1);
-            this.queue.push(id);
+        if (this.cache.has(key) === true) {
+            this.moveToHead(id);
             return;
         }
-        
+        this.entities.cacheTuids();
+        this.cache.set(key, id);
+        if (this.waitingIds.findIndex(v => v === id) >= 0) {
+            this.moveToHead(id);
+            return;
+        }
+
+        // 如果没有缓冲, 或者没有waiting
         if (this.queue.length >= maxCacheSize) {
             // 缓冲已满，先去掉最不常用的
             let r = this.queue.shift();

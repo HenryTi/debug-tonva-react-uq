@@ -3,6 +3,7 @@ import {Button} from 'reactstrap';
 import {Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
+import {SheetView} from './sheetView';
 
 interface DataProps {
     stateName: string;
@@ -53,13 +54,28 @@ export class SheetActionPage extends React.Component<SheetUIProps, State> {
         let s = sheet.schema.states.find(v => v.name === state.state);
         let actions = s.actions;
         return <Page header={sheet.name + ':' + stateName + '-' + brief.no}>
-            <div>
-                {actions.map((v,index) => <Button key={index} onClick={()=>this.actionClick(v)}>
-                    {v.name}
-                </Button>)}
+            <div className="mx-3 my-2">
+                {
+                    actions.map((v,index) => 
+                        <Button
+                            key={index}
+                            className="mr-2"
+                            color="primary"
+                            onClick={()=>this.actionClick(v)}
+                        >
+                            {v.name}
+                        </Button>)
+                }
             </div>
-            <pre>{JSON.stringify(this.state.data, undefined, ' ')}</pre>
-            <pre>{JSON.stringify(this.state.res, undefined, ' ')}</pre>
+            <SheetView className="mx-3"
+                ui={ui} 
+                sheetState={brief.state} 
+                sheetData={this.state.data} 
+                flows={this.state.res && this.state.res[1]} />
         </Page>;
     }
 }
+/*
+<pre>{JSON.stringify(this.state.data, undefined, ' ')}</pre>
+<pre>{JSON.stringify(this.state.res, undefined, ' ')}</pre>
+*/

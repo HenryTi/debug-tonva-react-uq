@@ -7,19 +7,10 @@ import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap'
 import {nav, Page} from 'tonva-tools';
 import {TonvaForm, List, FormRow, SubmitResult} from 'tonva-react-form';
 import {EntitiesUI} from '../../ui';
-
-export interface Detail {
-    name: string;
-    label?: string;
-    fields: FormRow[];
-    renderRow: (row:any) => JSX.Element;
-}
-export interface MainDetails {
-    main: FormRow[];
-    details?: Detail[];
-}
+import {Detail, MainDetails} from './model';
 
 export interface MainDetailsFormProps {
+    className?: string;
     entitiesUI: EntitiesUI;
     mainDetails: MainDetails;
     values: any;
@@ -34,8 +25,6 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
     
     constructor(props) {
         super(props);
-        this.callback = this.callback.bind(this);
-        this.test = this.test.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.onNew = this.onNew.bind(this);
         this.onDetailSubmit = this.onDetailSubmit.bind(this);
@@ -51,20 +40,6 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
         this.values = observable(v);
         this.formRows = this.buildMainRows();
     }
-    callback() {
-        //this.form.reset();
-    }
-    /*
-    handleValidSubmit(event, values) {
-        let arrs = this.props.mainDetails.details;
-        if (arrs !== undefined) {
-            for (let i in arrs) {
-                let arrName = arrs[i].name;
-                values[arrName] = this.values[arrName];
-            }
-        }
-        this.props.onSubmit(values);
-    }*/
     private onSubmit(values:any):Promise<SubmitResult | undefined> {
         let {mainDetails} = this.props;
         let {details} = this.props.mainDetails;
@@ -84,7 +59,6 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
             values={row} 
             onDetailSubmit={this.onDetailSubmit}  />);
     }
-
     onDetailSubmit(detail: Detail, inValues:any, values:any) {
         let detailValues = this.values[detail.name];
         if (inValues === undefined)
@@ -97,9 +71,6 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
             entitiesUI={this.props.entitiesUI} 
             detail={detail}
             values={undefined} onDetailSubmit={this.onDetailSubmit}  />);
-    }
-    private test() {
-        this.values['arr1'].push({a:1, b:'name'});
     }
     private buildMainRows():FormRow[] {
         let {main, details} = this.props.mainDetails;
@@ -118,10 +89,11 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
         return formRows;
     }
     render() {
+        let {className, entitiesUI} = this.props;
         return <div>
-            <button onClick={this.test}>test</button>
-            <TonvaForm formRows={this.formRows}
-                context={this.props.entitiesUI}
+            <TonvaForm className={className}
+                formRows={this.formRows}
+                context={entitiesUI}
                 onSubmit={this.onSubmit} />
         </div>;
     }
@@ -147,12 +119,13 @@ class DetailPage extends React.Component<DetailPageProps, null> {
         return;
     }
     render() {
-        return <Page>
-            <TonvaForm
-                context={this.props.entitiesUI}
-                formRows={this.props.detail.fields} 
+        let {entitiesUI, detail, values} = this.props;
+        return <Page header={detail.label || detail.name}>
+            <TonvaForm className="mx-3 my-2"
+                context={entitiesUI}
+                formRows={detail.fields} 
                 onSubmit={this.onSubmit}
-                initValues={this.props.values} />
+                initValues={values} />
         </Page>;
     }
 }

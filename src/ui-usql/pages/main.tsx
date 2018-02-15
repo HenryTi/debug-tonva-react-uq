@@ -4,25 +4,10 @@ import {nav, Page} from 'tonva-tools';
 import {List, Muted} from 'tonva-react-form';
 import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
 import {EntitiesUIProps, EntitiesUI, EntitySet, EntityUI, ActionUI, QueryUI, SheetUI, TuidUI} from '../ui';
-//import {TuidPage} from './tuid';
 
-/*
-class State {
-    loading: string;
-    tuids: Tuid[];
-    actions: Action[];
-    sheets: Sheet[];
-    queries: Query[];
-}
-*/
-//@observer
 export class Main extends React.Component<EntitiesUIProps> {
-    //private ui: EntitiesUI;
-
     constructor(props) {
         super(props);
-        //this.ui = this.props.ui;
-        //this.entities = this.ui.entities; // new Entities('$$$/a', '*');
         this.entityRender = this.entityRender.bind(this);
         this.entityClick = this.entityClick.bind(this);
 
@@ -30,30 +15,7 @@ export class Main extends React.Component<EntitiesUIProps> {
         this.sheetClick = this.sheetClick.bind(this);
         this.queryClick = this.queryClick.bind(this);
         this.tuidClick = this.tuidClick.bind(this);
-        /*
-        this.state = {
-            loading: undefined,
-            tuids: undefined,
-            actions: undefined,
-            sheets: undefined,
-            queries: undefined
-        };
-        */
     }
-    /*
-    async componentDidMount() {
-        this.setState({
-            loading: 'loading',
-        });
-        await this.entities.loadAccess();
-        this.setState({
-            loading: '',
-            tuids: this.entities.tuidArr,
-            actions: this.entities.actionArr,
-            sheets: this.entities.sheetArr,
-            queries: this.entities.queryArr,
-        });
-    }*/
     
     private entityRender(ui: TuidUI, index: number): JSX.Element {
         let {caption} = ui;
@@ -98,13 +60,10 @@ export class Main extends React.Component<EntitiesUIProps> {
         nav.push(<ui.mainPage ui={ui} />);
     }
     private renderList<E extends Entity>(entitySet:EntitySet<E,EntityUI<E>>, caption:string) {
-        return <>
-            <List
+        return <List className='my-2'
                 header={<Muted>{entitySet.caption || caption}</Muted>}
                 items={entitySet.list} 
-                item={{render: this.entityRender, onClick:this.entityClick}} />
-            <br/>
-        </>;
+                item={{render: this.entityRender, onClick:this.entityClick}} />;
     }
     render() {
         let {ui} = this.props;

@@ -12,9 +12,10 @@ import {TuidUI} from './tuidUI';
 
 export interface TuidInput {
     component?: TuidInputComponent;
-    inputContent?: new (props:TuidContentProps) => React.Component<TuidContentProps>;
+    inputContent?: new (props:{value:any}) => React.Component<{value:any}>;
     search?: (pageStart:any, pageSize:number, params:any) => Promise<any[]>;
-    candidateRow?: new (props:any) => React.Component<any>;
+    candidateRow?: new (props:{item:any; index:number}) => React.Component<any>;
+    pickPage?: new (props:TuidPickPageProps) => React.Component<TuidPickPageProps>;
 }
 export interface TuidContentProps {
     id: number;
@@ -24,9 +25,17 @@ export interface TuidInputProps {
     id: number;
     tuid: string;
     input: TuidInput;
+    readOnly: boolean;
     entitiesUI: EntitiesUI;
     params: any;
-    changeId: (id:number) => void;
+    onPicked: (value:any) => void;
+}
+export interface TuidPickPageProps {
+    id: number;
+    tuidUI: TuidUI;
+    input: TuidInput;
+    params: any;
+    onPicked: (value:any) => void;
 }
 export type TuidInputComponent = new (props:TuidInputProps) => React.Component<TuidInputProps>;
 

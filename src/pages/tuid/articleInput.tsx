@@ -10,7 +10,7 @@ export class ArticleInput extends React.Component<TuidInputProps> {
         this.onClick = this.onClick.bind(this);
     }
     onClick() {
-        let {id, tuid, entitiesUI, params, changeId} = this.props;
+        let {id, tuid, entitiesUI, params, onPicked} = this.props;
         if (entitiesUI === undefined) {
             alert('TonvaForm props 应该包含 context=EntitiesUI')
             return;
@@ -24,7 +24,7 @@ export class ArticleInput extends React.Component<TuidInputProps> {
             id={id} 
             tuidUI={tuidUI} 
             params={params} 
-            changeId={changeId} />);
+            changeId={onPicked} />);
     }
     render() {
         let {id, tuid} = this.props;

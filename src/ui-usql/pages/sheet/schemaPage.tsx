@@ -7,9 +7,8 @@ import {EntitiesUIProps, SheetUIProps} from '../../ui';
 export class SchemaPage extends React.Component<SheetUIProps> {
     render() {
         let {name, schema} = this.props.ui.entity;
-        return <Page>
-            <div>SheetEdit: {name}</div>
-            <pre>{JSON.stringify(schema, undefined, ' ')}</pre>
+        return <Page header={name + "模板"}>
+            <pre className="mx-3 my-2">{JSON.stringify(schema, undefined, ' ')}</pre>
         </Page>;
     }
 }

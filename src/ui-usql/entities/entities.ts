@@ -1,6 +1,5 @@
 import {observable} from 'mobx';
 import {UsqlApi} from './usqlApi';
-//import {TuidData} from './tuidData';
 import {Tuid} from './tuid';
 import {Action} from './action';
 import {Sheet, SheetState, SheetAction} from './sheet';
@@ -16,32 +15,23 @@ interface Arr {
     name:string;
     fields: Field[];
 }
-/*
-interface TuidCache {
-    tuid: Tuid;
-    idArr: number[];
-    waiting: {[id:number]:any};
-    [id:number]: any;
-}
-*/
+
 const tab = '\t';
 const ln = '\n';
 
 export class Entities {
-    //private apiOwner: string;
-    //private apiName: string;
-    //private access: string[];
     tvApi: UsqlApi;
-    //caches: {[tuid:string]: TuidCache} = {};
 
     private tuids: {[name:string]: Tuid} = {};
     private actions: {[name:string]: Action} = {};
     private sheets: {[name:string]: Sheet} = {};
     private queries: {[name:string]: Query} = {};
+    private cacheTimer: any;
 
     // api: apiOwner/apiName
     // access: acc1;acc2 or *
     constructor(api:string, access:string) {
+        this.loadIds = this.loadIds.bind(this);
         let p = api.split('/');
         if (p.length !== 2) {
             console.log('api must be apiOwner/apiName format');
@@ -61,6 +51,23 @@ export class Entities {
     queryArr: Query[] = [];
 
     getTuid(name:string) {return this.tuids[name];}
+
+    cacheTuids() {
+        this.clearCacheTimer();
+        this.cacheTimer = setTimeout(this.loadIds, 100);
+    }
+    private clearCacheTimer() {
+        if (this.cacheTimer === undefined) return;
+        clearTimeout(this.cacheTimer);
+        this.cacheTimer = undefined;
+    }
+    private loadIds() {
+        this.clearCacheTimer();
+        for (let i in this.tuids) {
+            let tuid = this.tuids[i];
+            tuid.cacheIds();
+        }
+    }
 
     // load access
     async loadAccess():Promise<boolean> {
@@ -119,10 +126,6 @@ export class Entities {
                 default: states.push(this.createSheetState(p, obj[p])); break;
             }
         }
-        //if (sheet !== undefined)
-        //     sheet.setAccess(props);
-        //else
-        //    createSheet(props);
     }
     private createSheetState(name:string, obj:object):SheetState {
         let ret:SheetState = {name:name, actions:[]};

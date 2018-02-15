@@ -33,4 +33,7 @@
 
 .main-detail-header :first-child {
   flex: 1;
+  font-size: small;
+  color: gray;
+  margin-bottom: 0;
 }

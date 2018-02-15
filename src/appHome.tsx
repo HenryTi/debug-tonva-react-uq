@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {ws} from 'tonva-tools';
 import {EntitiesUI, Entities, defaultMapper} from './ui-usql';
 import {pageMapper} from './pages';
 
@@ -16,10 +17,15 @@ export default class AppHome extends React.Component<{}, State> {
         }
     }
     async componentDidMount() {
+        ws.setToken('aaa');
+        await ws.connect();
         await entitiesUI.loadEntities();
         this.setState({
             content: entitiesUI.mainPage,
         });
+    }
+    componentWillUnmount() {
+        ws.close();
     }
     render() {
         return this.state.content;

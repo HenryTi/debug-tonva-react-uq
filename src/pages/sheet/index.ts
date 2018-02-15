@@ -2,7 +2,7 @@ import {MapperContainer,SheetMapper, TuidContentProps} from '../../ui-usql/ui';
 import {Sheet} from '../../ui-usql/entities';
 import {EntityUI, SheetUI} from '../../ui-usql/ui';
 import {GeneralTuidInput} from '../../ui-usql/pages/tuid/input'
-import {ArticleInput, ArticleContent} from './articleInput';
+import {ArticleInput, ArticleContent, CandidateRow, PickArticlePage} from './articleInput';
 
 export const mapperContainer:MapperContainer<Sheet, SheetUI, SheetMapper> = {
     caption: '凭单',
@@ -25,7 +25,9 @@ export const mapperContainer:MapperContainer<Sheet, SheetUI, SheetMapper> = {
                             label: '商品',
                             input: {
                                 //ArticleInput
-                                inputContent: ArticleContent
+                                inputContent: ArticleContent,
+                                candidateRow: CandidateRow,
+                                pickPage: PickArticlePage,
                             }
                         },
                         price: {

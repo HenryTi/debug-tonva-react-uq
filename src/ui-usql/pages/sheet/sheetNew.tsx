@@ -135,7 +135,7 @@ export class SheetNewPage extends React.Component<SheetUIProps> {
         let {entity} = ui;
         let {name, schema} = entity;
         return <Page header={'新' + name}>
-            <MainDetailsForm
+            <MainDetailsForm className="mx-3 my-2"
                 entitiesUI={ui.entitiesUI}
                 mainDetails={this.mainDetails} 
                 values={{}} 
