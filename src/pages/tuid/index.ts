@@ -28,7 +28,18 @@ export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
             input: {
                 component: ArticleInput
             }
-        }
+        },
+        "customer": {
+            caption: '客户',
+            fieldFaces: {
+                name: {
+                    label: '名称',
+                },
+                discription: {
+                    label: '描述',
+                }
+            }
+        },
     },
 }
 /*

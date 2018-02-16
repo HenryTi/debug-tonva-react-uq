@@ -1,3 +1,4 @@
+import {observable} from 'mobx';
 import {Field} from './entities';
 import {Entity} from './entity';
 
@@ -7,15 +8,19 @@ export class Query extends Entity {
     private params:any;
     private more: boolean;
     private startField: Field;
+    @observable loaded: boolean;
+    list = observable.shallowArray();
 
     resetPage(size:number, params:any) {
         this.pageStart = undefined;
         this.pageSize = size;
         this.params = params;
         this.more = false;
+        this.loaded = false;
+        this.list.clear();
     }
     get hasMore() {return this.more;}
-    page() {
+    async loadPage():Promise<void> {
         if (this.pageSize === undefined) {
             throw 'call resetPage(size:number, params:any) first';
         }
@@ -28,23 +33,22 @@ export class Query extends Entity {
                 case 'datetime': pageStart = (this.pageStart as Date).getTime(); break;
             }
         }
-        return this.tvApi.page(this.name, pageStart, this.pageSize+1, this.params)
-        .then(res => {
-            let data = this.entities.unpackReturns(this.schema, res);
-            let page = data['$page'] as any[];
-            if (page !== undefined) {
-                if (page.length > this.pageSize) {
-                    this.more = true;
-                    page.pop();
-                    let ret = (this.schema.returns as any[]).find(r => r.name === '$page');
-                    this.startField = ret.fields[0];
-                    this.pageStart = page[page.length-1][this.startField.name];
-                }
-                else {
-                    this.more = false;
-                }
+        let res = await this.tvApi.page(this.name, pageStart, this.pageSize+1, this.params)
+        let data = this.entities.unpackReturns(this.schema, res);
+        let page = data['$page'] as any[];
+        if (page !== undefined) {
+            if (page.length > this.pageSize) {
+                this.more = true;
+                page.pop();
+                let ret = (this.schema.returns as any[]).find(r => r.name === '$page');
+                this.startField = ret.fields[0];
+                this.pageStart = page[page.length-1][this.startField.name];
             }
-            return data;
-        });
+            else {
+                this.more = false;
+            }
+            this.list.push(...page);
+        }
+        this.loaded = true;
     }
 }

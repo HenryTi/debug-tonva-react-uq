@@ -114,9 +114,8 @@ export class SheetNewPage extends React.Component<SheetUIProps> {
     async onSubmit(values) {
         let entity = this.props.ui.entity;
         let schema = entity.schema;
-        let res = await entity.save(undefined, values);
-        let retId = res.id;
-        if (retId < 0) {
+        let id = await entity.save(undefined, values);
+        if (id < 0) {
             let unique = schema.unique;
             if (unique !== undefined) {
                 for (let u of unique) {

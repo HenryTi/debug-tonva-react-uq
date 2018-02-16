@@ -24,13 +24,11 @@ export class ListPage extends React.Component<TuidUIProps, State> {
     }
 
     async componentDidMount() {
-        /*
-        this.props.entity.search('this.props.search', 0, 30).then(res => {
-            this.setState({
-                more: res.more,
-                rows: res.rows
-            });
-        });*/
+        let res = await this.props.ui.entity.search('', 0, 30);
+        this.setState({
+            more: res.more,
+            rows: res.rows
+        });
     }
 
     click(row:any) {
@@ -39,7 +37,7 @@ export class ListPage extends React.Component<TuidUIProps, State> {
 
     mapper(row:any, index:number) {
         let {name, discription, d2} = row;
-        return <div className='app-row' onClick={()=>this.click(row)}>
+        return <div className='app-row'>
             <label>
                 <img src={config.appIcon} />
             </label>
@@ -55,8 +53,10 @@ export class ListPage extends React.Component<TuidUIProps, State> {
     }
 
     render() {
-        let type = this.props.ui.entity.name;
-        return <Page header={'Tuid: ' + type}>
+        let {ui} = this.props;
+        let {entity, caption} = ui;
+        let {name} = entity;
+        return <Page header={caption || name}>
             <List items={this.state.rows} item={{render: this.mapper, onClick: this.click}} />
         </Page>;
     }

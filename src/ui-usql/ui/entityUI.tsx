@@ -53,6 +53,9 @@ export abstract class EntityUI<E extends Entity> {
             _.merge(tuidInput, input0);
             ret.face.input = tuidInput;
         }
+        if (sf.null === false) {
+            ret.field.required = true;
+        }
         return ret;
     }
 

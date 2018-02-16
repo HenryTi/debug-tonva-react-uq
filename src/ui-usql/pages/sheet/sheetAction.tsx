@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Button} from 'reactstrap';
-import {Page} from 'tonva-tools';
+import {nav, Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {SheetView} from './sheetView';
@@ -42,7 +42,8 @@ export class SheetActionPage extends React.Component<SheetUIProps, State> {
         let {entity:sheet} = ui;
         let {state, brief} = data;
         let res = await sheet.action(brief.id, brief.flow, state.state, action.name);
-        alert(JSON.stringify(res));
+        //alert(JSON.stringify(res));
+        nav.pop();
     }
     mapper(row:any, index:number) {
         return <li key={index}>id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}</li>

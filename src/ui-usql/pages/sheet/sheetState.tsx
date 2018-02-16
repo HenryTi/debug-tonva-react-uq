@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {observer} from 'mobx-react';
 import {nav, Page} from 'tonva-tools';
 import {List, LMR, FA} from 'tonva-react-form';
 import {Sheet} from '../../entities';
@@ -9,25 +10,20 @@ interface DataProps {
     stateName: string;
     state: any;
 }
-interface State {
-    rows:any[];
-}
-export class SheetStatePage extends React.Component<SheetUIProps, State> {
+
+@observer
+export class SheetStatePage extends React.Component<SheetUIProps> {
     constructor(props) {
         super(props);
-        this.state = {
-            rows: undefined
-        }
         this.renderRow = this.renderRow.bind(this);
         this.click = this.click.bind(this);
     }
 
-    async componentDidMount() {
+    async componentWillMount() {
         let {ui, data} = this.props;
         let {entity:sheet} = ui;
         let {state} = data;
-        let res = await sheet.getStateSheets(state.state, 0, 10);
-        this.setState({rows: res});
+        await sheet.getStateSheets(state.state, 0, 10);
     }
     async click(brief:any) {
         if (brief.processing===1) return;
@@ -49,8 +45,9 @@ export class SheetStatePage extends React.Component<SheetUIProps, State> {
         let {ui, data} = this.props;
         let {entity:sheet} = ui;
         let {state, stateName} = data;
+        let sheets = sheet.stateSheets;
         return <Page header={sheet.name + stateName}>
-            <List items={this.state.rows} item={{render:this.renderRow, onClick:this.click}} />
+            <List items={sheets} item={{render:this.renderRow, onClick:this.click}} />
         </Page>;
     }
 }

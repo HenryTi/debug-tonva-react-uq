@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {observer} from 'mobx-react';
 import {Button, ButtonGroup, Badge} from 'reactstrap';
 import {nav, Page, ws} from 'tonva-tools';
 import {List, LMR, Muted} from 'tonva-react-form';
@@ -11,47 +12,49 @@ import {SheetEditPage} from './sheetEdit';
 import {SheetStatePage} from './sheetState';
 import {ArchivedListPage} from './archivedListPage';
 
+/*
 interface State {
     result: any;
     states: any[];
-}
-export class MainPage extends React.Component<SheetUIProps, State> {
+}*/
+@observer
+export class MainPage extends React.Component<SheetUIProps> {
     private wsHandler:number;
-    private wsAny:number;
+    //private wsAny:number;
     constructor(props) {
         super(props);
-        this.state = {
-            result: '',
-            states:[]
-        }
         this.renderState = this.renderState.bind(this);
         this.sheetStateClick = this.sheetStateClick.bind(this);
         this.onWsReceive = this.onWsReceive.bind(this);
-        this.onWsAny = this.onWsAny.bind(this);
+        //this.onWsAny = this.onWsAny.bind(this);
     }
     async componentDidMount() {
         this.wsHandler = ws.onWsReceive('sheetAct', this.onWsReceive);
-        this.wsAny = ws.onWsReceiveAny(this.onWsAny);
+        //this.wsAny = ws.onWsReceiveAny(this.onWsAny);
         let ui = this.props.ui;
         let sheet = ui.entity;
-        let res = await sheet.getStateSheetCount();
+        await sheet.getStateSheetCount();
+        /*
+        //let res = 
         let rows = sheet.schema.states.map(s => {return {state: s.name, count: 0} });
         res.forEach(r => {
             let fr = rows.find(f=>f.state === r.state);
             if (fr !== undefined) fr.count = r.count;
         });
         this.setState({states: rows});
+        */
     }
-    conpoentWillUnmount() {
+    componentWillUnmount() {
         ws.endWsReceive(this.wsHandler);
-        ws.endWsReceive(this.wsAny);
+        //ws.endWsReceive(this.wsAny);
     }
     onWsReceive(data:any) {
-        alert('ws msg received: ' + JSON.stringify(data));
+        this.props.ui.entity.onReceive(data);
+        //alert('ws msg received: ' + JSON.stringify(data));
     }
-    onWsAny(data:any) {
-        alert('ws msg received: ' + JSON.stringify(data));
-    }
+    //onWsAny(data:any) {
+    //    alert('ws msg received: ' + JSON.stringify(data));
+    //}
     newClick() {
         nav.push(<SheetNewPage ui={this.props.ui} data={{}} />);
         /*
@@ -76,10 +79,10 @@ export class MainPage extends React.Component<SheetUIProps, State> {
     }
 
     renderState(row:any, index:number) {
-        let stateName = row.state==='$'? '新单':row.state;
-        let badge;
-        if (row.count)
-            badge = <Badge className="ml-5 align-self-end" color="success">{row.count}</Badge>;
+        let {state, count} = row;
+        let stateName = state==='$'? '新单':state;
+        //if (!count) return;
+        let badge = <Badge className="ml-5 align-self-end" color="success">{count}</Badge>;
         return <LMR className="px-3 py-2" left={stateName} right={badge} />;
     }
 
@@ -93,8 +96,9 @@ export class MainPage extends React.Component<SheetUIProps, State> {
                 <Button className="mr-2" color="primary" onClick={()=>this.schemaClick()}>模板</Button>
             </div>
             <List className="my-2"
-                header={<Muted>待处理 + {name}</Muted>}
-                items={this.state.states}
+                header={<Muted>待处理{name}</Muted>}
+                none="[ 无 ]"
+                items={entity.statesCount.filter(row=>row.count)}
                 item={{render:this.renderState, onClick:this.sheetStateClick}} />
             <div className="mx-3 my-2">
                 <Button color="primary" onClick={()=>this.archivesClick()}>已归档{name}</Button>

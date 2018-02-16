@@ -1,56 +1,48 @@
 import * as React from 'react';
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
-//import {AvForm, AvInput} from '../tools/reactstrap-validation';
+import {TonvaForm, FormRow, SubmitResult} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {Action} from '../../entities';
-//import AvButton from '../tools/avButton';
-import {EntitiesUIProps, EntityUIProps} from '../../ui';
+import {EntitiesUIProps, EntityUIProps, ActionUIProps} from '../../ui';
 import {EntitiesUI, ActionUI} from '../../ui';
-//import {EditPage} from './editPage';
-//import {ListPage} from './listPage';
 
-export class MainPage extends React.Component<EntityUIProps<Action, ActionUI>> {
+export class MainPage extends React.Component<ActionUIProps> {
+    private formRows: FormRow[];
+
     constructor(props) {
         super(props);
-        this.addNew = this.addNew.bind(this);
-        this.list = this.list.bind(this);
-        //this.handleValidSubmit = this.handleValidSubmit.bind(this);
+        this.submit = this.submit.bind(this);
+        let ui = this.props.ui;
+        this.formRows = ui.mapMain();
     }
-
-    addNew() {
-        //nav.push(<EditPage entity={this.props.entity} item={{}} />);
+    async submit(values: any): Promise<SubmitResult | undefined> {
+        let {ui} = this.props;
+        let ret = await ui.entity.submit(values);
+        nav.pop();
+        nav.push(<ActionResultPage ui={ui} data={ret} />)
+        return;
     }
-
-    list() {
-        //nav.push(<ListPage entity={this.props.entity} />);
-    }
-    /*
-    handleValidSubmit(event, values) {
-        let entity = this.props.entity;
-        //nav.push(<ListPage entity={entity} search={values['key']} />);
-    }*/
-
     render() {
         let {ui} = this.props;
         let {caption, entity} = ui;
         let {name, schema} = entity;
-        return <Page header={caption}>
-            <div style={{margin:'6px 15px'}}>
-                <div>
-                    <Button className="m-3" color="primary" onClick={this.addNew}>新增</Button>
-                    <Button className="m-3" color="primary" onClick={this.list}>清单</Button>
-                </div>
-        
-                <pre>{JSON.stringify(schema, undefined, ' ')}</pre>
-            </div>
+        return <Page header={caption || name}>
+            <TonvaForm className="m-3" 
+                formRows={this.formRows} 
+                onSubmit={this.submit} />
         </Page>;
     }
 }
-/*
-<AvForm style={{padding: '6px 0'}} onValidSubmit={this.handleValidSubmit}>
-<FormGroup className='w-100'>
-    <AvInput type="text" name="key" placeholder={type+'关键字'} />
-    <AvButton confirmLeave={false}>查找</AvButton>
-</FormGroup>
-</AvForm>
-*/
+
+class ActionResultPage extends React.Component<ActionUIProps> {
+    render() {
+        let {ui, data} = this.props;
+        let {caption, entity} = ui;
+        let {name} = entity;
+        return <Page header={caption || name} close={true}>
+            <pre>
+                {JSON.stringify(data, undefined, ' ')}
+            </pre>
+        </Page>
+    }
+}

@@ -25,9 +25,9 @@ export class SheetEditPage extends React.Component<SheetUIProps, State> {
     }
     async click() {
         let {entity:sheet} = this.props.ui;
-        let res = await sheet.save('kkk bbb', this.data);
-        this.setState({result: res})
-        this.id = res.id;
+        this.id = await sheet.save('kkk bbb', this.data);
+        //this.setState({result: res})
+        //this.id = res.id;
         //alert(JSON.stringify(res, undefined, ' '));
     }
     action() {

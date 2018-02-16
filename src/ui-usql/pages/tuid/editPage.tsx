@@ -36,15 +36,16 @@ export class EditPage extends React.Component<TuidUIProps, State> {
     constructor(props) {
         super(props);
         //this.addNew = this.addNew.bind(this);
-        this.callback = this.callback.bind(this);
-        this.handleValidSubmit = this.handleValidSubmit.bind(this);
+        this.submit = this.submit.bind(this);
         this.state = {item:this.props.data||{}};
         this.buildFormView();
     }
     callback() {
         //this.form.reset();
     }
-    submit(values: any): Promise<SubmitResult | undefined> {
+    async submit(values: any): Promise<SubmitResult | undefined> {
+        await this.props.ui.entity.save(undefined, values);
+        nav.pop();
         return;
     }
     async handleValidSubmit(event, values) {
@@ -66,10 +67,11 @@ export class EditPage extends React.Component<TuidUIProps, State> {
         }
     }
     render() {
-        let type = this.props.ui.entity.name;
-        return <Page header={'新增' + type}>
-            {type}
-            <TonvaForm formRows={this.formRows} onSubmit={this.submit} />
+        let {ui} = this.props;
+        let {entity, caption} = ui;
+        let {name} = entity;
+        return <Page header={'新增' + (caption || name)}>
+            <TonvaForm className="m-3" formRows={this.formRows} onSubmit={this.submit} />
         </Page>
     }
 
