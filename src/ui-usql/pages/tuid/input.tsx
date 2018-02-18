@@ -12,6 +12,7 @@ export class GeneralTuidInput extends React.Component<TuidInputProps> {
         super(props);
         this.onClick = this.onClick.bind(this);
         this.onPicked = this.onPicked.bind(this);
+        this.inputOnBlure = this.inputOnBlure.bind(this);
         let {id, tuid, entitiesUI} = this.props;
         if (entitiesUI === undefined) {
             console.log('TonvaForm props 应该包含 context=EntitiesUI')
@@ -40,10 +41,23 @@ export class GeneralTuidInput extends React.Component<TuidInputProps> {
             params={params} 
             onPicked={this.onPicked} />);
     }
+    inputOnBlure(evt) {
+        let value = evt.currentTarget.value;
+        let id = Number(value);
+        if (id <= 0) {
+            evt.currentTarget.value = '';
+            return;
+        }
+        let {onPicked}  = this.props;
+        //this.tuidUI.entity.useId(id);
+        onPicked({id:id});
+    }
     render() {
         let {id, tuid, input, entitiesUI, params} = this.props;
         if (this.tuidUI === undefined) {
-            return <div>{tuid}没有定义，或者程序尚未处理</div>;
+            return <input className="form-control" type="number" step={1} 
+                onBlur={this.inputOnBlure}
+                placeholder={tuid+'没有定义或未处理，可直接输入数字'} />
         }
         let caption = this.tuidUI.caption;
         let content;
@@ -88,7 +102,7 @@ class PickTuidPage extends React.Component<TuidPickPageProps, State> {
     async onSearch(key:string) {
         let result = await this.props.tuidUI.entity.search(key, 0, 30);
         this.setState({
-            items: result.rows
+            items: result
         });
     }
     renderRow(item:any, index:number):JSX.Element {

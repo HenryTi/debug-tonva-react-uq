@@ -2,12 +2,14 @@ import {observable} from 'mobx';
 import {Field} from './entities';
 import {Entity} from './entity';
 
+export type QueryPageApi = (name:string, pageStart:any, pageSize:number, params:any) => Promise<string>;
 export class Query extends Entity {
     private pageStart: any;
     private pageSize:number;
     private params:any;
     private more: boolean;
     private startField: Field;
+    protected queryApiName = 'page';
     @observable loaded: boolean;
     list = observable.shallowArray();
 
@@ -33,7 +35,7 @@ export class Query extends Entity {
                 case 'datetime': pageStart = (this.pageStart as Date).getTime(); break;
             }
         }
-        let res = await this.tvApi.page(this.name, pageStart, this.pageSize+1, this.params)
+        let res = await this.tvApi[this.queryApiName](this.name, pageStart, this.pageSize+1, this.params)
         let data = this.entities.unpackReturns(this.schema, res);
         let page = data['$page'] as any[];
         if (page !== undefined) {

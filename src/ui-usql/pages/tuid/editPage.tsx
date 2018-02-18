@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {Button, FormGroup, Label, Input, Container, Col} from 'reactstrap';
-//import {AvForm, AvField} from '../tools/reactstrap-validation';
 import {nav, Page} from 'tonva-tools';
-import {TonvaForm, FormRow, SubmitResult, Fields} from 'tonva-react-form';
+import {TonvaForm, FormRow, SubmitResult, Fields, FA} from 'tonva-react-form';
 import {Tuid} from '../../entities';
 import {EntitiesUIProps, EntityUIProps, TuidUIProps} from '../../ui';
 import {EntitiesUI, TuidUI} from '../../ui';
@@ -10,68 +9,83 @@ import config from '../consts';
 
 const form = config.form;
 
-interface Field {
-    name: string;
-    type: string;
-}
-interface TvFieldPrpos {
-    field: Field
-}
-interface Props {
-    //entity: Tuid;
-    item: any;
-}
-interface State {
-    item:any;
-}
-let fields:Fields = {
-    name: {name:'name', type:'string', maxLength:50, required:true },
-    phone: {name:'phone', type:'string', maxLength:20 },
-    owner: {name:'owner', type:'string', maxLength:100 },
-};
-export class EditPage extends React.Component<TuidUIProps, State> {
-    //private form: AvForm;
+export class EditPage extends React.Component<TuidUIProps> {
+    private form: TonvaForm;
     private formRows: FormRow[];
 
     constructor(props) {
         super(props);
         //this.addNew = this.addNew.bind(this);
         this.submit = this.submit.bind(this);
+        this.next = this.next.bind(this);
+        this.finish = this.finish.bind(this);
         this.state = {item:this.props.data||{}};
         this.buildFormView();
     }
-    callback() {
-        //this.form.reset();
-    }
     async submit(values: any): Promise<SubmitResult | undefined> {
-        await this.props.ui.entity.save(undefined, values);
-        nav.pop();
-        return;
-    }
-    async handleValidSubmit(event, values) {
-        let entity = this.props.ui.entity;
-        let schema = entity.schema;
-        let res = await entity.save(undefined, values);
+        let {ui, data} = this.props;
+        let {entity, caption} = ui;
+        let {name} = entity;
+        caption = caption || name;
+        let {schema} = entity;
+        let id:number;
+        if (data !== undefined) id = data.id;
+        let res = await this.props.ui.entity.save(id, values);
         let retId = res.id;
         if (retId < 0) {
             let unique = schema.unique;
             if (unique !== undefined) {
                 for (let u of unique) {
-                    //this.form.setError(u, true, '重复');
+                    this.form.formView.setError(u, '不能重复');
                 }
             }
         }
-        else {
-            let callback = this.callback;
-            nav.push(<Success callback={callback} />);
+        else if (data === undefined) {
+            nav.push(<Page header={caption + '提交成功'} back="none">
+                <div className='m-3'>
+                    <span className="text-success">
+                        <FA name='check-circle' size='lg' /> 成功提交！
+                    </span>
+                    <div className='mt-5'>
+                        <Button className="mr-3" color="primary" onClick={this.next}>继续录入</Button>
+                        <Button color="primary" outline={true} onClick={this.finish}>不继续</Button>
+                    </div>
+                </div>
+            </Page>);
         }
+        else {
+            nav.pop();
+            nav.push(<Page header={caption + '修改成功'} back="close">
+                <div className='m-3'>
+                    <span className="text-success">
+                        <FA name='check-circle' size='lg' /> 成功！
+                    </span>
+                </div>
+            </Page>);
+        }
+        return;
+    }
+    next() {
+        this.form.formView.clear();
+        nav.pop();
+    }
+    finish() {
+        nav.pop(2);
     }
     render() {
-        let {ui} = this.props;
+        let {ui, data} = this.props;
         let {entity, caption} = ui;
         let {name} = entity;
-        return <Page header={'新增' + (caption || name)}>
-            <TonvaForm className="m-3" formRows={this.formRows} onSubmit={this.submit} />
+        caption = caption || name;
+        let header = data === undefined?
+            '新增' + caption : caption + '资料';
+        return <Page header={header}>
+            <TonvaForm
+                ref={tf=>this.form=tf}
+                className="m-3"
+                initValues={data}
+                formRows={this.formRows}
+                onSubmit={this.submit} />
         </Page>
     }
 
@@ -79,106 +93,8 @@ export class EditPage extends React.Component<TuidUIProps, State> {
         let ui = this.props.ui;
         this.formRows = ui.mapMain();
     }
-    /*
-    <AvForm ref={form => this.form = form} style={{margin: '20px'}} 
-    onValidSubmit={this.handleValidSubmit}>
-    {this.props.entity.schema.fields.map(v => {
-        //let f = this.createTvField(v);
-        let p = this.createAvFieldProps(v);
-        return <AvField {...p} key={p.key} />
-    })}
-    <FormGroup row={true}>
-        <Col {...form.submit}>
-            <AvButton color='primary'>提交</AvButton>
-        </Col>
-</FormGroup>
-</AvForm>
-*/
-/*
-    createAvFieldProps(field: Field): any {
-        let ret:any;
-        let {name, type} = field;
-        let v = this.state.item[name];
-        if (v === undefined) v = '';
-        else v = v.toString();
-        let props = {
-            key: name,
-            name: name,
-            label: name,
-            labelAttrs: form.label,
-            tag: undefined,
-            type: this.fieldType(type),
-            maxLength: 50,
-            grid: form.input,
-            placeholder: type,
-            inputClass: undefined,
-            errorMessage: undefined,
-            value: this.state.item[name]
-        };
-        switch (type) {
-            case 'char':
-            case 'bigint':
-            case 'dec':
-                break;
-            case 'text': 
-                props.tag = 'textarea';
-                props.maxLength = 50;
-                props.inputClass = 'form-control dev-app-discription';
-                break;
-        }
-        return props;
-    }
-    createTvField(field: Field) {
-        let {name, type} = field;
-        switch (type) {
-            case 'char':
-            case 'bigint':
-            case 'dec': return this.input(field);
-            case 'text': return this.inputText(field);
-        }
-    }
-    input(field) {
-        let {name, type} = field;
-        return <AvField key={name} name={name} label={name}
-                value={this.state.item[name]}
-                labelAttrs={form.label} 
-                type={this.fieldType(type)}
-                maxLength={50}
-                grid={form.input}
-                placeholder={type}
-            />;
-    }
-    inputText(field: Field) {
-        let {name} = field;
-        return <AvField key={name} name={name} label={name}
-        value={this.state.item[name]}
-        tag='textarea'
-        required={false} labelAttrs={form.label}
-        inputClass='form-control dev-app-discription'
-        type='text' maxLength={500}
-        grid={form.input} />
-    }
-    fieldType(type:string) {
-        switch (type) {
-            case 'char': return 'text';
-            case 'bigint':
-            case 'dec': return 'number';
-        }
-    }*/
 }
 
-/*
-<AvField
-name="name"
-label="App名称"
-required={true}
-value={''}
-labelAttrs={form.label} 
-type='text'
-maxLength={50}
-grid={form.input}
-errorMessage='请提供App名称' />
-*/
 interface SuccessProps {
     callback: () => void;
 }

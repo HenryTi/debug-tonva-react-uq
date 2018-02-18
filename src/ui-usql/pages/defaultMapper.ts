@@ -5,6 +5,8 @@ import {mapperContainer as actionMapperContainer} from './action';
 import {mapperContainer as queryMapperContainer} from './query';
 import {mapperContainer as sheetMapperContainer} from './sheet';
 import {mapperContainer as tuidMapperContainer} from './tuid';
+import {mapperContainer as bookMapperContainer} from './book';
+import {mapperContainer as historyMapperContainer} from './history';
 
 export const defaultMapper:EntitiesMapper = {
     mainPage: Main,
@@ -42,4 +44,6 @@ export const defaultMapper:EntitiesMapper = {
             mainPage: undefined,
         }
     },*/
+    book: bookMapperContainer,
+    history: historyMapperContainer,
 }

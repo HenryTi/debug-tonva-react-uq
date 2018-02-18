@@ -67,7 +67,7 @@ export class PickArticlePage extends React.Component<TuidPickPageProps, State> {
     async onSearch(key:string) {
         let result = await this.props.tuidUI.entity.search(key, 0, 30);
         this.setState({
-            items: result.rows
+            items: result
         });
     }
     renderRow(item:any, index:number):JSX.Element {

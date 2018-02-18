@@ -1,39 +1,44 @@
 import * as React from 'react';
 import {Button} from 'reactstrap';
-import {tonvaDebug} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
-import {SheetView} from './sheetView';
+import {SheetView} from '../sheet/sheetView';
 
 interface DataProps {
+    no: string;
+    state: string;
     stateName: string;
-    state: any;
     brief: any;
+    sheetData:any;
+    flows:any;
 }
+/*
 interface State {
-    flows: any;
+    res: any;
     data: any;
 }
-export class SheetActionPage extends React.Component<SheetUIProps, State> {
+*/
+export class SheetPage extends React.Component<SheetUIProps> {
     constructor(props) {
         super(props);
-        this.state = {
-            flows: undefined,
-            data: undefined
-        }
     }
-
+    /*
     async componentDidMount() {
         let {ui, data} = this.props;
         let {entity:sheet} = ui;
         let res = await sheet.getSheet(data.brief.id)
-        let {brief, data:sheetData, flows} = res;
+        let ret = res[0];
+        let sheetData;
+        if (ret.length === 1) {
+            sheetData = sheet.unpack(ret[0].data);
+        }
         this.setState({
             data: sheetData,
-            flows: flows
+            res: res
         });
-    }
+    }*/
+    /*
     async actionClick(action:any) {
         let {ui, data} = this.props;
         let {entity:sheet} = ui;
@@ -44,33 +49,20 @@ export class SheetActionPage extends React.Component<SheetUIProps, State> {
     }
     mapper(row:any, index:number) {
         return <li key={index}>id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}</li>
-    }
+    }*/
     render() {
         let {ui, data} = this.props;
+        let d:DataProps = data;
         let {entity:sheet} = ui;
-        let {state, brief, stateName} = data;
-        let s = sheet.schema.states.find(v => v.name === state.state);
-        let actions = s.actions;
-        tonvaDebug();
-        return <Page header={sheet.name + ':' + stateName + '-' + brief.no}>
-            <div className="mx-3 my-2">
-                {
-                    actions.map((v,index) => 
-                        <Button
-                            key={index}
-                            className="mr-2"
-                            color="primary"
-                            onClick={()=>this.actionClick(v)}
-                        >
-                            {v.name}
-                        </Button>)
-                }
-            </div>
+        let {no, state, stateName, sheetData, flows} = d;
+        //let s = sheet.schema.states.find(v => v.name === state.state);
+        //let actions = s.actions;
+        return <Page header={sheet.name + ':' + stateName + '-' + no}>
             <SheetView className="mx-3"
                 ui={ui} 
-                sheetState={brief.state} 
-                sheetData={this.state.data} 
-                flows={this.state.flows} />
+                sheetState={state} 
+                sheetData={data} 
+                flows={flows} />
         </Page>;
     }
 }

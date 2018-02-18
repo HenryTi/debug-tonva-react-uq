@@ -28,11 +28,12 @@ export class UsqlApi extends Api {
     }
 
     async tuidSearch(name:string, key:string, pageStart:string|number, pageSize:number):Promise<any> {
-        return await this.post('tuids/' + name, {
+        let ret = await this.post('tuids/' + name, {
             key: key,
             pageStart: pageStart,
             pageSize: pageSize
         });
+        return ret;
     }
 
     async tuidIds(name:string, ids:number[]):Promise<any[]> {
@@ -76,6 +77,14 @@ export class UsqlApi extends Api {
         p['$pageStart'] = pageStart;
         p['$pageSize'] = pageSize;
         return await this.post('page/' + name, p);
+    }
+
+    async history(name:string, pageStart:any, pageSize:number, params:any):Promise<string> {
+        let p = _.clone(params);
+        p['$pageStart'] = pageStart;
+        p['$pageSize'] = pageSize;
+        let ret = await this.post('history/' + name, p);
+        return ret;
     }
 
     async user():Promise<any> {

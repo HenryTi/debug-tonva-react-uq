@@ -1,58 +1,48 @@
 import * as React from 'react';
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
-//import {AvForm, AvInput} from '../tools/reactstrap-validation';
 import {nav, Page} from 'tonva-tools';
-import {Tuid} from '../../ui-usql/entities';
-//import AvButton from '../tools/avButton';
-import {EntitiesUIProps, EntityUIProps} from '../../ui-usql/ui';
-import {EntitiesUI, TuidUI} from '../../ui-usql/ui';
+import {LMR, SearchBox} from 'tonva-react-form';
+//import {Tuid} from '../../entities';
+import {EntitiesUIProps, TuidUIProps} from '../../ui-usql/ui';
+//import {EntitiesUI, TuidUI} from '../../ui';
 //import {EditPage} from './editPage';
 //import {ListPage} from './listPage';
+//import {SearchPage} from './searchPage';
 
-export class MainPage extends React.Component<EntityUIProps<Tuid, TuidUI>> {
+export class MainPage extends React.Component<TuidUIProps> {
     constructor(props) {
         super(props);
         this.addNew = this.addNew.bind(this);
         this.list = this.list.bind(this);
-        //this.handleValidSubmit = this.handleValidSubmit.bind(this);
+        this.onSearch = this.onSearch.bind(this);
     }
 
     addNew() {
-        let ui = this.props.ui;
-        nav.push(<ui.editPage ui={ui} data={{}} />);
+        nav.push(<this.props.ui.editPage ui={this.props.ui} />);
     }
 
     list() {
-        let ui = this.props.ui;
-        nav.push(<ui.listPage ui={ui} />);
+        nav.push(<this.props.ui.searchPage ui={this.props.ui} />);
     }
-    /*
-    handleValidSubmit(event, values) {
-        let entity = this.props.entity;
-        //nav.push(<ListPage entity={entity} search={values['key']} />);
-    }*/
+
+    onSearch(key:string) {
+        nav.push(<this.props.ui.searchPage ui={this.props.ui} data={key} />);
+    }
 
     render() {
-        let {entity} = this.props.ui;
+        let {entity, caption} = this.props.ui;
         let {name, schema} = entity;
-        return <Page header={'Tuid: ' + name}>
-            <div>修正，修正，真的</div>
-            <div style={{margin:'6px 15px'}}>
+        caption = caption || name;
+        let right = <SearchBox className="mr-3" onSearch={this.onSearch} placeholder={'搜索'+caption} />;
+        return <Page header={caption || name}>
+            <LMR className="mt-3" right={right}>
                 <div>
-                    <Button className="m-3" color="primary" onClick={this.addNew}>新增</Button>
-                    <Button className="m-3" color="primary" onClick={this.list}>清单</Button>
+                    <Button className="mr-3" color="primary" onClick={this.addNew}>新增</Button>
+                    <Button className="mr-3" color="primary" onClick={this.list}>列表</Button>
                 </div>
-        
-                <pre>{JSON.stringify(schema, undefined, ' ')}</pre>
-            </div>
+            </LMR>
         </Page>;
     }
 }
-/*
-<AvForm style={{padding: '6px 0'}} onValidSubmit={this.handleValidSubmit}>
-<FormGroup className='w-100'>
-    <AvInput type="text" name="key" placeholder={type+'关键字'} />
-    <AvButton confirmLeave={false}>查找</AvButton>
-</FormGroup>
-</AvForm>
-*/
+        
+// <pre>{JSON.stringify(schema, undefined, ' ')}</pre>

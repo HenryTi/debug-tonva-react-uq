@@ -15,10 +15,6 @@ export class Sheet extends Entity {
     curState:string;
     stateSheets = observable.shallowArray<{id:number}>();
 
-    unpack(data:any):any {
-        return this.entities.unpackSheet(this.schema, data);
-    }
-
     states: SheetState[] = [];
 
     setStates(states: SheetState[]) {
@@ -82,13 +78,29 @@ export class Sheet extends Entity {
             return {state: n, count: count} 
         }));
     }
-    getSheet(id:number) {
-        return this.tvApi.getSheet(this.name, id);
+    private async unpack(data:any):Promise<any> {
+        if (this.schema === undefined) await this.loadSchema();
+        let ret = data[0];
+        let brief = ret[0];
+        let sheetData = this.entities.unpackSheet(this.schema, brief.data);
+        let flows = data[1];
+        return {
+            brief: brief,
+            data: sheetData,
+            flows: flows,
+        }
     }
-    getArchives(pageStart:number, pageSize:number) {
-        return this.tvApi.sheetArchives(this.name, {pageStart:pageStart, pageSize:pageSize})
+    async getSheet(id:number):Promise<any> {
+        let ret = await this.tvApi.getSheet(this.name, id);
+        return await this.unpack(ret);
     }
-    getArchive(id:number) {
-        return this.tvApi.sheetArchive(this.name, id)
+    async getArchive(id:number):Promise<any> {
+        let ret = await this.tvApi.sheetArchive(this.name, id)
+        return await this.unpack(ret);
+    }
+
+    async getArchives(pageStart:number, pageSize:number) {
+        let ret = await this.tvApi.sheetArchives(this.name, {pageStart:pageStart, pageSize:pageSize});
+        return ret;
     }
 }

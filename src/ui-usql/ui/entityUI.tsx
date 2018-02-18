@@ -1,12 +1,14 @@
 import * as _ from 'lodash';
 import {UIComponent, FieldMappers, FieldMapper, FieldFaces, FieldFace, TuidInput} from './mapper';
-import {EntitiesUI} from './entitiesUI';
+import {EntitiesUI, EntitySet} from './entitiesUI';
 import {Entity} from '../entities';
 
 export abstract class EntityUI<E extends Entity> {
     entitiesUI: EntitiesUI;
+    entitySet: EntitySet<E, EntityUI<E>>;
     entity: E;
     caption: string;
+    icon?: string;
     typeFieldMappers?: FieldMappers;
     fieldFaces?: FieldFaces;
 

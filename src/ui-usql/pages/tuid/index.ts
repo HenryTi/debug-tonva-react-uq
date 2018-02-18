@@ -9,6 +9,7 @@ import {EntityLink} from '../entityLink';
 
 export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
     caption: '数据字典',
+    icon: 'book',
     mapper: {
         link: EntityLink,
         mainPage: MainPage,

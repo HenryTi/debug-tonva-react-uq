@@ -68,11 +68,12 @@ export class Tuid extends Entity {
 
     async save(id:number, props:any) {
         let params = _.clone(props);
-        params[props.id] = id;
+        params["$id"] = id;
         return await this.tvApi.tuidSave(this.name, params);
     }
     async search(key:string, pageStart:string|number, pageSize:number):Promise<any> {
-        return await this.tvApi.tuidSearch(this.name, key, pageStart, pageSize);
+        let ret = await this.tvApi.tuidSearch(this.name, key, pageStart, pageSize);
+        return ret;
     }
     
     // cache放到Tuid里面之后，这个函数不再需要公开调用了

@@ -1,13 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
+import {Entities, Entity, Tuid, Action, Sheet, Query, Book, History} from '../entities';
 import {EntitiesMapper, FieldMapper, FieldMappers, MapperContainer, 
-    EntityMapper, ActionMapper, QueryMapper, SheetMapper, TuidMapper, TuidInput} from './mapper';
+    EntityMapper, ActionMapper, QueryMapper, SheetMapper, TuidMapper, TuidInput,
+    BookMapper, HistoryMapper
+} from './mapper';
 import {EntityUI} from './entityUI';
 import {ActionUI} from './actionUI';
 import {QueryUI} from './queryUI';
 import {SheetUI} from './sheetUI';
 import {TuidUI} from './tuidUI';
+import {BookUI} from './bookUI';
+import {HistoryUI} from './historyUI';
 
 export class EntitiesUI {
     private defaultMapper:EntitiesMapper;
@@ -34,6 +38,8 @@ export class EntitiesUI {
     query: EntitySet<Query, QueryUI>;
     sheet: EntitySet<Sheet, SheetUI>;
     tuid: EntitySet<Tuid, TuidUI>;
+    book: EntitySet<Book, BookUI>;
+    history: EntitySet<History, HistoryUI>;
 
     private buildUI() {
         let d = this.defaultMapper;
@@ -47,6 +53,8 @@ export class EntitiesUI {
         this.query = new QuerySetBuilder(this, this.entities.queryArr, d.query, m.query).build();
         this.sheet = new SheetSetBuilder(this, this.entities.sheetArr, d.sheet, m.sheet).build();
         this.tuid = new TuidSetBuilder(this, this.entities.tuidArr, d.tuid, m.tuid).build();
+        this.book = new BookSetBuilder(this, this.entities.bookArr, d.book, m.book).build();
+        this.history = new HistorySetBuilder(this, this.entities.historyArr, d.history, m.history).build();
     }
 
     getTuidInput(name:string):TuidInput {
@@ -78,7 +86,9 @@ export class EntitiesUI {
 
 export interface EntitySet<E extends Entity, U extends EntityUI<E>> {
     caption: string;
+    icon: string;
     coll: {[name:string]: U};
+    idColl: {[id:number]: U};
     list: U[];
 }
 
@@ -111,14 +121,16 @@ abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T exten
             if (mappers !== undefined) return mappers[name] || mapper;
             return mapper;
         }
-        let ret: EntitySet<E, U> = {caption:undefined, coll:{}, list:[]};
-        let {coll, list} = ret;
+        let ret: EntitySet<E, U> = {caption:undefined, icon:undefined, coll:{}, idColl:{}, list:[]};
+        let {coll, idColl, list} = ret;
         for (let entity of this.entityArr) {
-            let name = entity.name;
+            let {id, name} = entity;
             let mapper1:T = getMapper(name, this.d);
             let mapper2:T = getMapper(name, this.m);
             let u = this.buildUI(entity, mapper1 || {} as T, mapper2 || {} as T);
+            u.entitySet = ret;
             coll[name] = u;
+            idColl[id] = u;
         }
         let nameList = this.d.list;
         if (nameList === undefined) {
@@ -129,6 +141,7 @@ abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T exten
             for (let n in nameList) list.push(coll[n]);
         }
         ret.caption = this.m.caption || this.d.caption;
+        ret.icon = this.m.icon || this.d.icon;
         return ret;
     }
 
@@ -137,6 +150,7 @@ abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T exten
         ret.entitiesUI = this.entitiesUI;
         ret.entity = entity;
         ret.caption = mapper2.caption || mapper1.caption || entity.name;
+        ret.icon = mapper2.icon || mapper1.icon;
         ret.link = mapper2.link || mapper1.link;
         ret.mainPage = mapper2.mainPage || mapper1.mainPage;
         ret.typeFieldMappers = this.buildTypeFieldMappers(this.typeFieldMappers, mapper1, mapper2);
@@ -182,6 +196,28 @@ class QuerySetBuilder extends EntitySetBuilder<Query, QueryUI, QueryMapper> {
         return ret;
     }
 }
+class BookSetBuilder extends EntitySetBuilder<Book, BookUI, BookMapper> {
+    build():EntitySet<Book, BookUI> {
+        let ret = super.build();
+        return ret;
+    }
+    protected createUI():BookUI {return new BookUI();}
+    protected buildUI(entity:Book, mapper1:BookMapper, mapper2:BookMapper):BookUI {
+        let ret = super.buildUI(entity, mapper1, mapper2);
+        return ret;
+    }
+}
+class HistorySetBuilder extends EntitySetBuilder<History, HistoryUI, HistoryMapper> {
+    build():EntitySet<History, HistoryUI> {
+        let ret = super.build();
+        return ret;
+    }
+    protected createUI():HistoryUI {return new HistoryUI();}
+    protected buildUI(entity:History, mapper1:HistoryMapper, mapper2:HistoryMapper):HistoryUI {
+        let ret = super.buildUI(entity, mapper1, mapper2);
+        return ret;
+    }
+}
 class SheetSetBuilder extends EntitySetBuilder<Sheet, SheetUI, SheetMapper> {
     build():EntitySet<Sheet, SheetUI> {
         let ret = super.build();
@@ -215,7 +251,7 @@ class TuidSetBuilder extends EntitySetBuilder<Tuid, TuidUI, TuidMapper> {
     protected buildUI(entity:Tuid, mapper1:TuidMapper, mapper2:TuidMapper):TuidUI {
         let ret = super.buildUI(entity, mapper1, mapper2);
         ret.editPage = mapper2.editPage || mapper1.editPage;
-        ret.listPage = mapper2.listPage || mapper1.listPage;
+        ret.searchPage = mapper2.listPage || mapper1.listPage;
         ret.input = mapper2.input || mapper2.input;
         return ret;
     }

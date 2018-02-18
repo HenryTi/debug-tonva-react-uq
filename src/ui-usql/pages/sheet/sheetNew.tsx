@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap';
+import {FA} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
@@ -150,23 +151,27 @@ class Success extends React.Component<SuccessProps, null> {
     constructor(props) {
         super(props);
         this.next = this.next.bind(this);
-        this.return = this.return.bind(this);
+        this.finish = this.finish.bind(this);
     }
 
     next() {
         this.props.callback();
         nav.pop();
     }
-    return() {
+    finish() {
         nav.pop(2);
     }
     render() {
         return <Page header='提交成功'>
-            <div>
-                成功提交！
+            <div className='m-3'>
+                <span className="text-success">
+                    <FA name='check-circle' size='lg' /> 成功提交！
+                </span>
+                <div className='mt-5'>
+                    <Button className="mr-3" color="primary" onClick={this.next}>继续录入</Button>
+                    <Button color="primary" outline={true} onClick={this.finish}>不继续</Button>
+                </div>
             </div>
-            <Button onClick={this.next}>继续录入</Button>
-            <Button onClick={this.return}>不继续</Button>
         </Page>;
     }
 }

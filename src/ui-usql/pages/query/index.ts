@@ -6,6 +6,7 @@ import {EntityLink} from '../entityLink';
 
 export const mapperContainer:MapperContainer<Query, QueryUI, QueryMapper> = {
     caption: '查询',
+    icon: 'hand-o-right',
     mapper: {
         link: EntityLink,
         mainPage: MainPage,

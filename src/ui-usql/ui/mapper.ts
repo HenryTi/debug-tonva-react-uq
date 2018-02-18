@@ -1,14 +1,12 @@
-import {Entities, Entity, Tuid, Action, Sheet, Query} from "../entities";
+import {Entities, Entity, Tuid, Action, Sheet, Query, Book, History} from "../entities";
 import {EntitiesUI} from './entitiesUI';
 import {EntityUI} from './entityUI';
 import {ActionUI} from './actionUI';
 import {QueryUI} from './queryUI';
 import {SheetUI} from './sheetUI';
 import {TuidUI} from './tuidUI';
-
-//export type FromPicked = (item:any)=>{id:number, caption?:string|JSX.Element};
-//export type ItemFromId = (id:number)=>any;
-//export type IdPick = (face: IdFace, params:any) => Promise<any>;
+import {BookUI} from './bookUI';
+import {HistoryUI} from './historyUI';
 
 export interface TuidInput {
     component?: TuidInputComponent;
@@ -63,6 +61,10 @@ export type ActionUIProps = EntityUIProps<Action, ActionUI>;
 export type ActionUIComponent = new (props:ActionUIProps) => React.Component<ActionUIProps>;
 export type QueryUIProps = EntityUIProps<Query, QueryUI>;
 export type QueryUIComponent = new (props:QueryUIProps) => React.Component<QueryUIProps>;
+export type BookUIProps = EntityUIProps<Book, BookUI>;
+export type BookUIComponent = new (props:BookUIProps) => React.Component<BookUIProps>;
+export type HistoryUIProps = EntityUIProps<History, HistoryUI>;
+export type HistoryUIComponent = new (props:HistoryUIProps) => React.Component<HistoryUIProps>;
 export type SheetUIProps = EntityUIProps<Sheet, SheetUI>;
 export type SheetUIComponent = new (props:SheetUIProps) => React.Component<SheetUIProps>;
 export type TuidUIProps = EntityUIProps<Tuid, TuidUI>;
@@ -70,6 +72,7 @@ export type TuidUIComponent = new (props:TuidUIProps) => React.Component<TuidUIP
 
 export interface EntityMapper<T extends Entity, TUI extends EntityUI<T>> {
     caption?: string;
+    icon?: string;
     typeFieldMappers?: FieldMappers;
     fieldFaces?: FieldFaces;
     link?: UIComponent<T, TUI>;
@@ -94,12 +97,17 @@ export interface SheetMapper extends EntityMapper<Sheet, SheetUI> {
 
 export interface QueryMapper extends EntityMapper<Query, QueryUI> {
 }
+export interface BookMapper extends EntityMapper<Book, BookUI> {
+}
+export interface HistoryMapper extends EntityMapper<History, HistoryUI> {
+}
 
 export interface EntitiesUIProps {
     ui: EntitiesUI;
 }
 export interface MapperContainer<E extends Entity, U extends EntityUI<E>, T extends EntityMapper<E, U>> {
     caption?: string;
+    icon?: string;
     mapper?: T;
     mappers?: {[name:string]: T};
     list?: string[];    // 清单，如果undefined，则全部，按字母顺序排名
@@ -114,27 +122,6 @@ export interface EntitiesMapper {
     action?: MapperContainer<Action, ActionUI, ActionMapper>;
     sheet?: MapperContainer<Sheet, SheetUI, SheetMapper>;
     query?: MapperContainer<Query, QueryUI, QueryMapper>;
+    book?: MapperContainer<Book, BookUI, BookMapper>;
+    history?: MapperContainer<History, HistoryUI, HistoryMapper>;
 }
-/*
-export function mergeEntitiesMapper(dst:EntitiesMapper, src:EntitiesMapper) {
-    dst.mainPage = src.mainPage || dst.mainPage;
-    dst.caption = src.caption || (dst.caption || 'Tonva Usql Entities');
-
-    let dstTuid = dst.tuid, srcTuid = src.tuid;
-    if (dstTuid === undefined) dst.tuid = dstTuid = {};
-    if (srcTuid !== undefined) {
-        dstTuid.mapper = srcTuid.mapper || dstTuid.mapper;
-        //if (dstTuid)
-    }
-}
-
-function mergeMapperContainer<T>(dst:MapperContainer<T>, src:MapperContainer<T>):MapperContainer<T> {
-    let ret:MapperContainer<T> = {};
-    ret.mapper = mergeEntityMapper(dst.mapper, src.mapper);
-    return ret;
-}
-
-function mergeEntityMapper<T>(dst:T, src:T):T {
-    return undefined;
-}
-*/

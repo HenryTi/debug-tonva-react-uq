@@ -10,22 +10,25 @@ export class Main extends React.Component<EntitiesUIProps> {
         super(props);
         this.entityRender = this.entityRender.bind(this);
         this.entityClick = this.entityClick.bind(this);
-
+/*
         this.actionClick = this.actionClick.bind(this);
         this.sheetClick = this.sheetClick.bind(this);
         this.queryClick = this.queryClick.bind(this);
         this.tuidClick = this.tuidClick.bind(this);
+*/
     }
     
     private entityRender(ui: TuidUI, index: number): JSX.Element {
         let {caption} = ui;
-        return <div className="px-3 py-2">{caption}</div>
+        return ui.link?
+            <ui.link ui={ui} />:
+            <div className="px-3 py-2">{caption}</div>;
     }
     private async entityClick<E extends Entity, U extends EntityUI<E>>(ui:U) {
         await ui.entity.loadSchema();
         nav.push(<ui.mainPage ui={ui} />);
     }
-    
+/*    
     private tuidRender<E extends Entity, U extends EntityUI<E>>(ui: U, index: number): JSX.Element {
         let {caption} = ui;
         return <div className="px-3 py-2">{caption}</div>
@@ -59,20 +62,23 @@ export class Main extends React.Component<EntitiesUIProps> {
         await ui.entity.loadSchema();
         nav.push(<ui.mainPage ui={ui} />);
     }
+*/
     private renderList<E extends Entity>(entitySet:EntitySet<E,EntityUI<E>>, caption:string) {
         return <List className='my-2'
                 header={<Muted>{entitySet.caption || caption}</Muted>}
                 items={entitySet.list} 
                 item={{render: this.entityRender, onClick:this.entityClick}} />;
-    }
+    }  
     render() {
         let {ui} = this.props;
-        let {caption, tuid, action, sheet, query} = ui;
+        let {caption, tuid, action, sheet, query, book, history} = ui;
         return <Page header={caption}>
             {this.renderList(tuid, 'Tuid')}
             {this.renderList(action, 'Action')}
             {this.renderList(sheet, 'Sheet')}
             {this.renderList(query, 'Query')}
+            {this.renderList(book, 'Book')}
+            {this.renderList(history, 'History')}
         </Page>;
     }
 }

@@ -3,6 +3,7 @@ import {Tuid} from '../../ui-usql/entities';
 import {EntityUI, TuidUI} from '../../ui-usql/ui';
 import {MainPage} from './mainPage';
 import {ArticleInput} from './articleInput';
+import {CandidateRow, CustomerContent} from './customerInput';
 
 export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
     //caption: '数据字典',
@@ -31,6 +32,11 @@ export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
         },
         "customer": {
             caption: '客户',
+            icon: 'user',
+            input: {
+                inputContent: CustomerContent,
+                candidateRow: CandidateRow,
+            },
             fieldFaces: {
                 name: {
                     label: '名称',

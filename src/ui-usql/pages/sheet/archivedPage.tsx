@@ -9,7 +9,7 @@ import {MainDetails, MainDetailsView} from '../tools';
 import {SheetView} from './sheetView';
 
 interface State {
-    res: any;
+    flows: any;
     data: any;
 }
 export class ArchivedPage extends React.Component<SheetUIProps, State> {
@@ -17,7 +17,7 @@ export class ArchivedPage extends React.Component<SheetUIProps, State> {
     constructor(props) {
         super(props);
         this.state = {
-            res: undefined,
+            flows: undefined,
             data: undefined,
         }
         this.mainDetails = this.props.ui.mapMainDetails({
@@ -29,14 +29,10 @@ export class ArchivedPage extends React.Component<SheetUIProps, State> {
         let {ui, data} = this.props;
         let sheet = ui.entity;
         let res = await sheet.getArchive(data.id);
-        let ret = res[0];
-        let sheetData;
-        if (ret.length === 1) {
-            sheetData = sheet.unpack(ret[0].data);
-        }
+        let {brief, data:sheetData, flows} = res;
         this.setState({
             data: sheetData,
-            res: res
+            flows: flows
         });
     }
     mapper(row:any, index:number) {
@@ -60,7 +56,7 @@ export class ArchivedPage extends React.Component<SheetUIProps, State> {
             <SheetView className="mx-3 my-2" ui={ui} 
                 sheetState={brief.state} 
                 sheetData={this.state.data} 
-                flows={this.state.res && this.state.res[1]} />
+                flows={this.state.flows} />
         </Page>;
     }
 }

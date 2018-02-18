@@ -8,9 +8,16 @@ import {mapperContainer as sheetMapperContainer} from './sheet';
 
 export const pageMapper:EntitiesMapper = {
     // mainPage: Main,
-    caption: '同花默认--界面',
+    caption: 'SCI客户管理',
     tuid: tuidMapperContainer,
     sheet: sheetMapperContainer,
+    book: {
+        mappers: {
+            账: {
+                caption: 'mapper-账'
+            }
+        }
+    }
     /*
     action: {
         caption: '操作',

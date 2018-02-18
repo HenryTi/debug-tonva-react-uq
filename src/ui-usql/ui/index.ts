@@ -4,4 +4,6 @@ export * from './actionUI';
 export * from './queryUI';
 export * from './sheetUI';
 export * from './tuidUI';
+export * from './bookUI';
+export * from './historyUI';
 export * from './mapper';

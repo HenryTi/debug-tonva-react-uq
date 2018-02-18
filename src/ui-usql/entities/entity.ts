@@ -4,10 +4,12 @@ import {Entities} from './entities';
 export abstract class Entity {
     protected entities: Entities;
     readonly name: string;
+    readonly id: number;
 
-    constructor(entities:Entities, name:string) {
+    constructor(entities:Entities, name:string, id:number) {
         this.entities = entities;
         this.name = name;
+        this.id = id;
     }
 
     public schema: any;

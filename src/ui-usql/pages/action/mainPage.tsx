@@ -39,7 +39,7 @@ class ActionResultPage extends React.Component<ActionUIProps> {
         let {ui, data} = this.props;
         let {caption, entity} = ui;
         let {name} = entity;
-        return <Page header={caption || name} close={true}>
+        return <Page header={caption || name} back="close">
             <pre>
                 {JSON.stringify(data, undefined, ' ')}
             </pre>

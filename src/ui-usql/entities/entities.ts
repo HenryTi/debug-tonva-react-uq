@@ -4,12 +4,15 @@ import {Tuid} from './tuid';
 import {Action} from './action';
 import {Sheet, SheetState, SheetAction} from './sheet';
 import {Query} from './query';
+import {Book} from './book';
+import {History} from './history';
 
 export interface Field {
     name: string;
     type: string;
-    tuidKey?: string;
-    tuid?: Tuid;
+    //tuidKey?: string;
+    tuid?: string;
+    _tuid: Tuid;
 }
 interface Arr {
     name:string;
@@ -26,6 +29,8 @@ export class Entities {
     private actions: {[name:string]: Action} = {};
     private sheets: {[name:string]: Sheet} = {};
     private queries: {[name:string]: Query} = {};
+    private books: {[name:string]: Book} = {};
+    private histories: {[name:string]: Book} = {};
     private cacheTimer: any;
 
     // api: apiOwner/apiName
@@ -49,6 +54,8 @@ export class Entities {
     actionArr: Action[] = [];
     sheetArr: Sheet[] = [];
     queryArr: Query[] = [];
+    bookArr: Book[] = [];
+    historyArr: History[] = [];
 
     getTuid(name:string) {return this.tuids[name];}
 
@@ -86,36 +93,51 @@ export class Entities {
     }
 
     private fromType(name:string, type:string) {
+        let parts = type.split('|');
+        type = parts[0];
+        let id = Number(parts[1]);
         switch (type) {
             case 'action': 
                 let action = this.actions[name];
                 if (action === undefined) {
-                    this.actionArr.push(this.actions[name] = new Action(this, name));
+                    this.actionArr.push(this.actions[name] = new Action(this, name, id));
                 }
                 break;
             case 'tuid':
                 let tuid = this.tuids[name];
                 if (tuid === undefined) {
-                    this.tuidArr.push(this.tuids[name] = new Tuid(this, name));
+                    this.tuidArr.push(this.tuids[name] = new Tuid(this, name, id));
                 }
                 break;
             case 'query': 
                 let query = this.queries[name];
                 if (query === undefined) {
-                    this.queryArr.push(this.queries[name] = new Query(this, name));
+                    this.queryArr.push(this.queries[name] = new Query(this, name, id));
+                }
+                break;
+            case 'book':
+                let book = this.books[name];
+                if (book === undefined) {
+                    this.bookArr.push(this.books[name] = new Book(this, name, id));
+                }
+                break;
+            case 'history':
+                let history = this.histories[name];
+                if (history === undefined) {
+                    this.historyArr.push(this.histories[name] = new History(this, name, id));
                 }
                 break;
         }
     }
-    private fromObj(name:string, obj:object) {
+    private fromObj(name:string, obj:any) {
         switch (obj['$']) {
             case 'sheet': this.buildSheet(name, obj); break;
         }
     }
-    private buildSheet(name:string, obj:object) {
+    private buildSheet(name:string, obj:any) {
         let sheet = this.sheets[name];
         if (sheet === undefined) {
-            this.sheetArr.push(sheet = this.sheets[name] = new Sheet(this, name));
+            this.sheetArr.push(sheet = this.sheets[name] = new Sheet(this, name, obj.id));
         }
 
         let states = sheet.states;
@@ -256,11 +278,11 @@ export class Entities {
             case 'int':
             case 'dec': return Number(v);
             case 'bigint':
-                let tuidKey = f.tuidKey;
+                let tuidKey = f.tuid;
                 if (tuidKey !== undefined) {
-                    let tuid = f.tuid;
+                    let tuid = f._tuid;
                     if (tuid === undefined) {
-                        f.tuid = tuid = this.getTuid(tuidKey);
+                        f._tuid = tuid = this.getTuid(tuidKey);
                     }
                     tuid.useId(Number(v));
                 }
