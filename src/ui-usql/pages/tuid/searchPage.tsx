@@ -5,6 +5,7 @@ import {LMR, SearchBox, List} from 'tonva-react-form';
 import {Tuid} from '../../entities';
 import {EntitiesUIProps, TuidUIProps} from '../../ui';
 import {EntitiesUI, TuidUI} from '../../ui';
+import { EditPage } from './editPage';
 
 class TuidPagedItems<T> extends PagedItems<T> {
     private tuidUI: TuidUI;
@@ -28,14 +29,22 @@ export class SearchPage extends React.Component<TuidUIProps> {
         super(props);
         this.pagedItems = new TuidPagedItems<any>(this.props.ui);
         this.onSearch = this.onSearch.bind(this);
+        this.renderRow = this.renderRow.bind(this);
+        this.rowClick = this.rowClick.bind(this);
     }
     componentWillMount() {
-        //let key = this.props.data;
-        //if (!key) return;
         this.onSearch(this.props.data);
     }
     async onSearch(key:string) {
         await this.pagedItems.first(key);
+    }
+    renderRow(item:any, index:number):JSX.Element {
+        return <div className="px-3 py-2">{JSON.stringify(item)}</div>;
+    }
+    async rowClick(item:any) {
+        let {ui} = this.props;
+        let data = await ui.entity.load(item.id);
+        nav.push(<EditPage ui={ui} data={data} />);
     }
     render() {
         let {data:initKey, ui} = this.props;
@@ -46,7 +55,7 @@ export class SearchPage extends React.Component<TuidUIProps> {
             initKey={initKey}
             onSearch={this.onSearch} placeholder={'搜索'+caption} />;
         return <Page header={header}>
-            <List items={this.pagedItems.items} item={{}} before={'搜索'+caption+'资料'} />
+            <List items={this.pagedItems.items} item={{render:this.renderRow, onClick:this.rowClick}} before={'搜索'+caption+'资料'} />
         </Page>;
     }
 }

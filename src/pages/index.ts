@@ -5,12 +5,14 @@ import {EntitiesMapper} from '../ui-usql/ui';
 //import {mapperContainer as sheetMapperContainer} from './sheet';
 import {mapperContainer as tuidMapperContainer} from './tuid';
 import {mapperContainer as sheetMapperContainer} from './sheet';
+import {mapperContainer as historyMapperContainer} from './history';
 
 export const pageMapper:EntitiesMapper = {
     // mainPage: Main,
     caption: 'SCI客户管理',
     tuid: tuidMapperContainer,
     sheet: sheetMapperContainer,
+    history: historyMapperContainer,
     book: {
         mappers: {
             账: {

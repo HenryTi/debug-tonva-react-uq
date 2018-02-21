@@ -6,34 +6,27 @@ import {observer} from 'mobx-react';
 import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {TonvaForm, List, FormRow, SubmitResult} from 'tonva-react-form';
-import {EntitiesUI} from '../../ui';
+import {Entity} from '../../entities';
+import {EntitiesUI, EntityUI, SheetUI} from '../../ui';
 import {Detail, MainDetails} from './model';
 
 export interface MainDetailsViewProps {
-    entitiesUI: EntitiesUI;
+    ui: SheetUI;
     mainDetails: MainDetails;
     values: any;
 }
 
 @observer
-export class MainDetailsView extends React.Component<MainDetailsViewProps> {    
+export class MainDetailsView<T extends Entity> extends React.Component<MainDetailsViewProps> {
     constructor(props) {
         super(props);
-        /*
-        let {values, mainDetails} = this.props;
-        let {main, details} = this.props.mainDetails;
-        let v = _.merge({}, values);
-        for (let arr of details) {
-            let name = arr.name;
-            let vArr = v[name];
-            if (vArr === undefined) v[name] = [];
-        }
-        //this.values = observable(v);
-        this.formRows = this.buildMainRows();
-        */
+    }
+    private detailRow(item:any, index:number):JSX.Element {
+        return 
     }
     private buildMainRows() {
-        let {main, details} = this.props.mainDetails;
+        let {ui, mainDetails} = this.props;
+        let {main, details} = mainDetails;
         let formRows:FormRow[] = main === undefined? [] : _.clone(main);
         if (details === undefined) return;
         let values = this.props.values;
@@ -45,7 +38,9 @@ export class MainDetailsView extends React.Component<MainDetailsViewProps> {
             formRows.push(<List
                 header={header}
                 items={values[d.name]}
-                item={{render:d.renderRow}}/>);
+            item={{render:(item:any, index:number) => {
+                return <d.renderRow ui={ui} data={{item:item, detail:d}} />
+            }}} />);
         }
         return formRows;
     }
@@ -54,7 +49,7 @@ export class MainDetailsView extends React.Component<MainDetailsViewProps> {
     }
     render() {
         let formRows:FormRow[];
-        let {values, mainDetails} = this.props;
+        let {values, mainDetails, ui} = this.props;
         let {main, details} = this.props.mainDetails;
         let v = _.merge({}, values);
         for (let arr of details) {
@@ -67,7 +62,7 @@ export class MainDetailsView extends React.Component<MainDetailsViewProps> {
         return <div>
             <TonvaForm formRows={formRows}
                 initValues={values}
-                context={this.props.entitiesUI}
+                context={ui.entitiesUI}
                 onSubmit={this.onSubmit}
                 readOnly={true} />
         </div>;

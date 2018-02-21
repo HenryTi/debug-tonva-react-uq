@@ -6,5 +6,6 @@ export class HistoryUI extends EntityUI<History> {
     mapKeys():any[] {
         return this.mapFields(this.entity.schema.keys);
     }
+    listRow?: new (props:{item:any; index:number}) => React.Component<any>;
 }
 

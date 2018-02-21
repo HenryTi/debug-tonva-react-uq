@@ -1,7 +1,16 @@
 import * as React from 'react';
-import {IdPickFace, FormProps} from 'tonva-react-form';
+import {IdPickFace, FormProps, Muted} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {TuidUI, TuidInputProps} from '../../ui-usql/ui';
+
+export class ArticleContent extends React.Component<{value:any}> {
+    render() {
+        let {value} = this.props;
+        //return <div>id = {value.id} {JSON.stringify(value)} </div>;
+        if (value === undefined) return <div>Article</div>;
+        return <>{value.discription} <Muted>{value.name}</Muted></>;
+    }
+}
 
 export class ArticleInput extends React.Component<TuidInputProps> {
     private id = 0;

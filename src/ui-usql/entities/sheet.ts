@@ -92,6 +92,7 @@ export class Sheet extends Entity {
     }
     async getSheet(id:number):Promise<any> {
         let ret = await this.tvApi.getSheet(this.name, id);
+        if (ret[0].length === 0) return await this.getArchive(id);
         return await this.unpack(ret);
     }
     async getArchive(id:number):Promise<any> {

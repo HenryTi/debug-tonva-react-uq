@@ -52,6 +52,12 @@ export interface FieldFaces {
     [name:string]: FieldFace;
 }
 
+export interface EntitiesUIProps {
+    ui: EntitiesUI;
+    data?: any;
+}
+export type EntitiesUIComponent = new (props: EntitiesUIProps) => React.Component<EntitiesUIProps>;
+
 export interface EntityUIProps<T extends Entity, TUI extends EntityUI<T>> {
     ui: TUI;
     data?: any;
@@ -89,6 +95,7 @@ export interface ActionMapper extends EntityMapper<Action, ActionUI> {
 
 export interface DetailFace {
     label?: string;
+    renderRow?: SheetUIComponent;
     fields: FieldFaces;
 }
 export interface SheetMapper extends EntityMapper<Sheet, SheetUI> {
@@ -100,11 +107,9 @@ export interface QueryMapper extends EntityMapper<Query, QueryUI> {
 export interface BookMapper extends EntityMapper<Book, BookUI> {
 }
 export interface HistoryMapper extends EntityMapper<History, HistoryUI> {
+    listRow?: new (props:{item:any; index:number}) => React.Component<any>;
 }
 
-export interface EntitiesUIProps {
-    ui: EntitiesUI;
-}
 export interface MapperContainer<E extends Entity, U extends EntityUI<E>, T extends EntityMapper<E, U>> {
     caption?: string;
     icon?: string;
@@ -113,7 +118,7 @@ export interface MapperContainer<E extends Entity, U extends EntityUI<E>, T exte
     list?: string[];    // 清单，如果undefined，则全部，按字母顺序排名
 }
 export interface EntitiesMapper {
-    mainPage?: new (props:EntitiesUIProps) => React.Component<EntitiesUIProps>;
+    mainPage?: EntitiesUIComponent;
     caption?: string;
 
     typeFieldMappers?: {[name:string]: FieldMapper};

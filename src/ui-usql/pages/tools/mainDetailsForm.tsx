@@ -6,12 +6,12 @@ import {observer} from 'mobx-react';
 import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap';
 import {nav, Page} from 'tonva-tools';
 import {TonvaForm, List, FormRow, SubmitResult} from 'tonva-react-form';
-import {EntitiesUI} from '../../ui';
+import {SheetUI, EntitiesUI} from '../../ui';
 import {Detail, MainDetails} from './model';
 
 export interface MainDetailsFormProps {
     className?: string;
-    entitiesUI: EntitiesUI;
+    ui: SheetUI;
     mainDetails: MainDetails;
     values: any;
     confirmLeave?: boolean;
@@ -54,7 +54,7 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
     }
     onDetailEdit(detail:Detail, row:any) {
         nav.push(<DetailPage
-            entitiesUI={this.props.entitiesUI} 
+            entitiesUI={this.props.ui.entitiesUI} 
             detail={detail} 
             values={row} 
             onDetailSubmit={this.onDetailSubmit}  />);
@@ -68,12 +68,13 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
     }
     onNew(detail:Detail) {
         nav.push(<DetailPage
-            entitiesUI={this.props.entitiesUI} 
+            entitiesUI={this.props.ui.entitiesUI} 
             detail={detail}
             values={undefined} onDetailSubmit={this.onDetailSubmit}  />);
     }
     private buildMainRows():FormRow[] {
-        let {main, details} = this.props.mainDetails;
+        let {ui, mainDetails} = this.props;
+        let {main, details} = mainDetails;
         let formRows:FormRow[] = main === undefined? [] : _.clone(main);
         if (details === undefined) return;
         for (let d of details) {
@@ -84,16 +85,19 @@ export class MainDetailsForm extends React.Component<MainDetailsFormProps> {
             formRows.push(<List
                 header={header}
                 items={this.values[d.name]}
-                item={{render:d.renderRow, onClick:row=>this.onDetailEdit(d, row)}}/>);
+                item={{
+                    render:(item:any, index:number) => <d.renderRow ui={ui} data={{item:item, detail:d}} />, 
+                    onClick:row=>this.onDetailEdit(d, row)
+                }}/>);
         }
         return formRows;
     }
     render() {
-        let {className, entitiesUI} = this.props;
+        let {className, ui} = this.props;
         return <div>
             <TonvaForm className={className}
                 formRows={this.formRows}
-                context={entitiesUI}
+                context={ui.entitiesUI}
                 onSubmit={this.onSubmit} />
         </div>;
     }

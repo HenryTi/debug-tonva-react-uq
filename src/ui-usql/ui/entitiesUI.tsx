@@ -25,10 +25,12 @@ export class EntitiesUI {
         _.merge(this.typeFieldMappers, this.mapper.typeFieldMappers);
     }
 
-    async loadEntities() {
-        await this.entities.loadAccess();
+    /*
+    async loadEntities(api:string, access:string) {
+        //await this.entities.loadAccess();
+        await this.entities.loadEntites(api, access);
         this.buildUI();
-    }
+    }*/
 
     entities:Entities;
     mainPage:JSX.Element;
@@ -41,7 +43,7 @@ export class EntitiesUI {
     book: EntitySet<Book, BookUI>;
     history: EntitySet<History, HistoryUI>;
 
-    private buildUI() {
+    buildUI() {
         let d = this.defaultMapper;
         let m = this.mapper;
         this.caption = m.caption || (d.caption || 'Tonva Usql Entities');
@@ -215,6 +217,7 @@ class HistorySetBuilder extends EntitySetBuilder<History, HistoryUI, HistoryMapp
     protected createUI():HistoryUI {return new HistoryUI();}
     protected buildUI(entity:History, mapper1:HistoryMapper, mapper2:HistoryMapper):HistoryUI {
         let ret = super.buildUI(entity, mapper1, mapper2);
+        ret.listRow = mapper2.listRow || mapper1.listRow;
         return ret;
     }
 }
@@ -252,7 +255,7 @@ class TuidSetBuilder extends EntitySetBuilder<Tuid, TuidUI, TuidMapper> {
         let ret = super.buildUI(entity, mapper1, mapper2);
         ret.editPage = mapper2.editPage || mapper1.editPage;
         ret.searchPage = mapper2.listPage || mapper1.listPage;
-        ret.input = mapper2.input || mapper2.input;
+        ret.input = _.merge({}, mapper1.input, mapper2.input);
         return ret;
     }
 }

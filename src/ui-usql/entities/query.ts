@@ -35,7 +35,7 @@ export class Query extends Entity {
                 case 'datetime': pageStart = (this.pageStart as Date).getTime(); break;
             }
         }
-        let res = await this.tvApi[this.queryApiName](this.name, pageStart, this.pageSize+1, this.params)
+        let res = await this.tvApi.queryPage(this.queryApiName, this.name, pageStart, this.pageSize+1, this.params);
         let data = this.entities.unpackReturns(this.schema, res);
         let page = data['$page'] as any[];
         if (page !== undefined) {

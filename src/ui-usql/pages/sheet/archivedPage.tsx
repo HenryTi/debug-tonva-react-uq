@@ -20,9 +20,7 @@ export class ArchivedPage extends React.Component<SheetUIProps, State> {
             flows: undefined,
             data: undefined,
         }
-        this.mainDetails = this.props.ui.mapMainDetails({
-            arr1: (row:any) => <div>{JSON.stringify(row)}</div>
-        });
+        this.mainDetails = this.props.ui.mapMainDetails();
     }
 
     async componentDidMount() {

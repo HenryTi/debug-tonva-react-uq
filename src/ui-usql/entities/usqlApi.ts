@@ -16,11 +16,15 @@ export class UsqlApi extends Api {
     }
 
     async loadAccess():Promise<any> {
-        return await this.get('access', this.access.join(';'));
+        return await this.get('access', {acc:this.access.join('|')});
     }
 
     async schema(name:string):Promise<any> {
         return await this.get('schema/' + name, undefined);
+    }
+
+    async tuidGet(name:string, id:number):Promise<any> {
+        return this.get('tuid/' + name + '/' + id, {});
     }
 
     async tuidSave(name:string, params):Promise<any> {
@@ -72,13 +76,13 @@ export class UsqlApi extends Api {
         return await this.post('action/' + name, data);
     }
 
-    async page(name:string, pageStart:any, pageSize:number, params:any):Promise<string> {
+    async queryPage(queryApi:string, name:string, pageStart:any, pageSize:number, params:any):Promise<string> {
         let p = _.clone(params);
         p['$pageStart'] = pageStart;
         p['$pageSize'] = pageSize;
-        return await this.post('page/' + name, p);
+        return await this.post(queryApi + '/' + name, p);
     }
-
+/*
     async history(name:string, pageStart:any, pageSize:number, params:any):Promise<string> {
         let p = _.clone(params);
         p['$pageStart'] = pageStart;
@@ -87,6 +91,14 @@ export class UsqlApi extends Api {
         return ret;
     }
 
+    async book(name:string, pageStart:any, pageSize:number, params:any):Promise<string> {
+        let p = _.clone(params);
+        p['$pageStart'] = pageStart;
+        p['$pageSize'] = pageSize;
+        let ret = await this.post('history/' + name, p);
+        return ret;
+    }
+*/
     async user():Promise<any> {
         return await this.get('user', undefined);
     }

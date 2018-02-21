@@ -65,7 +65,9 @@ export class Tuid extends Entity {
             this.cache.set(String(id), tuid);
         }
     }
-
+    async load(id:number):Promise<any> {
+        return await this.tvApi.tuidGet(this.name, id);
+    }
     async save(id:number, props:any) {
         let params = _.clone(props);
         params["$id"] = id;

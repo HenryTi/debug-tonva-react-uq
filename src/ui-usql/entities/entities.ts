@@ -23,20 +23,22 @@ const tab = '\t';
 const ln = '\n';
 
 export class Entities {
-    tvApi: UsqlApi;
-
+    //tvApi: UsqlApi;
+    private apis: {[api:string]: {[access:string]: UsqlApi}} = {};
     private tuids: {[name:string]: Tuid} = {};
     private actions: {[name:string]: Action} = {};
     private sheets: {[name:string]: Sheet} = {};
     private queries: {[name:string]: Query} = {};
     private books: {[name:string]: Book} = {};
-    private histories: {[name:string]: Book} = {};
+    private histories: {[name:string]: History} = {};
     private cacheTimer: any;
 
     // api: apiOwner/apiName
     // access: acc1;acc2 or *
-    constructor(api:string, access:string) {
+    //constructor(api:string, access:string) {
+    constructor() {
         this.loadIds = this.loadIds.bind(this);
+/*
         let p = api.split('/');
         if (p.length !== 2) {
             console.log('api must be apiOwner/apiName format');
@@ -44,10 +46,11 @@ export class Entities {
         }
         //this.apiOwner = p[0];
         //this.apiName = p[1];
-        let acc = access.split(';').map(v=>v.trim());
+        let acc = access === undefined? ['*'] : access.split(';').map(v=>v.trim());
         // * = all
         if (acc.length === 1 && acc[0] === '*') acc = [];
         this.tvApi = new UsqlApi(p[0], p[1], acc);
+*/
     }
 
     tuidArr: Tuid[] = [];
@@ -56,6 +59,25 @@ export class Entities {
     queryArr: Query[] = [];
     bookArr: Book[] = [];
     historyArr: History[] = [];
+
+    async loadEntites(api:string, access:string) {
+        let p = api.split('/');
+        if (p.length !== 2) {
+            console.log('api must be apiOwner/apiName format');
+            return;
+        }
+        let acc = access === undefined? ['*'] : access.split(';').map(v=>v.trim());
+        if (acc.length === 1 && acc[0] === '*') acc = [];
+        let tvApi = new UsqlApi(p[0], p[1], acc);
+
+        let accesses = await tvApi.loadAccess();
+        this.buildAccess(tvApi, accesses);
+        let apis = this.apis[api];
+        if (apis === undefined) {
+            apis = this.apis[api] = {};
+        }
+        apis[access] = tvApi;
+    }
 
     getTuid(name:string) {return this.tuids[name];}
 
@@ -77,22 +99,23 @@ export class Entities {
     }
 
     // load access
+    /*
     async loadAccess():Promise<boolean> {
         let ret = await this.tvApi.loadAccess();
-        this.buildAccess(ret);
+        this.buildAccess(this.tvApi, ret);
         return true;
-    }
-    private buildAccess(access:any) {
+    }*/
+    private buildAccess(api:UsqlApi, access:any) {
         for (let a in access) {
             let v = access[a];
             switch (typeof v) {
-                case 'string': this.fromType(a, v); break;
-                case 'object': this.fromObj(a, v); break;
+                case 'string': this.fromType(api, a, v); break;
+                case 'object': this.fromObj(api, a, v); break;
             }
         }
     }
 
-    private fromType(name:string, type:string) {
+    private fromType(api:UsqlApi, name:string, type:string) {
         let parts = type.split('|');
         type = parts[0];
         let id = Number(parts[1]);
@@ -100,44 +123,44 @@ export class Entities {
             case 'action': 
                 let action = this.actions[name];
                 if (action === undefined) {
-                    this.actionArr.push(this.actions[name] = new Action(this, name, id));
+                    this.actionArr.push(this.actions[name] = new Action(this, api, name, id));
                 }
                 break;
             case 'tuid':
                 let tuid = this.tuids[name];
                 if (tuid === undefined) {
-                    this.tuidArr.push(this.tuids[name] = new Tuid(this, name, id));
+                    this.tuidArr.push(this.tuids[name] = new Tuid(this, api, name, id));
                 }
                 break;
             case 'query': 
                 let query = this.queries[name];
                 if (query === undefined) {
-                    this.queryArr.push(this.queries[name] = new Query(this, name, id));
+                    this.queryArr.push(this.queries[name] = new Query(this, api, name, id));
                 }
                 break;
             case 'book':
                 let book = this.books[name];
                 if (book === undefined) {
-                    this.bookArr.push(this.books[name] = new Book(this, name, id));
+                    this.bookArr.push(this.books[name] = new Book(this, api, name, id));
                 }
                 break;
             case 'history':
                 let history = this.histories[name];
                 if (history === undefined) {
-                    this.historyArr.push(this.histories[name] = new History(this, name, id));
+                    this.historyArr.push(this.histories[name] = new History(this, api, name, id));
                 }
                 break;
         }
     }
-    private fromObj(name:string, obj:any) {
+    private fromObj(api:UsqlApi, name:string, obj:any) {
         switch (obj['$']) {
-            case 'sheet': this.buildSheet(name, obj); break;
+            case 'sheet': this.buildSheet(api, name, obj); break;
         }
     }
-    private buildSheet(name:string, obj:any) {
+    private buildSheet(api:UsqlApi, name:string, obj:any) {
         let sheet = this.sheets[name];
         if (sheet === undefined) {
-            this.sheetArr.push(sheet = this.sheets[name] = new Sheet(this, name, obj.id));
+            this.sheetArr.push(sheet = this.sheets[name] = new Sheet(this, api, name, obj.id));
         }
 
         let states = sheet.states;

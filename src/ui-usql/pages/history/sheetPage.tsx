@@ -57,11 +57,11 @@ export class SheetPage extends React.Component<SheetUIProps> {
         let {no, state, stateName, sheetData, flows} = d;
         //let s = sheet.schema.states.find(v => v.name === state.state);
         //let actions = s.actions;
-        return <Page header={sheet.name + ':' + stateName + '-' + no}>
-            <SheetView className="mx-3"
+        return <Page header={sheet.name + ':' + no}>
+            <SheetView className="mx-3 my-3"
                 ui={ui} 
                 sheetState={state} 
-                sheetData={data} 
+                sheetData={sheetData} 
                 flows={flows} />
         </Page>;
     }

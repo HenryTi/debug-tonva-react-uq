@@ -53,8 +53,10 @@ export class GeneralTuidInput extends React.Component<TuidInputProps> {
         onPicked({id:id});
     }
     render() {
-        let {id, tuid, input, entitiesUI, params} = this.props;
+        let {id, tuid, input, entitiesUI, params, readOnly} = this.props;
         if (this.tuidUI === undefined) {
+            if (readOnly === true)
+                return <span>{tuid+'没有定义或未处理'}</span>;
             return <input className="form-control" type="number" step={1} 
                 onBlur={this.inputOnBlure}
                 placeholder={tuid+'没有定义或未处理，可直接输入数字'} />
@@ -73,9 +75,12 @@ export class GeneralTuidInput extends React.Component<TuidInputProps> {
                 default:
                     content = input.inputContent? 
                         <input.inputContent value={val} /> :
-                        <div>{caption}: {id}</div>;
+                        <>{caption}: {id}</>;
                     break;
             }
+        }
+        if (readOnly === true) {
+            return <span>{content}</span>;
         }
         return <button className="form-control btn btn-outline-info"
             type="button"

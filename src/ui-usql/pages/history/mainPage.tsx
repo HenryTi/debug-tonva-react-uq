@@ -27,10 +27,11 @@ export class MainPage extends React.Component<HistoryUIProps> {
 
     render() {
         let {ui} = this.props;
-        let {caption, entity} = ui;
+        let {caption, entity, entitiesUI} = ui;
         let {name, schema} = entity;
         return <Page header={caption || name}>
-            <TonvaForm className="m-3" 
+            <TonvaForm className="m-3"
+                context={entitiesUI}
                 formRows={this.formRows} 
                 onSubmit={this.submit} />
         </Page>;
@@ -51,17 +52,20 @@ class HistoryResultPage extends React.Component<HistoryUIProps> {
     }
     async onRowClick(item:any) {
         let {ui} = this.props;
-        let {type, sheet:sheetId} = item;
+        let {entity} = ui;
+        let {schema} = entity;
+        let type = item[schema.sheetType];
+        let sheetId = item[schema.sheet];
         let sheetUI = ui.entitiesUI.sheet.idColl[type];
-        let {entity:sheet} = sheetUI;
+        if (sheetUI === undefined) return;
 
+        let {entity:sheet} = sheetUI;
         let sheetData = await sheetUI.entity.getSheet(sheetId);
         let {brief, data, flows} = sheetData;
-
         nav.push(<SheetPage ui={sheetUI} data={{
             no: brief.no,
-            state: 1,
-            stateName: brief.state,
+            state: brief.state,
+            stateName: undefined,
             brief: brief,
             sheetData: data,
             flows: flows,
@@ -70,14 +74,21 @@ class HistoryResultPage extends React.Component<HistoryUIProps> {
     renderRow(item:any, index:number) {
         let {ui} = this.props;
         let {type} = item;
-        let left;
+        let {listRow:ListRow} = ui;
+        let sheetCaption;
         if (type)
-            left = ui.entitiesUI.sheet.idColl[type].caption;
-        let right = <Muted><EasyDate date={item.date} /></Muted>;
-        let content = '';
-        for (let f of ui.entity.schema.fields)
-            content += f.name + ':' + item[f.name] + ' ';
-        return <LMR className="px-3 py-2" left={left} right={right}>
+            sheetCaption = ui.entitiesUI.sheet.idColl[type].caption;
+        let right = <Muted><EasyDate date={item.date} /> {sheetCaption}</Muted>;
+        let content;
+        if (ListRow !== undefined) {
+            content = <ListRow item={item} index={index} />;
+        }
+        else {
+            content = '';
+            for (let f of ui.entity.schema.fields)
+                content += f.name + ':' + item[f.name] + ' ';
+        }
+        return <LMR className="px-3 py-2" right={right}>
             {content}
         </LMR>
     }

@@ -2,7 +2,7 @@ import {MapperContainer,TuidMapper} from '../../ui-usql/ui';
 import {Tuid} from '../../ui-usql/entities';
 import {EntityUI, TuidUI} from '../../ui-usql/ui';
 import {MainPage} from './mainPage';
-import {ArticleInput} from './articleInput';
+import {ArticleInput, ArticleContent} from './articleInput';
 import {CandidateRow, CustomerContent} from './customerInput';
 
 export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
@@ -27,7 +27,14 @@ export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
         },
         "商品": {
             input: {
-                component: ArticleInput
+                inputContent: ArticleContent,
+                //component: ArticleInput
+            }
+        },
+        "article": {
+            caption: '货品',
+            input: {
+                inputContent: ArticleContent,
             }
         },
         "customer": {

@@ -6,46 +6,9 @@ import {nav, Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {MainDetails, MainDetailsForm} from '../tools';
-//import {MasterSlaveForm} from '../tools';
-//import AvButton from '../tools/avButton';
-/*
-interface Props {
-    entity: Sheet;
-    item: any;
-}
-class Item {
-    id: number;
-    name?: string;
-    discription?: string;
-}*/
-/*
-class PackData {
-    private timeInterval:any;
-    item: Item;
 
-    onChange(callback:(pd:PackData) => void) {
-        let n = 0;
-        return new Promise<void>((resolve, reject) => {
-            this.timeInterval = setInterval(() => {
-                this.item.name = 'ddd' + (n++);
-                this.item.discription = 'kkkk';
-                if (n > 10) {
-                    clearInterval(this.timeInterval);
-                    this.timeInterval = undefined;
-                }
-                callback(this);
-            }, 1000);
-        });
-    }
-
-    clearInterval() {
-        if (this.timeInterval !== undefined) clearInterval(this.timeInterval);
-    }
-}
-*/
 export class SheetNewPage extends React.Component<SheetUIProps> {
     private mainDetails: MainDetails; 
-    //private packData: PackData;
     constructor(props) {
         super(props);
         `{"fields":[
@@ -64,9 +27,7 @@ export class SheetNewPage extends React.Component<SheetUIProps> {
             }
         ]}`
         let {ui} = this.props;
-        this.mainDetails = ui.mapMainDetails({
-            arr1: (row:any) => <div>{JSON.stringify(row)}</div>
-        });
+        this.mainDetails = ui.mapMainDetails();
         this.state = {
             data: undefined
         }
@@ -136,7 +97,7 @@ export class SheetNewPage extends React.Component<SheetUIProps> {
         let {name, schema} = entity;
         return <Page header={'新' + name}>
             <MainDetailsForm className="mx-3 my-2"
-                entitiesUI={ui.entitiesUI}
+                ui={ui}
                 mainDetails={this.mainDetails} 
                 values={{}} 
                 onSubmit={this.onSubmit}  />
