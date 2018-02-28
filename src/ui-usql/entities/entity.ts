@@ -19,7 +19,7 @@ export abstract class Entity {
     protected get tvApi() {return this.api;} //{return this.entities.tvApi;}
 
     public async loadSchema():Promise<void> {
-        //this.schema = await this.entities.tvApi.schema(this.name);
+        if (this.schema !== undefined) return;
         this.schema = await this.api.schema(this.name);
     }
 }

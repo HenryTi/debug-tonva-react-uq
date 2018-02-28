@@ -17,6 +17,14 @@ export class MainPage extends React.Component<ActionUIProps> {
     }
     async submit(values: any): Promise<SubmitResult | undefined> {
         let {ui} = this.props;
+        values.arr1 = [
+            {t1:11, k:'a b'},
+            {t1:22, k:'bbbb'},
+        ];
+        values.arr2 = [
+            {k1: '1----abb ddd'},
+            {k1: '2----ddddd'},
+        ];
         let ret = await ui.entity.submit(values);
         nav.pop();
         nav.push(<ActionResultPage ui={ui} data={ret} />)
