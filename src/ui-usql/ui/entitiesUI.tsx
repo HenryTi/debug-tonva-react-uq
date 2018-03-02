@@ -13,24 +13,25 @@ import {TuidUI} from './tuidUI';
 import {BookUI} from './bookUI';
 import {HistoryUI} from './historyUI';
 
+const entitiesUICollection: {[api:string]: EntitiesUI} = {};
+
 export class EntitiesUI {
     private defaultMapper:EntitiesMapper;
     private mapper?:EntitiesMapper;
 
-    constructor(entities:Entities, defaultMapper:EntitiesMapper, mapper?:EntitiesMapper) {
-        this.entities = entities;
+    constructor(api:string, access:string, defaultMapper:EntitiesMapper, mapper?:EntitiesMapper) {
+        entitiesUICollection[api] = this;
+        this.entities = new Entities(api, access);
         this.defaultMapper = defaultMapper;
         this.mapper = mapper || {};
         this.typeFieldMappers = _.clone(defaultMapper.typeFieldMappers);
         _.merge(this.typeFieldMappers, this.mapper.typeFieldMappers);
     }
 
-    /*
-    async loadEntities(api:string, access:string) {
-        //await this.entities.loadAccess();
-        await this.entities.loadEntites(api, access);
+    async loadEntities() {
+        await this.entities.loadEntities();
         this.buildUI();
-    }*/
+    }
 
     entities:Entities;
     mainPage:JSX.Element;
@@ -59,7 +60,13 @@ export class EntitiesUI {
         this.history = new HistorySetBuilder(this, this.entities.historyArr, d.history, m.history).build();
     }
 
-    getTuidInput(name:string):TuidInput {
+    getTuidInput(name:string, tuidUrl:string):TuidInput {
+        if (tuidUrl !== undefined) {
+            let entitiesUI = entitiesUICollection[tuidUrl];
+            if (entitiesUI === undefined) return undefined;
+            return entitiesUI.getTuidInput(name, undefined);
+        }
+
         let ret:TuidInput = {component:undefined};
         let mc = this.mapper.tuid;
         let mapper:TuidMapper, mappers:{[name:string]:TuidMapper};

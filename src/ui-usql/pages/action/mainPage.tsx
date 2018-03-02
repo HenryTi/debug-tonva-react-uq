@@ -3,8 +3,7 @@ import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import {TonvaForm, FormRow, SubmitResult} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {Action} from '../../entities';
-import {EntitiesUIProps, EntityUIProps, ActionUIProps} from '../../ui';
-import {EntitiesUI, ActionUI} from '../../ui';
+import {EntitiesUI, ActionUI, EntitiesUIProps, EntityUIProps, ActionUIProps} from '../../ui';
 
 export class MainPage extends React.Component<ActionUIProps> {
     private formRows: FormRow[];

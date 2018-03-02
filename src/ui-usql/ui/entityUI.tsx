@@ -18,7 +18,7 @@ export abstract class EntityUI<E extends Entity> {
 
     protected tfmMap(sf: any, ff: FieldFace) {
         let ret: any;
-        let { type, tuid } = sf;
+        let { type, tuid, url } = sf;
         let tuidInput: TuidInput = {};
         let tfm = this.typeFieldMappers;
         let face;
@@ -53,7 +53,7 @@ export abstract class EntityUI<E extends Entity> {
             if (tuidUI !== undefined) {
                 _.merge(tuidInput, tuidUI.input);
             }
-            let input0 = this.entitiesUI.getTuidInput(tuid);
+            let input0 = this.entitiesUI.getTuidInput(tuid, url);
             _.merge(tuidInput, input0);
         }
         face.input = tuidInput;
@@ -65,7 +65,6 @@ export abstract class EntityUI<E extends Entity> {
 
     protected mapFields(schemaFields: any[]): any[] {
         if (schemaFields === undefined) return;
-        //let tfm = this.typeFieldMappers;
         let nfc = this.fieldFaces;
         return schemaFields.map(sf => this.tfmMap(sf, nfc !== undefined && nfc[sf.name]));
     }

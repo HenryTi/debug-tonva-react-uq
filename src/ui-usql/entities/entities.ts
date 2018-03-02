@@ -12,6 +12,7 @@ export interface Field {
     type: string;
     //tuidKey?: string;
     tuid?: string;
+    url?: string;
     _tuid: Tuid;
 }
 interface Arr {
@@ -22,9 +23,14 @@ interface Arr {
 const tab = '\t';
 const ln = '\n';
 
+// api: apiOwner/apiName
+// access: acc1; acc2
+
+const entitiesCollection: {[api:string]: Entities} = {};
+
 export class Entities {
-    //tvApi: UsqlApi;
-    private apis: {[api:string]: {[access:string]: UsqlApi}} = {};
+    private tvApi: UsqlApi;
+    //private apis: {[api:string]: {[access:string]: UsqlApi}} = {};
     private tuids: {[name:string]: Tuid} = {};
     private actions: {[name:string]: Action} = {};
     private sheets: {[name:string]: Sheet} = {};
@@ -36,21 +42,34 @@ export class Entities {
     // api: apiOwner/apiName
     // access: acc1;acc2 or *
     //constructor(api:string, access:string) {
-    constructor() {
+    constructor(api:string, access?:string) {
+        entitiesCollection[api] = this;
+
         this.loadIds = this.loadIds.bind(this);
-/*
-        let p = api.split('/');
-        if (p.length !== 2) {
-            console.log('api must be apiOwner/apiName format');
-            return;
+
+        let acc: string[];
+        if (access === undefined || access === '*') {
+            acc = [];
         }
-        //this.apiOwner = p[0];
-        //this.apiName = p[1];
-        let acc = access === undefined? ['*'] : access.split(';').map(v=>v.trim());
-        // * = all
-        if (acc.length === 1 && acc[0] === '*') acc = [];
+        else {
+            acc = access.split(';').map(v => v.trim()).filter(v => v.length > 0);
+        }
+        let apiOwner:string, apiName:string;
+        let p = api.split('/');
+        switch (p.length) {
+            case 1:
+                apiOwner = '$$$';
+                apiName = p[0];
+                break;
+            case 2:
+                apiOwner = p[0];
+                apiName = p[1];
+                break;
+            default:
+                console.log('api must be apiOwner/apiName format');
+                return;
+        }
         this.tvApi = new UsqlApi(p[0], p[1], acc);
-*/
     }
 
     tuidArr: Tuid[] = [];
@@ -60,7 +79,9 @@ export class Entities {
     bookArr: Book[] = [];
     historyArr: History[] = [];
 
-    async loadEntites(api:string, access:string) {
+    //async loadEntites(api:string, access:string) {
+    async loadEntities() {
+        /*
         let p = api.split('/');
         if (p.length !== 2) {
             console.log('api must be apiOwner/apiName format');
@@ -69,17 +90,18 @@ export class Entities {
         let acc = access === undefined? ['*'] : access.split(';').map(v=>v.trim());
         if (acc.length === 1 && acc[0] === '*') acc = [];
         let tvApi = new UsqlApi(p[0], p[1], acc);
+        */
 
-        let accesses = await tvApi.loadAccess();
-        this.buildAccess(tvApi, accesses);
-        let apis = this.apis[api];
-        if (apis === undefined) {
-            apis = this.apis[api] = {};
-        }
-        apis[access] = tvApi;
+        let accesses = await this.tvApi.loadAccess();
+        this.buildAccess(this.tvApi, accesses);
+        //let apis = this.apis[api];
+        //if (apis === undefined) {
+        //    apis = this.apis[api] = {};
+        //}
+        //apis[access] = tvApi;
     }
 
-    getTuid(name:string) {return this.tuids[name];}
+    getTuid(name:string, tuidUrl:string) {return this.tuids[name];}
 
     cacheTuids() {
         this.clearCacheTimer();
@@ -301,17 +323,15 @@ export class Entities {
             case 'int':
             case 'dec': return Number(v);
             case 'bigint':
-                let tuidKey = f.tuid;
+                let {tuid:tuidKey, url:tuidUrl} = f;
                 if (tuidKey !== undefined) {
                     let tuid = f._tuid;
                     if (tuid === undefined) {
-                        f._tuid = tuid = this.getTuid(tuidKey);
+                        f._tuid = tuid = this.getTuid(tuidKey, tuidUrl);
                     }
                     tuid.useId(Number(v));
                 }
                 return Number(v);
-                //return ret.tuid(Number(v), tuid);
-                //return {id:Number(v)}
         }
     }
 

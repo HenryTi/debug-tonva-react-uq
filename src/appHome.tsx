@@ -6,8 +6,8 @@ import {pageMapper} from './pages';
 
 const appAccess = process.env.REACT_APP_ACCESS;
 //'$$$/a', appAccess
-const entities = new Entities();
-const entitiesUI = new EntitiesUI(entities, defaultMapper, pageMapper);
+//const entities = new Entities();
+const entitiesUI = new EntitiesUI('$$$/a', appAccess, defaultMapper, pageMapper);
 
 interface State {
     content: JSX.Element;
@@ -22,7 +22,7 @@ export default class AppHome extends React.Component<{}, State> {
     async componentDidMount() {
         ws.setToken('aaa');
         await ws.connect();
-        await entities.loadEntites('$$$/a', appAccess);
+        await entitiesUI.loadEntities();
         await entitiesUI.buildUI();
         this.setState({
             content: entitiesUI.mainPage,
