@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import {CenterApi} from 'tonva-tools';
 import {Entities, Entity, Tuid, Action, Sheet, Query, Book, History} from '../entities';
 import {EntitiesMapper, FieldMapper, FieldMappers, MapperContainer, 
     EntityMapper, ActionMapper, QueryMapper, SheetMapper, TuidMapper, TuidInput,
@@ -13,20 +14,23 @@ import {TuidUI} from './tuidUI';
 import {BookUI} from './bookUI';
 import {HistoryUI} from './historyUI';
 
-const entitiesUICollection: {[api:string]: EntitiesUI} = {};
+export const entitiesUICollection: {[api:string]: EntitiesUI} = {};
 
 export class EntitiesUI {
     private defaultMapper:EntitiesMapper;
     private mapper?:EntitiesMapper;
 
-    constructor(api:string, access:string, defaultMapper:EntitiesMapper, mapper?:EntitiesMapper) {
+    constructor(url:string, api:string, access:string, defaultMapper:EntitiesMapper, mapper?:EntitiesMapper) {
+        this.api = api;
         entitiesUICollection[api] = this;
-        this.entities = new Entities(api, access);
+        this.entities = new Entities(url, api, access);
         this.defaultMapper = defaultMapper;
         this.mapper = mapper || {};
         this.typeFieldMappers = _.clone(defaultMapper.typeFieldMappers);
         _.merge(this.typeFieldMappers, this.mapper.typeFieldMappers);
     }
+
+    api: string;
 
     async loadEntities() {
         await this.entities.loadEntities();

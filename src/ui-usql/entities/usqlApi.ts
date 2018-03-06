@@ -4,10 +4,10 @@ import {Api, ApiBase} from 'tonva-tools';
 export class UsqlApi extends Api {
     access:string[];
 
-    constructor(apiOwner:string, apiName:string, access:string[]) {
+    constructor(apiOwner:string, apiName:string, url:string, access:string[]) {
         let hash = document.location.hash;
         let baseUrl = hash===undefined || hash===''? 'debug/':'tv/';
-        super(baseUrl, apiOwner, apiName);
+        super(baseUrl, url, apiOwner, apiName);
         this.access = access;
     }
 

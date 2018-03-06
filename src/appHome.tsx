@@ -1,37 +1,38 @@
 import * as React from 'react';
-import {ws} from 'tonva-tools';
-import {EntitiesUI, Entities, defaultMapper} from './ui-usql';
+import {List, Muted} from 'tonva-react-form';
+import {ws, nav, Page} from 'tonva-tools';
 import {pageMapper} from './pages';
+import {AppUI, MainPage} from './ui-usql/ui';
 
-
-const appAccess = process.env.REACT_APP_ACCESS;
-//'$$$/a', appAccess
-//const entities = new Entities();
-const entitiesUI = new EntitiesUI('$$$/a', appAccess, defaultMapper, pageMapper);
+const appUI = new AppUI('ui-usql-first', '$$$', {
+    "$$$/usql-first": pageMapper,
+});
 
 interface State {
-    content: JSX.Element;
+    uiLoaded: boolean;
 }
 export default class AppHome extends React.Component<{}, State> {
     constructor(props) {
-        super(props);
+        super(props);        
         this.state = {
-            content: <div/>,
+            uiLoaded: false
         }
     }
     async componentDidMount() {
         ws.setToken('aaa');
         await ws.connect();
-        await entitiesUI.loadEntities();
-        await entitiesUI.buildUI();
+        await appUI.load();
         this.setState({
-            content: entitiesUI.mainPage,
+            uiLoaded: true,
         });
+
     }
     componentWillUnmount() {
         ws.close();
     }
     render() {
-        return this.state.content;
+        let {uiLoaded} = this.state;
+        if (uiLoaded === false) return <Page>loading UI ...</Page>;
+        return <MainPage appUI={appUI} />;
     }
 }

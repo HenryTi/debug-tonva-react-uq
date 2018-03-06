@@ -42,7 +42,7 @@ export class Entities {
     // api: apiOwner/apiName
     // access: acc1;acc2 or *
     //constructor(api:string, access:string) {
-    constructor(api:string, access?:string) {
+    constructor(url:string, api:string, access?:string) {
         entitiesCollection[api] = this;
 
         this.loadIds = this.loadIds.bind(this);
@@ -69,7 +69,7 @@ export class Entities {
                 console.log('api must be apiOwner/apiName format');
                 return;
         }
-        this.tvApi = new UsqlApi(p[0], p[1], acc);
+        this.tvApi = new UsqlApi(p[0], p[1], url, acc);
     }
 
     tuidArr: Tuid[] = [];

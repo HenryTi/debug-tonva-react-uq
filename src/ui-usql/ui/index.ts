@@ -1,3 +1,4 @@
+export * from './appUI';
 export * from './entitiesUI';
 export * from './entityUI';
 export * from './actionUI';
