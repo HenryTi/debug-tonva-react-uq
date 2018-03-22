@@ -20,7 +20,7 @@ export default class AppHome extends React.Component<{}, State> {
     }
     async componentDidMount() {
         ws.setToken('aaa');
-        await ws.connect();
+        //await ws.connect();
         await appUI.load();
         this.setState({
             uiLoaded: true,

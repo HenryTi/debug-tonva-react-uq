@@ -6,7 +6,7 @@ const maxCacheSize = 1000;
 export class Tuid extends Entity {
     private queue: number[] = [];               // 每次使用，都排到队头
     private waitingIds: number[] = [];          // 等待loading的
-    private cache = observable.shallowMap();    // 已经缓冲的
+    private cache = observable.map({}, {deep: false});    // 已经缓冲的
 
     private moveToHead(id:number) {
         let index = this.queue.findIndex(v => v === id);

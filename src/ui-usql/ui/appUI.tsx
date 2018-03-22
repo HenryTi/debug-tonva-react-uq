@@ -60,7 +60,7 @@ export class MainPage extends React.Component<{appUI:AppUI}> {
     }
     render() {
         let {appUI} = this.props;
-        return <Page header='同花默认界面'>
+        return <Page header='同花默认界面-2'>
             {
                 appUI.apiUIs.map((v, index) => {
                     let {api, tuid, action, sheet, query, book, history} = v;

@@ -11,7 +11,7 @@ export class Query extends Entity {
     private startField: Field;
     protected queryApiName = 'page';
     @observable loaded: boolean;
-    list = observable.shallowArray();
+    list = observable.array([], {deep: false});
 
     resetPage(size:number, params:any) {
         this.pageStart = undefined;

@@ -11,9 +11,9 @@ export interface SheetAction {
 }
 
 export class Sheet extends Entity {
-    statesCount = observable.shallowArray<{state:string;count:number}>();
+    statesCount = observable.array<{state:string;count:number}>([], {deep:false});
     curState:string;
-    stateSheets = observable.shallowArray<{id:number}>();
+    stateSheets = observable.array<{id:number}>([], {deep:false});
 
     states: SheetState[] = [];
 
@@ -51,7 +51,7 @@ export class Sheet extends Entity {
         let stateCount = this.statesCount[index];
         stateCount.count += delta;
         this.statesCount.splice(index, 1, stateCount);
-}
+    }
     async save(discription:string, data:any):Promise<number> {
         let text = this.entities.pack(this.schema, data);
         let ret = await this.tvApi.sheetSave(this.name, {discription: discription, data:text});

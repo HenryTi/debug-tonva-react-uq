@@ -6,16 +6,12 @@ import {nav, Page, NavView} from 'tonva-tools';
 import AppHome from './appHome';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
+//import 'font-awesome/css/font-awesome.min.css';
+//import './css/va.css';
+//import './css/va-row.css';
+//import './css/va-form.css';
+//const logo = require('./imgs/logo.svg');
 
-const logo = require('./logo.svg');
-
-let env = process.env;
-const envs:string[][] = [
-  ['ENV', env.NODE_ENV],
-  ['APP_NAME', env.REACT_APP_NAME],
-  ['APIHOST_CENTER', env.REACT_APP_APIHOST_CENTER],
-  ['APP_WSHOST', env.REACT_APP_WSHOST],
-];
 const tStyle = {margin: '2em auto', borderCollapse:'collapse'};
 const rowStyle = {borderBottom: '1px solid gray'};
 const lStyle = {textAlign: 'right', padding: '1em 0.5em', color: 'gray'};
