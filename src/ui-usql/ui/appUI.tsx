@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {List, Muted} from 'tonva-react-form';
-import {ws, nav, Page, AppApi, loadAppApis} from 'tonva-tools';
+import {WSChannel, nav, Page, AppApi, loadAppApis} from 'tonva-tools';
 import {EntitiesMapper} from './mapper';
 import {defaultMapper} from '../pages';
 import {Entities, Entity} from '../entities';
@@ -30,12 +30,18 @@ export class AppUI {
     async load(): Promise<void> {
         let appApis = await loadAppApis(this.appOwner, this.appName);
         for (let appApi of appApis) {
-            let {apiOwner, apiName, url, access, token} = appApi;
+            let {apiOwner, apiName, url, ws, access, token} = appApi;
             let api = apiOwner + '/' + apiName;
             let mapper = this.uiMappers && this.uiMappers[api];
-            let apiUI = new EntitiesUI(url, api, access, defaultMapper, mapper);
+            let apiUI = new EntitiesUI(url, ws, api, access, defaultMapper, mapper);
             this.apiUIs.push(apiUI);
             await apiUI.loadEntities();
+        }
+    }
+
+    close() {
+        for (let p in this.entitiesUICollection) {
+            this.entitiesUICollection[p].close();
         }
     }
 }

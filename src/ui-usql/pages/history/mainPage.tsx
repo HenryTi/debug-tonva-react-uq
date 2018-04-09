@@ -85,8 +85,10 @@ class HistoryResultPage extends React.Component<HistoryUIProps> {
         }
         else {
             content = '';
-            for (let f of ui.entity.schema.fields)
-                content += f.name + ':' + item[f.name] + ' ';
+            for (let f of ui.entity.schema.fields) {
+                let v = item[f.name] || '-';
+                content += f.name + ': ' + v + ' ';
+            }
         }
         return <LMR className="px-3 py-2" right={right}>
             {content}

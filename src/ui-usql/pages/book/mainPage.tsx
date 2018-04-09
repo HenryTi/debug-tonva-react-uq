@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {observer} from 'mobx-react';
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
-import {TonvaForm, FormRow, SubmitResult, List} from 'tonva-react-form';
+import {TonvaForm, FormRow, SubmitResult, List, Muted} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {Book} from '../../entities';
 import {EntitiesUIProps, EntityUIProps, BookUIProps} from '../../ui';
@@ -14,6 +14,12 @@ export class MainPage extends React.Component<BookUIProps> {
         super(props);
         let ui = this.props.ui;
         this.formRows = ui.mapMain();
+        if (this.formRows.length === 0) {
+            this.formRows.push({
+                label: '[无参数]', 
+                help: <Muted>不需要参数，直接分页显示账本内容</Muted>
+            });
+        }
         this.submit = this.submit.bind(this);
     }
 

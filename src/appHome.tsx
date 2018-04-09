@@ -1,11 +1,13 @@
 import * as React from 'react';
 import {List, Muted} from 'tonva-react-form';
-import {ws, nav, Page} from 'tonva-tools';
+import {WSChannel, nav, Page} from 'tonva-tools';
 import {pageMapper} from './pages';
+import {pageMapper as 货主Mapper} from './货主';
 import {AppUI, MainPage} from './ui-usql/ui';
 
 const appUI = new AppUI('ui-usql-first', '$$$', {
     "$$$/usql-first": pageMapper,
+    "$$$/货主": 货主Mapper,
 });
 
 interface State {
@@ -19,7 +21,7 @@ export default class AppHome extends React.Component<{}, State> {
         }
     }
     async componentDidMount() {
-        ws.setToken('aaa');
+        //ws.setToken('aaa');
         //await ws.connect();
         await appUI.load();
         this.setState({
@@ -28,7 +30,7 @@ export default class AppHome extends React.Component<{}, State> {
 
     }
     componentWillUnmount() {
-        ws.close();
+        appUI.close();
     }
     render() {
         let {uiLoaded} = this.state;

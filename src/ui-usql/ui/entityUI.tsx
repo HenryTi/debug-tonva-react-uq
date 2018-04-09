@@ -16,6 +16,18 @@ export abstract class EntityUI<E extends Entity> {
         return this.mapFields(this.entity.schema.fields);
     }
 
+    onWsReceive(cmd: string, onWsReceive: (data:any)=>void): number {
+        return this.entitiesUI.entities.onWsReceive(cmd, onWsReceive);
+    }
+
+    onWsReceiveAny(onWsReceive: (data:any)=>void): number {
+        return this.entitiesUI.entities.onWsReceiveAny(onWsReceive);
+    }
+
+    endWsReceive(handlerId: number) {
+        this.entitiesUI.entities.endWsReceive(handlerId);
+    }
+
     protected tfmMap(sf: any, ff: FieldFace) {
         let ret: any;
         let { type, tuid, url } = sf;

@@ -20,10 +20,11 @@ export class EntitiesUI {
     private defaultMapper:EntitiesMapper;
     private mapper?:EntitiesMapper;
 
-    constructor(url:string, api:string, access:string, defaultMapper:EntitiesMapper, mapper?:EntitiesMapper) {
+    constructor(url:string, ws:string, api:string, access:string, defaultMapper:EntitiesMapper, mapper?:EntitiesMapper) {
         this.api = api;
         entitiesUICollection[api] = this;
-        this.entities = new Entities(url, api, access);
+        let token = undefined;
+        this.entities = new Entities(url, ws, token, api, access);
         this.defaultMapper = defaultMapper;
         this.mapper = mapper || {};
         this.typeFieldMappers = _.clone(defaultMapper.typeFieldMappers);
@@ -35,6 +36,10 @@ export class EntitiesUI {
     async loadEntities() {
         await this.entities.loadEntities();
         this.buildUI();
+    }
+
+    close() {
+        this.entities.close();
     }
 
     entities:Entities;

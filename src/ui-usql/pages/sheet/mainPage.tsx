@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {observer} from 'mobx-react';
 import {Button, ButtonGroup, Badge} from 'reactstrap';
-import {nav, Page, ws} from 'tonva-tools';
+import {nav, Page} from 'tonva-tools';
 import {List, LMR, Muted} from 'tonva-react-form';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
@@ -29,24 +29,14 @@ export class MainPage extends React.Component<SheetUIProps> {
         //this.onWsAny = this.onWsAny.bind(this);
     }
     async componentDidMount() {
-        this.wsHandler = ws.onWsReceive('sheetAct', this.onWsReceive);
-        //this.wsAny = ws.onWsReceiveAny(this.onWsAny);
+        //ws.onWsReceive('sheetAct', this.onWsReceive);
+        this.wsHandler = this.props.ui.onWsReceive('sheetAct', this.onWsReceive);
         let ui = this.props.ui;
         let sheet = ui.entity;
         await sheet.getStateSheetCount();
-        /*
-        //let res = 
-        let rows = sheet.schema.states.map(s => {return {state: s.name, count: 0} });
-        res.forEach(r => {
-            let fr = rows.find(f=>f.state === r.state);
-            if (fr !== undefined) fr.count = r.count;
-        });
-        this.setState({states: rows});
-        */
     }
     componentWillUnmount() {
-        ws.endWsReceive(this.wsHandler);
-        //ws.endWsReceive(this.wsAny);
+        this.props.ui.endWsReceive(this.wsHandler);
     }
     onWsReceive(data:any) {
         this.props.ui.entity.onReceive(data);

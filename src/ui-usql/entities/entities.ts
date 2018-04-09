@@ -6,6 +6,7 @@ import {Sheet, SheetState, SheetAction} from './sheet';
 import {Query} from './query';
 import {Book} from './book';
 import {History} from './history';
+import { WSChannel } from 'tonva-tools';
 
 export interface Field {
     name: string;
@@ -29,8 +30,9 @@ const ln = '\n';
 const entitiesCollection: {[api:string]: Entities} = {};
 
 export class Entities {
+    //private token: string;
     private tvApi: UsqlApi;
-    //private apis: {[api:string]: {[access:string]: UsqlApi}} = {};
+    private ws: WSChannel;
     private tuids: {[name:string]: Tuid} = {};
     private actions: {[name:string]: Action} = {};
     private sheets: {[name:string]: Sheet} = {};
@@ -42,9 +44,10 @@ export class Entities {
     // api: apiOwner/apiName
     // access: acc1;acc2 or *
     //constructor(api:string, access:string) {
-    constructor(url:string, api:string, access?:string) {
+    constructor(url:string, ws:string, token:string, api:string, access?:string) {
         entitiesCollection[api] = this;
-
+        //this.token = token;
+        if (ws !== undefined) this.ws = new WSChannel(ws, token);
         this.loadIds = this.loadIds.bind(this);
 
         let acc: string[];
@@ -81,6 +84,7 @@ export class Entities {
 
     //async loadEntites(api:string, access:string) {
     async loadEntities() {
+        if (this.ws !== undefined) this.ws.connect();
         /*
         let p = api.split('/');
         if (p.length !== 2) {
@@ -99,6 +103,28 @@ export class Entities {
         //    apis = this.apis[api] = {};
         //}
         //apis[access] = tvApi;
+    }
+
+    close() {
+        if (this.ws !== undefined) this.ws.close();
+    }
+
+    async wsConnect(): Promise<void> {
+        await this.ws.connect();
+    }
+
+    onWsReceive(type: string, onWsReceive: (data:any)=>void): number {
+        if (this.ws === undefined) return 0;
+        return this.ws.onWsReceive(type, onWsReceive);
+    }
+
+    onWsReceiveAny(onWsReceive: (data:any)=>void): number {
+        if (this.ws === undefined) return 0;
+        return this.ws.onWsReceiveAny(onWsReceive);
+    }
+
+    endWsReceive(handlerId: number) {
+        if (this.ws !== undefined) this.ws.endWsReceive(handlerId);
     }
 
     getTuid(name:string, tuidUrl:string) {return this.tuids[name];}
@@ -287,21 +313,32 @@ export class Entities {
     }
     
     private unpackRow(ret:any, fields:Field[], data:string, p:number):number {
-        let c = p, i = 0, len = data.length, fLen = fields.length;
+        let ch0 = 0, ch = 0, c = p, i = 0, len = data.length, fLen = fields.length;
         for (;p<len;p++) {
-            let ch = data.charCodeAt(p);
+            ch0 = ch;
+            ch = data.charCodeAt(p);
             if (ch === 9) {
                 let f = fields[i];
-                let v = data.substring(c, p);
-                ret[f.name] = this.to(ret, v, f);
+                if (ch0 !== 8) {
+                    let v = data.substring(c, p);
+                    ret[f.name] = this.to(ret, v, f);
+                }
+                else {
+                    let s = null;
+                }
                 c = p+1;
                 ++i;
                 if (i>=fLen) break;
             }
             else if (ch === 10) {
                 let f = fields[i];
-                let v = data.substring(c, p);
-                ret[f.name] = this.to(ret, v, f);
+                if (ch0 !== 8) {
+                    let v = data.substring(c, p);
+                    ret[f.name] = this.to(ret, v, f);
+                }
+                else {
+                    let s = null;
+                }
                 ++p;
                 ++i;
                 break;
