@@ -4,7 +4,7 @@ import {Page} from 'tonva-tools';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
 
-interface State {
+export interface State {
     result: any;
 }
 export class SheetEditPage extends React.Component<SheetUIProps, State> {

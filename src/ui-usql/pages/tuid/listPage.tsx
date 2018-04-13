@@ -8,7 +8,7 @@ import {EntitiesUI, TuidUI} from '../../ui';
 import {EditPage} from './editPage';
 import config from '../consts';
 
-interface State {
+export interface State {
     more: boolean;
     rows: any[];
 }

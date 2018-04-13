@@ -5,7 +5,8 @@ import {pageMapper} from './pages';
 import {pageMapper as 货主Mapper} from './货主';
 import {AppUI, MainPage} from './ui-usql/ui';
 
-const appUI = new AppUI('ui-usql-first', '$$$', {
+const tonvaApp = process.env.REACT_APP_TONVA_APP;
+const appUI = new AppUI(tonvaApp, {
     "$$$/usql-first": pageMapper,
     "$$$/货主": 货主Mapper,
 });
@@ -15,7 +16,7 @@ interface State {
 }
 export default class AppHome extends React.Component<{}, State> {
     constructor(props) {
-        super(props);        
+        super(props);
         this.state = {
             uiLoaded: false
         }

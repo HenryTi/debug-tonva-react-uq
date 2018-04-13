@@ -8,7 +8,7 @@ import {EntitiesUI, SheetUI} from '../../ui';
 import {MainDetails, MainDetailsView} from '../tools';
 import {SheetView} from './sheetView';
 
-interface State {
+export interface State {
     flows: any;
     data: any;
 }

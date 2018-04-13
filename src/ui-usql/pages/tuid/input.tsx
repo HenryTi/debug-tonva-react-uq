@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {observer} from 'mobx-react';
-import {IdPickFace, FormProps, SearchBox, List} from 'tonva-react-form';
+import {TuidPickFace, FormProps, SearchBox, List} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {EntitiesUI, TuidUI, TuidInputProps, TuidInput, TuidPickPageProps} from '../../ui';
 

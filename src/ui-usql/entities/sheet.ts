@@ -1,4 +1,4 @@
-import {observable} from 'mobx';
+import {observable, IObservableArray} from 'mobx';
 import {Entity} from './entity';
 
 export interface SheetState {
@@ -11,9 +11,9 @@ export interface SheetAction {
 }
 
 export class Sheet extends Entity {
-    statesCount = observable.array<{state:string;count:number}>([], {deep:false});
+    statesCount:IObservableArray = observable.array<{state:string;count:number}>([], {deep:false});
     curState:string;
-    stateSheets = observable.array<{id:number}>([], {deep:false});
+    stateSheets:IObservableArray = observable.array<{id:number}>([], {deep:false});
 
     states: SheetState[] = [];
 

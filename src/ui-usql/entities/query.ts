@@ -1,4 +1,4 @@
-import {observable} from 'mobx';
+import {observable, IObservableArray} from 'mobx';
 import {Field} from './entities';
 import {Entity} from './entity';
 
@@ -11,7 +11,7 @@ export class Query extends Entity {
     private startField: Field;
     protected queryApiName = 'page';
     @observable loaded: boolean;
-    list = observable.array([], {deep: false});
+    list:IObservableArray = observable.array([], {deep: false});
 
     resetPage(size:number, params:any) {
         this.pageStart = undefined;

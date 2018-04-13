@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IdPickFace, FormProps, Muted} from 'tonva-react-form';
+import {TuidPickFace, FormProps, Muted} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
 import {TuidUI, TuidInputProps} from '../../ui-usql/ui';
 

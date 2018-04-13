@@ -7,7 +7,7 @@ import {EntitiesUI, SheetUI} from '../../ui';
 import {SheetActionPage} from './sheetAction';
 import {ArchivedPage} from './archivedPage';
 
-interface State {
+export interface State {
     rows:any[];
 }
 export class ArchivedListPage extends React.Component<SheetUIProps, State> {

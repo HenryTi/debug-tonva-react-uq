@@ -18,9 +18,13 @@ export class AppUI {
     private entitiesUICollection = entitiesUICollection;
     private uiMappers?:{[api:string]: EntitiesMapper};
     
-    constructor(appName:string, appOwner:string, uiMappers?:{[api:string]: EntitiesMapper}) {
-        this.appOwner = appOwner;
-        this.appName = appName;
+    constructor(tonvaApp:string, uiMappers?:{[api:string]: EntitiesMapper}) {
+        let parts = tonvaApp.split('/');
+        if (parts.length !== 2) {
+            throw 'tonvaApp name must be / separated, owner/app';
+        }
+        this.appOwner = parts[0];
+        this.appName = parts[1];
         //this.mainPage = mainPage || MainPage;
         this.uiMappers = uiMappers;
     }

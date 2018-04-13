@@ -11,7 +11,7 @@ interface DataProps {
     state: any;
     brief: any;
 }
-interface State {
+export interface State {
     flows: any;
     data: any;
 }

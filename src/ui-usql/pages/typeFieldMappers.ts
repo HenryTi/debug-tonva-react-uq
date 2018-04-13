@@ -13,7 +13,7 @@ function bigInt(schemaField) {
     let face:any, field:any;
     if (tuid !== undefined) {
         field = {name: name, type: 'id'}
-        face = {type: 'pick-id', tuid:tuid };
+        face = {type: 'pick-tuid', tuid:tuid };
     }
     else {
         field = {name: name, type: 'int'}
