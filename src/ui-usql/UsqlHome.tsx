@@ -1,22 +1,33 @@
 import * as React from 'react';
 import {List, Muted} from 'tonva-react-form';
 import {WSChannel, nav, Page} from 'tonva-tools';
-import {pageMapper} from './pages';
-import {pageMapper as 货主Mapper} from './货主';
-import {AppUI, MainPage} from './ui-usql/ui';
+//import {pageMapper} from './pages';
+//import {pageMapper as 货主Mapper} from './货主';
+import {AppUI, MainPage, EntitiesMapper} from './ui';
 
+/*
 const tonvaApp = process.env.REACT_APP_TONVA_APP;
 const appUI = new AppUI(tonvaApp, {
     "$$$/usql-first": pageMapper,
     "$$$/货主": 货主Mapper,
 });
+*/
 
-interface State {
+export interface UsqlHomeProps {
+    appName: string,
+    uiMappers?:{[api:string]: EntitiesMapper}
+}
+
+export interface State {
     uiLoaded: boolean;
 }
-export default class AppHome extends React.Component<{}, State> {
+export class UsqlHome extends React.Component<UsqlHomeProps, State> {
+    private appUI:AppUI;
+
     constructor(props) {
         super(props);
+        let {appName, uiMappers} = this.props;
+        this.appUI = new AppUI(appName, uiMappers);
         this.state = {
             uiLoaded: false
         }
@@ -24,18 +35,18 @@ export default class AppHome extends React.Component<{}, State> {
     async componentDidMount() {
         //ws.setToken('aaa');
         //await ws.connect();
-        await appUI.load();
+        await this.appUI.load();
         this.setState({
             uiLoaded: true,
         });
 
     }
     componentWillUnmount() {
-        appUI.close();
+        this.appUI.close();
     }
     render() {
         let {uiLoaded} = this.state;
         if (uiLoaded === false) return <Page>loading UI ...</Page>;
-        return <MainPage appUI={appUI} />;
+        return <MainPage appUI={this.appUI} />;
     }
 }

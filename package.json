@@ -1,9 +1,8 @@
 {
-  "name": "ui-usql",
+  "name": "debug-tonva-react-usql",
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
-  "main": "dist/main.js",
   "dependencies": {
     "bootstrap": "^4.0.0",
     "classnames": "^2.2.5",
