@@ -14,10 +14,18 @@ const rowStyle = {borderBottom: '1px solid gray'};
 const lStyle = {textAlign: 'right', padding: '1em 0.5em', color: 'gray'};
 const rStyle = {textAlign: 'left', paddin: '1em 0.5em'};
 
+/*
 const tonvaApp = '$$$/ui-usql-first';
 const uiMappers: {[api:string]: EntitiesMapper} = {
     "$$$/usql-first": pageMapper,
     "$$$/货主": 货主Mapper,
+};
+*/
+const tonvaApp = 'devapp/DevApp';
+const uiMappers: {[api:string]: EntitiesMapper} = {
+    "DevApp/devappApi": pageMapper,
+    //"$$$/货主": 货主Mapper,
+    //"$$$/货主": null,
 };
 
 class App extends React.Component {
