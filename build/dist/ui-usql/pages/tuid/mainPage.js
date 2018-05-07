@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { nav, Page } from 'tonva-tools';
 import { LMR, SearchBox } from 'tonva-react-form';
-import { EditPage } from './editPage';
-import { SearchPage } from './searchPage';
+//import {EditPage} from './editPage';
+//import {ListPage} from './listPage';
 export class MainPage extends React.Component {
     constructor(props) {
         super(props);
@@ -12,13 +12,19 @@ export class MainPage extends React.Component {
         this.onSearch = this.onSearch.bind(this);
     }
     addNew() {
-        nav.push(React.createElement(EditPage, { ui: this.props.ui }));
+        //nav.push(<EditPage ui={this.props.ui} />);
+        let ui = this.props.ui;
+        nav.push(React.createElement(ui.editPage, { ui: ui }));
     }
     list() {
-        nav.push(React.createElement(SearchPage, { ui: this.props.ui }));
+        //nav.push(<SearchPage ui={this.props.ui} />);
+        let ui = this.props.ui;
+        nav.push(React.createElement(ui.listPage, { ui: ui }));
     }
     onSearch(key) {
-        nav.push(React.createElement(SearchPage, { ui: this.props.ui, data: key }));
+        //nav.push(<SearchPage ui={this.props.ui} data={key} />);
+        let ui = this.props.ui;
+        nav.push(React.createElement(ui.listPage, { ui: ui, data: key }));
     }
     render() {
         let { entity, caption } = this.props.ui;

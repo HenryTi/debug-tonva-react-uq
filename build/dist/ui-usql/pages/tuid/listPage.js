@@ -7,50 +7,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { nav, Page } from 'tonva-tools';
-import { List } from 'tonva-react-form';
+import { nav, Page, PagedItems } from 'tonva-tools';
+import { SearchBox, List } from 'tonva-react-form';
 import { EditPage } from './editPage';
-import config from '../consts';
+class TuidPagedItems extends PagedItems {
+    constructor(tuidUI) {
+        super();
+        this.tuidUI = tuidUI;
+    }
+    load() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let ret = yield this.tuidUI.entity.search(this.param, this.pageStart, this.pageSize);
+            return ret;
+        });
+    }
+    setPageStart(item) {
+        if (item === undefined)
+            this.pageStart = 0;
+    }
+}
 export class ListPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            more: false,
-            rows: undefined,
-        };
-        this.mapper = this.mapper.bind(this);
-        this.click = this.click.bind(this);
+        this.pagedItems = new TuidPagedItems(this.props.ui);
+        this.onSearch = this.onSearch.bind(this);
+        this.renderRow = this.renderRow.bind(this);
+        this.rowClick = this.rowClick.bind(this);
     }
-    componentDidMount() {
+    componentWillMount() {
         return __awaiter(this, void 0, void 0, function* () {
-            let res = yield this.props.ui.entity.search('', 0, 30);
-            this.setState({
-                more: res.more,
-                rows: res.rows
-            });
+            yield this.onSearch(this.props.data);
         });
     }
-    click(row) {
-        nav.push(React.createElement(EditPage, { ui: this.props.ui, data: row }));
+    onSearch(key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.pagedItems.first(key);
+        });
     }
-    mapper(row, index) {
-        let { name, discription, d2 } = row;
-        return React.createElement("div", { className: 'app-row' },
-            React.createElement("label", null,
-                React.createElement("img", { src: config.appIcon })),
-            React.createElement("div", null,
-                React.createElement("div", null, name),
-                React.createElement("span", null, discription)),
-            React.createElement("footer", null,
-                React.createElement("span", { style: { color: 'red' } }, d2.toFixed(2)),
-                React.createElement("span", { style: { fontSize: 'smaller' } }, "\u00A0\u5143")));
+    renderRow(item, index) {
+        return React.createElement("div", { className: "px-3 py-2" }, JSON.stringify(item));
+    }
+    rowClick(item) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { ui } = this.props;
+            let data = yield ui.entity.load(item.id);
+            nav.push(React.createElement(EditPage, { ui: ui, data: data }));
+        });
     }
     render() {
-        let { ui } = this.props;
+        let { data: initKey, ui } = this.props;
         let { entity, caption } = ui;
-        let { name } = entity;
-        return React.createElement(Page, { header: caption || name },
-            React.createElement(List, { items: this.state.rows, item: { render: this.mapper, onClick: this.click } }));
+        let { name, schema } = entity;
+        caption = caption || name;
+        let header = React.createElement(SearchBox, { className: "mx-1 w-100", initKey: initKey, onSearch: this.onSearch, placeholder: '搜索' + caption });
+        return React.createElement(Page, { header: header },
+            React.createElement(List, { items: this.pagedItems.items, item: { render: this.renderRow, onClick: this.rowClick }, before: '搜索' + caption + '资料' }));
     }
 }
 //# sourceMappingURL=listPage.js.map

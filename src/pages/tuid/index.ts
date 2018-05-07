@@ -1,7 +1,9 @@
 import {MapperContainer,TuidMapper} from '../../ui-usql/ui';
 import {Tuid} from '../../ui-usql/entities';
 import {EntityUI, TuidUI} from '../../ui-usql/ui';
-import {MainPage} from './mainPage';
+//import {MainPage} from './mainPage';
+import {MainPage} from './lll';
+import {EditPage} from './edit';
 import {ArticleInput, ArticleContent} from './articleInput';
 import {CandidateRow, CustomerContent} from './customerInput';
 
@@ -13,10 +15,12 @@ export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
     },
     mappers: {
         "商品inunit": {
+            caption: 'xxx商品',
             mainPage: MainPage,
+            editPage: EditPage,
             fieldFaces: {
                 'd2': {
-                    label: 'd2-d2d2',
+                    label: 'd2-d2d3',
                     notes: 'd2-d2d2-notes',
                     placeholder: 'd2-placeholder',
                 },

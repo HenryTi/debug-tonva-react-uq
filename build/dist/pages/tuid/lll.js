@@ -30,10 +30,10 @@ export class MainPage extends React.Component {
         return React.createElement(Page, { header: caption || name },
             React.createElement(LMR, { className: "mt-3", right: right },
                 React.createElement("div", null,
-                    React.createElement(Button, { className: "mr-3", color: "primary", onClick: this.addNew }, "\u65B0\u589E"),
+                    React.createElement(Button, { className: "mr-3", color: "success", onClick: this.addNew }, "\u65B0\u589E\u5546\u54C1"),
                     React.createElement(Button, { className: "mr-3", color: "primary", onClick: this.list }, "\u5217\u8868"))),
-            "\u674E\u56FD\u58F0");
+            "\u674E\u56FD\u58F02xxxx");
     }
 }
 // <pre>{JSON.stringify(schema, undefined, ' ')}</pre>
-//# sourceMappingURL=mainPage.js.map
+//# sourceMappingURL=lll.js.map

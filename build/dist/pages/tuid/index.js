@@ -1,4 +1,6 @@
-import { MainPage } from './mainPage';
+//import {MainPage} from './mainPage';
+import { MainPage } from './lll';
+import { EditPage } from './edit';
 import { ArticleContent } from './articleInput';
 import { CandidateRow, CustomerContent } from './customerInput';
 export const mapperContainer = {
@@ -9,10 +11,12 @@ export const mapperContainer = {
     },
     mappers: {
         "商品inunit": {
+            caption: 'xxx商品',
             mainPage: MainPage,
+            editPage: EditPage,
             fieldFaces: {
                 'd2': {
-                    label: 'd2-d2d2',
+                    label: 'd2-d2d3',
                     notes: 'd2-d2d2-notes',
                     placeholder: 'd2-placeholder',
                 },

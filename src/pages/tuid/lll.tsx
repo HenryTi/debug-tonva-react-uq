@@ -37,11 +37,11 @@ export class MainPage extends React.Component<TuidUIProps> {
         return <Page header={caption || name}>
             <LMR className="mt-3" right={right}>
                 <div>
-                    <Button className="mr-3" color="primary" onClick={this.addNew}>新增</Button>
+                    <Button className="mr-3" color="success" onClick={this.addNew}>新增商品</Button>
                     <Button className="mr-3" color="primary" onClick={this.list}>列表</Button>
                 </div>
             </LMR>
-            李国声
+            李国声2xxxx
         </Page>;
     }
 }
