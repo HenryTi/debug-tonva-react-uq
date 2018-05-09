@@ -6,6 +6,7 @@ import {MainPage} from './lll';
 import {EditPage} from './edit';
 import {ArticleInput, ArticleContent} from './articleInput';
 import {CandidateRow, CustomerContent} from './customerInput';
+import {T1Content} from './t1';
 
 export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
     //caption: '数据字典',
@@ -33,6 +34,11 @@ export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
             input: {
                 inputContent: ArticleContent,
                 //component: ArticleInput
+            }
+        },
+        "t1": {
+            input: {
+                inputContent: T1Content,
             }
         },
         "article": {
