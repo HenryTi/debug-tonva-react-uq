@@ -3,6 +3,7 @@ import { MainPage } from './lll';
 import { EditPage } from './edit';
 import { ArticleContent } from './articleInput';
 import { CandidateRow, CustomerContent } from './customerInput';
+import { T1Content } from './t1';
 export const mapperContainer = {
     //caption: '数据字典',
     mapper: {
@@ -28,6 +29,11 @@ export const mapperContainer = {
         "商品": {
             input: {
                 inputContent: ArticleContent,
+            }
+        },
+        "t1": {
+            input: {
+                inputContent: T1Content,
             }
         },
         "article": {

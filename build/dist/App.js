@@ -16,19 +16,19 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
     "$$$/货主": 货主Mapper,
 };
 */
-const tonvaApp = 'devapp/DevApp';
-const uiMappers = {
-    "DevApp/devappApi": pageMapper,
-};
 /*
-const tonvaApp = '百灵威系统工程部/first-app';
+const tonvaApp = 'devapp/DevApp';
 const uiMappers: {[api:string]: EntitiesMapper} = {
-    "百灵威系统工程部/usql-api-test": pageMapper,
-    "百灵威系统工程部/usql-api-test1": null, //pageMapper,
+    "DevApp/devappApi": pageMapper,
     //"$$$/货主": 货主Mapper,
     //"$$$/货主": null,
 };
 */
+const tonvaApp = '百灵威系统工程部/first-app';
+const uiMappers = {
+    "百灵威系统工程部/usql-api-test": pageMapper,
+    "百灵威系统工程部/usql-api-test1": null,
+};
 class App extends React.Component {
     render() {
         return (React.createElement(NavView, { view: React.createElement(UsqlHome, { appName: tonvaApp, uiMappers: uiMappers }) }));
