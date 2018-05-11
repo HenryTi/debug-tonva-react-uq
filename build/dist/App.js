@@ -24,7 +24,7 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
     //"$$$/货主": null,
 };
 */
-const tonvaApp = '百灵威系统工程部/first-app';
+const tonvaApp = '百灵威系统工程部/customer';
 const uiMappers = {
     "百灵威系统工程部/usql-api-test": pageMapper,
     "百灵威系统工程部/usql-api-test1": null,

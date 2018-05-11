@@ -30,7 +30,7 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 };
 */
 
-const tonvaApp = '百灵威系统工程部/first-app';
+const tonvaApp = '百灵威系统工程部/customer';
 const uiMappers: {[api:string]: EntitiesMapper} = {
     "百灵威系统工程部/usql-api-test": pageMapper,
     "百灵威系统工程部/usql-api-test1": null, //pageMapper,
