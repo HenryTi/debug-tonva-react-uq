@@ -77,9 +77,23 @@ export class EditPage extends React.Component<TuidUIProps> {
         let {entity, caption, entitiesUI} = ui;
         let {name} = entity;
         caption = caption || name;
-        let header = data === undefined?
-            '新增' + caption : caption + '资料';
+        let header, slaveInputs;
+        if (data === undefined) {
+            header = '新增' + caption;
+        }
+        else {
+            header = caption + '资料';
+            let slaves = entity.schema.slaves;
+            if (slaves !== undefined) {
+                slaveInputs = <div className="px-3 py-1 mb-3 bg-light border-bottom border-info">
+                    {slaves.map(s => {
+                        return <ui.slaveInput key={s} ui={ui} slave={s} />
+                    })}
+                </div>;
+            }
+        }
         return <Page header={header}>
+            {slaveInputs}
             <TonvaForm
                 context={entitiesUI}
                 ref={tf=>this.form=tf}

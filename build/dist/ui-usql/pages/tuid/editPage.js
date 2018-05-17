@@ -75,10 +75,22 @@ export class EditPage extends React.Component {
         let { entity, caption, entitiesUI } = ui;
         let { name } = entity;
         caption = caption || name;
-        let header = data === undefined ?
-            '新增' + caption : caption + '资料';
+        let header, slaveInputs;
+        if (data === undefined) {
+            header = '新增' + caption;
+        }
+        else {
+            header = caption + '资料';
+            let slaves = entity.schema.slaves;
+            if (slaves !== undefined) {
+                slaveInputs = slaves.map(s => {
+                    React.createElement(ui.slaveInput, { ui: ui, slave: s });
+                });
+            }
+        }
         return React.createElement(Page, { header: header },
-            React.createElement(TonvaForm, { context: entitiesUI, ref: tf => this.form = tf, className: "m-3", initValues: data, formRows: this.formRows, onSubmit: this.submit }));
+            React.createElement(TonvaForm, { context: entitiesUI, ref: tf => this.form = tf, className: "m-3", initValues: data, formRows: this.formRows, onSubmit: this.submit }),
+            slaveInputs);
     }
     buildFormView() {
         let ui = this.props.ui;

@@ -52,6 +52,8 @@ export interface FieldFaces {
     [name:string]: FieldFace;
 }
 
+export type TuidUISlaveComponent = new (props:TuidUIProps&{slave:string}) => React.Component<TuidUIProps&{slave:string}>;
+
 export interface EntitiesUIProps {
     ui: EntitiesUI;
     data?: any;
@@ -88,6 +90,7 @@ export interface TuidMapper extends EntityMapper<Tuid, TuidUI> {
     editPage?: TuidUIComponent;
     listPage?: TuidUIComponent;
     input?: TuidInput;
+    slaveInput?: TuidUISlaveComponent;
 }
 
 export interface ActionMapper extends EntityMapper<Action, ActionUI> {
