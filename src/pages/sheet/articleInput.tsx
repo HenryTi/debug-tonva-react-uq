@@ -23,7 +23,8 @@ export class ArticleInput extends React.Component<TuidInputProps> {
         this.onClick = this.onClick.bind(this);
     }
     onClick() {
-        let {id, tuid, input, entitiesUI, params, onPicked} = this.props;
+        //let {id, ui, params, onIdChanged} = this.props;
+        /*
         if (entitiesUI === undefined) {
             alert('TonvaForm props 应该包含 context=EntitiesUI')
             return;
@@ -32,21 +33,16 @@ export class ArticleInput extends React.Component<TuidInputProps> {
         if (tuidUI === undefined) {
             alert('Tuid ' + tuid + ' 没有定义');
             return;
-        }
-        nav.push(<PickArticlePage 
-            id={id} 
-            input={input}
-            tuidUI={tuidUI} 
-            params={params} 
-            onPicked={onPicked} />);
+        }*/
+        nav.push(<PickArticlePage {...this.props} />);
     }
     render() {
-        let {id, tuid} = this.props;
+        let {id, ui} = this.props;
         return <button className="form-control btn btn-outline-info"
             type="button"
             style={{textAlign:'left', paddingLeft:'0.75rem'}}
             onClick={this.onClick}>
-            <div>Article: {tuid} id: {id}</div>
+            <div>Article: {ui.caption} id: {id}</div>
         </button>
     }
 }
@@ -65,27 +61,27 @@ export class PickArticlePage extends React.Component<TuidPickPageProps, State> {
         }
     }
     async onSearch(key:string) {
-        let result = await this.props.tuidUI.entity.search(key, 0, 30);
+        let result = await this.props.ui.entity.search(key, 0, 30);
         this.setState({
             items: result
         });
     }
     renderRow(item:any, index:number):JSX.Element {
-        let {candidateRow:CandidateRow} = this.props.input;
+        let {candidateRow:CandidateRow} = this.props.ui.input;
         if (CandidateRow !== undefined) return <CandidateRow item={item} index={index} />;
         return <div className="px-3 py-2">{JSON.stringify(item)}</div>
     }
     rowClick(item:any) {
-        this.props.onPicked(item);
+        this.props.onIdChanged(item.id);
         nav.pop();
     }
     render() {
-        let {tuidUI, input} = this.props;
-        let header=<SearchBox className="mx-1 w-100" placeholder={tuidUI.caption} onSearch={this.onSearch}  />;
+        let {ui} = this.props;
+        let header=<SearchBox className="mx-1 w-100" placeholder={ui.caption} onSearch={this.onSearch}  />;
         return <Page header={header}>
             <List 
                 className="my-3"
-                before={'搜索' + tuidUI.caption + '--哈哈'}
+                before={'搜索' + ui.caption + '--哈哈'}
                 items={this.state.items} 
                 item={{render: this.renderRow, onClick:this.rowClick}} />
         </Page>;

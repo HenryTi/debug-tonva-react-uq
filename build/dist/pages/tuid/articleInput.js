@@ -9,7 +9,7 @@ export class ArticleContent extends React.Component {
             return React.createElement("div", null, "Article");
         return React.createElement(React.Fragment, null,
             value.discription,
-            " ",
+            " \u00A0 ",
             React.createElement(Muted, null, value.name));
     }
 }
@@ -20,9 +20,11 @@ export class ArticleInput extends React.Component {
         this.onClick = this.onClick.bind(this);
     }
     onClick() {
-        let { id, tuid, entitiesUI, params, onPicked } = this.props;
+        //let {id, tuid, entitiesUI, params, onPicked} = this.props;
+        //let {id, ui, params, onIdChanged} = this.props;
+        /*
         if (entitiesUI === undefined) {
-            alert('TonvaForm props 应该包含 context=EntitiesUI');
+            alert('TonvaForm props 应该包含 context=EntitiesUI')
             return;
         }
         let tuidUI = entitiesUI.tuid.coll[tuid];
@@ -30,33 +32,46 @@ export class ArticleInput extends React.Component {
             alert('Tuid ' + tuid + ' 没有定义');
             return;
         }
-        nav.push(React.createElement(PickTuidPage, { id: id, tuidUI: tuidUI, params: params, changeId: onPicked }));
+        */
+        nav.push(React.createElement(PickTuidPage, Object.assign({}, this.props)));
+        //id={id} 
+        //ui={ui} 
+        //params={params} 
+        //onPicked={onIdChanged} />);
     }
     render() {
-        let { id, tuid } = this.props;
+        let { id, ui } = this.props;
         return React.createElement("button", { className: "form-control btn btn-outline-info", type: "button", style: { textAlign: 'left', paddingLeft: '0.75rem' }, onClick: this.onClick },
             React.createElement("div", null,
                 "\u5546\u54C1\u7279\u5B9A\u7684input: ",
-                tuid,
+                ui.caption,
                 " id: ",
                 id));
     }
 }
+/*
+interface Props {
+    id: number;
+    tuidUI: TuidUI;
+    params: any;
+    changeId: (id:number) => void;
+}
+*/
 class PickTuidPage extends React.Component {
     render() {
-        let { tuidUI } = this.props;
-        return React.createElement(Page, { header: '选择' + tuidUI.caption },
+        let { ui } = this.props;
+        return React.createElement(Page, { header: '选择' + ui.caption },
             "tuid: ",
             JSON.stringify({
-                name: tuidUI.entity.name,
-                capiton: tuidUI.caption,
+                name: ui.entity.name,
+                capiton: ui.caption,
             }),
             React.createElement("br", null),
             React.createElement("button", { onClick: () => {
-                    let { id, changeId } = this.props;
+                    let { id, onIdChanged } = this.props;
                     if (id === undefined)
                         id = 0;
-                    changeId(++id);
+                    onIdChanged({ id: ++id });
                     nav.pop();
                 } }, "\u9009\u4E2D"));
     }

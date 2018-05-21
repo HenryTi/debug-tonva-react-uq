@@ -4,7 +4,7 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.1.1",
     "classnames": "^2.2.5",
     "jquery": "^3.3.1",
     "lodash": "^4.17.4",
@@ -12,8 +12,8 @@
     "mobx-react": "^5.0.0",
     "moment": "^2.20.1",
     "popper.js": "^1.12.9",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "react-scripts-ts": "^2.14.0",
     "reactstrap": "^5.0.0-alpha.4"
   },
@@ -28,7 +28,7 @@
     "@types/jest": "^22.2.0",
     "@types/lodash": "^4.14.97",
     "@types/node": "^9.4.0",
-    "@types/react": "^16.3.9",
+    "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
     "@types/reactstrap": "^5.0.12",
     "typescript": "^2.7.2"
