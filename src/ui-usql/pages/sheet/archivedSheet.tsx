@@ -12,7 +12,7 @@ export interface State {
     flows: any;
     data: any;
 }
-export class ArchivedPage extends React.Component<SheetUIProps, State> {
+export class ArchivedSheet extends React.Component<SheetUIProps, State> {
     private mainDetails: MainDetails; 
     constructor(props) {
         super(props);
@@ -51,14 +51,11 @@ export class ArchivedPage extends React.Component<SheetUIProps, State> {
         }
         */
         return <Page header={sheet.name + ':' + '-' + brief.no}>
-            <SheetView className="mx-3 my-2" ui={ui} 
+            <ui.view ui={ui}
+                data={this.state.data} 
+                className="mx-3 my-2" 
                 sheetState={brief.state} 
-                sheetData={this.state.data} 
                 flows={this.state.flows} />
         </Page>;
     }
 }
-/*
-<pre>{JSON.stringify(this.state.data, undefined, ' ')}</pre>
-<pre>{JSON.stringify(this.state.res, undefined, ' ')}</pre>
-*/

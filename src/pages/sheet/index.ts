@@ -4,12 +4,14 @@ import {EntityUI, SheetUI} from '../../ui-usql/ui';
 import {GeneralTuidInput} from '../../ui-usql/pages/tuid/input'
 import {ArticleInput, ArticleContent, CandidateRow, PickArticlePage} from './articleInput';
 import {OrderRow} from './order';
+import {SheetNew} from './sheetNew';
 
 export const mapperContainer:MapperContainer<Sheet, SheetUI, SheetMapper> = {
     caption: '凭单',
     mapper: {
         //link: EntityLink,
         mainPage: undefined,
+        sheetNew: SheetNew,
     },
     mappers: {
         "购物单": {

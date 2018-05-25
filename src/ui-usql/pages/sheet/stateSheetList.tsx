@@ -4,7 +4,7 @@ import {nav, Page} from 'tonva-tools';
 import {List, LMR, FA} from 'tonva-react-form';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
-import {SheetActionPage} from './sheetAction';
+import {SheetAction} from './sheetAction';
 
 interface DataProps {
     stateName: string;
@@ -12,7 +12,7 @@ interface DataProps {
 }
 
 @observer
-export class SheetStatePage extends React.Component<SheetUIProps> {
+export class StateSheetList extends React.Component<SheetUIProps> {
     constructor(props) {
         super(props);
         this.renderRow = this.renderRow.bind(this);
@@ -30,7 +30,7 @@ export class SheetStatePage extends React.Component<SheetUIProps> {
         let {ui, data} = this.props;
         let {entity:sheet} = ui;
         let {state, stateName} = data;
-        nav.push(<SheetActionPage ui={ui} data={{stateName:stateName, state:state, brief:brief}} />);
+        nav.push(<SheetAction ui={ui} data={{stateName:stateName, state:state, brief:brief}} />);
     }
 
     renderRow(row:any, index:number) {
@@ -51,5 +51,3 @@ export class SheetStatePage extends React.Component<SheetUIProps> {
         </Page>;
     }
 }
-
-// <pre>{JSON.stringify(state, undefined, ' ')}</pre>

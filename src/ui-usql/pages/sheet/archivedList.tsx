@@ -4,19 +4,18 @@ import {List, LMR, FA} from 'tonva-react-form';
 import {Sheet} from '../../entities';
 import {EntitiesUIProps, SheetUIProps} from '../../ui';
 import {EntitiesUI, SheetUI} from '../../ui';
-import {SheetActionPage} from './sheetAction';
-import {ArchivedPage} from './archivedPage';
+import {ArchivedSheet} from './archivedSheet';
 
 export interface State {
     rows:any[];
 }
-export class ArchivedListPage extends React.Component<SheetUIProps, State> {
+export class ArchivedList extends React.Component<SheetUIProps, State> {
     constructor(props) {
         super(props);
         this.state = {
             rows: undefined
         }
-        this.mapper = this.mapper.bind(this);
+        this.renderRow = this.renderRow.bind(this);
         this.click = this.click.bind(this);
     }
 
@@ -27,10 +26,10 @@ export class ArchivedListPage extends React.Component<SheetUIProps, State> {
 
     click(brief:any) {
         if (brief.processing===1) return;
-        nav.push(<ArchivedPage ui={this.props.ui} data={brief} />);
+        nav.push(<ArchivedSheet ui={this.props.ui} data={brief} />);
     }
 
-    mapper(row:any, index:number) {
+    renderRow(row:any, index:number) {
         let left = <>
             {row.processing===1? '... ' : ''}
             id:{row.id}, no:{row.no}, discription:{row.discription}, date:{row.date}
@@ -41,7 +40,7 @@ export class ArchivedListPage extends React.Component<SheetUIProps, State> {
     render() {
         let {name} = this.props.ui.entity;
         return <Page header={'已归档' + name}>
-            <List items={this.state.rows} item={{render:this.mapper, onClick:this.click}} />
+            <List items={this.state.rows} item={{render:this.renderRow, onClick:this.click}} />
         </Page>;
     }
 }

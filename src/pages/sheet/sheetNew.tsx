@@ -3,9 +3,7 @@ import * as classNames from 'classnames';
 import {Button, Form, FormGroup, Label, Input, Container, Col} from 'reactstrap';
 import {FA} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
-import {Sheet} from '../../entities';
-import {EntitiesUIProps, SheetUIProps} from '../../ui';
-import {MainDetails, MainDetailsForm} from '../tools';
+import {Sheet, EntitiesUIProps, SheetUIProps, MainDetails, MainDetailsForm} from '../../ui-usql';
 
 export class SheetNew extends React.Component<SheetUIProps> {
     private mainDetails: MainDetails; 
@@ -39,7 +37,7 @@ export class SheetNew extends React.Component<SheetUIProps> {
         let {ui} = this.props;
         let {entity} = ui;
         let {name, schema} = entity;
-        return <Page header={'新' + name}>
+        return <Page header={'新' + name + '自定义的单据格式'}>
             <MainDetailsForm className="mx-3 my-2"
                 ui={ui}
                 mainDetails={this.mainDetails} 
