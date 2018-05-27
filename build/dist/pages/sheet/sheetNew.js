@@ -10,7 +10,7 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { FA } from 'tonva-react-form';
 import { nav, Page } from 'tonva-tools';
-import { MainDetailsForm } from '../tools';
+import { MainDetailsForm } from '../../ui-usql';
 export class SheetNew extends React.Component {
     constructor(props) {
         super(props);
@@ -43,7 +43,7 @@ export class SheetNew extends React.Component {
         let { ui } = this.props;
         let { entity } = ui;
         let { name, schema } = entity;
-        return React.createElement(Page, { header: '新' + name },
+        return React.createElement(Page, { header: '新' + name + '自定义的单据格式' },
             React.createElement(MainDetailsForm, { className: "mx-3 my-2", ui: ui, mainDetails: this.mainDetails, values: {}, onSubmit: this.onSubmit }));
     }
 }

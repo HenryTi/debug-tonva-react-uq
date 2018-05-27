@@ -21,6 +21,19 @@ export class ArticleInput extends React.Component<TuidInputProps> {
     constructor(props) {
         super(props);
         this.onClick = this.onClick.bind(this);
+        this.onPicked = this.onPicked.bind(this);
+    }
+    onPicked(value:any) {
+        if (value === undefined) return;
+        let {id, proxyId, proxyName} = value;
+        this.setState({
+            id: id,
+            proxyId: proxyId,
+            proxyName: proxyName,
+        })
+        let {ui, onIdChanged}  = this.props;
+        if (id !== undefined) ui.entity.useId(id);
+        onIdChanged(value);
     }
     onClick() {
         //let {id, ui, params, onIdChanged} = this.props;
@@ -34,7 +47,7 @@ export class ArticleInput extends React.Component<TuidInputProps> {
             alert('Tuid ' + tuid + ' 没有定义');
             return;
         }*/
-        nav.push(<PickArticlePage {...this.props} />);
+        nav.push(<PickArticlePage {...this.props} onPicked={this.onPicked} />);
     }
     render() {
         let {id, ui} = this.props;
@@ -72,7 +85,7 @@ export class PickArticlePage extends React.Component<TuidPickPageProps, State> {
         return <div className="px-3 py-2">{JSON.stringify(item)}</div>
     }
     rowClick(item:any) {
-        this.props.onIdChanged(item.id);
+        this.props.onIdChanged(item);
         nav.pop();
     }
     render() {

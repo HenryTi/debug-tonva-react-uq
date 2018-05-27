@@ -104,10 +104,7 @@ export class EditPage extends React.Component {
             //context={entitiesUI}
             , { 
                 //context={entitiesUI}
-                ref: tf => {
-                    this.form = tf;
-                    tf.debug();
-                }, className: "m-3", initValues: data, formRows: this.formRows, onSubmit: this.submit }));
+                ref: tf => this.form = tf, className: "m-3", initValues: data, formRows: this.formRows, onSubmit: this.submit }));
     }
     buildFormView() {
         let ui = this.props.ui;

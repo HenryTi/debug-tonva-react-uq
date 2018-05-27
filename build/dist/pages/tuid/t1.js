@@ -2,13 +2,11 @@ import * as React from 'react';
 import { Muted } from 'tonva-react-form';
 export class T1Content extends React.Component {
     render() {
-        let { value } = this.props;
-        //return <div>id = {value.id} {JSON.stringify(value)} </div>;
-        //if (!value) return <div>t1</div>;
+        let { discription, name } = this.props.value;
         return React.createElement(React.Fragment, null,
-            value.discription,
+            discription,
             " ",
-            React.createElement(Muted, null, value.name));
+            React.createElement(Muted, null, name));
     }
 }
 //# sourceMappingURL=t1.js.map

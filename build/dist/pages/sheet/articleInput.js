@@ -30,6 +30,21 @@ export class ArticleInput extends React.Component {
         super(props);
         this.id = 0;
         this.onClick = this.onClick.bind(this);
+        this.onPicked = this.onPicked.bind(this);
+    }
+    onPicked(value) {
+        if (value === undefined)
+            return;
+        let { id, proxyId, proxyName } = value;
+        this.setState({
+            id: id,
+            proxyId: proxyId,
+            proxyName: proxyName,
+        });
+        let { ui, onIdChanged } = this.props;
+        if (id !== undefined)
+            ui.entity.useId(id);
+        onIdChanged(value);
     }
     onClick() {
         //let {id, ui, params, onIdChanged} = this.props;
@@ -43,7 +58,7 @@ export class ArticleInput extends React.Component {
             alert('Tuid ' + tuid + ' 没有定义');
             return;
         }*/
-        nav.push(React.createElement(PickArticlePage, Object.assign({}, this.props)));
+        nav.push(React.createElement(PickArticlePage, Object.assign({}, this.props, { onPicked: this.onPicked })));
     }
     render() {
         let { id, ui } = this.props;
@@ -80,7 +95,7 @@ export class PickArticlePage extends React.Component {
         return React.createElement("div", { className: "px-3 py-2" }, JSON.stringify(item));
     }
     rowClick(item) {
-        this.props.onIdChanged(item.id);
+        this.props.onIdChanged(item);
         nav.pop();
     }
     render() {

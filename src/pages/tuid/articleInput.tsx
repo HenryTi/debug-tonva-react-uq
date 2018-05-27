@@ -17,6 +17,10 @@ export class ArticleInput extends React.Component<TuidInputProps> {
     constructor(props) {
         super(props);
         this.onClick = this.onClick.bind(this);
+        this.onPicked = this.onPicked.bind(this);
+    }
+    onPicked(value:any) {
+        let id = value.id;
     }
     onClick() {
         //let {id, tuid, entitiesUI, params, onPicked} = this.props;
@@ -32,11 +36,11 @@ export class ArticleInput extends React.Component<TuidInputProps> {
             return;
         }
         */
-        nav.push(<PickTuidPage {...this.props} />);
+        nav.push(<PickTuidPage {...this.props} onPicked={this.onPicked} />);
             //id={id} 
             //ui={ui} 
             //params={params} 
-            //onPicked={onIdChanged} />);
+            ///>);
     }
     render() {
         let {id, ui} = this.props;
