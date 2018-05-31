@@ -22,11 +22,11 @@ export class MainPage extends React.Component<TuidUIProps> {
     }
 
     list() {
-        nav.push(<this.props.ui.listPage ui={this.props.ui} />);
+        nav.push(<this.props.ui.listPage.page ui={this.props.ui} />);
     }
 
     onSearch(key:string) {
-        nav.push(<this.props.ui.listPage ui={this.props.ui} data={key} />);
+        nav.push(<this.props.ui.listPage.page ui={this.props.ui} data={key} />);
     }
 
     render() {
