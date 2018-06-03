@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Api } from 'tonva-tools';
 import { Entities } from '../entities';
 import { ActionUI } from './actionUI';
 import { QueryUI } from './queryUI';
@@ -21,7 +22,26 @@ export class EntitiesUI {
         this.api = api;
         entitiesUICollection[api] = this;
         let token = undefined;
-        this.entities = new Entities(url, ws, token, api, access);
+        let apiOwner, apiName;
+        let p = api.split('/');
+        switch (p.length) {
+            case 1:
+                apiOwner = '$$$';
+                apiName = p[0];
+                break;
+            case 2:
+                apiOwner = p[0];
+                apiName = p[1];
+                break;
+            default:
+                console.log('api must be apiOwner/apiName format');
+                return;
+        }
+        let hash = document.location.hash;
+        let baseUrl = hash === undefined || hash === '' ?
+            'debug/' : 'tv/';
+        let _api = new Api(baseUrl, url, ws, apiOwner, apiName, true);
+        this.entities = new Entities(_api, access);
         this.defaultMapper = defaultMapper;
         this.mapper = mapper || {};
         this.typeFieldMappers = _.clone(defaultMapper.typeFieldMappers);
@@ -32,9 +52,6 @@ export class EntitiesUI {
             yield this.entities.loadEntities();
             this.buildUI();
         });
-    }
-    close() {
-        this.entities.close();
     }
     buildUI() {
         let d = this.defaultMapper;
@@ -247,9 +264,26 @@ class TuidSetBuilder extends EntitySetBuilder {
     buildUI(entity, mapper1, mapper2) {
         let ret = super.buildUI(entity, mapper1, mapper2);
         ret.editPage = mapper2.editPage || mapper1.editPage;
-        ret.listPage = mapper2.listPage || mapper1.listPage;
+        ret.listPage = this.mergeListPage(mapper2.listPage, mapper1.listPage);
         ret.slaveInput = mapper2.slaveInput || mapper1.slaveInput;
         ret.input = _.merge({}, mapper1.input, mapper2.input);
+        return ret;
+    }
+    mergeListPage(lp2, lp1) {
+        let ret = {};
+        if (lp1 !== undefined) {
+            if (typeof (lp1) === 'function') {
+                ret.page = lp1;
+            }
+        }
+        if (lp2 !== undefined) {
+            if (typeof (lp2) === 'function') {
+                ret.page = lp2;
+            }
+            else {
+                ret.row = lp2.row;
+            }
+        }
         return ret;
     }
 }

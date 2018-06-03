@@ -17,10 +17,10 @@ export class MainPage extends React.Component {
         nav.push(React.createElement(this.props.ui.editPage, { ui: this.props.ui }));
     }
     list() {
-        nav.push(React.createElement(this.props.ui.listPage, { ui: this.props.ui }));
+        nav.push(React.createElement(this.props.ui.listPage.page, { ui: this.props.ui }));
     }
     onSearch(key) {
-        nav.push(React.createElement(this.props.ui.listPage, { ui: this.props.ui, data: key }));
+        nav.push(React.createElement(this.props.ui.listPage.page, { ui: this.props.ui, data: key }));
     }
     render() {
         let { entity, caption } = this.props.ui;

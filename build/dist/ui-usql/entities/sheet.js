@@ -32,20 +32,22 @@ export class Sheet extends Entity {
         }
     }
     onReceive(data) {
-        let row = data.data;
-        if (row === undefined)
-            return;
-        let { id, state, preState } = row;
-        this.changeStateCount(state, 1);
-        this.changeStateCount(preState, -1);
-        if (this.curState === state) {
-            this.stateSheets.push(row);
-        }
-        else if (this.curState === preState) {
-            let index = this.stateSheets.findIndex(v => v.id === id);
-            if (index >= 0)
-                this.stateSheets.splice(index, 1);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            let row = data.data;
+            if (row === undefined)
+                return;
+            let { id, state, preState } = row;
+            this.changeStateCount(state, 1);
+            this.changeStateCount(preState, -1);
+            if (this.curState === state) {
+                this.stateSheets.push(row);
+            }
+            else if (this.curState === preState) {
+                let index = this.stateSheets.findIndex(v => v.id === id);
+                if (index >= 0)
+                    this.stateSheets.splice(index, 1);
+            }
+        });
     }
     changeStateCount(state, delta) {
         let index = this.statesCount.findIndex(v => v.state === state);
@@ -57,7 +59,7 @@ export class Sheet extends Entity {
     }
     save(discription, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.entities.wsConnect();
+            //await this.entities.wsConnect();
             let text = this.entities.pack(this.schema, data);
             let ret = yield this.tvApi.sheetSave(this.name, { discription: discription, data: text });
             let { id, state } = ret;
@@ -68,7 +70,7 @@ export class Sheet extends Entity {
     }
     action(id, flow, state, action) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.entities.wsConnect();
+            //await this.entities.wsConnect();
             return yield this.tvApi.sheetAction(this.name, { id: id, flow: flow, state: state, action: action });
         });
     }
