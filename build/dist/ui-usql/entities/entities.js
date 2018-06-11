@@ -195,6 +195,19 @@ export class Entities {
         }
         return ret;
     }
+    schemaRefTuids(tuidSchemas) {
+        if (tuidSchemas === undefined)
+            return;
+        for (let schema of tuidSchemas) {
+            let { tuids, name } = schema;
+            let tuid = this.tuids[name];
+            if (tuid === undefined)
+                debugger;
+            if (tuid.schema === undefined)
+                tuid.schema = schema;
+            this.schemaRefTuids(tuids);
+        }
+    }
     pack(schema, data) {
         let ret = [];
         if (schema === undefined || data === undefined)
