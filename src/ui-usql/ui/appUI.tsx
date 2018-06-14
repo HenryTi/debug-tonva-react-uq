@@ -41,7 +41,21 @@ export class AppUI {
             let api = apiOwner + '/' + apiName;
             let mapper = this.uiMappers && this.uiMappers[api];
             if (mapper === null) continue;
-            if (isDebug === true && urlDebug !== undefined) url = urlDebug;
+            if (isDebug === true && urlDebug !== undefined) {
+                let lud = urlDebug.toLowerCase();
+                if (lud.startsWith('http://') || lud.startsWith('https://')) {
+                    try {
+                        console.log('try urlDebug %s', urlDebug);
+                        if (!lud.endsWith('/')) lud += '/';
+                        await fetch(lud + 'hello');
+                        url = urlDebug;
+                        console.log('urlDebug %s works ok', urlDebug);
+                    }
+                    catch (e) {
+                        console.log('url %s not working', urlDebug);
+                    }
+                }
+            }
             let apiUI = new EntitiesUI(url, ws, api, access, defaultMapper, mapper);
             this.apiUIs.push(apiUI);
             await apiUI.loadEntities();

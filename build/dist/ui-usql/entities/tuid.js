@@ -118,9 +118,9 @@ export class Tuid extends Entity {
                 let { name, tuid } = f;
                 if (tuid === undefined)
                     continue;
-                let t = this.entities.tuid(name);
+                let t = this.entities.tuid(tuid);
                 if (t === undefined)
-                    debugger;
+                    continue;
                 t.useId(val[name]);
             }
         }

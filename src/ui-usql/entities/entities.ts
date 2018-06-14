@@ -178,6 +178,11 @@ export class Entities {
                     this.historyArr.push(this.histories[name] = new History(this, api, name, id));
                 }
                 break;
+            case 'sheet':
+                let sheet = this.sheets[name];
+                if (sheet === undefined) {
+                    this.sheetArr.push(this.sheet[name] = new Sheet(this, api, name, id));
+                }
         }
     }
     private fromObj(api:UsqlApi, name:string, obj:any) {
@@ -214,7 +219,9 @@ export class Entities {
         for (let schema of tuidSchemas) {
             let {tuids, name} = schema;
             let tuid = this.tuids[name];
-            if (tuid === undefined) debugger;
+            if (tuid === undefined) {
+                continue;
+            }
             if (tuid.schema === undefined) tuid.schema = schema;
             this.schemaRefTuids(tuids);
         }
