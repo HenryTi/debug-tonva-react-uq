@@ -38,8 +38,24 @@ export class AppUI {
                 let mapper = this.uiMappers && this.uiMappers[api];
                 if (mapper === null)
                     continue;
-                if (isDebug === true && urlDebug !== undefined)
-                    url = urlDebug;
+                if (isDebug === true && urlDebug !== undefined) {
+                    let lud = urlDebug.toLowerCase();
+                    if (lud.startsWith('http://') || lud.startsWith('https://')) {
+                        try {
+                            console.log('try urlDebug %s', urlDebug);
+                            if (!lud.endsWith('/'))
+                                lud += '/';
+                            let resp = yield fetch(lud + 'hello');
+                            let text = yield resp.text();
+                            console.log('respond from %s: %s', urlDebug, text);
+                            url = urlDebug;
+                            console.log('urlDebug %s works ok', urlDebug);
+                        }
+                        catch (e) {
+                            console.log('url %s not working', urlDebug);
+                        }
+                    }
+                }
                 let apiUI = new EntitiesUI(url, ws, api, access, defaultMapper, mapper);
                 this.apiUIs.push(apiUI);
                 yield apiUI.loadEntities();
