@@ -88,14 +88,14 @@ export class UsqlApi {
             });
         });
     }
-    tuidSlaveSave(name, slave, params) {
+    tuidBindSlaveSave(name, slave, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.api.post('tuid-slave/' + name + '/' + slave, params);
+            return yield this.api.post('tuid-bindSlave/' + name + '/' + slave, params);
         });
     }
-    tuidSlaves(name, slave, masterId, order, pageSize) {
+    tuidBindSlaves(name, slave, masterId, order, pageSize) {
         return __awaiter(this, void 0, void 0, function* () {
-            let ret = yield this.api.get('tuid-slaves/' + name, {
+            let ret = yield this.api.get('tuid-bindSlaves/' + name, {
                 slave: slave,
                 masterId: masterId,
                 pageStart: order,

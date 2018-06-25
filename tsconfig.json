@@ -3,6 +3,8 @@
     "outDir": "build/dist",
     "module": "esnext",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "target": "es6",
     "lib": ["es2016", "dom"],
     "sourceMap": true,

@@ -70,12 +70,12 @@ export class UsqlApi {
         });
     }
 
-    async tuidSlaveSave(name:string, slave, params):Promise<any> {
-        return await this.api.post('tuid-slave/' + name + '/' + slave, params);
+    async tuidBindSlaveSave(name:string, slave, params):Promise<any> {
+        return await this.api.post('tuid-bindSlave/' + name + '/' + slave, params);
     }
 
-    async tuidSlaves(name:string, slave:string, masterId:number, order:number, pageSize:number) {
-        let ret = await this.api.get('tuid-slaves/' + name, {
+    async tuidBindSlaves(name:string, slave:string, masterId:number, order:number, pageSize:number) {
+        let ret = await this.api.get('tuid-bindSlaves/' + name, {
             slave: slave,
             masterId: masterId,
             pageStart: order,

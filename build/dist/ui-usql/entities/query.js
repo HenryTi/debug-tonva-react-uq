@@ -82,7 +82,7 @@ export class Query extends Entity {
         return __awaiter(this, void 0, void 0, function* () {
             let res = yield this.api.queryPage(this.queryApiName, this.name, pageStart, pageSize + 1, params);
             let data = yield this.unpackReturns(res);
-            return data;
+            return data.$page; // as any[];
         });
     }
     query(params) {
