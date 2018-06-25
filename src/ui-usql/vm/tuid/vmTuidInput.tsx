@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { Tuid } from '../../entities';
 import { ViewModel } from '../viewModel';
-import { TypeTuidContent } from './tuidContent';
+import { TypeContent } from './tuidContent';
 import { nav } from 'tonva-tools';
 import { VmTuidSelect } from './vmTuidSelect';
 import { VmApi } from '../vmApi';
 import { VmFormRowTuidInput } from './vmFormRowTuidInput';
 
-export type TypeVmTuidInput = new (vmApi:VmApi, tuid: Tuid, vmFormRowTuidInput: VmFormRowTuidInput, tuidContent: TypeTuidContent) => VmTuidInput;
+export type TypeVmTuidInput = new (vmApi:VmApi, tuid: Tuid, vmFormRowTuidInput: VmFormRowTuidInput, tuidContent: TypeContent) => VmTuidInput;
 
 export class VmTuidInput extends ViewModel {
     protected vmApi:VmApi;
     protected tuid: Tuid;
-    protected tuidContent: TypeTuidContent;
+    protected tuidContent: TypeContent;
     vmFormRowTuidInput: VmFormRowTuidInput;
 
-    constructor(vmApi:VmApi, tuid: Tuid, vmFormRowTuidInput: VmFormRowTuidInput, tuidContent: TypeTuidContent) {
+    constructor(vmApi:VmApi, tuid: Tuid, vmFormRowTuidInput: VmFormRowTuidInput, tuidContent: TypeContent) {
         super();
         this.tuid = tuid;
         this.tuidContent = tuidContent;

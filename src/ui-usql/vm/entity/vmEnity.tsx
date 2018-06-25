@@ -7,7 +7,7 @@ import { VmApi, VmEntityFormRowBuilder } from '../vmApi';
 import { VmForm, VmFormRow } from '../vmForm';
 import { Field } from '../field';
 import { FormRowBuilder } from '../vmForm/rowBuilder';
-import { VmTuidInput, TypeTuidContent, TypeVmTuidInput } from '../tuid';
+import { VmTuidInput, TypeContent, TypeVmTuidInput } from '../tuid';
 
 export interface FieldFace {
     label?: string;
@@ -105,7 +105,7 @@ export abstract class VmEntity extends ViewModel {
         return this.vmApi.newVmTuidInput(field, tuid);
     }
 
-    newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+    newTuidContent(field:Field, tuid:Tuid): TypeContent {
         return this.vmApi.newTuidContent(field, tuid);
     }
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-export interface TuidContentProps {
+export interface ContentProps {
     values: any
 }
-export type TypeTuidContent = new (props:TuidContentProps) => React.Component<TuidContentProps>;
+export type TypeContent = new (props:ContentProps) => React.Component<ContentProps>;
 

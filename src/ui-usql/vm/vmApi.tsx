@@ -9,7 +9,7 @@ import { VmApp } from './vmApp';
 import { VmForm, VmFormRow } from './vmForm';
 import { Field } from './field';
 import { FormRowBuilder } from './vmForm/rowBuilder';
-import { VmFormRowTuidInput, VmTuidInput, TuidContentProps, TuidContentJSON, TypeTuidContent, TypeVmTuidInput } from './tuid';
+import { VmFormRowTuidInput, VmTuidInput, ContentProps, TuidContentJSON, TypeContent, TypeVmTuidInput } from './tuid';
 
 export class VmApi extends ViewModel {
     private url:string;
@@ -172,7 +172,7 @@ export class VmApi extends ViewModel {
         return VmTuidInput;
     }
 
-    newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+    newTuidContent(field:Field, tuid:Tuid): TypeContent {
         return TuidContentJSON;
     }
 
@@ -238,7 +238,7 @@ export class VmApiFormRowBuilder extends FormRowBuilder {
         return this.vmApi.newVmTuidInput(field, tuid);
     }
 
-    protected newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+    protected newTuidContent(field:Field, tuid:Tuid): TypeContent {
         return this.vmApi.newTuidContent(field, tuid);
     }
 
@@ -263,7 +263,7 @@ export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
         return this.vmEntity.newVmTuidInput(field, tuid);
     }
 
-    protected newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+    protected newTuidContent(field:Field, tuid:Tuid): TypeContent {
         return this.vmEntity.newTuidContent(field, tuid);
     }
 }

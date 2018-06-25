@@ -1,6 +1,6 @@
 import { VmFormFieldRow, VmForm } from "../vmForm";
 import { TypeVmTuidInput, VmTuidInput } from "./vmTuidInput";
-import { TypeTuidContent } from "./tuidContent";
+import { TypeContent } from "./tuidContent";
 import { Field } from "../field";
 import { Tuid } from "../../entities";
 import { VmApi } from "../vmApi";
@@ -10,7 +10,7 @@ export class VmFormRowTuidInput extends VmFormFieldRow {
     constructor(vmApi:VmApi, form:VmForm, field: Field, ui: any, 
         tuid: Tuid,
         typeVmTuidInput:TypeVmTuidInput,
-        typeTuidContent:TypeTuidContent)
+        typeTuidContent:TypeContent)
     {
         super(form, field, ui);
         this.vmTuidInput = new typeVmTuidInput(vmApi, tuid, this, typeTuidContent);
