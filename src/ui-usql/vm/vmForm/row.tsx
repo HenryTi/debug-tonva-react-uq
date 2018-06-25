@@ -60,8 +60,8 @@ export abstract class VmFormFieldRow extends VmFormRow {
         return this.renderInput();
     }
 
-    protected getValue() {return this.form.getValue(this.field.name)}
-    protected setValue(value:any) { this.form.setValue(this.field.name, value); }
+    getValue() {return this.form.getValue(this.field.name)}
+    setValue(value:any) { this.form.setValue(this.field.name, value); }
     protected parse(text:string):any {return text}
 }
 

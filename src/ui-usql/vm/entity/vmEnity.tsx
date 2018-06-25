@@ -3,12 +3,11 @@ import { observable } from 'mobx';
 import { Entity, Tuid } from '../../entities';
 import { ViewModel } from '../viewModel';
 import { FA } from 'tonva-react-form';
-import { VmApi, VmApiFormRowBuilder } from '../vmApi';
+import { VmApi, VmEntityFormRowBuilder } from '../vmApi';
 import { VmForm, VmFormRow } from '../vmForm';
 import { Field } from '../field';
 import { FormRowBuilder } from '../vmForm/rowBuilder';
-import { ObservableValue } from 'mobx/lib/types/observablevalue';
-import { VmTuidInput, VmTuidContent } from '../tuid';
+import { VmTuidInput, TypeTuidContent, TypeVmTuidInput } from '../tuid';
 
 export interface FieldFace {
     label?: string;
@@ -102,16 +101,16 @@ export abstract class VmEntity extends ViewModel {
         return ret;
     }
 
-    protected newVmTuidInput(field:Field): VmTuidInput {
-        return this.vmApi.newVmTuidInput(field);
+    newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return this.vmApi.newVmTuidInput(field, tuid);
     }
 
-    protected newVmTuidContent(field:Field): VmTuidContent {
-        return this.vmApi.newVmTuidContent(field);
+    newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+        return this.vmApi.newTuidContent(field, tuid);
     }
 
     protected newFormRowBuilder(): FormRowBuilder {
-        return this.vmApi.newFormRowBuilder();
+        return new VmEntityFormRowBuilder(this.vmApi, this);
     }
 
     get VmForm(): new (values:any, fields: Field[], fieldUIs?:any[], className?:string, rowBuilder?: FormRowBuilder) => VmForm {
@@ -125,30 +124,4 @@ export abstract class VmEntity extends ViewModel {
 
 export function vmLinkIcon(cls:string, faName:string) {
     return <FA className={cls} size="lg" name={faName} fixWidth={true} />;
-}
-
-
-export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
-    protected vmEntity: VmEntity;
-    constructor(vmApi: VmApi, vmEntity: VmEntity) {
-        super(vmApi);
-        this.vmEntity = vmEntity;
-    }
-
-    buildRow(vmForm:VmForm, field: Field, ui?: any): VmFormRow {
-        let ret: VmFormRow;
-        switch (field.type) {
-            case 'bigint':
-                ret = this.buildTuidInput(vmForm, field, ui);
-                if (ret !== undefined) return ret;
-                break;
-        }
-        return super.buildRow(vmForm, field, ui);
-    }
-
-    protected buildTuidInput(vmForm: VmForm, field: Field, ui: any): VmFormRow {
-        let tuidName = field.tuid;
-        if (tuidName === undefined) return;
-        return new VmFormRowTuidInput(vmForm, field, ui, this.vmApi, tuidName);
-    }
 }

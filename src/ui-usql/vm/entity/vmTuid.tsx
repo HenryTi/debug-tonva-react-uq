@@ -20,7 +20,7 @@ export class VmTuid extends VmEntity {
     }
     static get vmRegs() {return vmRegs}
 
-    protected entity: Tuid;
+    entity: Tuid;
 
     get icon() {return vmLinkIcon('text-info', 'list-alt')}
     renderView() {

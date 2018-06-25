@@ -9,7 +9,7 @@ import { VmApp } from './vmApp';
 import { VmForm, VmFormRow } from './vmForm';
 import { Field } from './field';
 import { FormRowBuilder } from './vmForm/rowBuilder';
-import { VmFormRowTuidInput, VmTuidInput, VmTuidContent } from './tuid';
+import { VmFormRowTuidInput, VmTuidInput, TuidContentProps, TuidContentJSON, TypeTuidContent, TypeVmTuidInput } from './tuid';
 
 export class VmApi extends ViewModel {
     private url:string;
@@ -168,12 +168,12 @@ export class VmApi extends ViewModel {
         vmLink.onClick();
     }
 
-    newVmTuidInput(field:Field): VmTuidInput {
-
+    newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return VmTuidInput;
     }
 
-    newVmTuidContent(field:Field): VmTuidContent {
-        
+    newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+        return TuidContentJSON;
     }
 
     newFormRowBuilder(): FormRowBuilder {
@@ -234,9 +234,36 @@ export class VmApiFormRowBuilder extends FormRowBuilder {
         return super.buildRow(vmForm, field, ui);
     }
 
+    protected newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return this.vmApi.newVmTuidInput(field, tuid);
+    }
+
+    protected newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+        return this.vmApi.newTuidContent(field, tuid);
+    }
+
     protected buildTuidInput(vmForm: VmForm, field: Field, ui: any): VmFormRow {
         let tuidName = field.tuid;
         if (tuidName === undefined) return;
-        return new VmFormRowTuidInput(vmForm, field, ui, this.vmApi, tuidName);
+        let tuid = this.vmApi.getTuid(tuidName);
+        return new VmFormRowTuidInput(this.vmApi, vmForm, field, ui, tuid, 
+            this.newVmTuidInput(field, tuid),
+            this.newTuidContent(field, tuid));
+    }
+}
+
+export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
+    protected vmEntity: VmEntity;
+    constructor(vmApi: VmApi, vmEntity: VmEntity) {
+        super(vmApi);
+        this.vmEntity = vmEntity;
+    }
+
+    protected newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return this.vmEntity.newVmTuidInput(field, tuid);
+    }
+
+    protected newTuidContent(field:Field, tuid:Tuid): TypeTuidContent {
+        return this.vmEntity.newTuidContent(field, tuid);
     }
 }
