@@ -19,6 +19,7 @@ const appUI = new AppUI(tonvaApp, {
 export interface UsqlHomeProps {
     appName: string;
     caption?: string;
+    ui?: any;
     uiMappers?:{[api:string]: EntitiesMapper};
 }
 
@@ -30,12 +31,12 @@ export class UsqlHome extends React.Component<UsqlHomeProps> {
 
     constructor(props) {
         super(props);
-        let {appName, caption, uiMappers} = this.props;
+        let {appName, caption, ui, uiMappers} = this.props;
         this.appUI = new AppUI(appName, caption,  uiMappers);
         this.state = {
             uiLoaded: false
         }
-        this.vmApp = new VmApp(appName);
+        this.vmApp = new VmApp(appName, ui);
     }
     async componentDidMount() {
         //await this.appUI.load();

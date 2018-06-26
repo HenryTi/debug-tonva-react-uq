@@ -2,7 +2,10 @@ import * as React from 'react';
 import { nav } from 'tonva-tools';
 import { Entity, Tuid } from '../../entities';
 import { ViewModel } from '../viewModel';
-import { VmEntity, VmTuid, VmAction, VmQuery, VmSheet, VmBook } from '../entity';
+import { VmEntity, VmSheet, VmBook } from '../entity';
+import { VmAction } from '../action';
+import { VmTuid } from '../tuid';
+import { VmQuery } from '../query';
 
 export abstract class VmLink extends ViewModel {
     abstract onClick();

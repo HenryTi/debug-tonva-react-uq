@@ -1,26 +1,33 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { ViewModel } from './viewModel';
 import { Entities, Tuid, Action, Sheet, Query, Book, Entity } from '../entities';
 import { Api } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { VmTuidLink, VmLink, VmActionLink, VmSheetLink, VmQueryLink } from './link';
-import { VmTuid, VmAction, VmSheet, VmQuery, VmBook, VmEntity } from './entity';
+import { VmSheet, VmBook, VmEntity } from './entity';
+import { VmAction } from './action';
+import { VmQuery } from './query';
+import { VmTuid, PickerConfig } from './tuid';
 import { VmApp } from './vmApp';
-import { VmForm, VmFormRow } from './vmForm';
+import { VmForm, VmFormRow, TypeVmForm } from './vmForm';
 import { Field } from './field';
 import { FormRowBuilder } from './vmForm/rowBuilder';
 import { VmFormRowTuidInput, VmTuidInput, ContentProps, TuidContentJSON, TypeContent, TypeVmTuidInput } from './tuid';
+import { VmTuidPicker } from './tuid/vmTuidPicker';
 
 export class VmApi extends ViewModel {
     private url:string;
     private access:string;
+    private ui:any;
     private entities:Entities;
 
-    constructor(vmApp:VmApp, url:string, api:string, access:string) {
+    constructor(vmApp:VmApp, url:string, api:string, access:string, ui:any) {
         super();
         this.vmApp = vmApp;
         this.url = url;
         this.api = api;
+        this.ui = ui;
         this.access = access;
 
         let token = undefined;
@@ -54,6 +61,7 @@ export class VmApi extends ViewModel {
     async load() {
         await this.entities.loadEntities();
         // 检查注册的entity viewModels
+        /*
         let arr = [
             {regs: VmTuid.vmRegs, type: 'tuid'},
             {regs: VmSheet.vmRegs, type: 'sheet'},
@@ -69,6 +77,15 @@ export class VmApi extends ViewModel {
                     console.warn(type + ':' + '\'' + i + '\' is not usql entity, which register class ' + vm.name);
                 }
             }
+        }*/
+
+        for (let i in this.ui) {
+            let g = this.ui[i];
+            for (let j in g) {
+                if (this.entities[i](j) === undefined) {
+                    console.warn(i + ':' + '\'' + j + '\' is not usql entity');
+                }
+            }
         }
     }
 
@@ -77,6 +94,17 @@ export class VmApi extends ViewModel {
     protected isSysVisible = false;
     protected isVisible(entity: Entity):boolean {
         return entity.sys !== true || this.isSysVisible;
+    }
+
+    private getUI(type:string, name:string):any {
+        if (this.ui === undefined) return;
+        let t = this.ui[type];
+        if (t === undefined) return;
+        return t[name];
+    }
+
+    getTuidUI(name:string): any {
+        return this.getUI('tuid', name);
     }
 
     protected get tuidTypeCaption() { return '数据字典' }
@@ -97,7 +125,10 @@ export class VmApi extends ViewModel {
         */
     }
     newVmTuid(tuid:Tuid):VmTuid {
-        return new VmTuid(this, tuid);
+        let ui = this.getUI('tuid', tuid.name);
+        let vm = ui && ui.vm;
+        if (vm === undefined) vm = VmTuid;
+        return new vm(this, tuid);
         // 如果需要自己重载，继承类里面可以这么写：
         /*        
         switch (tuid.name) {
@@ -113,7 +144,10 @@ export class VmApi extends ViewModel {
         return new VmSheetLink(vmSheet);
     }
     newVmSheet(sheet:Sheet):VmSheet {
-        return new VmSheet(this, sheet);
+        let ui = this.getUI('sheet', sheet.name);
+        let vm = ui && ui.vm;
+        if (vm === undefined) vm = VmSheet;
+        return new vm(this, sheet);
     }
     protected get vmSheetList() { 
         return this.entities.sheetArr.filter(v => this.isVisible(v)).map(v => {
@@ -126,7 +160,10 @@ export class VmApi extends ViewModel {
         return new VmActionLink(vmAction);
     }
     newVmAction(action:Action):VmAction {
-        return new VmAction(this, action);
+        let ui = this.getUI('action', action.name);
+        let vm = ui && ui.vm;
+        if (vm === undefined) vm = VmAction;
+        return new vm(this, action);
     }
     protected get vmActionList() { 
         return this.entities.actionArr.filter(v => this.isVisible(v)).map(v => {
@@ -139,7 +176,10 @@ export class VmApi extends ViewModel {
         return new VmQueryLink(vmQuery);
     }
     newVmQuery(query:Query):VmQuery {
-        return VmQuery.create(query.name, this, query);
+        let ui = this.getUI('query', query.name);
+        let vm = ui && ui.vm;
+        if (vm === undefined) vm = VmQuery;
+        return new vm(this, query);
     }
     protected get vmQueryList() { 
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
@@ -168,19 +208,35 @@ export class VmApi extends ViewModel {
         vmLink.onClick();
     }
 
-    newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
-        return VmTuidInput;
+    typeVmTuidInput(tuid:Tuid): TypeVmTuidInput {
+        let ui = this.getUI('tuid', tuid.name);
+        let typeVmTuidInput = ui && ui.input;
+        if (typeVmTuidInput === undefined) typeVmTuidInput = VmTuidInput;
+        return typeVmTuidInput;
     }
 
-    newTuidContent(field:Field, tuid:Tuid): TypeContent {
-        return TuidContentJSON;
+    pickerConfig(tuid:Tuid): PickerConfig {
+        let ui = this.getUI('tuid', tuid.name);
+        let pickerConfig:PickerConfig = ui && ui.pickerConfig;
+        let pc:PickerConfig = {
+            picker: VmTuidPicker,
+            row: TuidContentJSON,
+        };
+        return _.merge(pc, pickerConfig);
+    }
+
+    typeTuidContent(tuid:Tuid): TypeContent {
+        let ui = this.getUI('tuid', tuid.name);
+        let typeTuidContent = ui && ui.content;
+        if (typeTuidContent === undefined) typeTuidContent = TuidContentJSON;
+        return typeTuidContent;
     }
 
     newFormRowBuilder(): FormRowBuilder {
         return new VmApiFormRowBuilder(this);
     }
 
-    get VmForm(): new (values:any, fields: Field[], fieldUIs?:any[], className?:string, rowBuilder?: FormRowBuilder) => VmForm {
+    get VmForm(): TypeVmForm {
         return VmForm;
     }
 
@@ -234,12 +290,16 @@ export class VmApiFormRowBuilder extends FormRowBuilder {
         return super.buildRow(vmForm, field, ui);
     }
 
-    protected newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
-        return this.vmApi.newVmTuidInput(field, tuid);
+    protected typeVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return this.vmApi.typeVmTuidInput(tuid);
     }
 
-    protected newTuidContent(field:Field, tuid:Tuid): TypeContent {
-        return this.vmApi.newTuidContent(field, tuid);
+    protected typeTuidContent(field:Field, tuid:Tuid): TypeContent {
+        return this.vmApi.typeTuidContent(tuid);
+    }
+
+    protected pickerConfig(field:Field, tuid:Tuid): PickerConfig {
+        return this.vmApi.pickerConfig(tuid);
     }
 
     protected buildTuidInput(vmForm: VmForm, field: Field, ui: any): VmFormRow {
@@ -247,8 +307,9 @@ export class VmApiFormRowBuilder extends FormRowBuilder {
         if (tuidName === undefined) return;
         let tuid = this.vmApi.getTuid(tuidName);
         return new VmFormRowTuidInput(this.vmApi, vmForm, field, ui, tuid, 
-            this.newVmTuidInput(field, tuid),
-            this.newTuidContent(field, tuid));
+            this.typeVmTuidInput(field, tuid),
+            this.typeTuidContent(field, tuid),
+            this.pickerConfig(field, tuid));
     }
 }
 
@@ -259,11 +320,15 @@ export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
         this.vmEntity = vmEntity;
     }
 
-    protected newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
-        return this.vmEntity.newVmTuidInput(field, tuid);
+    protected typeVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return this.vmEntity.typeVmTuidInput(field, tuid);
     }
 
-    protected newTuidContent(field:Field, tuid:Tuid): TypeContent {
-        return this.vmEntity.newTuidContent(field, tuid);
+    protected typeTuidContent(field:Field, tuid:Tuid): TypeContent {
+        return this.vmEntity.typeTuidContent(field, tuid);
+    }
+
+    protected pickerConfig(field:Field, tuid:Tuid): PickerConfig {
+        return this.vmEntity.pickerConfig(field, tuid);
     }
 }

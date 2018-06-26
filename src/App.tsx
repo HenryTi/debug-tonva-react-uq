@@ -8,6 +8,25 @@ import {UsqlHome, EntitiesMapper} from './ui-usql';
 //import AppHome from './appHome';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
+import ui from './ui';
+import { isArray } from 'util';
+
+(function converUIKeyToLowercase(obj: any) {
+    for (let i in obj) {
+        let v = obj[i];
+        obj[i.toLowerCase()] = v;
+        if (typeof v === 'object') {
+          if (isArray(v) === true) {
+              for (let i of (v as any[])) {
+                  converUIKeyToLowercase(i);
+              }
+          }
+          else {
+              converUIKeyToLowercase(v);
+          }
+      }
+  }
+})(ui);
 
 const tStyle = {margin: '2em auto', borderCollapse:'collapse'};
 const rowStyle = {borderBottom: '1px solid gray'};
@@ -41,7 +60,7 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 
 class App extends React.Component {
   render() {
-    return (<NavView view={<UsqlHome appName={tonvaApp} uiMappers={uiMappers} />} />);
+    return (<NavView view={<UsqlHome appName={tonvaApp} ui={ui} uiMappers={uiMappers} />} />);
     /*
     return (
       <div className="App">

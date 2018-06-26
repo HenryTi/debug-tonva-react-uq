@@ -74,8 +74,9 @@ export class MainPage extends React.Component {
     }
     entityClick(ui) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield ui.entity.loadSchema();
-            nav.push(React.createElement(ui.mainPage, { ui: ui }));
+            yield ui.showMain();
+            //await ui.entity.loadSchema();
+            //nav.push(<ui.mainPage ui={ui} />);
         });
     }
     renderList(entitySet, caption) {

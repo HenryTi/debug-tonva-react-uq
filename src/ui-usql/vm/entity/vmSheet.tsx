@@ -4,23 +4,25 @@ import { VmEntity, vmLinkIcon } from './vmEnity';
 import { Page } from 'tonva-tools';
 import { VmApi } from '../vmApi';
 
+/*
 const vmRegs:{[name:string]: any} = {};
 
 export function regVmSheet(name:string) {
     return (target: any) => {
-        vmRegs[name] = target;
+        vmRegs[name.toLowerCase()] = target;
         return target;
     }
 }
-
+*/
 export class VmSheet extends VmEntity {
-    static create(name:string, vmApi:VmApi, entity:Entity) {
-        let vq = vmRegs[name];
-        return vq !== undefined? new vq(vmApi, entity) : new VmSheet(vmApi, entity);
+/*
+    static create(vmApi:VmApi, sheet:Sheet) {
+        let vq = vmRegs[sheet.name];
+        return vq !== undefined? new vq(vmApi, sheet) : new VmSheet(vmApi, sheet);
     }
     static get vmRegs() {return vmRegs}
-
-    protected entity: Sheet;
+*/
+    entity: Sheet;
 
     get icon() {return vmLinkIcon('text-primary', 'wpforms')}
     renderView() {

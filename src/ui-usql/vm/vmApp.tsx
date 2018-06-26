@@ -11,9 +11,10 @@ export const entitiesCollection: {[api:string]: Entities} = {};
 export class VmApp extends ViewModel {
     private appOwner:string;
     private appName:string;
+    private ui:any;
     private vmApiCollection: {[api:string]: VmApi} = {};
 
-    constructor(tonvaApp:string) {
+    constructor(tonvaApp:string, ui:any) {
         super();
         let parts = tonvaApp.split('/');
         if (parts.length !== 2) {
@@ -21,6 +22,7 @@ export class VmApp extends ViewModel {
         }
         this.appOwner = parts[0];
         this.appName = parts[1];
+        this.ui = ui;
     }
     async load(): Promise<void> {
         let isDebug = process.env.NODE_ENV==='development';
@@ -45,15 +47,15 @@ export class VmApp extends ViewModel {
                     }
                 }
             }
-            let vmApi = this.newVmApi(url, api, access);
+            let vmApi = this.newVmApi(url, api, access, this.ui && this.ui[api]);
             await vmApi.load();
             this.vmApiCollection[api] = vmApi;
         }
     }
 
-    protected newVmApi(url:string, api:string, access:string) {
+    protected newVmApi(url:string, api:string, access:string, ui:any) {
         // 这里是可以重载的，写自己的VmApi
-        return new VmApi(this, url, api, access);
+        return new VmApi(this, url, api, access, ui);
     }
 
     caption = 'View Model 版的 Usql App';

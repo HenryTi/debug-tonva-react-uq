@@ -28,6 +28,8 @@ export abstract class VmFormRow extends ViewModel {
         </div>;
     }
 
+    reset() {}
+
     renderView() {
         return <div key={this.key} className='form-group row'>
             <label className='col-sm-2 col-form-label'>
@@ -35,6 +37,24 @@ export abstract class VmFormRow extends ViewModel {
             </label>
             {this.renderControl()}
         </div>;
+    }
+}
+
+export class VmFormSubmitButtonRow extends VmFormRow {
+    protected submitButton:JSX.Element;
+    constructor(form:VmForm, submitButton:JSX.Element) {
+        super(form, undefined, undefined);
+        this.submitButton = submitButton;
+    }
+
+    protected renderContent() {
+        return <div className="form-control-plaintext">
+            {this.submitButton}
+        </div>
+    }
+
+    renderView() {
+        return this.submitButton && super.renderView();
     }
 }
 
@@ -96,6 +116,11 @@ export abstract class VmFormFieldRowInput extends VmFormFieldRow {
             {this.renderInput()}
             {this.renderError()}
         </>
+    }
+
+    reset() {
+        this.input.value = '';
+        this.setValue(null);
     }
 
     protected ref(input:HTMLInputElement) {

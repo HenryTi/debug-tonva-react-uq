@@ -4,33 +4,50 @@ import { Entity, Tuid } from '../../entities';
 import { ViewModel } from '../viewModel';
 import { FA } from 'tonva-react-form';
 import { VmApi, VmEntityFormRowBuilder } from '../vmApi';
-import { VmForm, VmFormRow } from '../vmForm';
+import { VmForm, VmFormRow, TypeVmForm } from '../vmForm';
 import { Field } from '../field';
 import { FormRowBuilder } from '../vmForm/rowBuilder';
-import { VmTuidInput, TypeContent, TypeVmTuidInput } from '../tuid';
+import { VmTuidInput, TypeContent, TypeVmTuidInput, PickerConfig } from '../tuid';
+import { nav } from '../../../../node_modules/tonva-tools';
 
-export interface FieldFace {
+export interface FieldUI {
     label?: string;
     notes?: string;
     placeholder?: string;
     input?: any; //TuidInput;
     //mapper?: FieldMapper;
 }
-export interface FieldFaces {
-    [name:string]: FieldFace;
+export interface FieldUIs {
+    [name:string]: FieldUI;
 }
 
 export abstract class VmEntity extends ViewModel {
     protected entity: Entity;
     protected vmApi:VmApi;
+    protected ui: any;
 
-    constructor(vmApi:VmApi, entity: Entity) {
+    constructor(vmApi:VmApi, entity: Entity, ui?:any) {
         super();
         this.vmApi = vmApi;
         this.entity = entity;
+        this.ui = ui;
+        this.initBind();
+    }
+
+    // init的时候，binding this
+    protected initBind() {
+        this.onSubmitClick = this.onSubmitClick.bind(this);
+    }
+
+    protected async nav<T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity) => T) {
+        let vm = new vmType(this.vmApi, this.entity);
+        await vm.load();
+        nav.push(vm.renderView());
     }
 
     values: any;
+    returns: any;
+    protected vmForm: VmForm;
     get icon() {return vmLinkIcon('text-info', 'circle-thin')}
     get caption() { return this.entity.name; }
 
@@ -43,14 +60,20 @@ export abstract class VmEntity extends ViewModel {
         this.values = observable(v);
     }
 
-    protected fieldFaces: FieldFaces;
+    protected resetValues() {
+        for (let i in this.values) {
+            this.values[i] = null;
+        }
+    }
+
+    protected fieldFaces: FieldUIs;
     protected mapFields(schemaFields: any[]): any[] {
         if (schemaFields === undefined) return;
         let nfc = this.fieldFaces;
         return schemaFields.map(sf => this.tfmMap(sf, nfc !== undefined && nfc[sf.name]));
     }
 
-    protected tfmMap(sf: any, ff: FieldFace) {
+    protected tfmMap(sf: any, ff: FieldUI) {
         let ret: any;
         let { type, tuid, url } = sf;
         //let tuidInput: TuidInput = {};
@@ -101,24 +124,42 @@ export abstract class VmEntity extends ViewModel {
         return ret;
     }
 
-    newVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
-        return this.vmApi.newVmTuidInput(field, tuid);
+    typeVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return this.vmApi.typeVmTuidInput(tuid);
     }
 
-    newTuidContent(field:Field, tuid:Tuid): TypeContent {
-        return this.vmApi.newTuidContent(field, tuid);
+    typeTuidContent(field:Field, tuid:Tuid): TypeContent {
+        return this.vmApi.typeTuidContent(tuid);
+    }
+
+    pickerConfig(field:Field, tuid:Tuid): PickerConfig {
+        return this.vmApi.pickerConfig(tuid);
     }
 
     protected newFormRowBuilder(): FormRowBuilder {
         return new VmEntityFormRowBuilder(this.vmApi, this);
     }
 
-    get VmForm(): new (values:any, fields: Field[], fieldUIs?:any[], className?:string, rowBuilder?: FormRowBuilder) => VmForm {
+    get VmForm(): TypeVmForm {
         return this.vmApi.VmForm;
     }
 
+    async submit() {}
+
+    async onSubmitClick() {
+        await this.submit();
+    }
+
+    newSubmitButton():JSX.Element {
+        return <button className="btn btn-primary"
+            type="button"
+            onClick={this.onSubmitClick}>
+            提交
+        </button>;
+    }
+
     newVmForm(values, fields:Field[], fieldUIs:any[], className:string):VmForm {
-        return new this.VmForm(values, fields, fieldUIs, className, this.newFormRowBuilder());
+        return this.vmForm = new this.VmForm(values, fields, this.newSubmitButton(), fieldUIs, className, this.newFormRowBuilder());
     }
 }
 

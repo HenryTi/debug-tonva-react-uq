@@ -4,16 +4,19 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
+    "@types/react": "^16.4.1",
+    "@types/react-dom": "^16.0.6",
     "bootstrap": "^4.1.1",
     "classnames": "^2.2.5",
     "lodash": "^4.17.4",
     "mobx": "^4.1.1",
     "mobx-react": "^5.0.0",
     "popper.js": "^1.12.9",
-    "react": "^16.4.0",
-    "react-dom": "^16.4.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
     "react-scripts-ts": "^2.14.0",
-    "reactstrap": "^5.0.0-alpha.4"
+    "reactstrap": "^5.0.0",
+    "typescript": "^2.9.2"
   },
   "scripts": {
     "start": "set PORT=3002 && react-scripts-ts start",
@@ -26,9 +29,9 @@
     "@types/jest": "^22.2.0",
     "@types/lodash": "^4.14.97",
     "@types/node": "^9.4.0",
-    "@types/react": "^16.3.14",
-    "@types/react-dom": "^16.0.5",
-    "@types/reactstrap": "^5.0.12",
+    "@types/react": "^16.4.1",
+    "@types/react-dom": "^16.0.6",
+    "@types/reactstrap": "^5.0.27",
     "typescript": "^2.9.2"
   }
 }

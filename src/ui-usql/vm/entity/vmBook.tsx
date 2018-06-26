@@ -4,23 +4,26 @@ import { VmEntity, vmLinkIcon } from './vmEnity';
 import { Page } from 'tonva-tools';
 import { VmApi } from '../vmApi';
 
-const vmRegs:{[name:string]: any} = {};
+/*
+type TypeVmBook = new (vmApi:VmApi, book:Book) => VmBook;
+const vmRegs:{[name:string]: TypeVmBook} = {};
 
 export function regVmBook(name:string) {
-    return (target: any) => {
-        vmRegs[name] = target;
+    return (target: TypeVmBook) => {
+        vmRegs[name.toLowerCase()] = target;
         return target;
     }
 }
-
+*/
 export class VmBook extends VmEntity {
-    static create(name:string, vmApi:VmApi, entity:Entity) {
-        let vq = vmRegs[name];
-        return vq !== undefined? new vq(vmApi, entity) : new VmBook(vmApi, entity);
+/*
+    static create(vmApi:VmApi, book:Book) {
+        let vq = vmRegs[book.name];
+        return vq !== undefined? new vq(vmApi, book) : new VmBook(vmApi, book);
     }
     static get vmRegs() {return vmRegs}
-
-    protected entity: Book;
+*/
+    entity: Book;
 
     get icon() {return vmLinkIcon('text-muted', 'book')}
     renderView() {
