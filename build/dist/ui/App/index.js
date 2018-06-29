@@ -1,5 +1,5 @@
-import zh from './zh';
+import res from './res';
 export default {
-    zh: zh
+    res: res,
 };
 //# sourceMappingURL=index.js.map

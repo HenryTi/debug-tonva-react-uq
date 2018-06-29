@@ -1,20 +1,23 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ViewModel } from './viewModel';
-import { Entities, Tuid, Action, Sheet, Query, Book, Entity } from '../entities';
 import { Api } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
-import { VmTuidLink, VmLink, VmActionLink, VmSheetLink, VmQueryLink } from './link';
-import { VmSheet, VmBook, VmEntity } from './entity';
-import { VmAction } from './action';
-import { VmQuery } from './query';
-import { VmTuid, PickerConfig } from './tuid';
+import { ViewModel, JSONContent, TypeContent } from './viewModel';
+import { Entities, Tuid, Action, Sheet, Query, Book, Entity } from '../entities';
+import { VmLink, VmEntityLink } from './link';
+import { VmEntity } from './entity';
+import { VmBookMain } from './book';
+import { VmSheetMain } from './sheet';
+import { VmActionMain } from './action';
+import { VmQueryMain } from './query';
+import { VmTuidMain, PickerConfig } from './tuid';
 import { VmApp } from './vmApp';
 import { VmForm, VmFormRow, TypeVmForm } from './vmForm';
 import { Field } from './field';
 import { FormRowBuilder } from './vmForm/rowBuilder';
-import { VmFormRowTuidInput, VmTuidInput, ContentProps, TuidContentJSON, TypeContent, TypeVmTuidInput } from './tuid';
+import { VmFormRowTuidInput, VmTuidInput, TypeVmTuidInput } from './tuid';
 import { VmTuidPicker } from './tuid/vmTuidPicker';
+
 
 export class VmApi extends ViewModel {
     private url:string;
@@ -103,18 +106,14 @@ export class VmApi extends ViewModel {
         return t[name];
     }
 
-    getTuidUI(name:string): any {
-        return this.getUI('tuid', name);
-    }
-
     protected get tuidTypeCaption() { return '数据字典' }
-    protected get vmTuidList() {
+    protected get vmTuidLinks() {
         return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => {
             return this.newVmTuidLink(this.newVmTuid(v))
         });
     }
-    newVmTuidLink(vmTuid:VmTuid) {
-        return new VmTuidLink(vmTuid);
+    newVmTuidLink(vmTuid:VmTuidMain) {
+        return new VmEntityLink<VmTuidMain>(vmTuid);
         // 如果需要自己重载，继承类里面可以这么写：
         /*
         switch (tuid.name) {
@@ -124,10 +123,10 @@ export class VmApi extends ViewModel {
         }
         */
     }
-    newVmTuid(tuid:Tuid):VmTuid {
+    newVmTuid(tuid:Tuid):VmTuidMain {
         let ui = this.getUI('tuid', tuid.name);
-        let vm = ui && ui.vm;
-        if (vm === undefined) vm = VmTuid;
+        let vm = ui && ui.main;
+        if (vm === undefined) vm = VmTuidMain;
         return new vm(this, tuid);
         // 如果需要自己重载，继承类里面可以这么写：
         /*        
@@ -140,61 +139,61 @@ export class VmApi extends ViewModel {
     }
 
     protected get sheetTypeCaption() { return '凭单' }
-    newVmSheetLink(vmSheet:VmSheet) {
-        return new VmSheetLink(vmSheet);
+    newVmSheetLink(vmSheet:VmSheetMain) {
+        return new VmEntityLink<VmSheetMain>(vmSheet);
     }
-    newVmSheet(sheet:Sheet):VmSheet {
+    newVmSheet(sheet:Sheet):VmSheetMain {
         let ui = this.getUI('sheet', sheet.name);
-        let vm = ui && ui.vm;
-        if (vm === undefined) vm = VmSheet;
+        let vm = ui && ui.main;
+        if (vm === undefined) vm = VmSheetMain;
         return new vm(this, sheet);
     }
-    protected get vmSheetList() { 
+    protected get vmSheetLinks() { 
         return this.entities.sheetArr.filter(v => this.isVisible(v)).map(v => {
             return this.newVmSheetLink(this.newVmSheet(v))
         });
     }
 
     get actionTypeCaption() { return '操作' }
-    newVmActionLink(vmAction:VmAction) {
-        return new VmActionLink(vmAction);
+    newVmActionLink(vmAction:VmActionMain) {
+        return new VmEntityLink<VmActionMain>(vmAction);
     }
-    newVmAction(action:Action):VmAction {
+    newVmAction(action:Action):VmActionMain {
         let ui = this.getUI('action', action.name);
-        let vm = ui && ui.vm;
-        if (vm === undefined) vm = VmAction;
+        let vm = ui && ui.main;
+        if (vm === undefined) vm = VmActionMain;
         return new vm(this, action);
     }
-    protected get vmActionList() { 
+    protected get vmActionLinks() { 
         return this.entities.actionArr.filter(v => this.isVisible(v)).map(v => {
             return this.newVmActionLink(this.newVmAction(v))
         });
     }
 
     get queryTypeCaption() { return '查询' }
-    newVmQueryLink(vmQuery:VmQuery) {
-        return new VmQueryLink(vmQuery);
+    newVmQueryLink(vmQuery:VmQueryMain) {
+        return new VmEntityLink<VmQueryMain>(vmQuery);
     }
-    newVmQuery(query:Query):VmQuery {
+    newVmQuery(query:Query):VmQueryMain {
         let ui = this.getUI('query', query.name);
-        let vm = ui && ui.vm;
-        if (vm === undefined) vm = VmQuery;
+        let vm = ui && ui.main;
+        if (vm === undefined) vm = VmQueryMain;
         return new vm(this, query);
     }
-    protected get vmQueryList() { 
+    protected get vmQueryLinks() { 
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
             return this.newVmQueryLink(this.newVmQuery(v))
         });
     }
     
     get bookTypeCaption() { return '帐 - 仅供调试程序使用，普通用户不可见' }
-    newVmBookLink(vmBook:VmBook) {
-        return new VmActionLink(vmBook);
+    newVmBookLink(vmBook:VmBookMain) {
+        return new VmEntityLink<VmBookMain>(vmBook);
     }
-    newVmBook(book:Book):VmBook {
-        return new VmBook(this, book);
+    newVmBook(book:Book):VmBookMain {
+        return new VmBookMain(this, book);
     }
-    protected get vmBookList() { 
+    protected get vmBookLinks() { 
         return this.entities.bookArr.filter(v => this.isVisible(v)).map(v => {
             return this.newVmBookLink(this.newVmBook(v))
         });
@@ -220,7 +219,7 @@ export class VmApi extends ViewModel {
         let pickerConfig:PickerConfig = ui && ui.pickerConfig;
         let pc:PickerConfig = {
             picker: VmTuidPicker,
-            row: TuidContentJSON,
+            row: JSONContent,
         };
         return _.merge(pc, pickerConfig);
     }
@@ -228,7 +227,7 @@ export class VmApi extends ViewModel {
     typeTuidContent(tuid:Tuid): TypeContent {
         let ui = this.getUI('tuid', tuid.name);
         let typeTuidContent = ui && ui.content;
-        if (typeTuidContent === undefined) typeTuidContent = TuidContentJSON;
+        if (typeTuidContent === undefined) typeTuidContent = JSONContent;
         return typeTuidContent;
     }
 
@@ -239,36 +238,66 @@ export class VmApi extends ViewModel {
     get VmForm(): TypeVmForm {
         return VmForm;
     }
-
+    
     renderView(): JSX.Element {
         let linkItem = { render: this.renderLink, onClick: this.linkClick };
+        let lists = [
+            {
+                header: this.tuidTypeCaption,
+                items: this.vmTuidLinks,
+            },
+            {
+                cn: 'my-2',
+                header: this.sheetTypeCaption,
+                items: this.vmSheetLinks
+            },
+            {
+                cn: 'my-2',
+                header: this.actionTypeCaption,
+                items: this.vmActionLinks
+            },
+            {
+                cn: 'my-2',
+                header: this.queryTypeCaption,
+                items: this.vmQueryLinks
+            },
+            {
+                cn: 'mt-2 mb-4',
+                header: this.bookTypeCaption,
+                items: this.vmBookLinks
+            }
+        ];
         return <>
             <div className="px-3 py-1 small">{this.api}</div>
-            <List
-                header={<Muted>{this.tuidTypeCaption}</Muted>}
-                items={this.vmTuidList}
+            {lists.map(({cn, header, items},index) => <List
+                key={index}
+                className={cn}
+                header={<Muted>{header}</Muted>}
+                items={items}
                 item={linkItem} />
-
+            )}
+        </>;
+/*
             <List className='my-2'
                 header={<Muted>{this.sheetTypeCaption}</Muted>}
-                items={this.vmSheetList}
+                items={this.vmSheetLinks}
                 item={linkItem} />
 
             <List className='my-2'
                 header={<Muted>{this.actionTypeCaption}</Muted>}
-                items={this.vmActionList}
+                items={this.vmActionLinks}
                 item={linkItem} />
 
             <List className='my-2'
                 header={<Muted>{this.queryTypeCaption}</Muted>}
-                items={this.vmQueryList}
+                items={this.vmQueryLinks}
                 item={linkItem} />
 
             <List className='mt-2 mb-4'
                 header={<Muted>{this.bookTypeCaption}</Muted>}
-                items={this.vmBookList}
+                items={this.vmBookLinks}
                 item={linkItem} />
-        </>;
+*/
     }
 }
 

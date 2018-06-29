@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { observable } from 'mobx';
-import { Entity, Tuid } from '../../entities';
-import { ViewModel } from '../viewModel';
 import { FA } from 'tonva-react-form';
+import { nav } from 'tonva-tools';
+import { Entity, Tuid } from '../../entities';
+import { ViewModel, TypeContent } from '../viewModel';
 import { VmApi, VmEntityFormRowBuilder } from '../vmApi';
 import { VmForm, VmFormRow, TypeVmForm } from '../vmForm';
 import { Field } from '../field';
 import { FormRowBuilder } from '../vmForm/rowBuilder';
-import { VmTuidInput, TypeContent, TypeVmTuidInput, PickerConfig } from '../tuid';
-import { nav } from '../../../../node_modules/tonva-tools';
+import { VmTuidInput, TypeVmTuidInput, PickerConfig } from '../tuid';
 
 export interface FieldUI {
     label?: string;
@@ -31,15 +31,12 @@ export abstract class VmEntity extends ViewModel {
         this.vmApi = vmApi;
         this.entity = entity;
         this.ui = ui;
-        this.initBind();
+        this.init();
     }
 
-    // init的时候，binding this
-    protected initBind() {
-        this.onSubmitClick = this.onSubmitClick.bind(this);
-    }
+    protected init() {}
 
-    protected async nav<T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity) => T) {
+    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity) => T) => {
         let vm = new vmType(this.vmApi, this.entity);
         await vm.load();
         nav.push(vm.renderView());
@@ -51,13 +48,19 @@ export abstract class VmEntity extends ViewModel {
     get icon() {return vmLinkIcon('text-info', 'circle-thin')}
     get caption() { return this.entity.name; }
 
-    protected buildObservableValues(fields: Field[]) {
+    async load() {
+        await this.entity.loadSchema();
+        this.initValues();
+    }
+    protected initValues() {}
+
+    protected buildObservableValues(fields: Field[]): object {
         let len = fields.length;
         let v: {[p:string]: any} = {};
         for (let i=0; i<len; i++) {
             v[fields[i].name] = null;
         }
-        this.values = observable(v);
+        return observable(v);
     }
 
     protected resetValues() {
@@ -146,23 +149,34 @@ export abstract class VmEntity extends ViewModel {
 
     async submit() {}
 
-    async onSubmitClick() {
+    onSubmitClick = async () => {
         await this.submit();
     }
 
     newSubmitButton():JSX.Element {
-        return <button className="btn btn-primary"
-            type="button"
-            onClick={this.onSubmitClick}>
-            提交
-        </button>;
+        return <SubmitButton onSubmitClick={this.onSubmitClick} />;
     }
 
-    newVmForm(values, fields:Field[], fieldUIs:any[], className:string):VmForm {
-        return this.vmForm = new this.VmForm(values, fields, this.newSubmitButton(), fieldUIs, className, this.newFormRowBuilder());
+    /*
+    newVmForm(fields:Field[], fieldUIs:any[], className:string):VmForm {
+        return new this.VmForm(this.values, fields, this.newSubmitButton(), fieldUIs, className, this.newFormRowBuilder());
     }
+    renderForm = (className) => {
+        let fieldUIs:any[] = undefined;
+        this.vmForm = this.newVmForm(
+            this.entity.schema.fields, fieldUIs, className);
+        return this.vmForm.renderView();
+    }
+    */
+    renderForm = (className) => <div>old VMForm</div>;
 }
 
 export function vmLinkIcon(cls:string, faName:string) {
     return <FA className={cls} size="lg" name={faName} fixWidth={true} />;
 }
+
+const SubmitButton = ({onSubmitClick}) => <button className="btn btn-primary"
+    type="button"
+    onClick={onSubmitClick}>
+        提交
+</button>;

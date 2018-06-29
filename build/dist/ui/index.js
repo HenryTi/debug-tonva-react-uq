@@ -1,6 +1,6 @@
 import App from './App';
 import DevApp_devappApi from './DevApp-devappApi';
-export const ui = {
+export default {
     App: App,
     "DevApp/devappApi": DevApp_devappApi
 };

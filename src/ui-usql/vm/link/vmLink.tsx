@@ -2,50 +2,43 @@ import * as React from 'react';
 import { nav } from 'tonva-tools';
 import { Entity, Tuid } from '../../entities';
 import { ViewModel } from '../viewModel';
-import { VmEntity, VmSheet, VmBook } from '../entity';
-import { VmAction } from '../action';
-import { VmTuid } from '../tuid';
-import { VmQuery } from '../query';
+import { VmEntity } from '../entity';
+import { VmActionMain } from '../action';
+import { VmTuidMain } from '../tuid';
+import { VmQueryMain } from '../query';
+import { VmSheetMain } from '../sheet';
+import { VmBookMain } from '../book';
 
 export abstract class VmLink extends ViewModel {
-    abstract onClick();
+    abstract onClick: () => void;
 }
 
-export abstract class VmEntityLink extends VmLink {
-    protected vmEntity: VmEntity
+export class VmEntityLinkBase<T extends VmEntity> extends VmLink {
+    vmEntity: T
 
-    constructor(vmEntity: VmEntity) {
+    constructor(vmEntity: T, link: TypeLink) {
         super();
         this.vmEntity = vmEntity;
-        this.onClick = this.onClick.bind(this);
+        this.view = link;
     }
 
-    async onClick() {
+    onClick = async () => {
         await this.vmEntity.load();
         nav.push(this.vmEntity.renderView());
     }
+}
 
-    renderView() {
-        return <div className="px-3 py-2  align-items-center">{this.vmEntity.icon} &nbsp; {this.vmEntity.caption}</div>;
+export class VmEntityLink<T extends VmEntity> extends VmEntityLinkBase<T> {
+    constructor(vmEntity: T) {
+        super(vmEntity, Link);
     }
 }
 
-export class VmTuidLink extends VmEntityLink {
-    protected vmEntity: VmTuid;
-}
+export type TypeLink = React.StatelessComponent<{vm: VmEntityLinkBase<any>}>;
 
-export class VmActionLink extends VmEntityLink {
-    protected vmEntity: VmAction;
-}
-
-export class VmQueryLink extends VmEntityLink {
-    protected vmEntity: VmQuery;
-}
-
-export class VmSheetLink extends VmEntityLink {
-    protected vmEntity: VmSheet;
-}
-
-export class VmBookLink extends VmEntityLink {
-    protected vmEntity: VmBook;
-}
+const Link = ({vm}:{vm: VmEntityLinkBase<any>}) => {
+    let {vmEntity} = vm;
+    return <div className="px-3 py-2  align-items-center">
+        {vmEntity.icon} &nbsp; {vmEntity.caption}
+    </div>;
+};

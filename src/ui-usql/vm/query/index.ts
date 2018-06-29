@@ -1,1 +1,1 @@
-export * from './vmQuery';
+export * from './vmQueryMain';

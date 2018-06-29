@@ -1,9 +1,9 @@
+import { Tuid } from "../../entities";
+import { TypeContent } from '../viewModel';
+import { Field } from "../field";
+import { VmApi } from "../vmApi";
 import { VmFormFieldRow, VmForm } from "../vmForm";
 import { TypeVmTuidInput, VmTuidInput, PickerConfig } from "./vmTuidInput";
-import { TypeContent } from "./tuidContent";
-import { Field } from "../field";
-import { Tuid } from "../../entities";
-import { VmApi } from "../vmApi";
 
 export class VmFormRowTuidInput extends VmFormFieldRow {
     protected vmTuidInput:VmTuidInput;

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Tuid } from '../../entities';
-import { ViewModel } from '../viewModel';
-import { TypeContent } from './tuidContent';
+import { ViewModel, TypeContent } from '../viewModel';
 import { nav } from 'tonva-tools';
 import { VmTuidPicker, TypeVmTuidPicker } from './vmTuidPicker';
 import { VmApi } from '../vmApi';
@@ -47,7 +46,7 @@ export class VmTuidInput extends ViewModel {
         let value = this.tuid.getId(this.vmFormRowTuidInput.getValue());
         let content = !value?
             <>点击选择 {this.tuid.name}</> : 
-            <this.tuidContent values={value} />;
+            <this.tuidContent {...value} />;
         return <button className="form-control btn btn-outline-info"
             type="button"
             style={{textAlign:'left', paddingLeft:'0.75rem'}}

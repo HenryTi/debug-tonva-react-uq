@@ -1,5 +1,7 @@
-import zh from './zh';
+import tuid from './tuid';
+import query from './query';
 export default {
-    zh: zh
+    tuid: tuid,
+    query: query,
 };
 //# sourceMappingURL=index.js.map

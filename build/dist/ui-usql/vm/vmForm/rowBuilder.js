@@ -14,7 +14,7 @@ export class FormRowBuilder {
         });
         return ret;
     }
-    buildRow(vmForm, field, ui) {
+    buildRow(vmForm, field, fieldUI) {
         switch (field.type) {
             case 'tinyint':
             case 'smallint':

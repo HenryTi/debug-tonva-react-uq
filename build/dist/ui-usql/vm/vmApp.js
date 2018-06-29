@@ -13,7 +13,7 @@ import { ViewModel } from './viewModel';
 import { VmApi } from './vmApi';
 export const entitiesCollection = {};
 export class VmApp extends ViewModel {
-    constructor(tonvaApp) {
+    constructor(tonvaApp, ui) {
         super();
         this.vmApiCollection = {};
         this.caption = 'View Model 版的 Usql App';
@@ -23,6 +23,7 @@ export class VmApp extends ViewModel {
         }
         this.appOwner = parts[0];
         this.appName = parts[1];
+        this.ui = ui;
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -49,15 +50,15 @@ export class VmApp extends ViewModel {
                         }
                     }
                 }
-                let vmApi = this.newVmApi(url, api, access);
+                let vmApi = this.newVmApi(url, api, access, this.ui && this.ui[api]);
                 yield vmApi.load();
                 this.vmApiCollection[api] = vmApi;
             }
         });
     }
-    newVmApi(url, api, access) {
+    newVmApi(url, api, access, ui) {
         // 这里是可以重载的，写自己的VmApi
-        return new VmApi(this, url, api, access);
+        return new VmApi(this, url, api, access, ui);
     }
     renderView() {
         return React.createElement(AppPage, { vm: this });

@@ -25,12 +25,12 @@ let UsqlHome = class UsqlHome extends React.Component {
         super(props);
         this.view = React.createElement(Page, null,
             React.createElement("div", { className: "m-3" }, "waiting..."));
-        let { appName, caption, uiMappers } = this.props;
+        let { appName, caption, ui, uiMappers } = this.props;
         this.appUI = new AppUI(appName, caption, uiMappers);
         this.state = {
             uiLoaded: false
         };
-        this.vmApp = new VmApp(appName);
+        this.vmApp = new VmApp(appName, ui);
     }
     componentDidMount() {
         return __awaiter(this, void 0, void 0, function* () {

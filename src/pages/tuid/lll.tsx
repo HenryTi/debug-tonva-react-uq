@@ -25,7 +25,7 @@ export class MainPage extends React.Component<TuidUIProps> {
         nav.push(<this.props.ui.listPage.page ui={this.props.ui} />);
     }
 
-    onSearch(key:string) {
+    async onSearch(key:string) {
         nav.push(<this.props.ui.listPage.page ui={this.props.ui} data={key} />);
     }
 

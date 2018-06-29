@@ -20,10 +20,23 @@ export class VmFormRow extends ViewModel {
     renderControl() {
         return React.createElement("div", { className: "col-sm-10" }, this.renderContent());
     }
+    reset() { }
     renderView() {
         return React.createElement("div", { key: this.key, className: 'form-group row' },
             React.createElement("label", { className: 'col-sm-2 col-form-label' }, this.label),
             this.renderControl());
+    }
+}
+export class VmFormSubmitButtonRow extends VmFormRow {
+    constructor(form, submitButton) {
+        super(form, undefined, undefined);
+        this.submitButton = submitButton;
+    }
+    renderContent() {
+        return React.createElement("div", { className: "form-control-plaintext" }, this.submitButton);
+    }
+    renderView() {
+        return this.submitButton && super.renderView();
     }
 }
 export class VmFormFieldRow extends VmFormRow {
@@ -70,6 +83,10 @@ export class VmFormFieldRowInput extends VmFormFieldRow {
         return React.createElement(React.Fragment, null,
             this.renderInput(),
             this.renderError());
+    }
+    reset() {
+        this.input.value = '';
+        this.setValue(null);
     }
     ref(input) {
         this.input = input;

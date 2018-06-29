@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { VmQuery }  from '../../../../ui-usql';
+import { VmQueryMain }  from '../../../../ui-usql';
 
-class VMQuery商品流水q extends VmQuery {
+class VMQuery商品流水q extends VmQueryMain {
     renderExtra() {
         return <div>商品流水q extra</div>;
     }
 }
 
 export default {
-    vm: VMQuery商品流水q
+    main: VMQuery商品流水q
 }

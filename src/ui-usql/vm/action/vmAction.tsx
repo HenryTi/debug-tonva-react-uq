@@ -1,18 +1,16 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Tuid, Action, Entity } from '../../entities';
 import { VmEntity, vmLinkIcon } from '../entity';
 import { Page, nav, } from 'tonva-tools';
-import { VmApi } from '../vmApi';
-import { observer } from '../../../../node_modules/mobx-react';
 
-export class VmAction extends VmEntity {
+export class VmActionMain extends VmEntity {
     entity: Action;
 
     get icon() {return vmLinkIcon('text-success', 'hand-o-right')}
 
-    async load() {
-        await this.entity.loadSchema();
-        this.buildObservableValues(this.entity.schema.fields);
+    protected initValues() {
+        this.values = this.buildObservableValues(this.entity.schema.fields);
     }
 
     async submit() {
@@ -22,12 +20,13 @@ export class VmAction extends VmEntity {
         return;
     }
 
+    /*
     renderForm(className?:string) {
         let fieldUIs:any[] = undefined;
-        let vmForm = this.newVmForm(this.values, 
+        let vmForm = this.newVmForm(
             this.entity.schema.fields, fieldUIs, className);
         return vmForm.renderView();
-    }
+    }*/
 
     renderView() {
         return <ActionPage vm={this} />;
@@ -35,7 +34,7 @@ export class VmAction extends VmEntity {
 }
 
 @observer
-export class ActionPage extends React.Component<{vm:VmAction}> {
+export class ActionPage extends React.Component<{vm:VmActionMain}> {
     render() {
         let {vm} = this.props;
         let {caption, values} = this.props.vm;
@@ -45,7 +44,7 @@ export class ActionPage extends React.Component<{vm:VmAction}> {
     }
 }
 
-class ResultPage extends React.Component<{vm: VmAction}> {
+class ResultPage extends React.Component<{vm: VmActionMain}> {
     render() {
         let {vm} = this.props;
         let {caption, entity, returns} = vm;
