@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { FieldUI } from "./formUI";
 import { ViewModel } from "../viewModel";
 import { FormValues } from './vmForm';
-import { observer } from '../../../../node_modules/mobx-react';
 
 export function buildControl(fieldUI: FieldUI, formValues:FormValues): VmControl {
     let ctrl: VmControl;
@@ -41,10 +41,6 @@ const UnkownControl = ({vm}:{vm:VmControl}) => {
     let {name, type} = vm.fieldUI;
     return <input type="text" className="form-control" id="staticEmail" 
         placeholder={'unkown control: ' + type + '-' + name} />;
-}
-
-export class VmTuidControl extends VmControl {
-
 }
 
 export abstract class VmInputControl extends VmControl {

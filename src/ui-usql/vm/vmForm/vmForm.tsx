@@ -7,10 +7,13 @@ import { VmFormRow, VmFormSubmitButtonRow } from './row';
 import { FormRowBuilder } from './rowBuilder';
 import { Field, Arr } from '../field';
 import { FormUI, BandUI, FieldBandUI, FieldsBandUI, ArrBandUI, SubmitUI, FieldUI } from './formUI';
-import { buildControl } from './control';
+import { buildControl, VmControl } from './control';
 import { ArrBand, FieldBand, FieldsBand } from './band';
+import { VmApi } from '../vmApi';
+import { VmTuidControl } from './tuid/vmTuidControl';
+import { PickerConfig } from '../tuid';
 
-const defaultClassName = 'px-2 py-2';
+const defaultClassName = 'px-3 py-2';
 const defaultSubmitCaption = '提交';
 
 export type TypeVmForm = typeof VmForm;
@@ -24,8 +27,9 @@ export interface VmFormOptions {
     arrs?: Arr[];
     submitButton?:JSX.Element;
     ui?: FormUI;
-    //controlBuilder?: ControlBuilder;
     readOnly?: boolean;
+    vmApi?: VmApi;                  // 主要用于tuid control的生成，也可以没有
+    buildControl?: (fieldUI: FieldUI, formValues:FormValues, vmApi:VmApi) => VmControl;
 }
 
 export class VmForm extends ViewModel {
@@ -35,14 +39,16 @@ export class VmForm extends ViewModel {
     protected submitButton: JSX.Element;
     //protected controlBuilder: ControlBuilder;
     protected readOnly: boolean;
+    protected vmApi: VmApi;
 
-    constructor({fields, arrs, submitButton, ui, readOnly}:VmFormOptions) {
+    constructor({fields, arrs, submitButton, ui, readOnly, vmApi}:VmFormOptions) {
         super();
         this.fields = fields;
         this.arrs = arrs;
         this.submitButton = submitButton;
         //this.controlBuilder = controlBuilder || new ControlBuilder();
         this.readOnly = readOnly === true;
+        this.vmApi = vmApi;
         //this.submitButtonRow = new VmFormSubmitButtonRow(this, submitButton);
         //if (className !== undefined) this.className = className;
         //this.rowBuilder = rowBuilder || new FormRowBuilder;
@@ -71,6 +77,21 @@ export class VmForm extends ViewModel {
 
     getValue(fieldName: string) { return this.formValues.values[fieldName] }
     setValue(fieldName: string, value: any) { this.formValues.values[fieldName] = value }
+
+    protected buildControl(fieldUI: FieldUI, formValues:FormValues):VmControl {
+        let {type} = fieldUI;
+        if (type !== 'tuid') return buildControl(fieldUI, formValues);
+
+        let field = fieldUI.field;
+        let tuidName = field.tuid;
+        let tuid = this.vmApi.getTuid(tuidName);
+        let pickerConfig: PickerConfig = {
+            picker: undefined, // TypeVmTuidPicker;
+            row: JSONContent, // TypeContent;
+            idFromValue: undefined, // TypeIdFromValue,
+        };
+        return new VmTuidControl(fieldUI, formValues, this.vmApi, tuid, JSONContent, pickerConfig)
+    }
 
     private buildObservableValues(fields: Field[]):IObservableObject {
         let v: {[p:string]: any} = {};
@@ -156,7 +177,7 @@ export class VmForm extends ViewModel {
     private buildFieldControl(fieldUI: FieldUI, fields: Field[], formValues:FormValues) {
         let {name} = fieldUI;
         fieldUI.field = fields.find(v => v.name === name);
-        fieldUI.control = buildControl(fieldUI, formValues);
+        fieldUI.control = this.buildControl(fieldUI, formValues);
     }
     private buildArrBandUI(arrBandUI: ArrBandUI):ArrBandUI {
         let ret = _.clone(arrBandUI);
@@ -189,7 +210,7 @@ export class VmForm extends ViewModel {
                 field: field,
                 band: FieldBand,
             };
-            band.control = buildControl(band, formValues);
+            band.control = this.buildControl(band, formValues);
             vBands.push(band);
         }
     }
@@ -198,7 +219,10 @@ export class VmForm extends ViewModel {
             case 'tinyint':
             case 'smallint':
             case 'int':
+                return 'int';
             case 'bigint':
+                let tuid = field.tuid;
+                if (tuid !== undefined) return 'tuid';
                 return 'int';
             case 'dec':
                 return 'dec';

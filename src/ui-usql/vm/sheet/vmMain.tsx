@@ -50,6 +50,7 @@ class VmSheetA extends VmSheet {
         await super.load();
         this.vmForm = new VmForm({
             fields: this.entity.schema.fields,
+            vmApi: this.vmApi,
         });
     }
 
