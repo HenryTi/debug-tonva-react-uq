@@ -4,11 +4,11 @@ import { FA } from 'tonva-react-form';
 import { nav } from 'tonva-tools';
 import { Entity, Tuid } from '../../entities';
 import { ViewModel, TypeContent } from '../viewModel';
-import { VmApi, VmEntityFormRowBuilder } from '../vmApi';
-import { VmForm, VmFormRow, TypeVmForm } from '../vmForm';
+import { VmApi } from '../vmApi';
+import { VmFieldsForm, TypeVmFieldsForm } from '../vmFieldsForm';
 import { Field } from '../field';
-import { FormRowBuilder } from '../vmForm/rowBuilder';
-import { VmTuidInput, TypeVmTuidInput, PickerConfig } from '../tuid';
+//import { FormRowBuilder } from '../vmForm/rowBuilder';
+import { VmTuidControl, TypeVmTuidControl, PickerConfig } from '../vmFieldsForm/tuid';
 
 export interface FieldUI {
     label?: string;
@@ -44,7 +44,7 @@ export abstract class VmEntity extends ViewModel {
 
     values: any;
     returns: any;
-    protected vmForm: VmForm;
+    protected vmFieldsForm: VmFieldsForm;
     get icon() {return vmLinkIcon('text-info', 'circle-thin')}
     get caption() { return this.entity.name; }
 
@@ -68,7 +68,7 @@ export abstract class VmEntity extends ViewModel {
             this.values[i] = null;
         }
     }
-
+/*
     protected fieldFaces: FieldUIs;
     protected mapFields(schemaFields: any[]): any[] {
         if (schemaFields === undefined) return;
@@ -110,25 +110,15 @@ export abstract class VmEntity extends ViewModel {
         }
         if (tuid !== undefined) {
             return;
-            /*
-            let tuidUI = this.entitiesUI.tuid.coll[tuid];
-            if (tuidUI !== undefined) {
-                _.merge(tuidInput, tuidUI.input);
-            }
-            let input0 = this.entitiesUI.getTuidInput(tuid, url);
-            _.merge(tuidInput, input0, face.input);
-            face.ui = tuidUI;
-            face.input = tuidInput;
-            */
         }
         if (sf.null === false) {
             ret.field.required = true;
         }
         return ret;
     }
-
-    typeVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
-        return this.vmApi.typeVmTuidInput(tuid);
+*/
+    typeVmTuidControl(field:Field, tuid:Tuid): TypeVmTuidControl {
+        return this.vmApi.typeVmTuidControl(tuid);
     }
 
     typeTuidContent(field:Field, tuid:Tuid): TypeContent {
@@ -138,12 +128,12 @@ export abstract class VmEntity extends ViewModel {
     pickerConfig(field:Field, tuid:Tuid): PickerConfig {
         return this.vmApi.pickerConfig(tuid);
     }
-
+/*
     protected newFormRowBuilder(): FormRowBuilder {
         return new VmEntityFormRowBuilder(this.vmApi, this);
     }
 
-    get VmForm(): TypeVmForm {
+    get VmForm(): TypeVmFieldsForm {
         return this.vmApi.VmForm;
     }
 
@@ -156,6 +146,7 @@ export abstract class VmEntity extends ViewModel {
     newSubmitButton():JSX.Element {
         return <SubmitButton onSubmitClick={this.onSubmitClick} />;
     }
+*/
 
     /*
     newVmForm(fields:Field[], fieldUIs:any[], className:string):VmForm {

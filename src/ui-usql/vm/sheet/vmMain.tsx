@@ -3,15 +3,15 @@ import { Button, ButtonProps } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { VmSheet } from './vmSheet';
+import { VmEdit } from './vmEdit';
 import { VmSchema } from './vmSchema';
 import { VmArchives } from './vmArchives';
-import { VmForm } from '../vmForm';
 
 export class VmSheetMain extends VmSheet {
-    protected vmEdit = VmSheetA;
+    protected vmEdit = VmEdit;
     protected vmSchema = VmSchema;
     protected vmArchives = VmArchives;
-    protected vmSheetState = VmSheetA;
+    protected vmSheetState = VmEdit;
 
     newClick = async () => await this.nav(this.vmEdit);
     schemaClick = async () => await this.nav(this.vmSchema);
@@ -41,26 +41,4 @@ const Main = ({vm}:{vm:VmSheetMain}) => {
             <Button color="primary" onClick={archivesClick}>已归档{caption}</Button>
         </div>
     </Page>;
-}
-
-class VmSheetA extends VmSheet {
-    vmForm: VmForm;
-
-    async load() {
-        await super.load();
-        this.vmForm = new VmForm({
-            fields: this.entity.schema.fields,
-            vmApi: this.vmApi,
-        });
-    }
-
-    protected view = A;
-}
-
-const A = ({vm}:{vm:VmSheetA}) => {
-    let {vmForm} = vm;
-    return <Page header="a">
-    a
-    {vmForm.renderView()}
-    </Page>
 }

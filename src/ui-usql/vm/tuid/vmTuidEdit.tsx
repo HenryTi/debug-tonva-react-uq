@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page, nav } from 'tonva-tools';
-import { VmTuidInput, TypeVmTuidInput } from '../tuid';
 import { VmTuid } from './vmTuid';
 
 export type TypeVmTuidEdit = typeof VmTuidEdit;
@@ -30,7 +29,7 @@ export class VmTuidEdit extends VmTuid {
 
     protected resetForm() {
         this.resetValues();
-        this.vmForm.reset();
+        this.vmFieldsForm.reset();
     }
 
     async submit() {

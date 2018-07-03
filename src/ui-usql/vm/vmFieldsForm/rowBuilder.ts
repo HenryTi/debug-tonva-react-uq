@@ -1,3 +1,4 @@
+/*
 import { VmFormRow, VmFormFieldRowNumber, VmFormFieldRowString, VmFormFieldRowUnkown } from "./row";
 import { Field } from "../field";
 import { VmForm } from ".";
@@ -24,11 +25,6 @@ export class FormRowBuilder {
             case 'int':
             case 'bigint':
                 return new VmFormFieldRowNumber(vmForm, field);
-                /*
-                let tuidName = field.tuid;
-                if (tuidName === undefined) return new VmFormFieldRowNumber(field);
-                return new VmTuidInput(key, field, this.vmApi.getTuid(tuidName));
-                */
             case 'char':
             case 'text':
                 return new VmFormFieldRowString(vmForm, field);
@@ -36,3 +32,4 @@ export class FormRowBuilder {
         }
     }
 }
+*/

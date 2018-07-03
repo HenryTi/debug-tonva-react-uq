@@ -3,7 +3,6 @@ import { Tuid, Entity } from '../../entities';
 import { VmEntity, vmLinkIcon } from '../entity/vmEnity';
 import { Page, nav } from 'tonva-tools';
 import { VmApi } from '../vmApi';
-import { VmTuidInput, TypeVmTuidInput } from '../tuid';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuid } from './vmTuid';
 import { VmTuidList } from './vmTuidList';

@@ -1,3 +1,4 @@
+/*
 import * as React from 'react';
 import { ViewModel } from "../viewModel";
 import { Field } from '../field';
@@ -170,3 +171,4 @@ export class VmFormFieldRowNumber extends VmFormFieldRowInput {
 export class VmFormFieldRowString extends VmFormFieldRowInput {
     protected inputType:string = 'text';
 }
+*/

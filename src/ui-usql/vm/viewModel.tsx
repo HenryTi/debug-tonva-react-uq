@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 
 export type TypeView = React.StatelessComponent<{vm: ViewModel}>;
 export type TypeContent = React.StatelessComponent<any>;
@@ -12,7 +13,8 @@ export abstract class ViewModel {
     }
 }
 
-export const JSONContent = (values) => 
-    <>content: {JSON.stringify(values)}</>;
+export const JSONContent = observer(
+    (values) => <>content: {JSON.stringify(values)}</>
+);
 export const RowContent = (values) => 
-    <div className="px-3 py-2">Row : = {JSON.stringify(values)}</div>;
+    <div className="px-3 py-2">Row: {JSON.stringify(values)}</div>;

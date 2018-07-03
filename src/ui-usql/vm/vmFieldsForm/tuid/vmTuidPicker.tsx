@@ -2,35 +2,39 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Page, nav, PagedItems } from 'tonva-tools';
 import { List, SearchBox } from 'tonva-react-form';
-import { Tuid } from '../../entities';
-import { VmTuid } from './vmTuid';
-import { VmApi } from '../vmApi';
-import { TypeContent } from '../viewModel';
-import { VmTuidInput, PickerConfig } from './vmTuidInput';
+import { Tuid } from '../../../entities';
+import { VmTuid } from '../../tuid/vmTuid';
+import { VmApi } from '../../vmApi';
+import { TypeContent, RowContent } from '../../viewModel';
+import { VmTuidControl, PickerConfig } from './vmTuidControl';
 
 export type TypeVmTuidPicker = typeof VmTuidPicker;
 
 export class VmTuidPicker extends VmTuid {
     private row: TypeContent;
 
-    vmTuidInput: VmTuidInput;
+    vmTuidControl: VmTuidControl;
     pagedItems: PagedItems<any>;
     idFromValue: (values) => number;
 
-    constructor(vmApi: VmApi, tuid: Tuid, vmTuidInput: VmTuidInput, pagedItems?: PagedItems<any>) {
+    constructor(vmApi: VmApi, tuid: Tuid, vmTuidControl: VmTuidControl, pagedItems?: PagedItems<any>) {
         super(vmApi, tuid);
-        this.vmTuidInput = vmTuidInput;
+        this.vmTuidControl = vmTuidControl;
         this.pagedItems = pagedItems || new PickerPagedItems(tuid);
-        let pc = this.vmTuidInput.pickerConfig;
-        this.row = pc.row;
+        let pc = this.vmTuidControl.pickerConfig;
+        this.row = pc.row || RowContent;
         this.idFromValue = pc.idFromValue;
         if (this.idFromValue === undefined) this.idFromValue = (values) => values.id;
+    }
+
+    async load() {
+        await this.onSearch(undefined);
     }
 
     itemRender = (item:any, index:number):JSX.Element => <this.row values={item} />;
     itemClick = (item:any) => {
         let id = this.idFromValue(item);
-        this.vmTuidInput.idChanged(id);
+        this.vmTuidControl.idChanged(id);
         nav.pop();
     }
     onSearch = async (key:string) => {

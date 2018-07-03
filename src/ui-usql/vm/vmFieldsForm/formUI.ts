@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TypeContent } from "../viewModel";
+import { TypeContent, ViewModel } from "../viewModel";
 import { Field } from "../field";
 import { VmControl } from "./control";
 import { TypeFieldBand, TypeFieldsBand, TypeArrBand, TypeSubmitBand } from './band';
@@ -7,9 +7,10 @@ import { TypeFieldBand, TypeFieldsBand, TypeArrBand, TypeSubmitBand } from './ba
 export interface FormUI {
     className?: string;
     bands: BandUI[];
+    visibleBands?: BandUI[];
 }
 
-export type BandUI = FieldBandUI | FieldsBandUI | ArrBandUI | SubmitUI;
+export type BandUI = FieldBandUI | FieldsBandUI | ArrBandUI | SubmitBandUI;
 
 export interface FieldBandUI extends FieldUI {
     label: string;
@@ -32,15 +33,17 @@ export interface ArrBandUI {
     name?: string;
     row: TypeContent;                   // arr 行的显示方式
     bands: BandUI[];                    // 下一级页面的展开描述
-    control?: VmControl;                // list control element
+    //control?: VmControl;                // list control element
+    vmList?: ViewModel;                  // list view model
     band?: TypeArrBand;
     key?: string;
 }
 
-export interface SubmitUI {
+export interface SubmitBandUI {
     type: 'submit';
-    caption: string;                    // 显示在按钮上的文本
-    control?: VmControl;                // button control element
+    content: any;                    // 显示在按钮上的文本
+    //control?: VmControl;                // button control element
+    onSubmit?: () => void;
     band?: TypeSubmitBand;
     key?: string;
 }

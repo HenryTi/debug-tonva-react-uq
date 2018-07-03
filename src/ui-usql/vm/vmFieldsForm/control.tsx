@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { FieldUI } from "./formUI";
 import { ViewModel } from "../viewModel";
-import { FormValues } from './vmForm';
+import { FormValues } from './vmFieldsForm';
 
 export function buildControl(fieldUI: FieldUI, formValues:FormValues): VmControl {
     let ctrl: VmControl;

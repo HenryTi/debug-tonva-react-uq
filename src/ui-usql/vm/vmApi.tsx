@@ -10,13 +10,13 @@ import { VmBookMain } from './book';
 import { VmSheetMain } from './sheet';
 import { VmActionMain } from './action';
 import { VmQueryMain } from './query';
-import { VmTuidMain, PickerConfig } from './tuid';
+import { VmTuidMain } from './tuid';
 import { VmApp } from './vmApp';
-import { VmForm, VmFormRow, TypeVmForm } from './vmForm';
+import { VmFieldsForm, TypeVmFieldsForm, 
+    VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmFieldsForm';
 import { Field } from './field';
-import { FormRowBuilder } from './vmForm/rowBuilder';
-import { VmFormRowTuidInput, VmTuidInput, TypeVmTuidInput } from './tuid';
-import { VmTuidPicker } from './tuid/vmTuidPicker';
+//import { FormRowBuilder } from './vmForm/rowBuilder';
+//import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm/tuid';
 
 
 export class VmApi extends ViewModel {
@@ -207,11 +207,11 @@ export class VmApi extends ViewModel {
         vmLink.onClick();
     }
 
-    typeVmTuidInput(tuid:Tuid): TypeVmTuidInput {
+    typeVmTuidControl(tuid:Tuid): TypeVmTuidControl {
         let ui = this.getUI('tuid', tuid.name);
-        let typeVmTuidInput = ui && ui.input;
-        if (typeVmTuidInput === undefined) typeVmTuidInput = VmTuidInput;
-        return typeVmTuidInput;
+        let typeVmTuidControl = ui && ui.input;
+        if (typeVmTuidControl === undefined) typeVmTuidControl = VmTuidControl;
+        return typeVmTuidControl;
     }
 
     pickerConfig(tuid:Tuid): PickerConfig {
@@ -230,7 +230,7 @@ export class VmApi extends ViewModel {
         if (typeTuidContent === undefined) typeTuidContent = JSONContent;
         return typeTuidContent;
     }
-
+/*
     newFormRowBuilder(): FormRowBuilder {
         return new VmApiFormRowBuilder(this);
     }
@@ -238,7 +238,7 @@ export class VmApi extends ViewModel {
     get VmForm(): TypeVmForm {
         return VmForm;
     }
-    
+*/    
     renderView(): JSX.Element {
         let linkItem = { render: this.renderLink, onClick: this.linkClick };
         let lists = [
@@ -301,13 +301,15 @@ export class VmApi extends ViewModel {
     }
 }
 
+/*
 export class VmApiFormRowBuilder extends FormRowBuilder {
     protected vmApi: VmApi;
     constructor(vmApi: VmApi) {
         super();
         this.vmApi = vmApi;
     }
-
+*/
+/*
     buildRow(vmForm:VmForm, field: Field, ui?: any): VmFormRow {
         let ret: VmFormRow;
         switch (field.type) {
@@ -318,9 +320,10 @@ export class VmApiFormRowBuilder extends FormRowBuilder {
         }
         return super.buildRow(vmForm, field, ui);
     }
-
-    protected typeVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
-        return this.vmApi.typeVmTuidInput(tuid);
+*/
+/*
+    protected typeVmTuidControl(field:Field, tuid:Tuid): TypeVmTuidControl {
+        return this.vmApi.typeVmTuidControl(tuid);
     }
 
     protected typeTuidContent(field:Field, tuid:Tuid): TypeContent {
@@ -330,18 +333,21 @@ export class VmApiFormRowBuilder extends FormRowBuilder {
     protected pickerConfig(field:Field, tuid:Tuid): PickerConfig {
         return this.vmApi.pickerConfig(tuid);
     }
-
-    protected buildTuidInput(vmForm: VmForm, field: Field, ui: any): VmFormRow {
+*/
+/*
+    protected buildTuidControl(vmForm: VmForm, field: Field, ui: any): VmFormRow {
         let tuidName = field.tuid;
         if (tuidName === undefined) return;
         let tuid = this.vmApi.getTuid(tuidName);
-        return new VmFormRowTuidInput(this.vmApi, vmForm, field, ui, tuid, 
+        return new VmFormRowTuidControl(this.vmApi, vmForm, field, ui, tuid, 
             this.typeVmTuidInput(field, tuid),
             this.typeTuidContent(field, tuid),
             this.pickerConfig(field, tuid));
     }
-}
+*/
+//}
 
+/*
 export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
     protected vmEntity: VmEntity;
     constructor(vmApi: VmApi, vmEntity: VmEntity) {
@@ -350,7 +356,7 @@ export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
     }
 
     protected typeVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
-        return this.vmEntity.typeVmTuidInput(field, tuid);
+        return this.vmEntity.typeVmTuidControl(field, tuid);
     }
 
     protected typeTuidContent(field:Field, tuid:Tuid): TypeContent {
@@ -361,3 +367,4 @@ export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
         return this.vmEntity.pickerConfig(field, tuid);
     }
 }
+*/
