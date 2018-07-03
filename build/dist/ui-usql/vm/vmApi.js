@@ -18,10 +18,9 @@ import { VmSheetMain } from './sheet';
 import { VmActionMain } from './action';
 import { VmQueryMain } from './query';
 import { VmTuidMain } from './tuid';
-import { VmForm } from './vmForm';
-import { FormRowBuilder } from './vmForm/rowBuilder';
-import { VmFormRowTuidInput, VmTuidInput } from './tuid';
-import { VmTuidPicker } from './tuid/vmTuidPicker';
+import { VmTuidControl, VmTuidPicker } from './vmFieldsForm';
+//import { FormRowBuilder } from './vmForm/rowBuilder';
+//import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm/tuid';
 export class VmApi extends ViewModel {
     constructor(vmApp, url, api, access, ui) {
         super();
@@ -195,12 +194,12 @@ export class VmApi extends ViewModel {
     linkClick(vmLink) {
         vmLink.onClick();
     }
-    typeVmTuidInput(tuid) {
+    typeVmTuidControl(tuid) {
         let ui = this.getUI('tuid', tuid.name);
-        let typeVmTuidInput = ui && ui.input;
-        if (typeVmTuidInput === undefined)
-            typeVmTuidInput = VmTuidInput;
-        return typeVmTuidInput;
+        let typeVmTuidControl = ui && ui.input;
+        if (typeVmTuidControl === undefined)
+            typeVmTuidControl = VmTuidControl;
+        return typeVmTuidControl;
     }
     pickerConfig(tuid) {
         let ui = this.getUI('tuid', tuid.name);
@@ -218,69 +217,133 @@ export class VmApi extends ViewModel {
             typeTuidContent = JSONContent;
         return typeTuidContent;
     }
-    newFormRowBuilder() {
-        return new VmApiFormRowBuilder(this);
-    }
-    get VmForm() {
-        return VmForm;
-    }
+    /*
+        newFormRowBuilder(): FormRowBuilder {
+            return new VmApiFormRowBuilder(this);
+        }
+    
+        get VmForm(): TypeVmForm {
+            return VmForm;
+        }
+    */
     renderView() {
         let linkItem = { render: this.renderLink, onClick: this.linkClick };
+        let lists = [
+            {
+                header: this.tuidTypeCaption,
+                items: this.vmTuidLinks,
+            },
+            {
+                cn: 'my-2',
+                header: this.sheetTypeCaption,
+                items: this.vmSheetLinks
+            },
+            {
+                cn: 'my-2',
+                header: this.actionTypeCaption,
+                items: this.vmActionLinks
+            },
+            {
+                cn: 'my-2',
+                header: this.queryTypeCaption,
+                items: this.vmQueryLinks
+            },
+            {
+                cn: 'mt-2 mb-4',
+                header: this.bookTypeCaption,
+                items: this.vmBookLinks
+            }
+        ];
         return React.createElement(React.Fragment, null,
             React.createElement("div", { className: "px-3 py-1 small" }, this.api),
-            React.createElement(List, { header: React.createElement(Muted, null, this.tuidTypeCaption), items: this.vmTuidLinks, item: linkItem }),
-            React.createElement(List, { className: 'my-2', header: React.createElement(Muted, null, this.sheetTypeCaption), items: this.vmSheetLinks, item: linkItem }),
-            React.createElement(List, { className: 'my-2', header: React.createElement(Muted, null, this.actionTypeCaption), items: this.vmActionLinks, item: linkItem }),
-            React.createElement(List, { className: 'my-2', header: React.createElement(Muted, null, this.queryTypeCaption), items: this.vmQueryLinks, item: linkItem }),
-            React.createElement(List, { className: 'mt-2 mb-4', header: React.createElement(Muted, null, this.bookTypeCaption), items: this.vmBookLinks, item: linkItem }));
+            lists.map(({ cn, header, items }, index) => React.createElement(List, { key: index, className: cn, header: React.createElement(Muted, null, header), items: items, item: linkItem })));
+        /*
+                    <List className='my-2'
+                        header={<Muted>{this.sheetTypeCaption}</Muted>}
+                        items={this.vmSheetLinks}
+                        item={linkItem} />
+        
+                    <List className='my-2'
+                        header={<Muted>{this.actionTypeCaption}</Muted>}
+                        items={this.vmActionLinks}
+                        item={linkItem} />
+        
+                    <List className='my-2'
+                        header={<Muted>{this.queryTypeCaption}</Muted>}
+                        items={this.vmQueryLinks}
+                        item={linkItem} />
+        
+                    <List className='mt-2 mb-4'
+                        header={<Muted>{this.bookTypeCaption}</Muted>}
+                        items={this.vmBookLinks}
+                        item={linkItem} />
+        */
     }
 }
+/*
 export class VmApiFormRowBuilder extends FormRowBuilder {
-    constructor(vmApi) {
+    protected vmApi: VmApi;
+    constructor(vmApi: VmApi) {
         super();
         this.vmApi = vmApi;
     }
-    buildRow(vmForm, field, ui) {
-        let ret;
+*/
+/*
+    buildRow(vmForm:VmForm, field: Field, ui?: any): VmFormRow {
+        let ret: VmFormRow;
         switch (field.type) {
             case 'bigint':
                 ret = this.buildTuidInput(vmForm, field, ui);
-                if (ret !== undefined)
-                    return ret;
+                if (ret !== undefined) return ret;
                 break;
         }
         return super.buildRow(vmForm, field, ui);
     }
-    typeVmTuidInput(field, tuid) {
-        return this.vmApi.typeVmTuidInput(tuid);
+*/
+/*
+    protected typeVmTuidControl(field:Field, tuid:Tuid): TypeVmTuidControl {
+        return this.vmApi.typeVmTuidControl(tuid);
     }
-    typeTuidContent(field, tuid) {
+
+    protected typeTuidContent(field:Field, tuid:Tuid): TypeContent {
         return this.vmApi.typeTuidContent(tuid);
     }
-    pickerConfig(field, tuid) {
+
+    protected pickerConfig(field:Field, tuid:Tuid): PickerConfig {
         return this.vmApi.pickerConfig(tuid);
     }
-    buildTuidInput(vmForm, field, ui) {
+*/
+/*
+    protected buildTuidControl(vmForm: VmForm, field: Field, ui: any): VmFormRow {
         let tuidName = field.tuid;
-        if (tuidName === undefined)
-            return;
+        if (tuidName === undefined) return;
         let tuid = this.vmApi.getTuid(tuidName);
-        return new VmFormRowTuidInput(this.vmApi, vmForm, field, ui, tuid, this.typeVmTuidInput(field, tuid), this.typeTuidContent(field, tuid), this.pickerConfig(field, tuid));
+        return new VmFormRowTuidControl(this.vmApi, vmForm, field, ui, tuid,
+            this.typeVmTuidInput(field, tuid),
+            this.typeTuidContent(field, tuid),
+            this.pickerConfig(field, tuid));
     }
-}
+*/
+//}
+/*
 export class VmEntityFormRowBuilder extends VmApiFormRowBuilder {
-    constructor(vmApi, vmEntity) {
+    protected vmEntity: VmEntity;
+    constructor(vmApi: VmApi, vmEntity: VmEntity) {
         super(vmApi);
         this.vmEntity = vmEntity;
     }
-    typeVmTuidInput(field, tuid) {
-        return this.vmEntity.typeVmTuidInput(field, tuid);
+
+    protected typeVmTuidInput(field:Field, tuid:Tuid): TypeVmTuidInput {
+        return this.vmEntity.typeVmTuidControl(field, tuid);
     }
-    typeTuidContent(field, tuid) {
+
+    protected typeTuidContent(field:Field, tuid:Tuid): TypeContent {
         return this.vmEntity.typeTuidContent(field, tuid);
     }
-    pickerConfig(field, tuid) {
+
+    protected pickerConfig(field:Field, tuid:Tuid): PickerConfig {
         return this.vmEntity.pickerConfig(field, tuid);
     }
 }
+*/ 
 //# sourceMappingURL=vmApi.js.map

@@ -38,7 +38,7 @@ export class VmTuidEdit extends VmTuid {
     }
     resetForm() {
         this.resetValues();
-        this.vmForm.reset();
+        this.vmFieldsForm.reset();
     }
     submit() {
         return __awaiter(this, void 0, void 0, function* () {
