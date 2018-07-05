@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List } from 'tonva-react-form';
+import { List, FA } from 'tonva-react-form';
 import { ViewModel, JSONContent, RowContent } from '../viewModel';
 import { Arr } from '../field';
 import { ArrValues } from './vmFieldsForm';
@@ -29,10 +29,22 @@ export class VmArrList extends ViewModel {
         alert(JSON.stringify(item));
     }
 
+    addClick = () => {
+        this.arrValues.list.push({a:1,b:2,c:3});
+    }
+
     renderView() {
+        let header = <div className="">
+            <div className="flex-fill align-self-center">{this.arrBandUI.label}</div>
+            <button onClick={this.addClick}
+                type="button" 
+                className="btn btn-primary btn-sm">
+                <FA name="plus" />
+            </button>
+        </div>;
         return <List
-            header={this.arrBandUI.label}
-            items={this.list} 
+            header={header}
+            items={this.arrValues.list} 
             item={{render: this.renderItem, onClick: this.itemClick}} />;
     }
 }
