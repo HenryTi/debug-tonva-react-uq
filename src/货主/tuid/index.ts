@@ -1,6 +1,6 @@
 import {MapperContainer,TuidMapper} from '../../ui-usql/ui';
 import {Tuid} from '../../ui-usql/entities';
-import {EntityUI, TuidUI} from '../../ui-usql/ui';
+import {EntityUIO, TuidUI} from '../../ui-usql/ui';
 import {货品MainPage, FileUpload} from './货品MainPage';
 //import {MainPage} from './mainPage';
 //import {ArticleInput, ArticleContent} from './articleInput';

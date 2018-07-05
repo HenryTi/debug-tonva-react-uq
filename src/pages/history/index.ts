@@ -1,6 +1,6 @@
 import {MapperContainer,HistoryMapper} from '../../ui-usql/ui';
 import {History} from '../../ui-usql/entities';
-import {EntityUI, HistoryUI} from '../../ui-usql';
+import {EntityUIO, HistoryUI} from '../../ui-usql';
 import {ListRow} from './listRow';
 
 export const mapperContainer:MapperContainer<History, HistoryUI, HistoryMapper> = {

@@ -13,14 +13,16 @@ export abstract class VmLink extends ViewModel {
     abstract onClick: () => void;
 }
 
-export class VmEntityLinkBase<T extends VmEntity> extends VmLink {
-    vmEntity: T
+export class VmEntityLink extends VmLink {
+    vmEntity: VmEntity
 
-    constructor(vmEntity: T, link: TypeLink) {
+    constructor(vmEntity: VmEntity) {
         super();
         this.vmEntity = vmEntity;
-        this.view = link;
+        //this.view = link;
     }
+
+    protected view = Link;
 
     onClick = async () => {
         await this.vmEntity.load();
@@ -28,15 +30,9 @@ export class VmEntityLinkBase<T extends VmEntity> extends VmLink {
     }
 }
 
-export class VmEntityLink<T extends VmEntity> extends VmEntityLinkBase<T> {
-    constructor(vmEntity: T) {
-        super(vmEntity, Link);
-    }
-}
+export type TypeLink = React.StatelessComponent<{vm: VmEntityLink}>;
 
-export type TypeLink = React.StatelessComponent<{vm: VmEntityLinkBase<any>}>;
-
-const Link = ({vm}:{vm: VmEntityLinkBase<any>}) => {
+const Link = ({vm}:{vm: VmEntityLink}) => {
     let {vmEntity} = vm;
     return <div className="px-3 py-2  align-items-center">
         {vmEntity.icon} &nbsp; {vmEntity.caption}

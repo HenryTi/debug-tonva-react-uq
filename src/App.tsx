@@ -4,29 +4,13 @@ import {observer} from 'mobx-react';
 import {nav, Page, NavView} from 'tonva-tools';
 import {pageMapper} from './pages';
 import {pageMapper as 货主Mapper} from './货主';
-import {UsqlHome, EntitiesMapper} from './ui-usql';
+import { EntitiesMapper } from './ui-usql';
+import { UsqlHome } from './UsqlHome';
 //import AppHome from './appHome';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import ui from './ui';
 import { isArray } from 'util';
-
-(function converUIKeyToLowercase(obj: any) {
-    for (let i in obj) {
-        let v = obj[i];
-        obj[i.toLowerCase()] = v;
-        if (typeof v === 'object') {
-          if (isArray(v) === true) {
-              for (let i of (v as any[])) {
-                  converUIKeyToLowercase(i);
-              }
-          }
-          else {
-              converUIKeyToLowercase(v);
-          }
-      }
-  }
-})(ui);
 
 const tStyle = {margin: '2em auto', borderCollapse:'collapse'};
 const rowStyle = {borderBottom: '1px solid gray'};

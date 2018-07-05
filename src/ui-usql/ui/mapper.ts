@@ -1,9 +1,9 @@
 import {Entities, Entity, Tuid, Slave, Action, Sheet, Query, Book, History} from "../entities";
 import {EntitiesUI} from './entitiesUI';
-import {EntityUI} from './entityUI';
+import {EntityUIO} from './entityUI';
 import {ActionUI} from './actionUI';
 import {QueryUI} from './queryUI';
-import {SheetUI} from './sheetUI';
+import {SheetUIO} from './sheetUI';
 import {TuidUI, SlaveUI} from './tuidUI';
 import {BookUI} from './bookUI';
 import {HistoryUI} from './historyUI';
@@ -61,11 +61,11 @@ export interface EntitiesUIProps {
 }
 export type EntitiesUIComponent = new (props: EntitiesUIProps) => React.Component<EntitiesUIProps>;
 
-export interface EntityUIProps<T extends Entity, TUI extends EntityUI<T>> {
+export interface EntityUIProps<T extends Entity, TUI extends EntityUIO<T>> {
     ui: TUI;
     data?: any;
 }
-export type UIComponent<T extends Entity, TUI extends EntityUI<T>> = new (props:EntityUIProps<T, TUI>) => React.Component<EntityUIProps<T, TUI>>;
+export type UIComponent<T extends Entity, TUI extends EntityUIO<T>> = new (props:EntityUIProps<T, TUI>) => React.Component<EntityUIProps<T, TUI>>;
 export type ActionUIProps = EntityUIProps<Action, ActionUI>;
 export type ActionUIComponent = new (props:ActionUIProps) => React.Component<ActionUIProps>;
 export type QueryUIProps = EntityUIProps<Query, QueryUI>;
@@ -74,8 +74,8 @@ export type BookUIProps = EntityUIProps<Book, BookUI>;
 export type BookUIComponent = new (props:BookUIProps) => React.Component<BookUIProps>;
 export type HistoryUIProps = EntityUIProps<History, HistoryUI>;
 export type HistoryUIComponent = new (props:HistoryUIProps) => React.Component<HistoryUIProps>;
-export type SheetUIProps = EntityUIProps<Sheet, SheetUI>;
-export type SheetViewProps = EntityUIProps<Sheet, SheetUI> & {
+export type SheetUIProps = EntityUIProps<Sheet, SheetUIO>;
+export type SheetViewProps = EntityUIProps<Sheet, SheetUIO> & {
     className:string;
     sheetState: any;
     flows: any
@@ -87,7 +87,7 @@ export type TuidUIComponent = new (props:TuidUIProps) => React.Component<TuidUIP
 export type TuidUIBindSlaveProps = TuidUIProps & {bindSlave:TuidUI; masterId?:number};
 export type TuidUISlaveProps = TuidUIProps & {slave:SlaveUI, masterId?:number};
 
-export interface EntityMapper<T extends Entity, TUI extends EntityUI<T>> {
+export interface EntityMapper<T extends Entity, TUI extends EntityUIO<T>> {
     caption?: string;
     icon?: string;
     typeFieldMappers?: FieldMappers;
@@ -112,7 +112,7 @@ export interface DetailFace {
     renderRow?: SheetUIComponent;
     fields: FieldFaces;
 }
-export interface SheetMapper extends EntityMapper<Sheet, SheetUI> {
+export interface SheetMapper extends EntityMapper<Sheet, SheetUIO> {
     detailFaces?: {[detail:string]: DetailFace;}
     view?: SheetViewComponent;
     archivedList?: SheetUIComponent;
@@ -130,7 +130,7 @@ export interface HistoryMapper extends EntityMapper<History, HistoryUI> {
     listRow?: new (props:{item:any; index:number}) => React.Component<any>;
 }
 
-export interface MapperContainer<E extends Entity, U extends EntityUI<E>, T extends EntityMapper<E, U>> {
+export interface MapperContainer<E extends Entity, U extends EntityUIO<E>, T extends EntityMapper<E, U>> {
     caption?: string;
     icon?: string;
     mapper?: T;
@@ -145,7 +145,7 @@ export interface EntitiesMapper {
 
     tuid?: MapperContainer<Tuid, TuidUI, TuidMapper>;
     action?: MapperContainer<Action, ActionUI, ActionMapper>;
-    sheet?: MapperContainer<Sheet, SheetUI, SheetMapper>;
+    sheet?: MapperContainer<Sheet, SheetUIO, SheetMapper>;
     query?: MapperContainer<Query, QueryUI, QueryMapper>;
     book?: MapperContainer<Book, BookUI, BookMapper>;
     history?: MapperContainer<History, HistoryUI, HistoryMapper>;

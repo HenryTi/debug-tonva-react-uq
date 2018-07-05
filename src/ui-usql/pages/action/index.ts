@@ -1,4 +1,4 @@
-import {MapperContainer, ActionMapper, EntityUI, ActionUI} from '../../ui';
+import {MapperContainer, ActionMapper, EntityUIO, ActionUI} from '../../ui';
 import {Action} from '../../entities';
 import {MainPage} from './mainPage';
 import {EntityLink} from '../entityLink';

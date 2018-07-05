@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { FieldUI } from "./formUI";
+//import { FieldUI, InputUI } from "./formUI";
 import { ViewModel } from "../viewModel";
 import { FormValues } from './vmFieldsForm';
+import { InputUIX, FieldUIX } from './formUIX';
 
-export function buildControl(fieldUI: FieldUI, formValues:FormValues): VmControl {
+export function buildControl(fieldUI: FieldUIX, formValues:FormValues): VmControl {
     let ctrl: VmControl;
     switch (fieldUI.type) {
         default: ctrl = new VmUnknownControl(fieldUI, formValues); break;
@@ -16,10 +17,10 @@ export function buildControl(fieldUI: FieldUI, formValues:FormValues): VmControl
 }
 
 export abstract class VmControl extends ViewModel {
-    fieldUI: FieldUI;
+    fieldUI: FieldUIX;
     protected formValues: FormValues;
     protected name: string;
-    constructor(fieldUI: FieldUI, formValues:FormValues) {
+    constructor(fieldUI: FieldUIX, formValues:FormValues) {
         super();
         this.fieldUI = fieldUI;
         this.name = fieldUI.name;
@@ -44,6 +45,7 @@ const UnkownControl = ({vm}:{vm:VmControl}) => {
 }
 
 export abstract class VmInputControl extends VmControl {
+    fieldUI: InputUIX;
     private input: HTMLInputElement;
 
     inputType:string;
@@ -83,13 +85,15 @@ export abstract class VmInputControl extends VmControl {
 }
 
 const InputControl = observer(({vm}:{vm: VmInputControl}) => {
-    let {ref, inputType, onFocus, onBlur, onChange, renderError} = vm;
+    let {fieldUI, ref, inputType, onFocus, onBlur, onChange, renderError} = vm;
+    let {placeholder} = fieldUI;
     return <><input className="form-control"
         ref={ref}
         type={inputType}
         onFocus={onFocus}
         onBlur={onBlur}
-        onChange={onChange} />
+        onChange={onChange}
+        placeholder={placeholder} />
         {renderError()}
     </>
 });

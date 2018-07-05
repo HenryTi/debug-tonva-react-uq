@@ -5,7 +5,7 @@ import { List, Muted } from 'tonva-react-form';
 import { VmSheet } from './vmSheet';
 import { VmFieldsForm } from '../vmFieldsForm';
 
-export class VmEdit extends VmSheet {
+export class VmSheetEdit extends VmSheet {
     vmFieldsForm: VmFieldsForm;
 
     async load() {
@@ -16,32 +16,16 @@ export class VmEdit extends VmSheet {
             fields: fields,
             arrs: arrs,
             vmApi: this.vmApi,
+            ui: this.ui && this.ui.res
         });
-    }
-
-    showField1 = () => {
-        this.vmFieldsForm.showBands(['f1'], 'f1');
-    }
-
-    showField2 = () => {
-        this.vmFieldsForm.showBands(['f2'], 'f2');
-    }
-
-    showAll = () => {
-        this.vmFieldsForm.showBands(undefined);
     }
 
     protected view = Edit;
 }
 
-const Edit = ({vm}:{vm:VmEdit}) => {
-    let {vmFieldsForm, showAll, showField1, showField2} = vm;
+const Edit = ({vm}:{vm:VmSheetEdit}) => {
+    let {vmFieldsForm} = vm;
     return <Page header={vm.caption}>
         {vmFieldsForm.renderView()}
-        <div>
-            <button className="btn btn-primary" onClick={showAll}>all</button> &nbsp; 
-            <button className="btn btn-primary" onClick={showField1}>f1</button> &nbsp; 
-            <button className="btn btn-primary" onClick={showField2}>f2</button>
-        </div>
     </Page>;
 }

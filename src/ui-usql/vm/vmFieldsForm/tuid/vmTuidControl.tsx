@@ -49,6 +49,12 @@ export class VmTuidControl extends VmControl { // ViewModel {
     protected view = TuidControl;
 }
 
+const buttonStyle:React.CSSProperties = {
+    textAlign:'left', 
+    paddingLeft:'0.75rem', 
+    paddingRight:'0.75rem', 
+    overflow: 'hidden'
+};
 const TuidControl = observer(({vm}:{vm: VmTuidControl}) => {
     let {tuid, value, tuidContent:TuidContent, onClick} = vm;
     let tuidObj = tuid.getId(value);
@@ -61,7 +67,7 @@ const TuidControl = observer(({vm}:{vm: VmTuidControl}) => {
         );
     return <button className="form-control btn btn-outline-info"
         type="button"
-        style={{textAlign:'left', paddingLeft:'0.75rem'}}
+        style={buttonStyle}
         onClick={onClick}>
         {content}
     </button>;

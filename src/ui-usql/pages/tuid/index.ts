@@ -1,6 +1,6 @@
 import {MapperContainer,TuidMapper} from '../../ui';
 import {Tuid} from '../../entities';
-import {EntityUI, TuidUI} from '../../ui';
+import {EntityUIO, TuidUI} from '../../ui';
 import {MainPage} from './mainPage';
 import {EditPage} from './editPage';
 import {ListPage} from './listPage';

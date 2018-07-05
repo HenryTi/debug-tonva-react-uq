@@ -8,10 +8,10 @@ import {EntitiesMapper, FieldMapper, FieldMappers, MapperContainer,
     BookMapper, HistoryMapper,
     TuidListPage
 } from './mapper';
-import {EntityUI} from './entityUI';
+import {EntityUIO} from './entityUI';
 import {ActionUI} from './actionUI';
 import {QueryUI} from './queryUI';
-import {SheetUI} from './sheetUI';
+import {SheetUIO} from './sheetUI';
 import {TuidUI, TuidUIListPage, SlaveUI} from './tuidUI';
 import {BookUI} from './bookUI';
 import {HistoryUI} from './historyUI';
@@ -78,7 +78,7 @@ export class EntitiesUI {
     typeFieldMappers?: FieldMappers;
     action: EntitySet<Action, ActionUI>;
     query: EntitySet<Query, QueryUI>;
-    sheet: EntitySet<Sheet, SheetUI>;
+    sheet: EntitySet<Sheet, SheetUIO>;
     tuid: EntitySet<Tuid, TuidUI>;
     book: EntitySet<Book, BookUI>;
     history: EntitySet<History, HistoryUI>;
@@ -136,7 +136,7 @@ export class EntitiesUI {
     }
 }
 
-export interface EntitySet<E extends Entity, U extends EntityUI<E>> {
+export interface EntitySet<E extends Entity, U extends EntityUIO<E>> {
     caption: string;
     icon: string;
     coll: {[name:string]: U};
@@ -144,7 +144,7 @@ export interface EntitySet<E extends Entity, U extends EntityUI<E>> {
     list: U[];
 }
 
-abstract class EntitySetBuilder<E extends Entity, U extends EntityUI<E>, T extends EntityMapper<E, U>> {
+abstract class EntitySetBuilder<E extends Entity, U extends EntityUIO<E>, T extends EntityMapper<E, U>> {
     protected entitiesUI:EntitiesUI;
     protected entityArr:E[];
     protected d:MapperContainer<E, U, T>;
@@ -272,13 +272,13 @@ class HistorySetBuilder extends EntitySetBuilder<History, HistoryUI, HistoryMapp
         return ret;
     }
 }
-class SheetSetBuilder extends EntitySetBuilder<Sheet, SheetUI, SheetMapper> {
-    build():EntitySet<Sheet, SheetUI> {
+class SheetSetBuilder extends EntitySetBuilder<Sheet, SheetUIO, SheetMapper> {
+    build():EntitySet<Sheet, SheetUIO> {
         let ret = super.build();
         return ret;
     }
-    protected createUI():SheetUI {return new SheetUI();}
-    protected buildUI(entity:Sheet, mapper1:SheetMapper, mapper2:SheetMapper):SheetUI {
+    protected createUI():SheetUIO {return new SheetUIO();}
+    protected buildUI(entity:Sheet, mapper1:SheetMapper, mapper2:SheetMapper):SheetUIO {
         let ret = super.buildUI(entity, mapper1, mapper2);
         let nfm1 = mapper1.detailFaces;
         let nfm2 = mapper2.detailFaces;

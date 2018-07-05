@@ -21,12 +21,15 @@ export interface FieldUIs {
     [name:string]: FieldUI;
 }
 
+export interface EntityUI {
+}
+
 export abstract class VmEntity extends ViewModel {
     protected entity: Entity;
     protected vmApi:VmApi;
-    protected ui: any;
+    protected ui: EntityUI;
 
-    constructor(vmApi:VmApi, entity: Entity, ui?:any) {
+    constructor(vmApi:VmApi, entity: Entity, ui?:EntityUI) {
         super();
         this.vmApi = vmApi;
         this.entity = entity;
@@ -36,8 +39,8 @@ export abstract class VmEntity extends ViewModel {
 
     protected init() {}
 
-    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity) => T) => {
-        let vm = new vmType(this.vmApi, this.entity);
+    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T) => {
+        let vm = new vmType(this.vmApi, this.entity, this.ui);
         await vm.load();
         nav.push(vm.renderView());
     }

@@ -3,7 +3,7 @@ import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
 import {TuidUIComponent, TuidInputComponent, TuidInput, 
     TuidUISlaveComponent, TuidUIBindSlaveComponent} from './mapper';
 import {EntitiesUI, EntitySet} from './entitiesUI';
-import {EntityUI} from './entityUI';
+import {EntityUIO} from './entityUI';
 import {BookUI} from './bookUI';
 import {ActionUI} from './actionUI';
 import {QueryUI} from './queryUI';
@@ -12,7 +12,7 @@ export class TuidUIListPage {
     page: TuidUIComponent;
     row?:TuidUIComponent
 }
-export class TuidUI extends EntityUI<Tuid> {
+export class TuidUI extends EntityUIO<Tuid> {
     entitySet: EntitySet<Tuid, TuidUI>;
 
     editPage?: TuidUIComponent;

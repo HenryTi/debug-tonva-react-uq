@@ -1,4 +1,4 @@
-import {RadioTuidInput, DropDownTuidInput, Tuid, EntityUI, TuidUI, MapperContainer,TuidMapper} from '../../ui-usql';
+import {RadioTuidInput, DropDownTuidInput, Tuid, EntityUIO, TuidUI, MapperContainer,TuidMapper} from '../../ui-usql';
 //import {MainPage} from './mainPage';
 import {MainPage} from './lll';
 import {EditPage} from './edit';

@@ -1,12 +1,12 @@
 import {MapperContainer,SheetMapper, TuidContentProps} from '../../ui-usql/ui';
 import {Sheet} from '../../ui-usql/entities';
-import {EntityUI, SheetUI} from '../../ui-usql/ui';
+import {EntityUIO, SheetUIO} from '../../ui-usql/ui';
 import {GeneralTuidInput} from '../../ui-usql/pages/tuid/input'
 import {ArticleInput, ArticleContent, CandidateRow, PickArticlePage} from './articleInput';
 import {OrderRow} from './order';
 import {SheetNew} from './sheetNew';
 
-export const mapperContainer:MapperContainer<Sheet, SheetUI, SheetMapper> = {
+export const mapperContainer:MapperContainer<Sheet, SheetUIO, SheetMapper> = {
     caption: '凭单',
     mapper: {
         //link: EntityLink,

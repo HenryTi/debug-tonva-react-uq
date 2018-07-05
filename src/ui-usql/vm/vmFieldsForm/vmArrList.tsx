@@ -1,26 +1,28 @@
 import * as React from 'react';
 import { List } from 'tonva-react-form';
-import { ViewModel } from '../viewModel';
+import { ViewModel, JSONContent, RowContent } from '../viewModel';
 import { Arr } from '../field';
 import { ArrValues } from './vmFieldsForm';
-import { ArrBandUI } from './formUI';
+import { ArrBandUIX } from './formUIX';
 
 export class VmArrList extends ViewModel {
     arr: Arr;
     arrValues: ArrValues;
     list: any[];
-    arrBandUI:ArrBandUI;
+    arrBandUI:ArrBandUIX;
+    row: any;
     
-    constructor(arr:Arr, arrValues:ArrValues, arrBandUI:ArrBandUI) {
+    constructor(arr:Arr, arrValues:ArrValues, arrBandUI:ArrBandUIX) {
         super();
         this.arr = arr;
         this.arrValues = arrValues;
         this.arrBandUI = arrBandUI;
+        this.row = arrBandUI.row || RowContent;
         this.list = [{a:1,b:2,c:3}, {a:3.3,b:22,c:3}];
     }
 
     renderItem = (item:any, index:number) => {
-        return <div className="px-3 py-2">{JSON.stringify(item)}</div>;
+        return <this.row {...item} />;
     }
 
     itemClick = (item:any) => {

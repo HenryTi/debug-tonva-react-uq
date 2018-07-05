@@ -5,8 +5,9 @@ import {List, Muted} from 'tonva-react-form';
 import {WSChannel, nav, Page} from 'tonva-tools';
 //import {pageMapper} from './pages';
 //import {pageMapper as 货主Mapper} from './货主';
-import {AppUI, MainPage, EntitiesMapper} from './ui';
-import {VmApp} from './vm';
+import {AppUI, MainPage, EntitiesMapper} from './ui-usql/ui';
+import {VmApp} from './ui-usql/vm';
+import UI from './ui';
 
 /*
 const tonvaApp = process.env.REACT_APP_TONVA_APP;
@@ -23,10 +24,12 @@ export interface UsqlHomeProps {
     uiMappers?:{[api:string]: EntitiesMapper};
 }
 
+UI.App.VmApp;
+
 @observer
 export class UsqlHome extends React.Component<UsqlHomeProps> {
     private appUI:AppUI;
-    private vmApp:VmApp;
+    private vmApp: VmApp;
     @observable private view = <Page><div className="m-3">waiting...</div></Page>;
 
     constructor(props) {
@@ -36,7 +39,7 @@ export class UsqlHome extends React.Component<UsqlHomeProps> {
         this.state = {
             uiLoaded: false
         }
-        this.vmApp = new VmApp(appName, ui);
+        this.vmApp = new UI.App.VmApp(appName, ui);
     }
     async componentDidMount() {
         //await this.appUI.load();

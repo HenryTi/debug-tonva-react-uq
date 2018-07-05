@@ -2,12 +2,22 @@ import * as React from 'react';
 import { Page } from 'tonva-tools';
 import {List, Muted, LMR, EasyDate, FA} from 'tonva-react-form';
 import { Tuid, Sheet, Entity } from '../../entities';
-import { VmEntity, vmLinkIcon } from '../entity';
+import { VmEntity, vmLinkIcon, EntityUI } from '../entity';
 import { VmApi } from '../vmApi';
+import { VmSheetMain } from './vmMain';
+import { VmSheetEdit } from './vmEdit';
+
+export interface SheetUI extends EntityUI {
+    res: any;
+    main: typeof VmSheetMain;
+    edit: typeof VmSheetEdit;
+}
 
 export abstract class VmSheet extends VmEntity {
-    constructor(vmApi:VmApi, sheet:Sheet) {
-        super(vmApi, sheet);
+    protected ui: SheetUI;
+
+    constructor(vmApi:VmApi, sheet:Sheet, ui?:SheetUI) {
+        super(vmApi, sheet, ui);
     }
 
     entity: Sheet;
