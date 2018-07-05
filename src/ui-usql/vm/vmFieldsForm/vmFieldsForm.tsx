@@ -67,23 +67,31 @@ export class VmFieldsForm extends ViewModel {
     formValues: FormValues;
     arrValues: {[name:string]: ArrValues};
 
-    onSubmitButtonClick = async () => {
+    getValues() {
         let values:any = {};
-        /*
-        let vs = this.formValues.values;
-        for (let f of this.fields) {
-            let fn = f.name;
-            values[fn] = vs[fn];
-        }
-        */
         _.merge(values, this.formValues.values);
         if (this.arrValues !== undefined) {
             for (let i in this.arrValues) {
                 values[i] = this.arrValues[i].list;
             }
         }
+        return values;
+    }
+
+    setValues(values:any) {
+        let v = this.formValues.values;
+        for (let f of this.fields) {
+            let fn = f.name;
+            v[fn] = values[fn];
+        }
+        // 还要设置arrs的values
+    }
+
+    onSubmitButtonClick = async () => {
+        let values = this.getValues();
         if (this.onSubmit !== undefined) {
             await this.onSubmit(values);
+            return;
         }
         let json = JSON.stringify(values);
         alert('submit: \n' + json);
@@ -199,7 +207,7 @@ export class VmFieldsForm extends ViewModel {
     }
 
     private buildFromBands(bandUIs:BandUI[], formValues:FormValues, fields:Field[]): BandUIX[] {
-        let vBands:BandUI[] = [];
+        let vBands:BandUIX[] = [];
         for (let bandUI of bandUIs) {
             let fieldUIs = (bandUI as FieldsBandUI).fieldUIs;
             if (fieldUIs !== undefined) {
@@ -236,13 +244,13 @@ export class VmFieldsForm extends ViewModel {
                 }
                 children.push(content.substring(index, ret.index));
                 let str = ret[0];
-                children.push(<FA name={str.substr(1, str.length-2).trim()} />);
+                children.push(<FA key={index} name={str.substr(1, str.length-2).trim()} />);
                 index = ret.index + str.length;
             }
             c = React.createElement(React.Fragment, undefined, children);
         }
         return {
-            key: '$sumit',
+            key: '$submit',
             type: 'submit',
             content: c,
             onSubmit: this.onSubmitButtonClick,
@@ -251,15 +259,19 @@ export class VmFieldsForm extends ViewModel {
     }
     private buildFieldBandUI(fieldBandUI: FieldBandUI, fields:Field[], formValues:FormValues):FieldBandUIX {
         let ret:FieldBandUIX = _.clone(fieldBandUI);
+        let name = ret.name;
         ret.band = FieldBand;
-        ret.key = ret.name;
+        ret.key = name;
+        if (ret.label === undefined) ret.label = name;
         this.buildFieldControl(ret, fields, formValues);
         return ret;
     }
     private buildFieldsBandUI(fieldsBandUI: FieldsBandUI, fields:Field[], formValues:FormValues):FieldsBandUIX {
         let ret:FieldsBandUIX = _.clone(fieldsBandUI);
+        let name = ret.fieldUIs[0].name;
         ret.band = FieldsBand;
-        ret.key = ret.fieldUIs[0].name;
+        ret.key = name;
+        if (ret.label === undefined) ret.label = name;
         let fieldUIs = ret.fieldUIs;
         fieldUIs = ret.fieldUIs = fieldUIs.map(v => _.clone(v));
         for (let f of fieldUIs) {
@@ -280,13 +292,14 @@ export class VmFieldsForm extends ViewModel {
         let {name, bands} = ret;
         ret.band = ArrBand;
         ret.key = name;
+        if (ret.label === undefined) ret.label = name;
         if (this.arrs === undefined) return ret;
         let arr = this.arrs.find(v => v.name === name);
         if (arr === undefined) return ret;
         let arrValue = this.arrValues[name];
         let {formValues} = arrValue;
         ret.bands = this.buildFromBands(bands, formValues, arr.fields);
-        let vmList = this.buildArrList(arr, arrValue, arrBandUI);
+        let vmList = this.buildArrList(arr, arrValue, ret);
         ret.vmList = vmList;
         return ret;
     }
@@ -334,7 +347,7 @@ export class VmFieldsForm extends ViewModel {
     }
     private buildArrBand(vBands:BandUI[], arr: Arr) {
         let {name, fields} = arr;
-        let fieldsBandUIs:BandUI[] = [];
+        let fieldsBandUIs:BandUIX[] = [];
         let arrValue = this.arrValues[name];
         let {formValues} = arrValue;
         this.buildFromFields(fieldsBandUIs, fields, formValues);
@@ -356,8 +369,8 @@ export class VmFieldsForm extends ViewModel {
         for (let arr of this.arrs) this.buildArrBand(vBands, arr);
     }
 
-    private buildArrList(arr:Arr, arrValues: ArrValues, arrBandUI:ArrBandUI): ViewModel {
-        return new VmArrList(arr, arrValues, arrBandUI);
+    private buildArrList(arr:Arr, arrValues: ArrValues, arrBandUI:ArrBandUIX): ViewModel {
+        return new VmArrList(this.vmApi, arr, arrValues, arrBandUI);
     }
 
     protected view = Form;
@@ -367,7 +380,7 @@ const Form = observer(({vm}:{vm:VmFieldsForm}) => {
     let {ui} = vm;
     let {className, bands, visibleBands} = ui;
     let vBands = bands;
-    if (visibleBands !== undefined) vBands = visibleBands;
+    if (visibleBands !== undefined && visibleBands.length > 0) vBands = visibleBands;
     return <form className={className}>
         {vBands.map(v => {
             let {band:Band, key} = v;

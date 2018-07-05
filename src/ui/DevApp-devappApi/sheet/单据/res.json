@@ -9,7 +9,7 @@
             "label": "arr1中文",
             "bands": [
                 {"name":"f11", "label":"arr1-f11中文" },
-                {"name":"f12", "label":"arr1-f12中文" }
+                {"name":"f12" }
             ]
         },
 

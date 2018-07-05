@@ -31,6 +31,7 @@ export interface ArrBandUIX extends ArrBandUI {
     vmList?: ViewModel;                  // list view model
     band?: TypeArrBand;
     key?: string;
+    bands: BandUIX[];                    // 下一级页面的展开描述
 }
 
 export interface SubmitBandUIX extends SubmitBandUI {
