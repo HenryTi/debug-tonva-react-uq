@@ -34,6 +34,8 @@ export class VmTuidControl extends VmControl { // ViewModel {
         this.tuidContent = tuidContent;
         this.pickerConfig = pickerConfig;
         this.onClick = this.onClick.bind(this);
+        let id = formValues.values[this.name];
+        if (id !== null) this.idChanged(id);
     }
     onClick = async () => {
         let typePicker = this.pickerConfig.picker;
@@ -57,6 +59,7 @@ const buttonStyle:React.CSSProperties = {
 };
 const TuidControl = observer(({vm}:{vm: VmTuidControl}) => {
     let {tuid, value, tuidContent:TuidContent, onClick} = vm;
+    tuid.useId(value);
     let tuidObj = tuid.getId(value);
     let content = !tuidObj?
         <>点击选择 {tuid.name}</> : 

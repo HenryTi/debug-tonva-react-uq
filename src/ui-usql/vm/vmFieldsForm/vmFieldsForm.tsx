@@ -42,6 +42,7 @@ export class VmFieldsForm extends ViewModel {
     protected arrs: Arr[];
     //protected submitButton: JSX.Element;
     protected onSubmit: (values:any) => Promise<void>;
+    protected onFieldsInputed: (values:any) => Promise<void>;
     protected readOnly: boolean;
     protected vmApi: VmApi;
 
@@ -66,6 +67,8 @@ export class VmFieldsForm extends ViewModel {
     ui: FormUIX;
     formValues: FormValues;
     arrValues: {[name:string]: ArrValues};
+    defaultSubmitCaption: any;
+    submitCaption: any;
 
     getValues() {
         let values:any = {};
@@ -89,6 +92,10 @@ export class VmFieldsForm extends ViewModel {
 
     onSubmitButtonClick = async () => {
         let values = this.getValues();
+        if (this.onFieldsInputed !== undefined) {
+            await this.onFieldsInputed(values);
+            return;
+        }
         if (this.onSubmit !== undefined) {
             await this.onSubmit(values);
             return;
@@ -176,7 +183,12 @@ export class VmFieldsForm extends ViewModel {
         };
     }
 
-    showBands(fieldNames:string[], submitCaption?:any) {
+    showBands(fieldNames:string[], submitCaption?:any, onSubmit?:(values:any)=>Promise<void>) {
+        if (submitCaption === undefined)
+            this.submitCaption = this.defaultSubmitCaption;
+        else
+            this.submitCaption = this.buildSumitConent(submitCaption);
+        this.onFieldsInputed = onSubmit;
         let {bands, visibleBands} = this.ui;
         visibleBands.splice(0, visibleBands.length);
         if (fieldNames === undefined) {
@@ -230,31 +242,35 @@ export class VmFieldsForm extends ViewModel {
         return vBands;
     }
     private static buttonContentRegex = /\{\S+\}/gm;
-    private buildSubmit(content:any): SubmitBandUIX {
-        let c = content;
-        if (typeof content === 'string') {
-            let children = [];
-            let regex = VmFieldsForm.buttonContentRegex;
-            let index = 0;
-            for (;;) {
-                let ret = regex.exec(content as string);
-                if (ret === null) {
-                    children.push(content.substr(index));
-                    break;
-                }
-                children.push(content.substring(index, ret.index));
-                let str = ret[0];
-                children.push(<FA key={index} name={str.substr(1, str.length-2).trim()} />);
-                index = ret.index + str.length;
+    private buildSumitConent(content:any):any {
+        if (typeof content !== 'string') return content;
+        let children = [];
+        let regex = VmFieldsForm.buttonContentRegex;
+        let index = 0;
+        for (;;) {
+            let ret = regex.exec(content as string);
+            if (ret === null) {
+                children.push(content.substr(index));
+                break;
             }
-            c = React.createElement(React.Fragment, undefined, children);
+            children.push(content.substring(index, ret.index));
+            let str = ret[0];
+            children.push(<FA key={index} name={str.substr(1, str.length-2).trim()} />);
+            index = ret.index + str.length;
         }
+        return React.createElement(React.Fragment, undefined, children);
+    }
+    private buildSubmit(content:any): SubmitBandUIX {
+        let c = this.buildSumitConent(content);
+        this.defaultSubmitCaption = c;
+        this.submitCaption = c;
         return {
             key: '$submit',
             type: 'submit',
             content: c,
             onSubmit: this.onSubmitButtonClick,
             band: SubmitBand,
+            form: this,
         };
     }
     private buildFieldBandUI(fieldBandUI: FieldBandUI, fields:Field[], formValues:FormValues):FieldBandUIX {

@@ -39,10 +39,19 @@ export abstract class VmEntity extends ViewModel {
 
     protected init() {}
 
-    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T) => {
+    async create<T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T): Promise<T> {
         let vm = new vmType(this.vmApi, this.entity, this.ui);
         await vm.load();
-        nav.push(vm.renderView());
+        return vm;
+    }
+
+    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T) => {
+        let vm = await this.create<T>(vmType);
+        vm.start();
+    }
+
+    async start(param?:any):Promise<void> {
+        nav.push(this.renderView());
     }
 
     values: any;

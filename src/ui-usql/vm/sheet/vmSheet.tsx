@@ -5,11 +5,13 @@ import { Tuid, Sheet, Entity } from '../../entities';
 import { VmEntity, vmLinkIcon, EntityUI } from '../entity';
 import { VmApi } from '../vmApi';
 import { VmSheetMain } from './vmMain';
+import { VmSheetNew } from './vmNew';
 import { VmSheetEdit } from './vmEdit';
 
 export interface SheetUI extends EntityUI {
     res: any;
     main: typeof VmSheetMain;
+    new: typeof VmSheetNew;
     edit: typeof VmSheetEdit;
 }
 

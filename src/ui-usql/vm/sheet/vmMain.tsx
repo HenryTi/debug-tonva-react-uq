@@ -3,18 +3,21 @@ import { Button, ButtonProps } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { VmSheet } from './vmSheet';
+import { VmSheetNew } from './vmNew';
 import { VmSheetEdit } from './vmEdit';
 import { VmSheetSchema } from './vmSchema';
 import { VmArchives } from './vmArchives';
 
 export class VmSheetMain extends VmSheet {
+    protected vmNew = VmSheetNew;
     protected vmEdit = VmSheetEdit;
     protected vmSchema = VmSheetSchema;
     protected vmArchives = VmArchives;
     protected vmSheetState = VmSheetEdit;
 
     newClick = async () => {
-        let t = (this.ui && this.ui.edit) || this.vmEdit;
+        //let t = (this.ui && this.ui.edit) || this.vmEdit;
+        let t = (this.ui && this.ui.new) || this.vmNew;
         await this.nav(t);
     }
     schemaClick = async () => await this.nav(this.vmSchema);

@@ -5,6 +5,7 @@ import { VmControl } from "./control";
 import { TypeFieldBand, TypeFieldsBand, TypeArrBand, TypeSubmitBand } from './band';
 import { FormUI, FieldBandUI, FieldsBandUI, ArrBandUI, SubmitBandUI, FieldUI,
     TuidUI, InputUI, StringUI, IntUI, DecUI, TextUI, CheckUI, SelectUI, RadioUI } from './formUI';
+import { VmFieldsForm } from './vmFieldsForm';
 
 export interface FormUIX extends FormUI {
     bands: BandUIX[];
@@ -40,6 +41,7 @@ export interface SubmitBandUIX extends SubmitBandUI {
     onSubmit?: () => void;
     band?: TypeSubmitBand;
     key?: string;
+    form?: VmFieldsForm;
 }
 
 export interface FieldUIX extends FieldUI {

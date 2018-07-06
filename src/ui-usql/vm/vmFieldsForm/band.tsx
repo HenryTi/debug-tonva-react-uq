@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FA } from 'tonva-react-form';
 import { FieldBandUIX, FieldsBandUIX, ArrBandUIX, SubmitBandUIX } from "./formUIX";
+import { defaultCreateObservableOptions } from '../../../../node_modules/mobx/lib/api/observable';
 
 export type TypeFieldBand = ({}:FieldBandUIX) => JSX.Element;
 export type TypeFieldsBand = ({}:FieldsBandUIX) => JSX.Element;
@@ -36,11 +37,12 @@ export const ArrBand = ({label, name, bands, vmList}: ArrBandUIX) => {
     </div>;
 }
 
-export const SubmitBand = ({content, onSubmit}: SubmitBandUIX) => {
+export const SubmitBand = ({content, onSubmit, form}: SubmitBandUIX) => {
+    let {defaultSubmitCaption, submitCaption} = form;
     return <div className="form-group row">
         <div className="offset-sm-2 col-sm-10">
             <button type="button" onClick={onSubmit} className="btn btn-primary">
-                {content}
+                {submitCaption || defaultSubmitCaption}
             </button>
         </div>
     </div>;
