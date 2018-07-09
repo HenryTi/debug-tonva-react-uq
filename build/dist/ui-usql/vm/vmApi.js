@@ -18,7 +18,7 @@ import { VmSheetMain } from './sheet';
 import { VmActionMain } from './action';
 import { VmQueryMain } from './query';
 import { VmTuidMain } from './tuid';
-import { VmTuidControl, VmTuidPicker } from './vmFieldsForm';
+import { VmTuidControl, VmTuidPicker } from './vmForm';
 //import { FormRowBuilder } from './vmForm/rowBuilder';
 //import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm/tuid';
 export class VmApi extends ViewModel {

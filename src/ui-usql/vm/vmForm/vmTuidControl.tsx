@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { nav } from 'tonva-tools';
-import { Tuid } from '../../../entities';
-import { ViewModel, TypeContent } from '../../viewModel';
-import { VmTuidPicker, TypeVmTuidPicker } from './vmTuidPicker';
-import { VmApi } from '../../vmApi';
-import { VmControl } from '../control';
-import { FieldUI } from '../formUI';
-import { FormValues } from '../vmFieldsForm';
+import { Tuid } from '../../entities';
+import { ViewModel, TypeContent } from '../viewModel';
+import { VmApi } from '../vmApi';
+//import { VmTuidPicker, TypeVmTuidPicker } from './vmTuidPicker';
+import { VmTuidPicker, TypeVmTuidPicker } from './vmPicker';
+import { VmControl } from './control';
+import { FieldUI } from './formUI';
+import { FormValues } from './vmForm';
 
 export type TypeVmTuidControl = typeof VmTuidControl; // new (vmApi:VmApi, tuid: Tuid, vmFormRowTuidInput: VmFormRowTuidInput, tuidContent: TypeContent) => VmTuidInput;
 export type TypeIdFromValue = (values) => number;
@@ -15,7 +16,7 @@ export type TypeIdFromValue = (values) => number;
 export interface PickerConfig {
     picker: TypeVmTuidPicker;
     row: TypeContent;
-    idFromValue?: TypeIdFromValue,
+    //idFromValue?: TypeIdFromValue,
 }
 
 export class VmTuidControl extends VmControl { // ViewModel {
@@ -34,20 +35,33 @@ export class VmTuidControl extends VmControl { // ViewModel {
         this.tuidContent = tuidContent;
         this.pickerConfig = pickerConfig;
         this.onClick = this.onClick.bind(this);
-        let id = formValues.values[this.name];
-        if (id !== null) this.idChanged(id);
+        this.setValue(formValues.values[this.name]);
+        //if (id !== null) this.idChanged(id);
     }
     onClick = async () => {
         let typePicker = this.pickerConfig.picker;
         if (typePicker === undefined) typePicker = VmTuidPicker;
-        let vmTuidPicker = new typePicker(this.vmApi, this.tuid, this);
-        await vmTuidPicker.load();
-        nav.push(vmTuidPicker.renderView());
+        let vmTuidPicker = new typePicker(
+            this.vmApi,
+            '搜索 - ' + this.tuid.name, 
+            this.tuid, 
+            this.onSelected, 
+            this.pickerConfig && this.pickerConfig.row);
+        await vmTuidPicker.loadSchema();
+        nav.push(vmTuidPicker.render());
     }
-    idChanged(id:number) {
+    setValue(id:number) {
         this.tuid.useId(id);
         this.value = id;
     }
+    onSelected = async (item:any) => {
+        this.setValue(item.id);
+    }
+    /*
+    idChanged(id:number) {
+        this.tuid.useId(id);
+        this.value = id;
+    }*/
     protected view = TuidControl;
 }
 
@@ -58,7 +72,8 @@ const buttonStyle:React.CSSProperties = {
     overflow: 'hidden'
 };
 const TuidControl = observer(({vm}:{vm: VmTuidControl}) => {
-    let {tuid, value, tuidContent:TuidContent, onClick} = vm;
+    let {tuid, value, fieldUI, tuidContent:TuidContent, onClick} = vm;
+    let {readOnly} = fieldUI;
     tuid.useId(value);
     let tuidObj = tuid.getId(value);
     let content = !tuidObj?
@@ -68,6 +83,9 @@ const TuidControl = observer(({vm}:{vm: VmTuidControl}) => {
                 <TuidContent {...tuidObj} />
                 : <TuidContent id={value} />
         );
+    if (readOnly === true) {
+        return <div className="form-control form-control-plaintext border border-info rounded bg-light">{content}</div>;
+    }
     return <button className="form-control btn btn-outline-info"
         type="button"
         style={buttonStyle}

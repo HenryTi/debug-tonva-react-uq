@@ -6,7 +6,7 @@ import {defaultMapper} from '../pages';
 import {Entities, Entity} from '../entities';
 import {EntitiesUI, entitiesUICollection, EntitySet} from './entitiesUI';
 import {EntityUIO} from './entityUI';
-import {TuidUI} from './tuidUI';
+import {TuidUIO} from './tuidUI';
 //import {Entities, defaultMapper, Entity, Tuid, Action, Sheet, Query,
 //    AppUI, EntitiesUI, EntitiesUIProps, EntitySet, 
 //    EntityUI, ActionUI, QueryUI, SheetUI, TuidUI} from './ui-usql';

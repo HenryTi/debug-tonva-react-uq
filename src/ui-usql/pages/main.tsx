@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import {nav, Page} from 'tonva-tools';
 import {List, Muted} from 'tonva-react-form';
 import {Entities, Entity, Tuid, Action, Sheet, Query} from '../entities';
-import {EntitiesUIProps, EntitiesUI, EntitySet, EntityUIO, ActionUI, QueryUI, SheetUIO, TuidUI} from '../ui';
+import {EntitiesUIProps, EntitiesUI, EntitySet, EntityUIO, ActionUIO, QueryUI, SheetUIO, TuidUIO} from '../ui';
 
 export class Main extends React.Component<EntitiesUIProps> {
     constructor(props) {

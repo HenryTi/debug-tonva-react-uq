@@ -3,44 +3,48 @@ import { observer } from 'mobx-react';
 import { Button, ButtonProps } from 'reactstrap';
 import { Page, nav } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
-import { VmSheetNew, VmSheetEdit, VmFieldsForm } from '../../../../ui-usql';
+import { VmSheetNew, VmSheetEdit, VmForm, VmTuidPicker, RowContent } from '../../../../ui-usql';
+//import { VmTuidPicker } from '../../../../ui-usql/vm/vmForm';
 
 export class VmSheetNew单据 extends VmSheetNew {
     showField1 = () => {
-        this.vmFieldsForm.showBands(['f1'], 'f1');
+        this.vmForm.showBands(['f1'], 'f1');
     }
 
     showField2 = () => {
-        this.vmFieldsForm.showBands(['f2'], 'f2');
+        this.vmForm.showBands(['f2'], 'f2');
     }
 
     showAll = () => {
-        this.vmFieldsForm.showBands(undefined);
+        this.vmForm.showBands(undefined);
     }
 
     async start() {
         //nav.push(this.renderView());
         //alert('started');
-        nav.push(<SelectId1 vm={this} />)
+        let tuid = this.entity.getFieldTuid('id1');
+        let vmTuidPicker = new VmTuidPicker(this.vmApi, '选择Id1', tuid, this.onArticleSelected, RowContent);
+        //nav.push(<SelectId1 vm={this} />)
+        vmTuidPicker.start();
     }
 
-    onArticleSelected = () => {
-        this.vmFieldsForm.setValue('id1', 1);
-        nav.replace(<InputArr1Row vm={this} />);
+    onArticleSelected = async (item:any) => {
+        this.vmForm.setValue('id1', item.id);
+        nav.push(<InputArr1Row vm={this} />);
     }
 
     onInputF1 = async () => {
-        this.vmFieldsForm.showBands(['f1'], 'f1', this.onInputF2);
+        this.vmForm.showBands(['f1'], 'f1', this.onInputF2);
         nav.replace(<InputF1 vm={this} />);
     }
     
     onInputF2 = async () => {
-        this.vmFieldsForm.showBands(['f2'], 'f2', this.onShowAll);
+        this.vmForm.showBands(['f2'], 'f2', this.onShowAll);
         nav.replace(<InputF1 vm={this} />);
     }
 
     onShowAll = async () => {
-        this.vmFieldsForm.showBands(undefined);
+        this.vmForm.showBands(undefined);
         nav.replace(<ShowAll vm={this} />);
     }
     
@@ -68,34 +72,34 @@ const InputArr1Row = ({vm}:{vm:VmSheetNew单据}) => {
 }
 
 const InputF1 = ({vm}:{vm:VmSheetNew单据}) => {
-    let {vmFieldsForm, showAll, showField1, showField2} = vm;
-    return <Page header={vm.caption}>
+    let {label, vmForm, showAll, showField1, showField2} = vm;
+    return <Page header={label}>
         <div className="p-3">现在输入F1字段</div>
-        {vmFieldsForm.renderView()}
+        {vmForm.render()}
     </Page>
 }
 
 const InputF2 = ({vm}:{vm:VmSheetNew单据}) => {
-    let {vmFieldsForm, showAll, showField1, showField2} = vm;
-    return <Page header={vm.caption}>
+    let {label, vmForm, showAll, showField1, showField2} = vm;
+    return <Page header={label}>
         <div className="p-3">现在输入F2字段</div>
-        {vmFieldsForm.renderView()}
+        {vmForm.render()}
     </Page>
 }
 
 const ShowAll = ({vm}:{vm:VmSheetNew单据}) => {
-    let {vmFieldsForm, showAll, showField1, showField2} = vm;
-    return <Page header={vm.caption}>
+    let {label, vmForm, showAll, showField1, showField2} = vm;
+    return <Page header={label}>
         <div className="p-3">自己的单据程序</div>
-        {vmFieldsForm.renderView()}
+        {vmForm.render()}
     </Page>;
 }
 
 const AddNew = ({vm}:{vm:VmSheetNew单据}) => {
-    let {vmFieldsForm, showAll, showField1, showField2} = vm;
-    return <Page header={vm.caption}>
+    let {label, vmForm, showAll, showField1, showField2} = vm;
+    return <Page header={label}>
         <div className="p-3">自己的单据程序</div>
-        {vmFieldsForm.renderView()}
+        {vmForm.render()}
         <div className="px-3">
             <div className="form-group row">
                 <div className="offset-sm-2 col-sm-10">

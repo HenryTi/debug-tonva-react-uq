@@ -26,7 +26,7 @@ const EntityLink = ({vm, apiName, type, entityName}:Props) => {
     return <div key={key}
         className="bg-white cursor-pointer border-bottom" 
         onClick={vmLink.onClick}>
-        {vmLink.renderView()}
+        {vmLink.render()}
     </div>;
 }
 
@@ -38,6 +38,6 @@ const AppPage = observer(({vm}:{vm:VmApp}) => {
         <div className="p-3">自定义的app界面</div>
         {sheets.map(v => <EntityLink key={v} vm={vm} apiName={api} type="sheet" entityName={v} />)}
         <br />
-        {vmApiArr.map((v,i) => <div key={i}>{v.renderView()}</div>)}
+        {vmApiArr.map((v,i) => <div key={i}>{v.render()}</div>)}
     </Page>;
 });

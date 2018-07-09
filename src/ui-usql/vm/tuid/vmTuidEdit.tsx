@@ -4,11 +4,18 @@ import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page, nav } from 'tonva-tools';
 import { VmTuid } from './vmTuid';
+import { VmForm } from '../vmForm';
 
 export type TypeVmTuidEdit = typeof VmTuidEdit;
 
 export class VmTuidEdit extends VmTuid {
+    vmForm: VmForm;
     id: number;
+
+    async loadSchema() {
+        await super.loadSchema();
+        this.vmForm = this.createVmFieldsForm();
+    }
 
     async loadId(id: number) {
         this.id = id;
@@ -29,7 +36,7 @@ export class VmTuidEdit extends VmTuid {
 
     protected resetForm() {
         this.resetValues();
-        this.vmFieldsForm.reset();
+        this.vmForm.reset();
     }
 
     async submit() {
@@ -37,7 +44,7 @@ export class VmTuidEdit extends VmTuid {
         if (ret) {
             alert('这里还要判断返回值，先不处理了 \n' + JSON.stringify(ret));
         }
-        nav.push(<Page header={this.caption + '提交成功'} back="none">
+        nav.push(<Page header={this.label + '提交成功'} back="none">
             <div className='m-3'>
                 <span className="text-success">
                     <FA name='check-circle' size='lg' /> 成功提交！
@@ -59,8 +66,8 @@ export class VmTuidEdit extends VmTuid {
 }
 
 const TuidNewPage = observer(({vm}:{vm:VmTuidEdit}) => {
-    let {caption, values, renderForm} = vm;
-    return <Page header={'新增 - ' + caption}>
+    let {label, values, renderForm} = vm;
+    return <Page header={'新增 - ' + label}>
         {renderForm('mx-3 my-2')}
     </Page>;
 });

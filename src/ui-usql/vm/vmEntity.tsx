@@ -2,15 +2,14 @@ import * as React from 'react';
 import { observable } from 'mobx';
 import { FA } from 'tonva-react-form';
 import { nav } from 'tonva-tools';
-import { Entity, Tuid } from '../../entities';
-import { ViewModel, TypeContent } from '../viewModel';
-import { VmApi } from '../vmApi';
-import { VmFieldsForm, TypeVmFieldsForm } from '../vmFieldsForm';
-import { Field } from '../field';
-//import { FormRowBuilder } from '../vmForm/rowBuilder';
-import { VmTuidControl, TypeVmTuidControl, PickerConfig } from '../vmFieldsForm/tuid';
+import { Entity, Tuid } from '../entities';
+import { ViewModel, TypeContent } from './viewModel';
+import { VmApi } from './vmApi';
+import { VmForm, TypeVmFieldsForm, VmFormOptions } from './vmForm';
+import { Field } from './field';
+import { VmTuidControl, TypeVmTuidControl, PickerConfig } from './vmForm';
 
-export interface FieldUI {
+export interface FieldUIO {
     label?: string;
     notes?: string;
     placeholder?: string;
@@ -18,49 +17,81 @@ export interface FieldUI {
     //mapper?: FieldMapper;
 }
 export interface FieldUIs {
-    [name:string]: FieldUI;
+    [name:string]: FieldUIO;
 }
 
 export interface EntityUI {
+    label: string;
+    res: any;
 }
 
 export abstract class VmEntity extends ViewModel {
     protected entity: Entity;
-    protected vmApi:VmApi;
     protected ui: EntityUI;
+    label: string;
+    vmApi:VmApi;
 
     constructor(vmApi:VmApi, entity: Entity, ui?:EntityUI) {
         super();
         this.vmApi = vmApi;
         this.entity = entity;
         this.ui = ui;
+        this.label = this.getLabel();
         this.init();
     }
 
     protected init() {}
+    protected getRes() {
+        return this.ui && this.ui.res;
+    }
+    protected getLabel() {
+        let res = this.getRes();
+        return (res && res.label) || this.entity.name;
+    }
+
+    protected createVmFieldsForm() {
+        let ret = this.newVmFieldsForm();
+        ret.init(this.fieldsFormOptions);
+        return ret;
+    }
+
+    protected newVmFieldsForm():VmForm {
+        return new VmForm();
+    }
+
+    protected get fieldsFormOptions():VmFormOptions {
+        let {schema} = this.entity;
+        let {fields, arrs} = schema;
+        return {
+            fields: fields,
+            arrs: arrs,
+            vmApi: this.vmApi,
+            ui: this.ui && this.ui.res,
+        }
+    }
 
     async create<T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T): Promise<T> {
         let vm = new vmType(this.vmApi, this.entity, this.ui);
-        await vm.load();
+        await vm.loadSchema();
         return vm;
     }
 
-    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T) => {
+    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T, param?:any) => {
         let vm = await this.create<T>(vmType);
-        vm.start();
+        vm.start(param);
     }
 
     async start(param?:any):Promise<void> {
-        nav.push(this.renderView());
+        nav.push(this.render());
     }
 
     values: any;
     returns: any;
-    protected vmFieldsForm: VmFieldsForm;
+    //protected vmForm: VmForm;
     get icon() {return vmLinkIcon('text-info', 'circle-thin')}
-    get caption() { return this.entity.name; }
+    //get caption() { return this.entity.name; }
 
-    async load() {
+    async loadSchema() {
         await this.entity.loadSchema();
         this.initValues();
     }

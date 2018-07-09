@@ -3,29 +3,22 @@ import { Button, ButtonProps } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { VmSheet } from './vmSheet';
-import { VmFieldsForm } from '../vmFieldsForm';
+import { VmForm } from '../vmForm';
 
 export class VmSheetNew extends VmSheet {
-    vmFieldsForm: VmFieldsForm;
+    vmForm: VmForm;
 
-    async load() {
-        await super.load();
-        let {schema} = this.entity;
-        let {fields, arrs} = schema;
-        this.vmFieldsForm = new VmFieldsForm({
-            fields: fields,
-            arrs: arrs,
-            vmApi: this.vmApi,
-            ui: this.ui && this.ui.res
-        });
+    async loadSchema() {
+        await super.loadSchema();
+        this.vmForm = this.createVmFieldsForm();
     }
 
     protected view = Edit;
 }
 
 const Edit = ({vm}:{vm:VmSheetNew}) => {
-    let {vmFieldsForm} = vm;
-    return <Page header={vm.caption}>
-        {vmFieldsForm.renderView()}
+    let {label, vmForm} = vm;
+    return <Page header={label}>
+        {vmForm.render()}
     </Page>;
 }

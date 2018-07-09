@@ -5,15 +5,15 @@ import {TuidUIComponent, TuidInputComponent, TuidInput,
 import {EntitiesUI, EntitySet} from './entitiesUI';
 import {EntityUIO} from './entityUI';
 import {BookUI} from './bookUI';
-import {ActionUI} from './actionUI';
+import {ActionUIO} from './actionUI';
 import {QueryUI} from './queryUI';
 
 export class TuidUIListPage {
     page: TuidUIComponent;
     row?:TuidUIComponent
 }
-export class TuidUI extends EntityUIO<Tuid> {
-    entitySet: EntitySet<Tuid, TuidUI>;
+export class TuidUIO extends EntityUIO<Tuid> {
+    entitySet: EntitySet<Tuid, TuidUIO>;
 
     editPage?: TuidUIComponent;
     listPage?: TuidUIListPage;
@@ -72,11 +72,11 @@ export class TuidUI extends EntityUIO<Tuid> {
 
 export interface SlaveUI {
     name: string;
-    tuid: TuidUI,
+    tuid: TuidUIO,
     book: BookUI;
     page: QueryUI;
     pageSlave: QueryUI;
     all: QueryUI;
-    add: ActionUI;
-    del: ActionUI;
+    add: ActionUIO;
+    del: ActionUIO;
 }

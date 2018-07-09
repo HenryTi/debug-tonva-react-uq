@@ -49,6 +49,7 @@ export interface SubmitBandUI {
 export interface FieldUI {
     name: string;           // field name 对应
     type: 'tuid' | 'string' | 'int' | 'dec' | 'text' | 'check' | 'select' | 'radio';
+    readOnly?: boolean;
     //field?: Field;
     //control?: VmControl;              // field control element
 }

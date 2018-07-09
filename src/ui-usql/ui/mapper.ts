@@ -1,10 +1,10 @@
 import {Entities, Entity, Tuid, Slave, Action, Sheet, Query, Book, History} from "../entities";
 import {EntitiesUI} from './entitiesUI';
 import {EntityUIO} from './entityUI';
-import {ActionUI} from './actionUI';
+import {ActionUIO} from './actionUI';
 import {QueryUI} from './queryUI';
 import {SheetUIO} from './sheetUI';
-import {TuidUI, SlaveUI} from './tuidUI';
+import {TuidUIO, SlaveUI} from './tuidUI';
 import {BookUI} from './bookUI';
 import {HistoryUI} from './historyUI';
 
@@ -17,7 +17,7 @@ export interface TuidInput {
 }
 export interface TuidContentProps {
     id: number;
-    ui: TuidUI;
+    ui: TuidUIO;
 }
 export interface TuidInputProps extends TuidContentProps {
     //id: number;
@@ -66,7 +66,7 @@ export interface EntityUIProps<T extends Entity, TUI extends EntityUIO<T>> {
     data?: any;
 }
 export type UIComponent<T extends Entity, TUI extends EntityUIO<T>> = new (props:EntityUIProps<T, TUI>) => React.Component<EntityUIProps<T, TUI>>;
-export type ActionUIProps = EntityUIProps<Action, ActionUI>;
+export type ActionUIProps = EntityUIProps<Action, ActionUIO>;
 export type ActionUIComponent = new (props:ActionUIProps) => React.Component<ActionUIProps>;
 export type QueryUIProps = EntityUIProps<Query, QueryUI>;
 export type QueryUIComponent = new (props:QueryUIProps) => React.Component<QueryUIProps>;
@@ -82,9 +82,9 @@ export type SheetViewProps = EntityUIProps<Sheet, SheetUIO> & {
 };
 export type SheetUIComponent = new (props:SheetUIProps) => React.Component<SheetUIProps>;
 export type SheetViewComponent = new (props:SheetViewProps) => React.Component<SheetViewProps>;
-export type TuidUIProps = EntityUIProps<Tuid, TuidUI>;
+export type TuidUIProps = EntityUIProps<Tuid, TuidUIO>;
 export type TuidUIComponent = new (props:TuidUIProps) => React.Component<TuidUIProps>;
-export type TuidUIBindSlaveProps = TuidUIProps & {bindSlave:TuidUI; masterId?:number};
+export type TuidUIBindSlaveProps = TuidUIProps & {bindSlave:TuidUIO; masterId?:number};
 export type TuidUISlaveProps = TuidUIProps & {slave:SlaveUI, masterId?:number};
 
 export interface EntityMapper<T extends Entity, TUI extends EntityUIO<T>> {
@@ -96,7 +96,7 @@ export interface EntityMapper<T extends Entity, TUI extends EntityUIO<T>> {
     mainPage?: UIComponent<T, TUI>;
 }
 export type TuidListPage = TuidUIComponent | {row?: TuidUIComponent};
-export interface TuidMapper extends EntityMapper<Tuid, TuidUI> {
+export interface TuidMapper extends EntityMapper<Tuid, TuidUIO> {
     editPage?: TuidUIComponent;
     listPage?: TuidListPage;
     input?: TuidInput;
@@ -104,7 +104,7 @@ export interface TuidMapper extends EntityMapper<Tuid, TuidUI> {
     bindSlaveInput?: TuidUIBindSlaveComponent;
 }
 
-export interface ActionMapper extends EntityMapper<Action, ActionUI> {
+export interface ActionMapper extends EntityMapper<Action, ActionUIO> {
 }
 
 export interface DetailFace {
@@ -143,8 +143,8 @@ export interface EntitiesMapper {
 
     typeFieldMappers?: {[name:string]: FieldMapper};
 
-    tuid?: MapperContainer<Tuid, TuidUI, TuidMapper>;
-    action?: MapperContainer<Action, ActionUI, ActionMapper>;
+    tuid?: MapperContainer<Tuid, TuidUIO, TuidMapper>;
+    action?: MapperContainer<Action, ActionUIO, ActionMapper>;
     sheet?: MapperContainer<Sheet, SheetUIO, SheetMapper>;
     query?: MapperContainer<Query, QueryUI, QueryMapper>;
     book?: MapperContainer<Book, BookUI, BookMapper>;

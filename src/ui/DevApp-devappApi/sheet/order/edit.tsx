@@ -5,7 +5,7 @@ import { Page } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { VmSheetEdit, VmForm } from '../../../../ui-usql';
 
-export class VmSheetEdit单据 extends VmSheetEdit {
+export class VmSheetEditOrder extends VmSheetEdit {
     showField1 = () => {
         this.vmForm.showBands(['f1'], 'f1');
     }
@@ -21,10 +21,10 @@ export class VmSheetEdit单据 extends VmSheetEdit {
     protected view = Edit;
 }
 
-const Edit = ({vm}:{vm:VmSheetEdit单据}) => {
+const Edit = ({vm}:{vm:VmSheetEditOrder}) => {
     let {label, vmForm, showAll, showField1, showField2} = vm;
     return <Page header={label}>
-        <div className="p-3">自己的单据程序</div>
+        <div className="p-3">自己的Order程序</div>
         {vmForm.render()}
         <div className="px-3">
             <div className="form-group row">

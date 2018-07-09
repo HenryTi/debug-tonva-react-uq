@@ -5,14 +5,13 @@ import { List, Muted } from 'tonva-react-form';
 import { ViewModel, JSONContent, TypeContent } from './viewModel';
 import { Entities, Tuid, Action, Sheet, Query, Book, Entity } from '../entities';
 import { VmLink, VmEntityLink } from './link';
-import { VmEntity } from './entity';
 import { VmBookMain } from './book';
 import { VmSheetMain } from './sheet';
 import { VmActionMain } from './action';
 import { VmQueryMain } from './query';
 import { VmTuidMain } from './tuid';
 import { VmApp } from './vmApp';
-import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmFieldsForm';
+import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm';
 
 export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book';
 
@@ -58,7 +57,7 @@ export class VmApi extends ViewModel {
     api:string;
     vmApp: VmApp;
 
-    async load() {
+    async loadSchema() {
         await this.entities.loadEntities();
         // 检查注册的entity viewModels
         /*
@@ -227,7 +226,7 @@ export class VmApi extends ViewModel {
     }
 
     renderLink = (vmLink:VmLink, index:number):JSX.Element => {
-        return vmLink.renderView();
+        return vmLink.render();
     }
 
     linkClick = (vmLink:VmLink) => {

@@ -5,8 +5,8 @@ import { VmSheet } from './vmSheet';
 
 export class VmArchives extends VmSheet {
     list: any[];
-    async load() {
-        await super.load();
+    async loadSchema() {
+        await super.loadSchema();
         this.list = await this.entity.getArchives(undefined, 10);
     }
 
@@ -33,8 +33,8 @@ export class VmArchives extends VmSheet {
 }
 
 const Archives = ({vm}:{vm:VmArchives}) => {
-    let {caption, list, archiveRow, archiveClick} = vm;
-    return <Page header={'已归档' + caption}>
+    let {label, list, archiveRow, archiveClick} = vm;
+    return <Page header={'已归档' + label}>
         <List items={list} item={{render:archiveRow, onClick:archiveClick}} />
     </Page>;
 }
@@ -67,7 +67,7 @@ export class ArchivedSheet extends React.Component<SheetUIProps, State> {
     render() {
 */
 const ArchivedSheet = ({vm}:{vm: VmArchives}) => {
-    let {caption, archiveData, typeSheetView:SheetView} = vm;
+    let {label, archiveData, typeSheetView:SheetView} = vm;
     let {brief, data:sheetData, flows} = archiveData;
     //let {ui, data:brief} = this.props;
     //let {entity:sheet} = ui;
@@ -82,7 +82,7 @@ const ArchivedSheet = ({vm}:{vm: VmArchives}) => {
             item={{}}/>
     }
     */
-    return <Page header={caption + ':' + '-' + brief.no}>
+    return <Page header={label + ':' + '-' + brief.no}>
         <SheetView vm={vm} />
     </Page>;
 }

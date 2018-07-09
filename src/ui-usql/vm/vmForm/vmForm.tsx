@@ -10,82 +10,67 @@ import { FormUIX, BandUIX, FieldBandUIX, FieldsBandUIX, ArrBandUIX, SubmitBandUI
 import { buildControl, VmControl } from './control';
 import { ArrBand, FieldBand, FieldsBand, SubmitBand } from './band';
 import { VmApi } from '../vmApi';
-import { VmTuidControl, PickerConfig } from './tuid';
-import { VmArrList } from './vmArrList';
+import { VmTuidControl, PickerConfig } from './vmTuidControl';
+import { VmArr } from './vmArr';
 
 const defaultClassName = 'px-3 py-2';
 const defaultSubmitCaption = <><FA name="send-o" /> &nbsp; 提交 &nbsp; </>;
 
-export type TypeVmFieldsForm = typeof VmFieldsForm;
+export type TypeVmFieldsForm = typeof VmForm;
 export interface FormValues {
     values: any;
     errors: any;
 }
-export interface ArrValues {
-    formValues: FormValues,
-    list: IObservableArray<any>,
-};
 
 export interface VmFormOptions {
     fields: Field[];
     arrs?: Arr[];
-    //submitButton?:JSX.Element;
-    onSubmit?: (values:any) => Promise<void>;
+    //onSubmit?: (values:any) => Promise<void>;
     ui?: FormUI;
     readOnly?: boolean;
     vmApi?: VmApi;                  // 主要用于tuid control的生成，也可以没有
-    //buildControl?: (fieldUI: FieldUI, formValues:FormValues, vmApi:VmApi) => VmControl;
 }
 
-export class VmFieldsForm extends ViewModel {
+export class VmForm extends ViewModel {
     protected fields: Field[];
     protected arrs: Arr[];
-    //protected submitButton: JSX.Element;
-    protected onSubmit: (values:any) => Promise<void>;
     protected onFieldsInputed: (values:any) => Promise<void>;
     protected readOnly: boolean;
     protected vmApi: VmApi;
 
-    constructor({fields, arrs, onSubmit, ui, readOnly, vmApi}:VmFormOptions) {
-        super();
+    init({fields, arrs, ui, readOnly, vmApi}:VmFormOptions) {
         this.fields = fields;
         this.arrs = arrs;
-        this.onSubmit = onSubmit;
+        //this.onSubmit = onSubmit;
         this.readOnly = readOnly === true;
         this.vmApi = vmApi;
-        //this.submitButton = submitButton;
-        //this.submitButtonRow = new VmFormSubmitButtonRow(this, submitButton);
-        //if (className !== undefined) this.className = className;
-        //this.rowBuilder = rowBuilder || new FormRowBuilder;
-        //this.rows = this.rowBuilder.buildRows(this, fields, fieldUIs);
         this.formValues = this.buildFormValues(this.fields);
-        //this.errors = this.buildObservableValues(this.fields);
-        this.buildObservableArrs();
         this.buildBands(ui);
     }
 
+    onSubmit: (values:any) => Promise<void>;
+    controls: {[name:string]:VmControl} = {};
     ui: FormUIX;
     formValues: FormValues;
-    arrValues: {[name:string]: ArrValues};
+    vmArrs: {[name:string]: VmArr} = {};
     defaultSubmitCaption: any;
     submitCaption: any;
 
     getValues() {
         let values:any = {};
         _.merge(values, this.formValues.values);
-        if (this.arrValues !== undefined) {
-            for (let i in this.arrValues) {
-                values[i] = this.arrValues[i].list;
-            }
+        for (let i in this.vmArrs) {
+            values[i] = this.vmArrs[i].list;
         }
         return values;
     }
 
-    setValues(values:any) {
-        let v = this.formValues.values;
+    setValues(initValues:any) {
+        let {values, errors} = this.formValues;
         for (let f of this.fields) {
             let fn = f.name;
-            v[fn] = values[fn];
+            values[fn] = initValues[fn];
+            errors[fn] = undefined;
         }
         // 还要设置arrs的values
     }
@@ -103,24 +88,21 @@ export class VmFieldsForm extends ViewModel {
         let json = JSON.stringify(values);
         alert('submit: \n' + json);
     }
+    onFormSubmit = (event:React.FormEvent<any>) => {
+        event.preventDefault();
+        return false;
+    }
 
     reset() {
-        let vs = this.formValues.values;
+        let {values, errors} = this.formValues;
         for (let f of this.fields) {
             let fn = f.name;
-            vs[fn] = null;
+            values[fn] = null;
+            errors[fn] = undefined;
         }
-        if (this.arrs !== undefined) {
-            for (let arr of this.arrs) {
-                let {name, fields} = arr;
-                let av = this.arrValues[name];
-                av.list.clear();
-                vs = av.formValues.values;
-                for (let f of fields) {
-                    let fn = f.name;
-                    vs[fn] = null;
-                }
-            }
+        for (let i in this.vmArrs) {
+            let vmArr = this.vmArrs[i];
+            vmArr.reset();
         }
     }
 
@@ -137,8 +119,7 @@ export class VmFieldsForm extends ViewModel {
         let tuid = this.vmApi.getTuid(tuidName);
         let pickerConfig: PickerConfig = {
             picker: undefined,          // TypeVmTuidPicker;
-            row: undefined,             //RowContent, // TypeContent;
-            idFromValue: undefined,     // TypeIdFromValue,
+            row: undefined,             // RowContent
         };
         return new VmTuidControl(fieldUI, formValues, this.vmApi, tuid, JSONContent, pickerConfig)
     }
@@ -152,18 +133,6 @@ export class VmFieldsForm extends ViewModel {
         return {
             values: this.buildObservableValues(fields),
             errors: this.buildObservableValues(fields),
-        }
-    }
-    private buildObservableArrs() {
-        if (this.arrs === undefined) return;
-        this.arrValues = {};
-        for (let arr of this.arrs) {
-            let {name, fields} = arr;
-            this.arrValues[name] = {
-                formValues: this.buildFormValues(fields),
-                //errors: this.buildObservableValues(fields),
-                list: observable([]),
-            }
         }
     }
 
@@ -245,7 +214,7 @@ export class VmFieldsForm extends ViewModel {
     private buildSumitConent(content:any):any {
         if (typeof content !== 'string') return content;
         let children = [];
-        let regex = VmFieldsForm.buttonContentRegex;
+        let regex = VmForm.buttonContentRegex;
         let index = 0;
         for (;;) {
             let ret = regex.exec(content as string);
@@ -298,37 +267,37 @@ export class VmFieldsForm extends ViewModel {
     private buildFieldControl(fieldUI: FieldUIX, fields: Field[], formValues:FormValues) {
         let {name, type} = fieldUI;
         let field = fieldUI.field = fields.find(v => v.name === name);
+        if (field === undefined) {
+            console.log('%s is not exists in schema', name);
+            return;
+        }
         let tuid = field.tuid;
         if (tuid !== undefined) fieldUI.type = 'tuid';
         else if (type === undefined) fieldUI.type = this.typeFromField(field);
-        fieldUI.control = this.buildControl(fieldUI, formValues);
+        this.controls[name] = fieldUI.control = this.buildControl(fieldUI, formValues);
     }
     private buildArrBandUI(arrBandUI: ArrBandUI):ArrBandUIX {
         let ret:ArrBandUIX = _.clone(arrBandUI);
-        let {name, bands} = ret;
+        let {name} = ret;
         ret.band = ArrBand;
         ret.key = name;
         if (ret.label === undefined) ret.label = name;
         if (this.arrs === undefined) return ret;
         let arr = this.arrs.find(v => v.name === name);
         if (arr === undefined) return ret;
-        let arrValue = this.arrValues[name];
-        let {formValues} = arrValue;
-        ret.bands = this.buildFromBands(bands, formValues, arr.fields);
-        let vmList = this.buildArrList(arr, arrValue, ret);
-        ret.vmList = vmList;
+        ret.vmList = this.buildArrList(arr, ret);
         return ret;
     }
 
     private buildOnFly(): BandUIX[] {
         let vBands:BandUI[] = [];
-        this.buildFromFields(vBands, this.fields, this.formValues);
+        this.buildFromFields(undefined, vBands, this.fields, this.formValues);
         this.buildArrsBands(vBands);
         let submitBand = this.buildSubmit(defaultSubmitCaption);
         vBands.push(submitBand);
         return vBands;
     }
-    private buildFromFields(vBands: BandUI[], fields:Field[], formValues:FormValues) {
+    private buildFromFields(arrName:string, vBands: BandUI[], fields:Field[], formValues:FormValues) {
         for (let field of fields) {
             let {name} = field;
             let type = this.typeFromField(field);
@@ -340,7 +309,8 @@ export class VmFieldsForm extends ViewModel {
                 field: field,
                 band: FieldBand,
             };
-            band.control = this.buildControl(band, formValues);
+            let c = band.control = this.buildControl(band, formValues);
+            if (arrName === undefined) this.controls[name] = c;
             vBands.push(band);
         }
     }
@@ -363,19 +333,15 @@ export class VmFieldsForm extends ViewModel {
     }
     private buildArrBand(vBands:BandUI[], arr: Arr) {
         let {name, fields} = arr;
-        let fieldsBandUIs:BandUIX[] = [];
-        let arrValue = this.arrValues[name];
-        let {formValues} = arrValue;
-        this.buildFromFields(fieldsBandUIs, fields, formValues);
         let arrBandUI: ArrBandUIX = {
             type: 'arr',
             key: name,
             label: name,
             row: RowContent,
-            bands: fieldsBandUIs,
+            bands: undefined, //fieldsBandUIs,
             band: ArrBand,
         };
-        let vmList = this.buildArrList(arr, arrValue, arrBandUI);
+        let vmList = this.buildArrList(arr, arrBandUI);
         arrBandUI.vmList = vmList;
         vBands.push(arrBandUI);
     }
@@ -385,19 +351,21 @@ export class VmFieldsForm extends ViewModel {
         for (let arr of this.arrs) this.buildArrBand(vBands, arr);
     }
 
-    private buildArrList(arr:Arr, arrValues: ArrValues, arrBandUI:ArrBandUIX): ViewModel {
-        return new VmArrList(this.vmApi, arr, arrValues, arrBandUI);
+    private buildArrList(arr:Arr, arrBandUI:ArrBandUIX): VmArr {
+        let ret = new VmArr(this.vmApi, arr, arrBandUI);
+        this.vmArrs[arr.name] = ret;
+        return ret;
     }
 
     protected view = Form;
 }
 
-const Form = observer(({vm}:{vm:VmFieldsForm}) => {
-    let {ui} = vm;
+const Form = observer(({vm}:{vm:VmForm}) => {
+    let {ui, onFormSubmit} = vm;
     let {className, bands, visibleBands} = ui;
     let vBands = bands;
     if (visibleBands !== undefined && visibleBands.length > 0) vBands = visibleBands;
-    return <form className={className}>
+    return <form className={className} onSubmit={onFormSubmit}>
         {vBands.map(v => {
             let {band:Band, key} = v;
             return <Band key={key} {...v} />

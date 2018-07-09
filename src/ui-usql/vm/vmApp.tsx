@@ -25,7 +25,7 @@ export class VmApp extends ViewModel {
         this.ui = ui;
     }
     vmApiCollection: {[api:string]: VmApi} = {};
-    async load(): Promise<void> {
+    async loadSchema(): Promise<void> {
         let isDebug = process.env.NODE_ENV==='development';
         let appApis = await loadAppApis(this.appOwner, this.appName);
         for (let appApi of appApis) {
@@ -49,7 +49,7 @@ export class VmApp extends ViewModel {
                 }
             }
             let vmApi = this.newVmApi(url, api, access, this.ui && this.ui[api]);
-            await vmApi.load();
+            await vmApi.loadSchema();
             this.vmApiCollection[api] = vmApi;
         }
     }
@@ -99,7 +99,7 @@ const SheetLink = ({vm, apiName, type, entityName}:SheetLinkProps) => {
     return <div key={key}
         className="bg-white cursor-pointer border-bottom" 
         onClick={vmLink.onClick}>
-        {vmLink.renderView()}
+        {vmLink.render()}
     </div>;
 }
 
@@ -109,6 +109,6 @@ const AppPage = observer(({vm}:{vm:VmApp}) => {
     let sheets = ['order', '单据'];
     return <Page header={caption}>
         {sheets.map(v => <SheetLink key={v} vm={vm} apiName={api} type="sheet" entityName={v} />)}
-        {vmApiArr.map((v,i) => <div key={i}>{v.renderView()}</div>)}
+        {vmApiArr.map((v,i) => <div key={i}>{v.render()}</div>)}
     </Page>;
 });

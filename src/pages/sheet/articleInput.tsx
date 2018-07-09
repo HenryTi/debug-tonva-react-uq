@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {TuidPickFace, FormProps, SearchBox, List} from 'tonva-react-form';
 import {nav, Page} from 'tonva-tools';
-import {TuidUI, TuidInputProps, TuidContentProps, TuidPickPageProps} from '../../ui-usql/ui';
+import {TuidUIO, TuidInputProps, TuidContentProps, TuidPickPageProps} from '../../ui-usql/ui';
 
 export class ArticleContent extends React.Component<{value:any}> {
     render() {

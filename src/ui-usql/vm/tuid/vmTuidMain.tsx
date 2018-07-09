@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tuid, Entity } from '../../entities';
-import { VmEntity, vmLinkIcon } from '../entity/vmEnity';
+import { VmEntity, vmLinkIcon } from '../vmEntity';
 import { Page, nav } from 'tonva-tools';
 import { VmApi } from '../vmApi';
 import { VmTuidEdit } from './vmTuidEdit';
@@ -16,8 +16,8 @@ export class VmTuidMain extends VmTuid {
 }
 
 const MainPage = ({vm}:{vm:VmTuidMain}) => {
-    let {caption, onNew, onList} = vm;
-    return <Page header={caption}>
+    let {label, onNew, onList} = vm;
+    return <Page header={label}>
         Tuid 
         <button className="btn btn-primary" onClick={onNew}>新建</button>
         <button className="btn btn-primary" onClick={onList}>列表</button>

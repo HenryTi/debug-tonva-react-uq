@@ -9,18 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { VmSheet } from './vmSheet';
-import { VmFieldsForm } from '../vmFieldsForm';
+import { VmForm } from '../vmForm';
 export class VmEdit extends VmSheet {
     constructor() {
         super(...arguments);
         this.showField1 = () => {
-            this.vmFieldsForm.showBands(['f1'], 'f1');
+            this.vmForm.showBands(['f1'], 'f1');
         };
         this.showField2 = () => {
-            this.vmFieldsForm.showBands(['f2'], 'f2');
+            this.vmForm.showBands(['f2'], 'f2');
         };
         this.showAll = () => {
-            this.vmFieldsForm.showBands(undefined);
+            this.vmForm.showBands(undefined);
         };
         this.view = Edit;
     }
@@ -30,7 +30,7 @@ export class VmEdit extends VmSheet {
             yield _super("load").call(this);
             let { schema } = this.entity;
             let { fields, arrs } = schema;
-            this.vmFieldsForm = new VmFieldsForm({
+            this.vmForm = new VmForm({
                 fields: fields,
                 arrs: arrs,
                 vmApi: this.vmApi,
@@ -39,9 +39,9 @@ export class VmEdit extends VmSheet {
     }
 }
 const Edit = ({ vm }) => {
-    let { vmFieldsForm, showAll, showField1, showField2 } = vm;
+    let { vmForm, showAll, showField1, showField2 } = vm;
     return React.createElement(Page, { header: vm.caption },
-        vmFieldsForm.renderView(),
+        vmForm.renderView(),
         React.createElement("div", null,
             React.createElement("button", { className: "btn btn-primary", onClick: showAll }, "all"),
             " \u00A0",

@@ -21,7 +21,7 @@ const defaultSubmitCaption = React.createElement(React.Fragment, null,
     React.createElement(FA, { name: "send-o" }),
     " \u00A0 \u63D0\u4EA4 \u00A0 ");
 ;
-export class VmFieldsForm extends ViewModel {
+export class VmForm extends ViewModel {
     constructor({ fields, arrs, onSubmit, ui, readOnly, vmApi }) {
         super();
         this.onSubmitButtonClick = () => __awaiter(this, void 0, void 0, function* () {
@@ -316,4 +316,4 @@ const Form = observer(({ vm }) => {
         return React.createElement(Band, Object.assign({ key: key }, v));
     }));
 });
-//# sourceMappingURL=vmFieldsForm.js.map
+//# sourceMappingURL=vmForm.js.map

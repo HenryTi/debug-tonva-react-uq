@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 import { List, Muted } from 'tonva-react-form';
 import { VmSheetMain }  from '../../../../ui-usql';
 
-export class VmSheetMain单据 extends VmSheetMain {
+export class VmSheetMainOrder extends VmSheetMain {
     protected view = Main;
 }
 
@@ -12,7 +12,7 @@ const Main = ({vm}:{vm:VmSheetMain}) => {
     let {label, entity, newClick, schemaClick, renderState, sheetStateClick, archivesClick}  = vm;
     return <Page header={label}>
         <div className="mx-3 my-2">
-            定制的单据
+            定制的Order
         </div>
         <div className="mx-3 my-2">
             <Button className="mr-2" color="primary" onClick={newClick}>新建</Button>

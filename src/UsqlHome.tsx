@@ -44,8 +44,8 @@ export class UsqlHome extends React.Component<UsqlHomeProps> {
     async componentDidMount() {
         //await this.appUI.load();
         //this.view = <MainPage appUI={this.appUI} />;
-        await this.vmApp.load();
-        this.view = this.vmApp.renderView();
+        await this.vmApp.loadSchema();
+        this.view = this.vmApp.render();
     }
     componentWillUnmount() {
         //this.appUI.close();

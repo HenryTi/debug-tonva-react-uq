@@ -2,8 +2,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 //import { FieldUI, InputUI } from "./formUI";
 import { ViewModel } from "../viewModel";
-import { FormValues } from './vmFieldsForm';
+import { FormValues } from './vmForm';
 import { InputUIX, FieldUIX } from './formUIX';
+import { isArray } from 'util';
+
+export type TypeControl = React.StatelessComponent<{vm: ViewModel, className:string}>;
 
 export function buildControl(fieldUI: FieldUIX, formValues:FormValues): VmControl {
     let ctrl: VmControl;
@@ -38,9 +41,9 @@ export class VmUnknownControl extends VmControl {
     protected view = UnkownControl;
 }
 
-const UnkownControl = ({vm}:{vm:VmControl}) => {
+const UnkownControl = ({vm, className}:{vm:VmControl, className:string}) => {
     let {name, type} = vm.fieldUI;
-    return <input type="text" className="form-control" id="staticEmail" 
+    return <input type="text" className={className}
         placeholder={'unkown control: ' + type + '-' + name} />;
 }
 
@@ -49,11 +52,11 @@ export abstract class VmInputControl extends VmControl {
     private input: HTMLInputElement;
 
     inputType:string;
-    renderError = () => {
+    renderError = (className:string) => {
         let {errors} = this.formValues;
         let error = errors[this.name];
         if (error === undefined) return;
-        return <div>{error}</div>
+        return <span className={className}>{error}</span>
     }
 
     reset() {
@@ -65,7 +68,7 @@ export abstract class VmInputControl extends VmControl {
         this.input = input;
         if (input) {
             let v = this.value;
-            if (v !== null) this.input.value = v;
+            this.input.value = (v !== null)? v : '';
         }
     }
 
@@ -84,17 +87,27 @@ export abstract class VmInputControl extends VmControl {
     protected view = InputControl;
 }
 
-const InputControl = observer(({vm}:{vm: VmInputControl}) => {
+const InputControl = observer(({vm, className}:{vm:VmInputControl, className:string|string[]}) => {
     let {fieldUI, ref, inputType, onFocus, onBlur, onChange, renderError} = vm;
-    let {placeholder} = fieldUI;
-    return <><input className="form-control"
+    let {placeholder, readOnly} = fieldUI;
+    if (readOnly === undefined) readOnly=false;
+    let ctrlCN, errCN;
+    if (className !== undefined) {
+        if (typeof className === 'string') ctrlCN = className;
+        else if (isArray(className) === true) {
+            ctrlCN = className[0];
+            errCN = className[1];
+        }
+    }
+    return <><input className={ctrlCN}
         ref={ref}
         type={inputType}
         onFocus={onFocus}
         onBlur={onBlur}
         onChange={onChange}
-        placeholder={placeholder} />
-        {renderError()}
+        placeholder={placeholder}
+        readOnly={readOnly} />
+        {renderError(errCN)}
     </>
 });
 

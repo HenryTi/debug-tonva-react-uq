@@ -1,4 +1,4 @@
-import {RadioTuidInput, DropDownTuidInput, Tuid, EntityUIO, TuidUI, MapperContainer,TuidMapper} from '../../ui-usql';
+import {RadioTuidInput, DropDownTuidInput, Tuid, EntityUIO, TuidUIO, MapperContainer,TuidMapper} from '../../ui-usql';
 //import {MainPage} from './mainPage';
 import {MainPage} from './lll';
 import {EditPage} from './edit';
@@ -6,7 +6,7 @@ import {ArticleInput, ArticleContent} from './articleInput';
 import {CandidateRow, CustomerContent} from './customerInput';
 import {T1Content} from './t1';
 
-export const mapperContainer:MapperContainer<Tuid, TuidUI, TuidMapper> = {
+export const mapperContainer:MapperContainer<Tuid, TuidUIO, TuidMapper> = {
     //caption: '数据字典',
     mapper: {
         //link: EntityLink,
