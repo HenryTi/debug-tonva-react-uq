@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { observable, action, autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import { Button, ButtonProps } from 'reactstrap';
 import { Page, nav, callCenterapi } from 'tonva-tools';
 import { List, Muted, SearchBox, TonvaForm, PropGrid, Prop } from 'tonva-react-form';
 import { VmSheetNew, VmSheetEdit, VmForm, VmTuidPicker, RowContent, Tuid, VmFormOptions, VmArr, TypeContent } from '../../../../ui-usql';
 import article from '../../tuid/article';
-import { observable, action, autorun } from '../../../../../node_modules/mobx';
 
 const field客户 = '客户';
 const fieldArticle = 'article';
@@ -20,7 +20,8 @@ export class VmSheetOrderNew extends VmSheetNew {
     @observable totalAmount: number;
     ArticleContent: TypeContent;
 
-    async start() {
+    async beforeStart() {
+        await super.beforeStart();
         this.vmForm.onSubmit = this.onSubmit;
         this.vmArticles = this.vmForm.vmArrs[arrArticles];
         if (this.vmArticles === undefined) {
@@ -34,7 +35,6 @@ export class VmSheetOrderNew extends VmSheetNew {
         this.tuidCustomer = this.entity.getFieldTuid(field客户);
         this.tuidArticle = this.entity.getFieldTuid(fieldArticle, arrArticles);
         this.ArticleContent = this.vmApi.typeTuidContent(this.tuidArticle);
-        nav.push(<Step1 vm={this} />);
         autorun(()=>{
             let {vmForm, list} = this.vmArticles;
             let {formValues} = vmForm;
@@ -44,6 +44,10 @@ export class VmSheetOrderNew extends VmSheetNew {
             // 求和
             this.totalAmount = list.reduce((t, c) => t+c.amount, 0);
         });
+    }
+
+    async show() {
+        nav.push(<Step1 vm={this} />);
     }
 
     onSubmit = async (values:any):Promise<void> => {

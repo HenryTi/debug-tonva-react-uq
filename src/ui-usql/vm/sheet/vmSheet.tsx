@@ -9,7 +9,7 @@ import { VmSheetNew } from './vmNew';
 import { VmSheetEdit } from './vmEdit';
 
 export interface ActionUI {
-    label: string;    
+    label: string;
 }
 
 export interface StateUI {
@@ -54,17 +54,17 @@ export abstract class VmSheet extends VmEntity {
         return (action && action.label) || actionName;
     }
 
-    protected typeFlowRow = FlowRow;
-    flowRow = (item:any, index:number) => <this.typeFlowRow item={item} />
+    //protected typeFlowRow = FlowRow;
+    //flowRow = (item:any, index:number) => <this.typeFlowRow item={item} />
 
-    className: string;
-    sheetState: string;
-    data: any;
-    flows: any[];
+    //className: string;
+    //sheetState: string;
+    //data: any;
+    //flows: any[];
 
-    typeSheetView = SheetView;
+    //typeSheetView = SheetView;
 }
-
+/*
 const FlowRow = (item) => {
     let {date, user, preState, state, action} = item;
     if (action === undefined) action = <><FA className="text-primary" name="pencil-square-o" /> 制单</>;
@@ -91,7 +91,7 @@ const SheetView = ({vm}:{vm: VmSheet}) => {
         item={{render:flowRow}}/>
     return <div className={className}>
         {removed}
-        /* ddd */
         {flow}
     </div>;
 }
+*/

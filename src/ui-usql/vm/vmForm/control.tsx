@@ -89,8 +89,11 @@ export abstract class VmInputControl extends VmControl {
 
 const InputControl = observer(({vm, className}:{vm:VmInputControl, className:string|string[]}) => {
     let {fieldUI, ref, inputType, onFocus, onBlur, onChange, renderError} = vm;
-    let {placeholder, readOnly} = fieldUI;
+    let {placeholder, readOnly, form} = fieldUI;
     if (readOnly === undefined) readOnly=false;
+    if (readOnly === false) {
+        if (form.readOnly === true) readOnly = true;
+    }
     let ctrlCN, errCN;
     if (className !== undefined) {
         if (typeof className === 'string') ctrlCN = className;
@@ -99,6 +102,13 @@ const InputControl = observer(({vm, className}:{vm:VmInputControl, className:str
             errCN = className[1];
         }
     }
+    if (readOnly === true)
+        return <input className={ctrlCN}
+            ref={ref}
+            type={inputType}
+            readOnly={true}
+        />;
+
     return <><input className={ctrlCN}
         ref={ref}
         type={inputType}

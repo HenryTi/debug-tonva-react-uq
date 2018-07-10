@@ -6,7 +6,6 @@ export type TypeView = React.StatelessComponent<{vm: ViewModel, className?:strin
 export type TypeContent = React.StatelessComponent<any>;
 
 export abstract class ViewModel {
-    async loadSchema():Promise<void> {}
     protected view: TypeView;
     render(className?:string|string[]):JSX.Element {
         if (this.view === undefined) return <div>??? viewModel 必须定义 view ???</div>

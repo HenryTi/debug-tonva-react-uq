@@ -12,8 +12,7 @@ export class VmTuidEdit extends VmTuid {
     vmForm: VmForm;
     id: number;
 
-    async loadSchema() {
-        await super.loadSchema();
+    async beforeStart(param?:any) {
         this.vmForm = this.createVmFieldsForm();
     }
 
@@ -21,7 +20,7 @@ export class VmTuidEdit extends VmTuid {
         this.id = id;
     }
 
-    protected initValues() {
+    protected buildValuesFromSchema() {
         this.values = this.buildObservableValues(this.entity.schema.fields);
     }
 

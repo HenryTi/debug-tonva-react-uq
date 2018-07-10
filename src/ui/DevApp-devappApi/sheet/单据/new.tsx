@@ -19,7 +19,7 @@ export class VmSheetNew单据 extends VmSheetNew {
         this.vmForm.showBands(undefined);
     }
 
-    async start() {
+    async show() {
         //nav.push(this.renderView());
         //alert('started');
         let tuid = this.entity.getFieldTuid('id1');

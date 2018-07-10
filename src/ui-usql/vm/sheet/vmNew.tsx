@@ -8,8 +8,7 @@ import { VmForm } from '../vmForm';
 export class VmSheetNew extends VmSheet {
     vmForm: VmForm;
 
-    async loadSchema() {
-        await super.loadSchema();
+    async beforeStart(param?:any) {
         this.vmForm = this.createVmFieldsForm();
     }
 

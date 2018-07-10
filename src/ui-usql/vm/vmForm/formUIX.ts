@@ -25,6 +25,7 @@ export interface FieldsBandUIX extends FieldsBandUI {
     band?: TypeFieldsBand;
     key?: string;
     fieldUIs: FieldUIX[];                // 对应的多个field ui
+    form?: VmForm;
 }
 
 export interface ArrBandUIX extends ArrBandUI {
@@ -33,6 +34,7 @@ export interface ArrBandUIX extends ArrBandUI {
     vmList?: VmArr;                  // list view model
     band?: TypeArrBand;
     key?: string;
+    form?: VmForm;
     //bands: BandUIX[];                    // 下一级页面的展开描述
 }
 
@@ -45,42 +47,46 @@ export interface SubmitBandUIX extends SubmitBandUI {
     form?: VmForm;
 }
 
-export interface FieldUIX extends FieldUI {
+export interface FieldUIXBase {
     field?: Field;
     control?: VmControl;              // field control element
+    form?: VmForm;
 }
 
-export interface TuidUIX extends TuidUI {
+export interface FieldUIX extends FieldUI, FieldUIXBase {
 }
 
-export interface InputUIX extends InputUI {
+export interface TuidUIX extends TuidUI, FieldUIXBase {
+}
+
+export interface InputUIX extends InputUI, FieldUIXBase {
     placeholder: string;
 }
 
-export interface StringUIX extends StringUI {
+export interface StringUIX extends StringUI, FieldUIXBase {
     //type: 'string';
 }
 
-export interface IntUIX extends IntUI {
+export interface IntUIX extends IntUI, FieldUIXBase {
     //type: 'int';
 }
 
-export interface DecUIX extends DecUI {
+export interface DecUIX extends DecUI, FieldUIXBase {
     //type: 'dec';
 }
 
-export interface TextUIX extends TextUI {
+export interface TextUIX extends TextUI, FieldUIXBase {
     //type: 'text';
 } 
 
-export interface CheckUIX extends CheckUI {
+export interface CheckUIX extends CheckUI, FieldUIXBase {
     //type: 'check';
 }
 
-export interface SelectUIX extends SelectUI {
+export interface SelectUIX extends SelectUI, FieldUIXBase {
     //type: 'select';
 }
 
-export interface RadioUIX extends RadioUI {
+export interface RadioUIX extends RadioUI, FieldUIXBase {
     //type: 'radio';
 }

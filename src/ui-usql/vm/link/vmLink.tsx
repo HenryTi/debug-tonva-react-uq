@@ -21,15 +21,12 @@ export class VmEntityLink extends VmLink {
     constructor(vmEntity: VmEntity) {
         super();
         this.vmEntity = vmEntity;
-        //this.view = link;
     }
 
     protected view = Link;
 
     onClick = async () => {
-        await this.vmEntity.loadSchema();
         this.vmEntity.start();
-        //nav.push(this.vmEntity.render());
     }
 }
 

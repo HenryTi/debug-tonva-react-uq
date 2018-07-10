@@ -9,7 +9,7 @@ export class VmActionMain extends VmEntity {
 
     get icon() {return vmLinkIcon('text-success', 'hand-o-right')}
 
-    protected initValues() {
+    protected buildValuesFromSchema() {
         this.values = this.buildObservableValues(this.entity.schema.fields);
     }
 

@@ -14,11 +14,10 @@ export class VmSheetMain extends VmSheet {
     protected vmEdit = VmSheetEdit;
     protected vmSchema = VmSheetSchema;
     protected vmArchives = VmArchives;
-    protected vmSheetState = VmSheetList;
+    protected vmSheetList = VmSheetList;
 
-    async start() {
+    async beforeStart() {
         await this.entity.getStateSheetCount();
-        super.start();
     }
 
     newClick = async () => {
@@ -27,7 +26,7 @@ export class VmSheetMain extends VmSheet {
     }
     schemaClick = async () => await this.nav(this.vmSchema);
     archivesClick = async () => await this.nav(this.vmArchives);
-    sheetStateClick = async (state) => await this.nav(this.vmSheetState, state);
+    sheetStateClick = async (state) => await this.nav(this.vmSheetList, state);
 
     renderState = (item:any, index:number) => {
         let {state, count} = item;

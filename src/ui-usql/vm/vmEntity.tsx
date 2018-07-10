@@ -49,6 +49,10 @@ export abstract class VmEntity extends ViewModel {
         return (res && res.label) || this.entity.name;
     }
 
+    protected nav = async <T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T, param?:any) => {
+        await this.vmApi.nav(vmType, this.entity, this.ui);
+    }
+
     protected createVmFieldsForm() {
         let ret = this.newVmFieldsForm();
         ret.init(this.fieldsFormOptions);
@@ -70,32 +74,28 @@ export abstract class VmEntity extends ViewModel {
         }
     }
 
-    async create<T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T): Promise<T> {
-        let vm = new vmType(this.vmApi, this.entity, this.ui);
-        await vm.loadSchema();
-        return vm;
-    }
-
-    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T, param?:any) => {
-        let vm = await this.create<T>(vmType);
-        vm.start(param);
-    }
-
     async start(param?:any):Promise<void> {
+        await this.loadSchema();
+        await this.beforeStart(param);
+        await this.show();
+    }
+
+    async beforeStart(param?:any):Promise<void> {
+    }
+
+    async show() {
         nav.push(this.render());
     }
 
     values: any;
     returns: any;
-    //protected vmForm: VmForm;
     get icon() {return vmLinkIcon('text-info', 'circle-thin')}
-    //get caption() { return this.entity.name; }
 
     async loadSchema() {
         await this.entity.loadSchema();
-        this.initValues();
+        this.buildValuesFromSchema();
     }
-    protected initValues() {}
+    protected buildValuesFromSchema() {}
 
     protected buildObservableValues(fields: Field[]): object {
         let len = fields.length;

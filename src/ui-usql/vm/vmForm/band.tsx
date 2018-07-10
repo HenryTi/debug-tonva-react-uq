@@ -47,7 +47,8 @@ export const ArrBand = ({label, name, bands, vmList}: ArrBandUIX) => {
 }
 
 export const SubmitBand = ({content, onSubmit, form}: SubmitBandUIX) => {
-    let {defaultSubmitCaption, submitCaption} = form;
+    let {defaultSubmitCaption, submitCaption, readOnly} = form;
+    if (readOnly === true) return null;
     return <div className="form-group row">
         <div className="offset-sm-2 col-sm-10">
             <button type="button" onClick={onSubmit} className="btn btn-primary">

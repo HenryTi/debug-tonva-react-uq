@@ -12,6 +12,7 @@ import { VmQueryMain } from './query';
 import { VmTuidMain } from './tuid';
 import { VmApp } from './vmApp';
 import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm';
+import { VmEntity, EntityUI } from './vmEntity';
 
 export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book';
 
@@ -255,6 +256,19 @@ export class VmApi extends ViewModel {
         let typeTuidContent = ui && ui.content;
         if (typeTuidContent === undefined) typeTuidContent = JSONContent;
         return typeTuidContent;
+    }
+
+    async create<T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T,
+        entity:Entity, ui:EntityUI): Promise<T> {
+        let vm = new vmType(this, entity, ui);
+        //await vm.loadSchema();
+        return vm;
+    }
+
+    nav = async <T extends VmEntity> (vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T, 
+    entity:Entity, ui:EntityUI, param?:any) => {
+        let vm = await this.create<T>(vmType, entity, ui);
+        vm.start(param);
     }
 
     protected view = ApiView;

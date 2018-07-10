@@ -6,7 +6,7 @@ import { Tuid, Query, Entity } from '../../entities';
 import { VmQuery } from './vmQuery';
 
 export class VmQueryMain extends VmQuery {
-    protected initValues() {
+    protected buildValuesFromSchema() {
         this.values = this.buildObservableValues(this.entity.schema.fields);
     }
 

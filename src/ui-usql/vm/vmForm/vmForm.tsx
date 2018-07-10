@@ -35,13 +35,11 @@ export class VmForm extends ViewModel {
     protected fields: Field[];
     protected arrs: Arr[];
     protected onFieldsInputed: (values:any) => Promise<void>;
-    protected readOnly: boolean;
     protected vmApi: VmApi;
 
     init({fields, arrs, ui, readOnly, vmApi}:VmFormOptions) {
         this.fields = fields;
         this.arrs = arrs;
-        //this.onSubmit = onSubmit;
         this.readOnly = readOnly === true;
         this.vmApi = vmApi;
         this.formValues = this.buildFormValues(this.fields);
@@ -49,6 +47,7 @@ export class VmForm extends ViewModel {
     }
 
     onSubmit: (values:any) => Promise<void>;
+    readOnly: boolean;
     controls: {[name:string]:VmControl} = {};
     ui: FormUIX;
     formValues: FormValues;
@@ -73,6 +72,9 @@ export class VmForm extends ViewModel {
             errors[fn] = undefined;
         }
         // 还要设置arrs的values
+        for (let i in this.vmArrs) {
+            this.vmArrs[i].list.push(...initValues[i]);
+        }
     }
 
     onSubmitButtonClick = async () => {
@@ -247,6 +249,7 @@ export class VmForm extends ViewModel {
         let name = ret.name;
         ret.band = FieldBand;
         ret.key = name;
+        ret.form = this;
         if (ret.label === undefined) ret.label = name;
         this.buildFieldControl(ret, fields, formValues);
         return ret;
@@ -256,6 +259,7 @@ export class VmForm extends ViewModel {
         let name = ret.fieldUIs[0].name;
         ret.band = FieldsBand;
         ret.key = name;
+        ret.form = this;
         if (ret.label === undefined) ret.label = name;
         let fieldUIs = ret.fieldUIs;
         fieldUIs = ret.fieldUIs = fieldUIs.map(v => _.clone(v));
@@ -281,6 +285,7 @@ export class VmForm extends ViewModel {
         let {name} = ret;
         ret.band = ArrBand;
         ret.key = name;
+        ret.form = this;
         if (ret.label === undefined) ret.label = name;
         if (this.arrs === undefined) return ret;
         let arr = this.arrs.find(v => v.name === name);
@@ -308,6 +313,7 @@ export class VmForm extends ViewModel {
                 type: type as any,
                 field: field,
                 band: FieldBand,
+                form: this,
             };
             let c = band.control = this.buildControl(band, formValues);
             if (arrName === undefined) this.controls[name] = c;
@@ -340,6 +346,7 @@ export class VmForm extends ViewModel {
             row: RowContent,
             bands: undefined, //fieldsBandUIs,
             band: ArrBand,
+            form: this,
         };
         let vmList = this.buildArrList(arr, arrBandUI);
         arrBandUI.vmList = vmList;

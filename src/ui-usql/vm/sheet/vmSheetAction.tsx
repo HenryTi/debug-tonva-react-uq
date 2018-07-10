@@ -17,14 +17,14 @@ export class VmSheetAction extends VmSheet {
         this.brief = brief;
         this.sheetData = sheetData;
         this.flows = flows;
-        this.vmView = new VmView(this.entity, this.sheetData, this.brief.state, flows);
+        this.vmView = new VmView(this.vmApi, this.entity, this.ui, this.sheetData, this.brief.state, flows);
         super.start();
     }
 
     actionClick = async (action:any) => {
-        let {state, brief} = this.sheetData;
-        let {id, flow} = brief;
-        let res = await this.entity.action(id, flow, state.state, action.name);
+        let {id, flow, state} = this.brief;
+        let res = await this.entity.action(id, flow, state, action.name);
+        alert(JSON.stringify(res));
         nav.pop();
     }
     protected view = SheetAction;
@@ -38,20 +38,20 @@ const SheetAction = ({vm}:{vm:VmSheetAction}) => {
     let actions = s.actions;
     tonvaDebug();
     return <Page header={label + ':' + stateLabel + '-' + brief.no}>
-        <div className="mx-3 my-2">
-            {
-                actions.map((v,index) => 
-                    <Button
-                        key={index}
-                        className="mr-2"
-                        color="primary"
-                        onClick={()=>actionClick(v)}
-                    >
-                        {vm.getActionLabel(state, v.name)}
-                    </Button>)
-            }
-            <br />
-            <br />
+        <div className="my-3">
+            <div className="mx-3 mb-3">
+                {
+                    actions.map((v,index) => 
+                        <Button
+                            key={index}
+                            className="mr-2"
+                            color="primary"
+                            onClick={()=>actionClick(v)}
+                        >
+                            {vm.getActionLabel(state, v.name)}
+                        </Button>)
+                }
+            </div>
             {vmView.render()}
         </div>
     </Page>;

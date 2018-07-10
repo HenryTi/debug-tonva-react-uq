@@ -5,7 +5,7 @@ import { VmSheetNew单据 } from './new';
 
 export default {
     res: res,
-    main: VmSheetMain单据,
-    edit: VmSheetEdit单据,
-    new: VmSheetNew单据,
+    //main: VmSheetMain单据,
+    //edit: VmSheetEdit单据,
+    //new: VmSheetNew单据,
 }

@@ -17,6 +17,7 @@ export class VmArr extends ViewModel {
     protected arrBandUI: ArrBandUIX;
     arr: Arr;
     row: any;
+    readOnly: boolean;
     vmForm: VmForm;
     onEditRow: ArrEditRow;
     afterEditRow: (values:any) => Promise<void>;
@@ -31,7 +32,8 @@ export class VmArr extends ViewModel {
         this.vmApi = vmApi;
         this.arr = arr;
         this.arrBandUI = arrBandUI;
-        let {label, row} = arrBandUI;
+        let {label, row, form} = arrBandUI;
+        this.readOnly = form.readOnly;
         this.label = label;
         this.row = row || RowContent;
         this.list = observable.array([], {deep:true});
@@ -50,6 +52,7 @@ export class VmArr extends ViewModel {
                 bands: bands,
                 className: undefined,
             },
+            readOnly: this.readOnly,
             //onSubmit: this.onSubmit,
         });
         this.vmForm.onSubmit = this.onSubmit;
@@ -99,14 +102,18 @@ export class VmArr extends ViewModel {
 }
 
 const ArrList = ({vm}:{vm:VmArr}) => {
-    let {label, list, renderItem, start, addClick, header, footer} = vm;
-    header = header || <div className="">
-        <div className="flex-fill align-self-center">{label}</div>
-        <button onClick={addClick}
+    let {label, list, renderItem, start, addClick, header, footer, readOnly} = vm;
+    let button;
+    if (readOnly === false) {
+        button = <button onClick={addClick}
             type="button" 
             className="btn btn-primary btn-sm">
             <FA name="plus" />
-        </button>
+        </button>;
+    }
+    header = header || <div className="">
+        <div className="flex-fill align-self-center">{label}</div>
+        {button}
     </div>;
     return <List
         header={header}

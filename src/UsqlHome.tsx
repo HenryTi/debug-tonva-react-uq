@@ -9,6 +9,8 @@ import {AppUI, MainPage, EntitiesMapper} from './ui-usql/ui';
 import {VmApp} from './ui-usql/vm';
 import UI from './ui';
 
+const ws = new WSChannel(process.env.REACT_APP_WSHOST, undefined);
+
 /*
 const tonvaApp = process.env.REACT_APP_TONVA_APP;
 const appUI = new AppUI(tonvaApp, {
@@ -24,10 +26,9 @@ export interface UsqlHomeProps {
     uiMappers?:{[api:string]: EntitiesMapper};
 }
 
-UI.App.VmApp;
-
 @observer
 export class UsqlHome extends React.Component<UsqlHomeProps> {
+    private wsId:number;  
     private appUI:AppUI;
     private vmApp: VmApp;
     @observable private view = <Page><div className="m-3">waiting...</div></Page>;
@@ -42,12 +43,19 @@ export class UsqlHome extends React.Component<UsqlHomeProps> {
         this.vmApp = new UI.App.VmApp(appName, ui);
     }
     async componentDidMount() {
+        await ws.connect();
+        this.wsId = ws.onWsReceiveAny(this.onWs);
         //await this.appUI.load();
         //this.view = <MainPage appUI={this.appUI} />;
         await this.vmApp.loadSchema();
         this.view = this.vmApp.render();
     }
+    onWs = async (msg:any) => {
+
+    }
     componentWillUnmount() {
+        ws.endWsReceive(this.wsId);
+        ws.close();
         //this.appUI.close();
     }
     render() {

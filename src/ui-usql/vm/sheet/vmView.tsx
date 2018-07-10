@@ -4,23 +4,31 @@ import { VmSheet, SheetUI } from './vmSheet';
 import { Sheet } from '../../entities';
 import { VmApi } from '../vmApi';
 import { ViewModel } from '../viewModel';
+import { VmForm, VmFormOptions } from '../vmForm';
 //import {Page} from 'tonva-tools';
 //import {Sheet} from '../../entities';
 //import {EntitiesUIProps, SheetUIProps, SheetViewProps, EntitiesUI, SheetUIO} from '../../ui';
 //import {MainDetails, MainDetailsView} from '../tools';
 
-export class VmView extends ViewModel {
-    sheet: Sheet;
+export class VmView extends VmSheet {
+    vmForm: VmForm;
     data: any;
     state: string;
     flows:any[];
 
-    constructor(sheet: Sheet, data: any, state:string, flows:any[]) {
-        super();
-        this.sheet = sheet;
+    constructor(vmApi:VmApi, sheet: Sheet, ui:SheetUI, data: any, state:string, flows:any[]) {
+        super(vmApi, sheet, ui);
         this.data = data;
         this.state = state;
         this.flows = flows;
+        this.vmForm = this.createVmFieldsForm();
+        this.vmForm.setValues(data);
+    }
+
+    protected get fieldsFormOptions():VmFormOptions {
+        let ret = super.fieldsFormOptions;
+        ret.readOnly = true;
+        return ret;
     }
 
     flowRow = (item:any, index:number):JSX.Element => {
@@ -43,16 +51,19 @@ export class VmView extends ViewModel {
 }
 
 const View = ({vm}:{vm:VmView}) => {
-    let {sheet, state, data, flows, flowRow} = vm;
+    let {entity, state, data, vmForm, flows, flowRow} = vm;
     let removed;
     if (state === '-')
         removed = <div className="mx-3 my-2" style={{color:'red'}}>本单据作废</div>;
     return <div>
         {removed}
-        来不及写了，先用JSON方式显示吧。反正就是显示<br/>
-        {JSON.stringify(data)}
+        {vmForm.render()}
+
         <List header={<Muted>流程</Muted>}
             items={flows}
             item={{render:flowRow}}/>
     </div>;
 }
+
+//{/*来不及写了，先用JSON方式显示吧。反正就是显示<br/>*/}
+//{/*JSON.stringify(data)*/}

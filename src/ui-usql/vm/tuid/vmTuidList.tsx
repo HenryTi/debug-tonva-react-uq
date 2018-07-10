@@ -14,8 +14,7 @@ export class VmTuidList extends VmTuid {
         this.pagedItems = new TuidPagedItems(this.entity);
     }
 
-    async loadSchema() {
-        await super.loadSchema();
+    async beforeStart(param?:any) {
         await this.onSearch(undefined);
     }
     onSearch = async (key:string) => {
