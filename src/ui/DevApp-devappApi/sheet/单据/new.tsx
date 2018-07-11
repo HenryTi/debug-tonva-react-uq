@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, ButtonProps } from 'reactstrap';
-import { Page, nav } from 'tonva-tools';
+import { Page } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { VmSheetNew, VmSheetEdit, VmForm, VmTuidPicker, RowContent } from '../../../../ui-usql';
 //import { VmTuidPicker } from '../../../../ui-usql/vm/vmForm';
@@ -30,22 +30,22 @@ export class VmSheetNew单据 extends VmSheetNew {
 
     onArticleSelected = async (item:any) => {
         this.vmForm.setValue('id1', item.id);
-        nav.push(<InputArr1Row vm={this} />);
+        this.pushPage(<InputArr1Row vm={this} />);
     }
 
     onInputF1 = async () => {
         this.vmForm.showBands(['f1'], 'f1', this.onInputF2);
-        nav.replace(<InputF1 vm={this} />);
+        this.replacePage(<InputF1 vm={this} />);
     }
     
     onInputF2 = async () => {
         this.vmForm.showBands(['f2'], 'f2', this.onShowAll);
-        nav.replace(<InputF1 vm={this} />);
+        this.replacePage(<InputF1 vm={this} />);
     }
 
     onShowAll = async () => {
         this.vmForm.showBands(undefined);
-        nav.replace(<ShowAll vm={this} />);
+        this.replacePage(<ShowAll vm={this} />);
     }
     
     protected view = AddNew;

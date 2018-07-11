@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { observable, action, autorun } from 'mobx';
+import { observable, action, autorun, IReactionDisposer } from 'mobx';
 import { observer } from 'mobx-react';
 import { Button, ButtonProps } from 'reactstrap';
 import { Page, nav, callCenterapi } from 'tonva-tools';
@@ -20,9 +20,9 @@ export class VmSheetOrderNew extends VmSheetNew {
     @observable totalAmount: number;
     ArticleContent: TypeContent;
 
-    async beforeStart() {
+    protected async beforeStart() {
         await super.beforeStart();
-        this.vmForm.onSubmit = this.onSubmit;
+        //this.vmForm.onSubmit = this.onSubmit;
         this.vmArticles = this.vmForm.vmArrs[arrArticles];
         if (this.vmArticles === undefined) {
             alert(arrArticles + ' not have VmArrList');
@@ -35,7 +35,7 @@ export class VmSheetOrderNew extends VmSheetNew {
         this.tuidCustomer = this.entity.getFieldTuid(field客户);
         this.tuidArticle = this.entity.getFieldTuid(fieldArticle, arrArticles);
         this.ArticleContent = this.vmApi.typeTuidContent(this.tuidArticle);
-        autorun(()=>{
+        this.regAutorun(()=>{
             let {vmForm, list} = this.vmArticles;
             let {formValues} = vmForm;
             let {values} = formValues;
@@ -47,13 +47,13 @@ export class VmSheetOrderNew extends VmSheetNew {
     }
 
     async show() {
-        nav.push(<Step1 vm={this} />);
+        this.pushPage(<Step1 vm={this} />);
     }
 
     onSubmit = async (values:any):Promise<void> => {
         let ret = await this.entity.save('订单 from ' + this.customer.name , values);
         alert('订单已保存: ' + JSON.stringify(ret));
-        nav.pop();
+        this.popPage();
     }
 
     onSearchCustomer = async (key:string) => {
@@ -76,13 +76,13 @@ export class VmSheetOrderNew extends VmSheetNew {
         let {id} = item;
         this.customer = await this.tuidCustomer.load(id);
         this.vmForm.setValue('客户', id);
-        nav.push(<Customered vm={this} />);
+        this.pushPage(<Customered vm={this} />);
     }
 
     startEditArticleRow = async () => {
-        nav.pop();
+        this.popPage();
         this.vmForm.showBands(undefined);
-        nav.replace(<ShowAll vm={this} />);
+        this.replacePage(<ShowAll vm={this} />);
         nav.regConfirmClose(this.confirmClose);
         await this.vmArticles.start(undefined);
     }
@@ -115,10 +115,10 @@ export class VmSheetOrderNew extends VmSheetNew {
         vmPicker.start();
     }
     editQuantity = async () => {
-        nav.push(<ArticleRowPage vm={this} />);
+        this.pushPage(<ArticleRowPage vm={this} />);
     }
     afterEditArticleRow = async (vlaues:any) => {
-        nav.pop();
+        this.popPage();
         await this.vmArticles.start(undefined);
     }
 }

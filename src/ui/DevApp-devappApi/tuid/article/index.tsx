@@ -14,5 +14,5 @@ export default {
         row: RowContent,
         idFromValue: ({id}) => id,
     },
-    edit: undefined, // VmTuidNew,
+    //edit: undefined, // VmTuidNew,
 };

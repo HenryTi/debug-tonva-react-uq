@@ -7,7 +7,7 @@ class VMQuery查询Test extends VmQueryMain {
 }
 
 const Extra = observer(({vm}:{vm:VmQueryMain}) => <div>
-    测试代码，额外加点显示 - new values: {JSON.stringify(vm.values)}
+    测试代码，额外加点显示 - new values: {JSON.stringify(vm.vmForm.values)}
 </div>);
 
 export default {
