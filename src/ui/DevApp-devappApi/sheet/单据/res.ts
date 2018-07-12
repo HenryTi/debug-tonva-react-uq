@@ -1,8 +1,8 @@
-{
+export default {
     "bands": [
-        {"name":"id1", "label":"id1中文"},
-        {"name":"f1", "label":"f1中文"},
-        {"name":"f2", "label":"f2中文", "placeholder":"输入f2中文"},
+        {"name":"id1", "label":"id1中文", required: true},
+        {"name":"f1", "label":"f1中文", min:10, max:100},
+        {"name":"f2", "label":"f2中文", "placeHolder":"输入f2中文"},
 
         {
             "name": "arr1",
@@ -72,4 +72,4 @@
             "actions":[]
         }
     ]
-}
+};

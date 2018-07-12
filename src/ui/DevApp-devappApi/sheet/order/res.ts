@@ -8,7 +8,7 @@ export default {
             "bands": [
                 {"name":"article", "label":"产品" },
                 {"name":"price", "label":"单价" },
-                {"name":"quantity", "label":"数量" },
+                {"name":"quantity", "label":"数量", min:1, max: 1000 },
                 {"name":"amount", "label":"金额" }
             ]
         },

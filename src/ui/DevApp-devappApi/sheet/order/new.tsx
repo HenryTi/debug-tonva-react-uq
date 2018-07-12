@@ -161,12 +161,12 @@ const ArticleRowPage = observer(({vm}:{vm:VmSheetOrderNew}) => {
     let article = tuidArticle.getId(articleId);
     return <Page header="产品">
         <form className="m-3" onSubmit={onFormSubmit}>
-            <ArticleContent {...article} /> <br/>
-            产品产品 {JSON.stringify(values)} <br/>
-            单价：{price}元 <br/>
-            {controls['quantity'].render([undefined, 'text-danger'])}<br/>
-            金额: {amount}元 <br/>
-            <button type='button' onClick={onSubmitButtonClick}>确认</button>
+            <div><ArticleContent {...article} /> </div>
+            <div>产品产品 {JSON.stringify(values)} </div>
+            单价：{price}元
+            {controls['quantity'].render(['border border-info rounded mx-2', 'text-danger'])}
+            <div>金额: {amount}元 </div>
+            <button className="btn btn-primary" type="button" onClick={onSubmitButtonClick}>确认</button>
         </form>
     </Page>
 });

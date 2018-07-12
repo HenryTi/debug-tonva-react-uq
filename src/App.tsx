@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {observable} from 'mobx';
 import {observer} from 'mobx-react';
-import {NavView, Page} from 'tonva-tools';
+import {nav, NavView} from 'tonva-tools';
 import {pageMapper} from './pages';
 import {pageMapper as 货主Mapper} from './货主';
 import { EntitiesMapper } from './ui-usql';
@@ -44,19 +44,19 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 */
 
 class App extends React.Component {
-    async componentDidMount() {
+    async onLogined() {
         let vmApp = new VmApp(tonvaApp, ui);
         await vmApp.start();
     }
-
     render() {
+        return <NavView onLogined={this.onLogined} />;
         //return (<NavView view={<UsqlHome appName={tonvaApp} ui={ui} uiMappers={uiMappers} />} />);
-        return (<NavView view={<Page>
+        /*
+            view={<Page>
             <div className="d-flex flex-fill align-items-center justify-content-center text-info" style={{height:'90%'}}>
                 努力加载中...
             </div>
         </Page>} />);
-        /*
         return (
             <div className="App">
                 <header className="App-header">

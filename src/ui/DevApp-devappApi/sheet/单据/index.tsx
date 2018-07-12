@@ -1,4 +1,4 @@
-import res from './res.json';
+import res from './res';
 import { VmSheetMain单据 } from './main';
 import { VmSheetEdit单据 } from './edit';
 import { VmSheetNew单据 } from './new';
