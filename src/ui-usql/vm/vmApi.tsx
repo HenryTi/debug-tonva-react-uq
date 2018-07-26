@@ -6,26 +6,27 @@ import { ViewModel, JSONContent, TypeContent } from './viewModel';
 import { Entities, Tuid, Action, Sheet, Query, Book, Entity } from '../entities';
 import { VmLink, VmEntityLink } from './link';
 import { VmBookMain } from './book';
-import { VmSheetMain } from './sheet';
+import { VmSheetMain, SheetUI } from './sheet';
 import { VmActionMain } from './action';
 import { VmQueryMain } from './query';
-import { VmTuidMain } from './tuid';
+import { VmTuidMain, VmTuidView } from './tuid';
 import { VmApp } from './vmApp';
 import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm';
 import { VmEntity, EntityUI } from './vmEntity';
+import { TuidUI } from './tuid/vmTuid';
 
 export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book';
 
 export class VmApi extends ViewModel {
-    private url:string;
+    //private url:string;
     private access:string;
     private ui:any;
     private entities:Entities;
 
-    constructor(vmApp:VmApp, url:string, api:string, access:string, ui:any) {
+    constructor(vmApp:VmApp, api:string, access:string, ui:any) {
         super();
         this.vmApp = vmApp;
-        this.url = url;
+        //this.url = url;
         this.api = api;
         this.ui = ui;
         this.access = access;
@@ -51,7 +52,7 @@ export class VmApi extends ViewModel {
         let baseUrl = hash===undefined || hash===''? 
             'debug/':'tv/';
         //let ws = undefined;     // 新版没有ws了，webSocket都是从单一的中央过来的
-        let _api = new Api(baseUrl, url, /*ws, */apiOwner, apiName, true);
+        let _api = new Api(baseUrl, apiOwner, apiName, true);
         this.entities = new Entities(_api, access);
     }
 
@@ -156,9 +157,15 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmTuid);
     }
     newVmTuid(tuid:Tuid):VmTuidMain {
-        let ui = this.getUI('tuid', tuid.name);
+        let ui = this.getUI('tuid', tuid.name) as TuidUI;
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmTuidMain;
+        return new vm(this, tuid, ui);
+    }
+    newVmTuidView(tuid:Tuid):VmTuidView {
+        let ui = this.getUI('tuid', tuid.name) as TuidUI;
+        let vm = ui && ui.view;
+        if (vm === undefined) vm = VmTuidView;
         return new vm(this, tuid, ui);
     }
 
@@ -167,7 +174,7 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmSheet);
     }
     newVmSheet(sheet:Sheet):VmSheetMain {
-        let ui = this.getUI('sheet', sheet.name);
+        let ui = this.getUI('sheet', sheet.name) as SheetUI;
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmSheetMain;
         return new vm(this, sheet, ui);

@@ -44,7 +44,7 @@ export class EntitiesUI {
         let hash = document.location.hash;
         let baseUrl = hash===undefined || hash===''? 
             'debug/':'tv/';
-        let _api = new Api(baseUrl, url, /*ws, */apiOwner, apiName, true);
+        let _api = new Api(baseUrl, apiOwner, apiName, true);
         this.entities = new Entities(_api, access);
         this.defaultMapper = defaultMapper;
         this.mapper = mapper || {};

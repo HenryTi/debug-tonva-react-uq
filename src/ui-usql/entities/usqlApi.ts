@@ -2,18 +2,10 @@ import * as _ from 'lodash';
 import {Api, ApiBase} from 'tonva-tools';
 
 export class UsqlApi {
-    private api: ApiBase;
+    private api: Api;
     private access:string[];
 
-    /*
-    constructor(apiOwner:string, apiName:string, url:string, access:string[]) {
-        let hash = document.location.hash;
-        let baseUrl = (hash===undefined || hash==='') && apiOwner!=='$$$'? 
-            'debug/':'tv/';
-        super(baseUrl, url, apiOwner, apiName);
-        this.access = access;
-    }*/
-    constructor(api: ApiBase, access:string[]) {
+    constructor(api: Api, access:string[]) {
         this.api = api;
         this.access = access;
     }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {observable} from 'mobx';
 import {observer} from 'mobx-react';
-import {Page, loadAppApis, nav} from 'tonva-tools';
+import {Page, loadAppApis, nav, getUrlOrDebug} from 'tonva-tools';
 import {Entities} from '../entities';
 import {ViewModel} from './viewModel';
 import { VmApi, EntityType } from './vmApi';
@@ -31,7 +31,9 @@ export class VmApp extends ViewModel {
         for (let appApi of appApis) {
             let {apiOwner, apiName, url, urlDebug, ws, access, token} = appApi;
             let api = apiOwner + '/' + apiName;
-            if (isDebug === true && urlDebug !== undefined) {
+            //if (isDebug === true) {
+                //url = await getUrlOrDebug(url, urlDebug);
+                /*
                 let lud = urlDebug.toLowerCase();
                 if (lud.startsWith('http://') || lud.startsWith('https://')) {
                     try {
@@ -52,17 +54,17 @@ export class VmApp extends ViewModel {
                     catch (e) {
                         console.log('url %s not working', urlDebug);
                     }
-                }
-            }
-            let vmApi = this.newVmApi(url, api, access, this.ui && this.ui[api]);
+                }*/
+            //}
+            let vmApi = this.newVmApi(api, access, this.ui && this.ui[api]);
             await vmApi.loadSchema();
             this.vmApiCollection[api] = vmApi;
         }
     }
 
-    protected newVmApi(url:string, api:string, access:string, ui:any) {
+    protected newVmApi(api:string, access:string, ui:any) {
         // 这里是可以重载的，写自己的VmApi
-        return new VmApi(this, url, api, access, ui);
+        return new VmApi(this, api, access, ui);
     }
 
     caption = 'View Model 版的 Usql App';
@@ -95,7 +97,7 @@ export class VmApp extends ViewModel {
         catch(err) {
             nav.push(<Page header="App start error!">
                 <pre>
-                    {err.message}
+                    {typeof err === 'string'? err : err.message}
                 </pre>
             </Page>);
         }

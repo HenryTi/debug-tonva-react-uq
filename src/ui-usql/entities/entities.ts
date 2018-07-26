@@ -7,7 +7,7 @@ import {Sheet, SheetState, SheetAction} from './sheet';
 import {Query} from './query';
 import {Book} from './book';
 import {History} from './history';
-import { ApiBase } from 'tonva-tools';
+import { ApiBase, Api } from 'tonva-tools';
 
 export interface Field {
     name: string;
@@ -31,7 +31,7 @@ const ln = '\n';
 //const entitiesCollection: {[api:string]: Entities} = {};
 
 export class Entities {
-    private api:ApiBase;
+    //private api:Api;
     private tvApi: UsqlApi;
     private tuids: {[name:string]: Tuid} = {};
     private actions: {[name:string]: Action} = {};
@@ -41,8 +41,8 @@ export class Entities {
     private histories: {[name:string]: History} = {};
     private cacheTimer: any;
 
-    constructor(api:ApiBase, access?:string) {
-        this.api = api;
+    constructor(api:Api, access?:string) {
+        //this.api = api;
         this.loadIds = this.loadIds.bind(this);
 
         let acc: string[];

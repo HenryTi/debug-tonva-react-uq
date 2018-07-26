@@ -5,7 +5,6 @@ import {nav, NavView} from 'tonva-tools';
 import {pageMapper} from './pages';
 import {pageMapper as 货主Mapper} from './货主';
 import { EntitiesMapper } from './ui-usql';
-import { UsqlHome } from './UsqlHome';
 //import AppHome from './appHome';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';

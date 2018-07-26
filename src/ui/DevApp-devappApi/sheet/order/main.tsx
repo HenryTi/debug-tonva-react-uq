@@ -10,6 +10,7 @@ export class VmSheetMainOrder extends VmSheetMain {
 
 const Main = ({vm}:{vm:VmSheetMain}) => {
     let {label, entity, newClick, schemaClick, renderState, sheetStateClick, archivesClick}  = vm;
+    let list = entity.statesCount.filter(row=>row.count);
     return <Page header={label}>
         <div className="mx-3 my-2">
             定制的Order
@@ -21,7 +22,7 @@ const Main = ({vm}:{vm:VmSheetMain}) => {
         <List className="my-2"
             header={<Muted>待处理{label}</Muted>}
             none="[ 无 ]"
-            items={entity.statesCount.filter(row=>row.count)}
+            items={list}
             item={{render:renderState, onClick:sheetStateClick}} />
         <div className="mx-3 my-2">
             <Button color="primary" onClick={archivesClick}>已归档{label}</Button>

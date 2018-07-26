@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Button, ButtonProps, Badge } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { List, Muted, LMR } from 'tonva-react-form';
@@ -43,8 +44,9 @@ export class VmSheetMain extends VmSheet {
     protected view = Main;
 }
 
-const Main = ({vm}:{vm:VmSheetMain}) => {
+const Main = observer(({vm}:{vm:VmSheetMain}) => {
     let {label, entity, newClick, schemaClick, renderState, sheetStateClick, archivesClick}  = vm;
+    let list = entity.statesCount.filter(row=>row.count);
     return <Page header={label}>
         <div className="mx-3 my-2">
             <Button className="mr-2" color="primary" onClick={newClick}>新建</Button>
@@ -53,10 +55,10 @@ const Main = ({vm}:{vm:VmSheetMain}) => {
         <List className="my-2"
             header={<Muted>待处理{label}</Muted>}
             none="[ 无 ]"
-            items={entity.statesCount}
+            items={list}
             item={{render:renderState, onClick:sheetStateClick}} />
         <div className="mx-3 my-2">
             <Button color="primary" onClick={archivesClick}>已归档{label}</Button>
         </div>
     </Page>;
-};
+});
