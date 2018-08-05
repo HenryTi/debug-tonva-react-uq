@@ -35,8 +35,9 @@ export class AppUI {
 
     async load(): Promise<void> {
         let isDebug = process.env.NODE_ENV==='development';
-        let appApis = await loadAppApis(this.appOwner, this.appName);
-        for (let appApi of appApis) {
+        let app = await loadAppApis(this.appOwner, this.appName);
+        let {id, apis} = app;
+        for (let appApi of apis) {
             let {apiOwner, apiName, url, urlDebug, /*ws, */access, token} = appApi;
             let api = apiOwner + '/' + apiName;
             let mapper = this.uiMappers && this.uiMappers[api];

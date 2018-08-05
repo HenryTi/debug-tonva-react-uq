@@ -12,7 +12,6 @@ import { ApiBase, Api } from 'tonva-tools';
 export interface Field {
     name: string;
     type: string;
-    //tuidKey?: string;
     tuid?: string;
     url?: string;
     _tuid: Tuid;
@@ -31,7 +30,6 @@ const ln = '\n';
 //const entitiesCollection: {[api:string]: Entities} = {};
 
 export class Entities {
-    //private api:Api;
     private tvApi: UsqlApi;
     private tuids: {[name:string]: Tuid} = {};
     private actions: {[name:string]: Action} = {};
@@ -40,9 +38,12 @@ export class Entities {
     private books: {[name:string]: Book} = {};
     private histories: {[name:string]: History} = {};
     private cacheTimer: any;
+    appId: number;
+    apiId: number;
 
-    constructor(api:Api, access?:string) {
-        //this.api = api;
+    constructor(appId:number, apiId:number, api:Api, access?:string) {
+        this.appId = appId;
+        this.apiId = apiId;
         this.loadIds = this.loadIds.bind(this);
 
         let acc: string[];
@@ -62,6 +63,13 @@ export class Entities {
     book(name:string):Book {return this.books[name.toLowerCase()]}
     history(name:string):History {return this.histories[name.toLowerCase()]}
 
+    sheetFromTypeId(typeId:number):Sheet {
+        for (let i in this.sheets) {
+            let sheet = this.sheets[i];
+            if (sheet.id === typeId) return sheet;
+        }
+    }
+
     tuidArr: Tuid[] = [];
     actionArr: Action[] = [];
     sheetArr: Sheet[] = [];
@@ -69,10 +77,9 @@ export class Entities {
     bookArr: Book[] = [];
     historyArr: History[] = [];
 
-    async loadEntities() {
+    async load() {
         let accesses = await this.tvApi.loadAccess();
         this.buildAccess(this.tvApi, accesses);
-        //await this.wsConnect();
     }
 
     getTuid(name:string, tuidUrl:string) {return this.tuids[name];}

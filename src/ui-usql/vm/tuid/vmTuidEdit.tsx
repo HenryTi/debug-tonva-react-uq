@@ -35,9 +35,17 @@ export class VmTuidEdit extends VmTuid {
     }
 
     protected onSubmit = async () => {
-        let ret = await this.entity.save(this.id, this.vmForm.values);
-        if (ret) {
-            alert('这里还要判断返回值，先不处理了 \n' + JSON.stringify(ret));
+        let {values} = this.vmForm;
+        let ret = await this.entity.save(this.id, values);
+        let {id} = ret;
+        if (id < 0) {
+            let {unique} = this.entity.schema;
+            if (unique !== undefined) {
+                for (let u of unique) {
+                    this.vmForm.setError(u, '不能重复');
+                }
+            }
+            return;
         }
         this.pushPage(<Page header={this.label + '提交成功'} back="none">
             <div className='m-3'>

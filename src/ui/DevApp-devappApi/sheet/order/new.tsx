@@ -5,7 +5,6 @@ import { Button, ButtonProps } from 'reactstrap';
 import { Page, nav, callCenterapi } from 'tonva-tools';
 import { List, Muted, SearchBox, TonvaForm, PropGrid, Prop } from 'tonva-react-form';
 import { VmSheetNew, VmSheetEdit, VmForm, VmTuidPicker, RowContent, Tuid, VmFormOptions, VmArr, TypeContent } from '../../../../ui-usql';
-import article from '../../tuid/article';
 
 const field客户 = '客户';
 const fieldArticle = 'article';

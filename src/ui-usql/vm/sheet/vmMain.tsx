@@ -9,6 +9,7 @@ import { VmSheetEdit } from './vmEdit';
 import { VmSheetList } from './vmList';
 import { VmSheetSchema } from './vmSchema';
 import { VmArchives } from './vmArchives';
+import { VmSheetAction } from './vmSheetAction';
 
 export class VmSheetMain extends VmSheet {
     protected vmNew = VmSheetNew;
@@ -33,6 +34,10 @@ export class VmSheetMain extends VmSheet {
     schemaClick = async () => await this.navVm(this.vmSchema);
     archivesClick = async () => await this.navVm(this.vmArchives);
     sheetStateClick = async (state) => await this.navVm(this.vmSheetList, state);
+    async showSheet(sheetId:number) {
+        let vmAction = (this.ui && this.ui.action) || VmSheetAction;
+        await this.navVm(vmAction, sheetId);
+    }
 
     renderState = (item:any, index:number) => {
         let {state, count} = item;

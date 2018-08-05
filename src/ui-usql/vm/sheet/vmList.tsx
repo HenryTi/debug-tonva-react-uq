@@ -18,7 +18,7 @@ export class VmSheetList extends VmSheet {
 
     rowClick = async (brief:any) => {
         if (brief.processing===1) return;
-        this.navVm(VmSheetAction, brief);
+        this.navVm(VmSheetAction, brief.id);
     }
 
     renderRow = (row:any, index:number) => {

@@ -1,0 +1,8 @@
+{
+    "商品test1": {
+        "caption": "商品测试1",
+        "fields": [
+            { "name": "b1", "type": "input", "label": "b1中文", "placeHolder": "请输入中文" }
+        ]
+    }
+}

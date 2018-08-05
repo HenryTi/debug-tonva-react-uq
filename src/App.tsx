@@ -25,13 +25,15 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 };
 */
 
-const tonvaApp = 'devapp/DevApp';
+//const tonvaApp = 'devapp/DevApp';
+const tonvaApp = '$$$/$unitx';
+/*
 const uiMappers: {[api:string]: EntitiesMapper} = {
     "DevApp/devappApi": pageMapper,
     //"$$$/货主": 货主Mapper,
     //"$$$/货主": null,
 };
-
+*/
 /*
 const tonvaApp = '百灵威系统工程部/customer';
 const uiMappers: {[api:string]: EntitiesMapper} = {

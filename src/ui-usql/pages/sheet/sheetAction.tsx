@@ -47,7 +47,6 @@ export class SheetAction extends React.Component<SheetUIProps, State> {
         let {state, brief, stateName} = data;
         let s = sheet.schema.states.find(v => v.name === state.state);
         let actions = s.actions;
-        tonvaDebug();
         return <Page header={sheet.name + ':' + stateName + '-' + brief.no}>
             <div className="mx-3 my-2">
                 {

@@ -123,6 +123,8 @@ export class VmForm extends ViewModel {
     getValue(fieldName: string) { return this.formValues.values[fieldName] }
     setValue(fieldName: string, value: any) { this.formValues.values[fieldName] = value }
 
+    setError(fieldName:string, error:string) {this.formValues.errors[fieldName] = error}
+
     // 如果要定制control，重载这个函数
     protected buildControl(fieldUI: FieldUIX, formValues:FormValues):VmControl {
         let {type} = fieldUI;

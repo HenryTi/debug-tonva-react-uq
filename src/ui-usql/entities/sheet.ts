@@ -59,15 +59,15 @@ export class Sheet extends Entity {
         //this.statesCount.splice(index, 1, stateCount);
     }
     async save(discription:string, data:any):Promise<number> {
-        //await this.entities.wsConnect();
+        let {appId, apiId} = this.entities;
         let text = this.entities.pack(this.schema, data);
-        let ret = await this.tvApi.sheetSave(this.name, {discription: discription, data:text});
+
+        let ret = await this.tvApi.sheetSave(this.name, {app: appId, api: apiId, discription: discription, data:text});
         let {id, state} = ret;
         if (id > 0) this.changeStateCount(state, 1);
         return id;
     }
     async action(id:number, flow:number, state:string, action:string) {
-        //await this.entities.wsConnect();
         return await this.tvApi.sheetAction(this.name, {id:id, flow:flow, state:state, action:action});
     }
     async getStateSheets(state:string, pageStart:number, pageSize:number):Promise<void> {

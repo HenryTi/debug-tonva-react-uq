@@ -29,20 +29,41 @@ export class Tuid extends Entity {
 
     private buildSlave(slave:any):Slave {
         let {tuid, book, page, pageSlave, all, add, del} = slave;
-        let tuidTuid:Tuid = this.entities.tuid(tuid.name);
-        tuidTuid.setSchema(tuid);
-        let bookBook:Book = this.entities.book(book.name);
-        bookBook.setSchema(book);
-        let pageQuery:Query = this.entities.query(page.name);
-        pageQuery.setSchema(page);
-        let pageSlaveQuery:Query = this.entities.query(pageSlave.name);
-        pageSlaveQuery.setSchema(pageSlave);
-        let allQuery:Query = this.entities.query(all.name);
-        allQuery.setSchema(all);
-        let addAction:Action = this.entities.action(add.name);
-        addAction.setSchema(add);
-        let delAction:Action = this.entities.action(del.name);
-        delAction.setSchema(del);
+        let tuidTuid:Tuid;
+        if (tuid !== undefined) {
+            tuidTuid = this.entities.tuid(tuid.name);
+            tuidTuid.setSchema(tuid);
+        }
+        let bookBook:Book;
+        if (book !== undefined) {
+            bookBook = this.entities.book(book.name);
+            bookBook.setSchema(book);
+        }
+        let pageQuery:Query;
+        if (page !== undefined){
+            pageQuery = this.entities.query(page.name);
+            pageQuery.setSchema(page);
+        }
+        let pageSlaveQuery:Query;
+        if (pageSlave !== undefined) {
+            pageSlaveQuery = this.entities.query(pageSlave.name);
+            pageSlaveQuery.setSchema(pageSlave);
+        }
+        let allQuery:Query;
+        if (all !== undefined) {
+            allQuery = this.entities.query(all.name);
+            allQuery.setSchema(all);
+        }
+        let addAction:Action;
+        if (add !== undefined) {
+            addAction = this.entities.action(add.name);
+            addAction.setSchema(add);
+        }
+        let delAction:Action;
+        if (del !== undefined) {
+            delAction = this.entities.action(del.name);
+            delAction.setSchema(del);
+        }
         return {
             tuid: tuidTuid,
             book: bookBook,
@@ -85,6 +106,7 @@ export class Tuid extends Entity {
         this.cache.set(String(id), item);
     }
     useId(id:number, defer?:boolean):void {
+        if (id === undefined || id === 0) return;
         if (isNumber(id) === false) return;
         let key = String(id);
         if (this.cache.has(key) === true) {
