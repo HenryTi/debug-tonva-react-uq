@@ -6,7 +6,7 @@ import { Page, nav, } from 'tonva-tools';
 import { VmForm } from '../vmForm';
 
 export class VmAction extends VmEntity {
-    protected entity: Action;
+    entity: Action;
 
     get icon() {return vmLinkIcon('text-success', 'hand-o-right')}
 }

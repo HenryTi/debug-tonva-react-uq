@@ -14,11 +14,11 @@ export class VmTuidEdit extends VmTuid {
 
     protected async beforeStart(param?:any) {
         this.vmForm = this.createVmFieldsForm();
+        if (param !== undefined) {
+            this.id = param.id;
+            this.vmForm.values = param;
+        }
         this.vmForm.onSubmit = this.onSubmit;
-    }
-
-    async loadId(id: number) {
-        this.id = id;
     }
 
     protected next = async () => {
@@ -65,8 +65,8 @@ export class VmTuidEdit extends VmTuid {
 }
 
 const TuidNewPage = observer(({vm}:{vm:VmTuidEdit}) => {
-    let {label, vmForm} = vm;
-    return <Page header={'新增 - ' + label}>
+    let {label, id, vmForm} = vm;
+    return <Page header={(id===undefined? '新增':'编辑') + ' - ' + label}>
         {vmForm.render('mx-3 my-2')}
     </Page>;
 });

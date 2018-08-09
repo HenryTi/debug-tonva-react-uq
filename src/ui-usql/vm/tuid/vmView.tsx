@@ -13,7 +13,7 @@ export class VmTuidView extends VmTuid {
     id: number;
 
     protected async beforeStart(param?:any) {
-        let data = await this.entity.getId(param)
+        let data = await this.entity.valueFromId(param)
         this.vmForm = this.createVmFieldsForm();
         this.vmForm.values = data;
         this.vmForm.readOnly = true;

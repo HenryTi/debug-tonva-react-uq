@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { TypeContent, ViewModel } from "../viewModel";
-import { Field } from "../field";
 import { VmControl } from "./control";
 import { TypeFieldBand, TypeFieldsBand, TypeArrBand, TypeSubmitBand } from './band';
 import { FormUI, FieldBandUI, FieldsBandUI, ArrBandUI, SubmitBandUI, FieldUI,
     TuidUI, InputUI, StringUI, IntUI, DecUI, TextUI, CheckUI, SelectUI, RadioUI, NumberUI } from './formUI';
 import { VmForm } from './vmForm';
 import { VmArr } from './vmArr';
+import { Field } from '../../entities';
 
 export interface FormUIX extends FormUI {
     bands: BandUIX[];

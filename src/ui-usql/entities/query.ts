@@ -66,12 +66,12 @@ export class Query extends Entity {
     }
 
     async page(params:any, pageStart:any, pageSize:number):Promise<any[]> {
-        let res = await this.api.queryPage(this.queryApiName, this.name, pageStart, pageSize+1, params);
+        let res = await this.tvApi.queryPage(this.queryApiName, this.name, pageStart, pageSize+1, params);
         let data = await this.unpackReturns(res);
         return data.$page;// as any[];
     }
     async query(params:any):Promise<any> {
-        let res = await this.api.query(this.name, params);
+        let res = await this.tvApi.query(this.name, params);
         let data = await this.unpackReturns(res);
         return data;
     }

@@ -100,7 +100,7 @@ export class GeneralTuidInput extends React.Component<TuidInputProps, TuidInputS
 
         let proxies = entity.proxies;
         if (proxies === undefined) {
-            let val = entity.getId(id);
+            let val = entity.valueFromId(id);
             if (typeof val === 'number') {
                 return this.idContent(caption, id);
             }
@@ -113,7 +113,7 @@ export class GeneralTuidInput extends React.Component<TuidInputProps, TuidInputS
         }
 
         // ==== proxy tuid =====
-        let val = entity.getId(id);
+        let val = entity.valueFromId(id);
         if (typeof val === 'number')
             return this.idContent(caption, id);
 
@@ -122,7 +122,7 @@ export class GeneralTuidInput extends React.Component<TuidInputProps, TuidInputS
         let InputContent = tuidUI.input.inputContent;
         caption = tuidUI.caption;
         id = $proxy;
-        val = tuidUI.entity.getId($proxy);
+        val = tuidUI.entity.valueFromId($proxy);
         if (typeof val === 'number')
             return this.idContent(caption, id);
 

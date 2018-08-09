@@ -31,8 +31,8 @@ export class VmSheetOrderNew extends VmSheetNew {
             this.vmArticles.afterEditRow = this.afterEditArticleRow;
             this.vmArticles.footer = <ArticleFooter vm={this} />;
         }
-        this.tuidCustomer = this.entity.getFieldTuid(field客户);
-        this.tuidArticle = this.entity.getFieldTuid(fieldArticle, arrArticles);
+        this.tuidCustomer = this.entity.getTuidFromName(field客户);
+        this.tuidArticle = this.entity.getTuidFromName(fieldArticle, arrArticles);
         this.ArticleContent = this.vmApi.typeTuidContent(this.tuidArticle);
         this.regAutorun(()=>{
             let {vmForm, list} = this.vmArticles;
@@ -157,7 +157,7 @@ const ArticleRowPage = observer(({vm}:{vm:VmSheetOrderNew}) => {
     let {controls, formValues, onSubmitButtonClick, onFormSubmit} = vmForm;
     let {values} = formValues;
     let {price, quantity, amount} = values;
-    let article = tuidArticle.getId(articleId);
+    let article = tuidArticle.valueFromId(articleId);
     return <Page header="产品">
         <form className="m-3" onSubmit={onFormSubmit}>
             <div><ArticleContent {...article} /> </div>

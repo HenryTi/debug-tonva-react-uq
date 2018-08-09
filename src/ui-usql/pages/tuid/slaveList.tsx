@@ -77,7 +77,7 @@ export class SlaveList extends React.Component<TuidUISlaveProps> {
         let {$slave} = item;
         tuid.entity.useId($slave);
         let content;
-        let value = tuid.entity.getId($slave);
+        let value = tuid.entity.valueFromId($slave);
         if (value !== undefined) {
             if (InputContent !== undefined) {
                 return <LMR className="px-3 py-2"
@@ -209,7 +209,7 @@ class SetSlave extends React.Component<TuidUISlaveProps & { slaveChanged: (slave
         }
         let tuid = this.props.slave.tuid;
         tuid.entity.useId($slave);
-        let value = tuid.entity.getId($slave);
+        let value = tuid.entity.valueFromId($slave);
         let InputContent = tuid.input.inputContent;
         return <LMR
             left={flag}

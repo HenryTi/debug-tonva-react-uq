@@ -22,7 +22,7 @@ export class VmSheetNew单据 extends VmSheetNew {
     async show() {
         //nav.push(this.renderView());
         //alert('started');
-        let tuid = this.entity.getFieldTuid('id1');
+        let tuid = this.entity.getTuidFromName('id1');
         let vmTuidPicker = new VmTuidPicker(this.vmApi, '选择Id1', tuid, this.onArticleSelected, RowContent);
         //nav.push(<SelectId1 vm={this} />)
         vmTuidPicker.start();

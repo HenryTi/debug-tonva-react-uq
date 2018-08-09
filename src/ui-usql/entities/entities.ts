@@ -8,12 +8,16 @@ import {Query} from './query';
 import {Book} from './book';
 import {History} from './history';
 import { ApiBase, Api } from 'tonva-tools';
+import { Map } from './map';
 
 export interface Field {
     name: string;
-    type: string;
+    type: 'tinyint' | 'smallint' | 'int' | 'bigint' | 'dec' | 'char' | 'text' 
+        | 'datetime' | 'date' | 'time';
     tuid?: string;
     url?: string;
+    null?: boolean;
+    size?: number;
     _tuid: Tuid;
 }
 export interface Arr {
@@ -30,14 +34,15 @@ const ln = '\n';
 //const entitiesCollection: {[api:string]: Entities} = {};
 
 export class Entities {
-    private tvApi: UsqlApi;
     private tuids: {[name:string]: Tuid} = {};
     private actions: {[name:string]: Action} = {};
     private sheets: {[name:string]: Sheet} = {};
     private queries: {[name:string]: Query} = {};
     private books: {[name:string]: Book} = {};
+    private maps: {[name:string]: Map} = {};
     private histories: {[name:string]: History} = {};
     private cacheTimer: any;
+    tvApi: UsqlApi;
     appId: number;
     apiId: number;
 
@@ -61,6 +66,7 @@ export class Entities {
     sheet(name:string):Sheet {return this.sheets[name.toLowerCase()]}
     query(name:string):Query {return this.queries[name.toLowerCase()]}
     book(name:string):Book {return this.books[name.toLowerCase()]}
+    map(name:string):Map {return this.maps[name.toLowerCase()]}
     history(name:string):History {return this.histories[name.toLowerCase()]}
 
     sheetFromTypeId(typeId:number):Sheet {
@@ -75,11 +81,12 @@ export class Entities {
     sheetArr: Sheet[] = [];
     queryArr: Query[] = [];
     bookArr: Book[] = [];
+    mapArr: Map[] = [];
     historyArr: History[] = [];
 
     async load() {
         let accesses = await this.tvApi.loadAccess();
-        this.buildAccess(this.tvApi, accesses);
+        this.buildAccess(accesses);
     }
 
     getTuid(name:string, tuidUrl:string) {return this.tuids[name];}
@@ -108,71 +115,89 @@ export class Entities {
         }
     }
 
-    private buildAccess(api:UsqlApi, access:any) {
+    private buildAccess(access:any) {
         for (let a in access) {
             let v = access[a];
             switch (typeof v) {
-                case 'string': this.fromType(api, a, v); break;
-                case 'object': this.fromObj(api, a, v); break;
+                case 'string': this.fromType(a, v); break;
+                case 'object': this.fromObj(a, v); break;
             }
         }
         for (let tuid of this.tuidArr) tuid.setProxies(this);
     }
 
-    private fromType(api:UsqlApi, name:string, type:string) {
+    newAction(name:string, id:number):Action {
+        let action = this.actions[name];
+        if (action !== undefined) return action;
+        action = this.actions[name] = new Action(this, name, id)
+        this.actionArr.push(action);
+        return action;
+    }
+    newTuid(name:string, id:number, proxies:string[]):Tuid {
+        let tuid = this.tuids[name];
+        if (tuid !== undefined) return tuid;
+        tuid = this.tuids[name] = new Tuid(this, name, id);
+        this.tuidArr.push(tuid);
+        tuid.buidProxies(proxies);
+        return tuid;
+    }
+    newQuery(name:string, id:number):Query {
+        let query = this.queries[name];
+        if (query !== undefined) return query;
+        query = this.queries[name] = new Query(this, name, id)
+        this.queryArr.push(query);
+        return query;
+    }
+    newBook(name:string, id:number):Book {
+        let book = this.books[name];
+        if (book !== undefined) return book;
+        book = this.books[name] = new Book(this, name, id);
+        this.bookArr.push(book);
+        return book;
+    }
+    newMap(name:string, id:number):Map {
+        let map = this.maps[name];
+        if (map !== undefined) return map;
+        map = this.maps[name] = new Map(this, name, id)
+        this.mapArr.push(map);
+        return map;
+    }
+    newHistory(name:string, id:number):History {
+        let history = this.histories[name];
+        if (history !== undefined) return;
+        history = this.histories[name] = new History(this, name, id)
+        this.historyArr.push(history);
+        return history;
+    }
+    newSheet(name:string, id:number):Sheet {
+        let sheet = this.sheets[name];
+        if (sheet !== undefined) return sheet;
+        sheet = this.sheets[name] = new Sheet(this, name, id);
+        this.sheetArr.push(sheet);
+        return sheet;
+    }
+    private fromType(name:string, type:string) {
         let parts = type.split('|');
         type = parts[0];
         let id = Number(parts[1]);
         switch (type) {
-            case 'action': 
-                let action = this.actions[name];
-                if (action === undefined) {
-                    this.actionArr.push(this.actions[name] = new Action(this, api, name, id));
-                }
-                break;
-            case 'tuid':
-                let tuid = this.tuids[name];
-                if (tuid === undefined) {
-                    this.tuidArr.push(tuid = this.tuids[name] = new Tuid(this, api, name, id));
-                    tuid.buidProxies(parts);
-                }
-                break;
-            case 'query': 
-                let query = this.queries[name];
-                if (query === undefined) {
-                    this.queryArr.push(this.queries[name] = new Query(this, api, name, id));
-                }
-                break;
-            case 'book':
-                let book = this.books[name];
-                if (book === undefined) {
-                    this.bookArr.push(this.books[name] = new Book(this, api, name, id));
-                }
-                break;
-            case 'history':
-                let history = this.histories[name];
-                if (history === undefined) {
-                    this.historyArr.push(this.histories[name] = new History(this, api, name, id));
-                }
-                break;
-            case 'sheet':
-                let sheet = this.sheets[name];
-                if (sheet === undefined) {
-                    this.sheetArr.push(this.sheets[name] = new Sheet(this, api, name, id));
-                }
+            case 'action': this.newAction(name, id); break;
+            case 'tuid': this.newTuid(name, id, parts); break;
+            case 'query': this.newQuery(name, id); break;
+            case 'book': this.newBook(name, id); break;
+            case 'map': this.newMap(name, id); break;
+            case 'history': this.newHistory(name, id); break;
+            case 'sheet':this.newSheet(name, id); break;
         }
     }
-    private fromObj(api:UsqlApi, name:string, obj:any) {
+    private fromObj(name:string, obj:any) {
         switch (obj['$']) {
-            case 'sheet': this.buildSheet(api, name, obj); break;
+            case 'sheet': this.buildSheet(name, obj); break;
         }
     }
-    private buildSheet(api:UsqlApi, name:string, obj:any) {
+    private buildSheet(name:string, obj:any) {
         let sheet = this.sheets[name];
-        if (sheet === undefined) {
-            this.sheetArr.push(sheet = this.sheets[name] = new Sheet(this, api, name, obj.id));
-        }
-
+        if (sheet === undefined) sheet = this.newSheet(name, obj.id);
         let states = sheet.states;
         for (let p in obj) {
             switch(p) {
@@ -337,6 +362,8 @@ export class Entities {
                 if (tuidKey !== undefined) {
                     let tuid = f._tuid;
                     if (tuid === undefined) {
+                        // 在JSON.stringify中间不会出现
+                        Object.defineProperty(f, '_tuid', {value:'_tuid', writable: true});
                         f._tuid = tuid = this.getTuid(tuidKey, tuidUrl);
                     }
                     tuid.useId(Number(v), true);

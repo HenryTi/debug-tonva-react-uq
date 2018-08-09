@@ -6,15 +6,18 @@ import { VmApi } from '../vmApi';
 import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidView } from './vmView';
+import { VmTuidSearch } from './vmTuidSearch';
 
 export interface TuidUI extends EntityUI {
     main: typeof VmTuidMain;
     edit: typeof VmTuidEdit;
     view: typeof VmTuidView;
+    search: typeof VmTuidSearch;
 }
 
 export abstract class VmTuid extends VmEntity {
     entity: Tuid;
+    protected ui: TuidUI;
 
     constructor(vmApi: VmApi, tuid: Tuid, ui?:TuidUI) {
         super(vmApi, tuid, ui);

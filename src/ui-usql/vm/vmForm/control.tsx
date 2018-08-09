@@ -54,7 +54,9 @@ export abstract class VmControl extends ViewModel {
     }
 
     @computed get value() { return this.formValues.values[this.name]; }
-    set value(v:any) { this.formValues.values[this.name]=v; }
+    setValue(v:any) { 
+        this.formValues.values[this.name]=v; 
+    }
     get error() { return this.formValues.errors[this.name]; }
     set error(err:any) { this.formValues.errors[this.name]=err; }
     protected parse(str:string):any {return str;}
@@ -88,7 +90,9 @@ export abstract class VmInputControl extends VmControl {
     }
 
     get value() {return super.value;}
-    set value(v:any) { super.value = v; this.setInputValue(); }
+    setValue(v:any) {
+        super.setValue(v); this.setInputValue(); 
+    }
 
     ref = (input:HTMLInputElement) => {
         this.input = input;
@@ -113,7 +117,7 @@ export abstract class VmInputControl extends VmControl {
     }
 
     onChange = (evt: React.ChangeEvent<any>) => {
-        this.value = this.parse(evt.currentTarget.value);
+        this.setValue(this.parse(evt.currentTarget.value));
     }
 
     protected view = InputControl;

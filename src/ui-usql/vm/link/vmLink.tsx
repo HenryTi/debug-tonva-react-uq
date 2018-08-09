@@ -1,15 +1,6 @@
 import * as React from 'react';
 import { ViewModel } from '../viewModel';
 import { VmEntity } from '../vmEntity';
-/*
-import { nav } from 'tonva-tools';
-import { Entity, Tuid } from '../../entities';
-import { VmActionMain } from '../action';
-import { VmTuidMain } from '../tuid';
-import { VmQueryMain } from '../query';
-import { VmSheetMain } from '../sheet';
-import { VmBookMain } from '../book';
-*/
 
 export abstract class VmLink extends ViewModel {
     abstract onClick: () => void;
@@ -26,7 +17,7 @@ export class VmEntityLink extends VmLink {
     protected view = Link;
 
     onClick = async () => {
-        this.vmEntity.start();
+        await this.vmEntity.start();
     }
 }
 

@@ -69,7 +69,7 @@ export class BindSlaveList extends React.Component<TuidUIBindSlaveProps> {
         let {id} = item;
         bindSlave.entity.useId(id);
         let content;
-        let value = bindSlave.entity.getId(id);
+        let value = bindSlave.entity.valueFromId(id);
         if (value !== undefined) {
             if (InputContent !== undefined) content = <InputContent value={value} />;
             else content = <>{JSON.stringify(item)}</>;

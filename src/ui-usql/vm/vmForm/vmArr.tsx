@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { List, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
 import { ViewModel, RowContent } from '../viewModel';
-import { Arr } from '../field';
+import { Arr, Field } from '../../entities';
 import { VmForm } from './vmForm';
 import { ArrBandUIX } from './formUIX';
 import { VmApi } from '../vmApi';

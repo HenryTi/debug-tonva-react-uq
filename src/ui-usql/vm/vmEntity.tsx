@@ -2,11 +2,10 @@ import * as React from 'react';
 import { observable } from 'mobx';
 import { FA } from 'tonva-react-form';
 import { } from 'tonva-tools';
-import { Entity, Tuid } from '../entities';
+import { Entity, Tuid, Field } from '../entities';
 import { TypeContent } from './viewModel';
 import { VmApi } from './vmApi';
 import { VmForm, VmFormOptions, TypeVmTuidControl, PickerConfig } from './vmForm';
-import { Field } from './field';
 import { VmPage } from './vmPage';
 
 export interface EntityUI {
@@ -15,7 +14,7 @@ export interface EntityUI {
 }
 
 export abstract class VmEntity extends VmPage {
-    protected entity: Entity;
+    entity: Entity;
     protected ui: EntityUI;
     label: string;
     vmApi:VmApi;

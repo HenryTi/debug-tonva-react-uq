@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import { observable, IObservableObject, IObservableArray, computed } from 'mobx';
 import { observer } from 'mobx-react';
 import { FA } from 'tonva-react-form';
+import { Field, Arr } from '../../entities';
 import { ViewModel, JSONContent, RowContent } from '../viewModel';
-import { Field, Arr } from '../field';
 import { FormUI, BandUI, FieldBandUI, FieldsBandUI, ArrBandUI, SubmitBandUI, FieldUI } from './formUI';
 import { FormUIX, BandUIX, FieldBandUIX, FieldsBandUIX, ArrBandUIX, SubmitBandUIX, FieldUIX } from './formUIX';
 import { buildControl, VmControl } from './control';
@@ -112,7 +112,7 @@ export class VmForm extends ViewModel {
         }
         for (let i in this.controls) {
             let ctrl = this.controls[i];
-            ctrl.value = null;
+            ctrl.setValue(null);
         }
         for (let i in this.vmArrs) {
             let vmArr = this.vmArrs[i];

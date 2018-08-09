@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { Api } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { ViewModel, JSONContent, TypeContent } from './viewModel';
-import { Entities, Tuid, Action, Sheet, Query, Book, Entity } from '../entities';
+import { Entities, Tuid, Action, Sheet, Query, Book, Map, Entity } from '../entities';
 import { VmLink, VmEntityLink } from './link';
 import { VmBookMain } from './book';
 import { VmSheetMain, SheetUI } from './sheet';
@@ -14,8 +14,10 @@ import { VmApp } from './vmApp';
 import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm';
 import { VmEntity, EntityUI } from './vmEntity';
 import { TuidUI } from './tuid/vmTuid';
+import { VmMapMain } from './map';
+import { VmTuidSearch } from './tuid/vmTuidSearch';
 
-export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book';
+export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book' | 'map';
 
 export class VmApi extends ViewModel {
     private access:string;
@@ -60,24 +62,6 @@ export class VmApi extends ViewModel {
 
     async loadSchema() {
         await this.entities.load();
-        // 检查注册的entity viewModels
-        /*
-        let arr = [
-            {regs: VmTuid.vmRegs, type: 'tuid'},
-            {regs: VmSheet.vmRegs, type: 'sheet'},
-            {regs: VmAction.vmRegs, type: 'action'},
-            {regs: VmQuery.vmRegs, type: 'query'},
-            {regs: VmBook.vmRegs, type: 'book'},
-        ];
-        for (let item of arr) {
-            let {regs, type} = item;
-            for (let i in regs) {
-                if (this.entities[type](i) === undefined) {
-                    let vm = regs[i];
-                    console.warn(type + ':' + '\'' + i + '\' is not usql entity, which register class ' + vm.name);
-                }
-            }
-        }*/
 
         for (let i in this.ui) {
             let g = this.ui[i];
@@ -136,6 +120,11 @@ export class VmApi extends ViewModel {
             if (book === undefined) return;
             let vmBookMain = this.newVmBook(book);
             return new VmEntityLink(vmBookMain);
+        case 'map':
+            let map = this.entities.map(entityName);
+            if (map === undefined) return;
+            let vmMapMain = this.newVmMap(map);
+            return new VmEntityLink(vmMapMain);
         }
     }
 
@@ -176,6 +165,14 @@ export class VmApi extends ViewModel {
         let vm = ui && ui.view;
         if (vm === undefined) vm = VmTuidView;
         return new vm(this, tuid, ui);
+    }
+    newVmTuidSearch(tuid:Tuid, onSelected:(item:any)=>Promise<void>):VmTuidSearch {
+        let ui = this.getUI('tuid', tuid.name) as TuidUI;
+        let vm = ui && ui.search;
+        if (vm === undefined) vm = VmTuidSearch;
+        let ret = new vm(this, tuid, ui);
+        ret.onSelected = onSelected;
+        return ret;
     }
 
     get sheetTypeCaption() { return this.getUITypeCaption('sheet') || '凭单'; }
@@ -241,6 +238,22 @@ export class VmApi extends ViewModel {
             return this.newVmBookLink(this.newVmBook(v))
         });
     }
+    
+    get mapTypeCaption() { return this.getUITypeCaption('map') || '对照表' }
+    newVmMapLink(vmMap:VmMapMain) {
+        return new VmEntityLink(vmMap);
+    }
+    newVmMap(map:Map):VmMapMain {
+        let ui = this.getUI('map', map.name);
+        let vm = ui && ui.main;
+        if (vm === undefined) vm = VmMapMain;
+        return new vm(this, map, ui);
+    }
+    get vmMapLinks() { 
+        return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
+            return this.newVmMapLink(this.newVmMap(v))
+        });
+    }
 
     renderLink = (vmLink:VmLink, index:number):JSX.Element => {
         return vmLink.render();
@@ -293,6 +306,7 @@ export class VmApi extends ViewModel {
 const ApiView = ({vm}:{vm:VmApi}) => {
     let {api, renderLink, linkClick, 
         tuidTypeCaption, vmTuidLinks,
+        mapTypeCaption, vmMapLinks,
         sheetTypeCaption, vmSheetLinks,
         actionTypeCaption, vmActionLinks,
         queryTypeCaption, vmQueryLinks,
@@ -303,6 +317,11 @@ const ApiView = ({vm}:{vm:VmApi}) => {
         {
             header: tuidTypeCaption,
             items: vmTuidLinks,
+        },
+        {
+            cn: 'my-2',
+            header: mapTypeCaption,
+            items: vmMapLinks,
         },
         {
             cn: 'my-2',
@@ -327,7 +346,7 @@ const ApiView = ({vm}:{vm:VmApi}) => {
     ];
     return <>
         <div className="px-3 py-1 small">{api}</div>
-        {lists.map(({cn, header, items},index) => <List
+        {lists.map(({cn, header, items},index) => items.length > 0 && <List
             key={index}
             className={cn}
             header={<Muted>{header}</Muted>}

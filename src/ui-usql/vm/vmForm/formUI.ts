@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TypeContent, ViewModel } from "../viewModel";
-import { Field } from "../field";
+import { Field } from "../../entities";
 import { VmControl } from "./control";
 //import { TypeFieldBand, TypeFieldsBand, TypeArrBand, TypeSubmitBand } from './band';
 

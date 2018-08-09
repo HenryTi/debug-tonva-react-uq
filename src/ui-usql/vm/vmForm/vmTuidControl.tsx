@@ -57,17 +57,12 @@ export class VmTuidControl extends VmControl { // ViewModel {
         nav.push(vmTuidPicker.render());
     }
     setValue(id:number) {
+        super.setValue(id);
         this.tuid.useId(id);
-        this.value = id;
     }
     onSelected = async (item:any) => {
         this.setValue(item.id);
     }
-    /*
-    idChanged(id:number) {
-        this.tuid.useId(id);
-        this.value = id;
-    }*/
     protected view = TuidControl;
 }
 
@@ -80,7 +75,7 @@ const buttonStyle:React.CSSProperties = {
 const TuidControl = observer(({vm}:{vm: VmTuidControl}) => {
     let {tuid, value, fieldUI, tuidContent:TuidContent, onClick, readOnly} = vm;
     tuid.useId(value);
-    let tuidObj = tuid.getId(value);
+    let tuidObj = tuid.valueFromId(value);
     let content = !tuidObj?
         <>点击选择 {tuid.name}</> : 
         (

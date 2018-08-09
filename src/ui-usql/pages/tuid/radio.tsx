@@ -69,7 +69,7 @@ export class RadioTuidInput extends React.Component<TuidInputProps, RadioTuidInp
         let id = this.state.id;
         let content;
         if (onIdChanged === undefined) {
-            return <span><InputContent value={entity.getId(id)} /></span>;
+            return <span><InputContent value={entity.valueFromId(id)} /></span>;
         }
         if (all !== undefined) {
             return <div>{all.map(v => 

@@ -50,7 +50,7 @@ export class DropDownTuidInput extends React.Component<TuidInputProps, DropDownT
         let id = this.state.id;
         if (id === undefined) id = 0;
         if (onIdChanged === undefined) {
-            return <span><InputContent value={entity.getId(id)} /></span>;
+            return <span><InputContent value={entity.valueFromId(id)} /></span>;
         }
         let {all, proxies} = entity;
         if (proxies !== undefined) {

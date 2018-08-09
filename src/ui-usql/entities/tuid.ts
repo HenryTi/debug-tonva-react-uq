@@ -13,7 +13,7 @@ export class Tuid extends Entity {
     private waitingIds: number[] = [];          // 等待loading的
     private cache = observable.map({}, {deep: false});    // 已经缓冲的
     @observable all:any[] = undefined;
-    proxies: {[name:string]: Tuid};    
+    proxies: {[name:string]: Tuid};
     slaves:{[name:string]:Slave};
 
     public setSchema(schema:any) {
@@ -25,6 +25,11 @@ export class Tuid extends Entity {
             let slave = slaves[i];
             this.slaves[i] = this.buildSlave(slave);
         }
+    }
+
+    getId(item:any) {
+        let {id} = this.schema;
+        return item[id];
     }
 
     private buildSlave(slave:any):Slave {
@@ -93,7 +98,7 @@ export class Tuid extends Entity {
         if (this.proxies === undefined) return;
         for (let i in this.proxies) this.proxies[i] = entities.getTuid(i, undefined);
     }
-    getId(id:number):any {
+    valueFromId(id:number):any {
         return this.cache.get(String(id));
     }
     resetCache(id:number) {
