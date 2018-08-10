@@ -43,7 +43,7 @@ const SheetAction = ({vm}:{vm:VmSheetAction}) => {
     let {label, entity, brief, actionClick, vmView, deleteClick, editClick} = vm;
     let state = brief.state;
     let stateLabel = vm.getStateLabel(state);
-    let {states} = entity.schema;
+    let {states} = entity;
     let s = states.find(v => v.name === state);
     let actionButtons, startButtons;
     if (s === undefined) {

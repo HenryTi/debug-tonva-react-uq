@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { List, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
 import { ViewModel, RowContent } from '../viewModel';
-import { Arr, Field } from '../../entities';
+import { ArrFields, Field } from '../../entities';
 import { VmForm } from './vmForm';
 import { ArrBandUIX } from './formUIX';
 import { VmApi } from '../vmApi';
@@ -16,7 +16,7 @@ export type ArrEditRow = (initValues:any, onRowChanged:(values:any)=>Promise<voi
 export class VmArr extends VmPage {
     protected vmApi: VmApi;
     protected arrBandUI: ArrBandUIX;
-    arr: Arr;
+    arr: ArrFields;
     row: any;
     readOnly: boolean;
     vmForm: VmForm;
@@ -27,7 +27,7 @@ export class VmArr extends VmPage {
     header: any;
     footer: any;
     
-    constructor(vmApi:VmApi, arr:Arr, arrBandUI:ArrBandUIX,) {
+    constructor(vmApi:VmApi, arr:ArrFields, arrBandUI:ArrBandUIX,) {
         super();
         this.start = this.start.bind(this);
         this.vmApi = vmApi;

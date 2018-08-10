@@ -31,8 +31,8 @@ export class VmSheetOrderNew extends VmSheetNew {
             this.vmArticles.afterEditRow = this.afterEditArticleRow;
             this.vmArticles.footer = <ArticleFooter vm={this} />;
         }
-        this.tuidCustomer = this.entity.getTuidFromName(field客户);
-        this.tuidArticle = this.entity.getTuidFromName(fieldArticle, arrArticles);
+        this.tuidCustomer = this.entity.getTuidFromName(field客户) as Tuid;
+        this.tuidArticle = this.entity.getTuidFromName(fieldArticle, arrArticles) as Tuid;
         this.ArticleContent = this.vmApi.typeTuidContent(this.tuidArticle);
         this.regAutorun(()=>{
             let {vmForm, list} = this.vmArticles;

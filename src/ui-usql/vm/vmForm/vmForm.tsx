@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { observable, IObservableObject, IObservableArray, computed } from 'mobx';
 import { observer } from 'mobx-react';
 import { FA } from 'tonva-react-form';
-import { Field, Arr } from '../../entities';
+import { Field, ArrFields } from '../../entities';
 import { ViewModel, JSONContent, RowContent } from '../viewModel';
 import { FormUI, BandUI, FieldBandUI, FieldsBandUI, ArrBandUI, SubmitBandUI, FieldUI } from './formUI';
 import { FormUIX, BandUIX, FieldBandUIX, FieldsBandUIX, ArrBandUIX, SubmitBandUIX, FieldUIX } from './formUIX';
@@ -23,7 +23,7 @@ export interface FormValues {
 
 export interface VmFormOptions {
     fields: Field[];
-    arrs?: Arr[];
+    arrs?: ArrFields[];
     ui?: FormUI;
     readOnly?: boolean;
     vmApi?: VmApi;                  // 主要用于tuid control的生成，也可以没有
@@ -31,7 +31,7 @@ export interface VmFormOptions {
 
 export class VmForm extends ViewModel {
     protected fields: Field[];
-    protected arrs: Arr[];
+    protected arrs: ArrFields[];
     protected onFieldsInputed: (values:any) => Promise<void>;
     protected vmApi: VmApi;
 
@@ -351,7 +351,7 @@ export class VmForm extends ViewModel {
                 return 'string';
         }
     }
-    private buildArrBand(vBands:BandUI[], arr: Arr) {
+    private buildArrBand(vBands:BandUI[], arr: ArrFields) {
         let {name, fields} = arr;
         let arrBandUI: ArrBandUIX = {
             type: 'arr',
@@ -372,7 +372,7 @@ export class VmForm extends ViewModel {
         for (let arr of this.arrs) this.buildArrBand(vBands, arr);
     }
 
-    private buildVmArr(arr:Arr, arrBandUI:ArrBandUIX): VmArr {
+    private buildVmArr(arr:ArrFields, arrBandUI:ArrBandUIX): VmArr {
         let ret = new VmArr(this.vmApi, arr, arrBandUI);
         this.vmArrs[arr.name] = ret;
         return ret;

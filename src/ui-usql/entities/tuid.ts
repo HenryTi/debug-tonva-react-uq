@@ -1,37 +1,32 @@
 import {observable} from 'mobx';
 import * as _ from 'lodash';
-import {Entity} from './entity';
-import {Entities} from './entities';
-import { debug, isNumber } from 'util';
-import { Book } from './book';
-import { Query } from './query';
-import { Action } from './action';
+import { Entity } from './entity';
+import { Entities, Field } from './entities';
+import { isNumber } from 'util';
 
 const maxCacheSize = 1000;
-export class Tuid extends Entity {
+export class TuidBase extends Entity {
     private queue: number[] = [];               // 每次使用，都排到队头
     private waitingIds: number[] = [];          // 等待loading的
     private cache = observable.map({}, {deep: false});    // 已经缓冲的
     @observable all:any[] = undefined;
-    proxies: {[name:string]: Tuid};
-    slaves:{[name:string]:Slave};
-
-    public setSchema(schema:any) {
-        super.setSchema(schema);
-        let {slaves} = schema;
-        if (slaves === undefined) return;
-        this.slaves = {};
-        for (let i in slaves) {
-            let slave = slaves[i];
-            this.slaves[i] = this.buildSlave(slave);
-        }
-    }
+    protected id: string;
+    owner: Tuid;                    // 用这个值来区分是不是TuidArr
+    unique: string[];
+    //slaves:{[name:string]:Slave};
 
     getId(item:any) {
-        let {id} = this.schema;
-        return item[id];
+        return item[this.id];
     }
 
+    setSchema(schema:any) {
+        super.setSchema(schema);
+        let {id, unique} = schema;
+        this.id = id;
+        this.unique = unique;
+    }
+
+    /*
     private buildSlave(slave:any):Slave {
         let {tuid, book, page, pageSlave, all, add, del} = slave;
         let tuidTuid:Tuid;
@@ -79,6 +74,7 @@ export class Tuid extends Entity {
             del: delAction,
         };
     }
+    */
 
     private moveToHead(id:number) {
         let index = this.queue.findIndex(v => v === id);
@@ -87,16 +83,6 @@ export class Tuid extends Entity {
     }
     setItemObservable() {
         this.cache = observable.map({}, {deep: true});
-    }
-    buidProxies(parts:string[]) {
-        let len = parts.length;
-        if (len <= 2) return;
-        this.proxies = {};
-        for (let i=2;i<len;i++) this.proxies[parts[i]] = null;
-    }
-    setProxies(entities:Entities) {
-        if (this.proxies === undefined) return;
-        for (let i in this.proxies) this.proxies[i] = entities.getTuid(i, undefined);
     }
     valueFromId(id:number):any {
         return this.cache.get(String(id));
@@ -158,11 +144,13 @@ export class Tuid extends Entity {
     }
     private cacheValue(val:any):boolean {
         if (val === undefined) return false;
-        let id = val.id;
+        let id = this.getId(val);
         if (id === undefined) return false;
         let index = this.waitingIds.findIndex(v => v === id);
         if (index>=0) this.waitingIds.splice(index, 1);
         this.cache.set(String(id), val);
+        // 下面的代码应该是cache proxy id, 需要的时候再写吧
+        /*
         let {tuids, fields} = this.schema;
         if (tuids !== undefined && fields !== undefined) {
             for (let f of fields) {
@@ -172,20 +160,26 @@ export class Tuid extends Entity {
                 if (t === undefined) continue;
                 t.useId(val[name]);
             }
-        }
+        }*/
         return true;
+    }
+    protected afterCacheId(tuidValue:any) {
     }
     async cacheIds():Promise<void> {
         if (this.waitingIds.length === 0) return;
-        await this.loadSchema();
-        let tuids = await this.tvApi.tuidIds(this.name, this.waitingIds);
-        for (let tuid of tuids) {
-            if (this.cacheValue(tuid) === false) continue;
-            if (this.proxies !== undefined) {
-                let {type, $proxy} = tuid;
-                let pTuid = this.proxies[type];
-                pTuid.useId($proxy);
-            }
+        //await this.loadSchema();
+        let name:string, arr:string;
+        if (this.owner === undefined) {
+            name = this.name;
+        }
+        else {
+            name = this.owner.name;
+            arr = this.name;
+        }
+        let tuids = await this.tvApi.tuidIds(name, arr, this.waitingIds);
+        for (let tuidValue of tuids) {
+            if (this.cacheValue(tuidValue) === false) continue;
+            this.afterCacheId(tuidValue);
         }
     }
     async load(id:number):Promise<any> {
@@ -201,7 +195,16 @@ export class Tuid extends Entity {
         return await this.tvApi.tuidSave(this.name, params);
     }
     async search(key:string, pageStart:string|number, pageSize:number):Promise<any> {
-        let ret = await this.tvApi.tuidSearch(this.name, key, pageStart, pageSize);
+        let name:string, arr:string;
+        if (this.owner !== undefined) {
+            name = this.owner.name;
+            arr = this.name;
+        }
+        else {
+            name = this.name;
+            arr = undefined;
+        }
+        let ret = await this.tvApi.tuidSearch(name, arr, key, pageStart, pageSize);
         return ret;
     }
     async loadArr(arr:string, owner:number, id:number):Promise<any> {
@@ -231,11 +234,12 @@ export class Tuid extends Entity {
     }
     
     // cache放到Tuid里面之后，这个函数不再需要公开调用了
-    private async ids(idArr:number[]) {
-        return await this.tvApi.tuidIds(this.name, idArr);
-    }
+    //private async ids(idArr:number[]) {
+    //    return await this.tvApi.tuidIds(this.name, idArr);
+    //}
 }
 
+/*
 export interface Slave {
     tuid: Tuid,
     book: Book;
@@ -244,4 +248,65 @@ export interface Slave {
     all: Query;
     add: Action;
     del: Action;
+}
+*/
+
+export class Tuid extends TuidBase {
+    arrs: {[name:string]: TuidArr};
+    proxies: {[name:string]: Tuid};
+
+    public setSchema(schema:any) {
+        super.setSchema(schema);
+        //let {slaves} = schema;
+        //if (slaves === undefined) return;
+        //this.slaves = {};
+        //for (let i in slaves) {
+        //    let slave = slaves[i];
+        //    this.slaves[i] = this.buildSlave(slave);
+        //}
+        let {arrs} = schema;
+        if (arrs !== undefined) {
+            this.arrs = {};
+            for (let arr of arrs) {
+                let {name} = arr;
+                let tuidArr = new TuidArr(this.entities, name, this.typeId, this);
+                this.arrs[name] = tuidArr;
+                tuidArr.setSchema(arr);
+            }
+        }
+    }
+
+    async cacheIds():Promise<void> {
+        await super.cacheIds();
+        if (this.arrs === undefined) return;
+        for (let i in this.arrs) {
+            await this.arrs[i].cacheIds();
+        }
+    }
+
+    /*
+    buidProxies(parts:string[]) {
+        let len = parts.length;
+        if (len <= 2) return;
+        this.proxies = {};
+        for (let i=2;i<len;i++) this.proxies[parts[i]] = null;
+    }
+    setProxies(entities:Entities) {
+        if (this.proxies === undefined) return;
+        for (let i in this.proxies) this.proxies[i] = entities.getTuid(i) as Tuid;
+    }
+    */
+    protected afterCacheId(tuidValue:any) {
+        if (this.proxies === undefined) return;
+        let {type, $proxy} = tuidValue;
+        let pTuid = this.proxies[type];
+        pTuid.useId($proxy);
+    }
+}
+
+export class TuidArr extends TuidBase {
+    constructor(entities:Entities, name:string, typeId:number, owner:Tuid) {
+        super(entities, name, typeId);
+        this.owner = owner;
+    }
 }

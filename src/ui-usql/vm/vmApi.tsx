@@ -3,14 +3,13 @@ import * as _ from 'lodash';
 import { Api } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { ViewModel, JSONContent, TypeContent } from './viewModel';
-import { Entities, Tuid, Action, Sheet, Query, Book, Map, Entity } from '../entities';
+import { Entities, Tuid, Action, Sheet, Query, Book, Map, Entity, TuidBase } from '../entities';
 import { VmLink, VmEntityLink } from './link';
 import { VmBookMain } from './book';
 import { VmSheetMain, SheetUI } from './sheet';
 import { VmActionMain } from './action';
 import { VmQueryMain } from './query';
 import { VmTuidMain, VmTuidView } from './tuid';
-import { VmApp } from './vmApp';
 import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm';
 import { VmEntity, EntityUI } from './vmEntity';
 import { TuidUI } from './tuid/vmTuid';
@@ -26,7 +25,6 @@ export class VmApi extends ViewModel {
 
     constructor(appId:number, apiId:number, api:string, access:string, ui:any) {
         super();
-        //this.vmApp = vmApp;
         this.api = api;
         this.id = apiId;
         this.ui = ui;
@@ -166,7 +164,7 @@ export class VmApi extends ViewModel {
         if (vm === undefined) vm = VmTuidView;
         return new vm(this, tuid, ui);
     }
-    newVmTuidSearch(tuid:Tuid, onSelected:(item:any)=>Promise<void>):VmTuidSearch {
+    newVmTuidSearch(tuid:TuidBase, onSelected:(item:any)=>Promise<void>):VmTuidSearch {
         let ui = this.getUI('tuid', tuid.name) as TuidUI;
         let vm = ui && ui.search;
         if (vm === undefined) vm = VmTuidSearch;

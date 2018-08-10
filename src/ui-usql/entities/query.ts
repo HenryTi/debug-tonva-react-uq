@@ -18,11 +18,11 @@ export class Query extends Entity {
         let {returns} = this.schema;
         this.lowerCaseReturns(returns);
     }*/
-
-    private async unpackReturns(data:any):Promise<any> {
+    /*
+    async unpackReturns(data:any):Promise<any> {
         if (this.schema === undefined) await this.loadSchema();
-        return this.entities.unpackReturns(this.schema, data);
-    }
+        return super.unpackReturns(data);
+    }*/
 
     resetPage(size:number, params:any) {
         this.pageStart = undefined;
@@ -45,6 +45,7 @@ export class Query extends Entity {
                 case 'datetime': pageStart = (this.pageStart as Date).getTime(); break;
             }
         }
+        await this.loadSchema();
         let res = await this.tvApi.queryPage(this.queryApiName, this.name, pageStart, this.pageSize+1, this.params);
         let data = await this.unpackReturns(res);
         this.list = observable.array([], {deep: false});
@@ -53,7 +54,7 @@ export class Query extends Entity {
             if (page.length > this.pageSize) {
                 this.more = true;
                 page.pop();
-                let ret = (this.schema.returns as any[]).find(r => r.name === '$page');
+                let ret = this.returns.find(r => r.name === '$page');
                 this.startField = ret.fields[0];
                 this.pageStart = page[page.length-1][this.startField.name];
             }
@@ -66,11 +67,13 @@ export class Query extends Entity {
     }
 
     async page(params:any, pageStart:any, pageSize:number):Promise<any[]> {
+        await this.loadSchema();
         let res = await this.tvApi.queryPage(this.queryApiName, this.name, pageStart, pageSize+1, params);
         let data = await this.unpackReturns(res);
         return data.$page;// as any[];
     }
     async query(params:any):Promise<any> {
+        await this.loadSchema();
         let res = await this.tvApi.query(this.name, params);
         let data = await this.unpackReturns(res);
         return data;

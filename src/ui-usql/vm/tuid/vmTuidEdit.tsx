@@ -39,7 +39,7 @@ export class VmTuidEdit extends VmTuid {
         let ret = await this.entity.save(this.id, values);
         let {id} = ret;
         if (id < 0) {
-            let {unique} = this.entity.schema;
+            let {unique} = this.entity;
             if (unique !== undefined) {
                 for (let u of unique) {
                     this.vmForm.setError(u, '不能重复');

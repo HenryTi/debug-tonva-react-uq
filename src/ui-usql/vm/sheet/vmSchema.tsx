@@ -11,6 +11,6 @@ export class VmSheetSchema extends VmSheet {
 const SchemaPage = ({vm}:{vm:VmSheetSchema}) => {
     let {label, entity} = vm;
     return <Page header={label + "模板"}>
-        <pre className="mx-3 my-2">{JSON.stringify(entity.schema, undefined, ' ')}</pre>
+        <pre className="mx-3 my-2">{entity.schemaStringify()}</pre>
     </Page>;
 }

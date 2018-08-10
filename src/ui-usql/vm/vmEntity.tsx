@@ -52,11 +52,10 @@ export abstract class VmEntity extends VmPage {
     }
 
     protected get fieldsFormOptions():VmFormOptions {
-        let {schema} = this.entity;
-        let {fields, arrs} = schema;
+        let {fields, arrFields} = this.entity;
         return {
             fields: fields,
-            arrs: arrs,
+            arrs: arrFields,
             vmApi: this.vmApi,
             ui: this.ui && this.ui.res,
         }

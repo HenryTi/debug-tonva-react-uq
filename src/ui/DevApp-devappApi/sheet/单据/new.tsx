@@ -4,7 +4,6 @@ import { Button, ButtonProps } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { VmSheetNew, VmSheetEdit, VmForm, VmTuidPicker, RowContent } from '../../../../ui-usql';
-//import { VmTuidPicker } from '../../../../ui-usql/vm/vmForm';
 
 export class VmSheetNew单据 extends VmSheetNew {
     showField1 = () => {

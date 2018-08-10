@@ -1,6 +1,7 @@
 import { Entity } from './entity';
 import { Action } from './action';
 import { Query } from './query';
+import { Field } from './entities';
 
 interface MapActions {
     add: Action;
@@ -13,13 +14,15 @@ interface MapQueries {
 }
 
 export class Map extends Entity {
+    keys: Field[];
     actions: MapActions = {} as any;
     queries: MapQueries = {} as any;
 
-    public async loadSchema():Promise<void> {
-        await super.loadSchema();
-        let {actions, queries} = this.schema;
-        let t = JSON.stringify(this.schema);
+    setSchema(schema:any) {
+        super.setSchema(schema);
+        let {actions, queries, keys} = schema;
+        this.entities.buildFieldTuid(this.keys = keys);
+        //let t = this.schemaStringify();
         for (let i in actions) {
             let schema = actions[i];
             let {name} = schema;
@@ -34,6 +37,6 @@ export class Map extends Entity {
             query.setSchema(schema);
             this.queries[i] = query;
         }
-        t = JSON.stringify(this.schema);
+        //t = this.schemaStringify();
     }
 }

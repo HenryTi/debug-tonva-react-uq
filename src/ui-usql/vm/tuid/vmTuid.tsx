@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tuid, Entity } from '../../entities';
+import { Tuid, Entity, TuidBase } from '../../entities';
 import { VmEntity, vmLinkIcon, EntityUI } from '../vmEntity';
 import { Page } from 'tonva-tools';
 import { VmApi } from '../vmApi';
@@ -16,10 +16,10 @@ export interface TuidUI extends EntityUI {
 }
 
 export abstract class VmTuid extends VmEntity {
-    entity: Tuid;
+    entity: TuidBase;
     protected ui: TuidUI;
 
-    constructor(vmApi: VmApi, tuid: Tuid, ui?:TuidUI) {
+    constructor(vmApi: VmApi, tuid: TuidBase, ui?:TuidUI) {
         super(vmApi, tuid, ui);
     }
 

@@ -11,6 +11,7 @@ import { VmTuidList } from './vmTuidList';
 import { VmEntityLink, TypeLink } from '../link';
 
 export class VmTuidMain extends VmTuid {
+    proxies: {[name:string]: Tuid};
     onNew = () => this.navVm(VmTuidEdit);
     onList = () => this.navVm(VmTuidList);
     onSearch = async (key:string) => await this.navVm(VmTuidList, key);
@@ -24,8 +25,12 @@ export class VmTuidMain extends VmTuid {
     }
 
     protected async beforeStart(param?:any) {
-        let {proxies} = this.entity.schema;
-        this.view = proxies === undefined? MainPage : ProxyMainPage;
+        let {owner} = this.entity;
+        if (owner === undefined) {
+            let tuid = this.entity as Tuid;
+            this.proxies = tuid.proxies;
+        }
+        this.view = this.proxies === undefined? MainPage : ProxyMainPage;
     }
 }
 
@@ -41,8 +46,7 @@ const MainPage = ({vm}:{vm:VmTuidMain}) => {
 }
         
 const ProxyMainPage = ({vm}:{vm:VmTuidMain}) => {
-    let {label, vmApi, entity, entityClick, entityRender} = vm;
-    let {proxies} = entity.schema;
+    let {label, vmApi, entity, entityClick, entityRender, proxies} = vm;
     let arr:string[] = [];
     for (let i in proxies) {
         arr.push(i);

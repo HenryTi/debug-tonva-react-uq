@@ -4,7 +4,7 @@ import { Page, nav, PagedItems } from 'tonva-tools';
 import { List, SearchBox } from 'tonva-react-form';
 import { VmApi } from '../vmApi';
 import { TypeContent, RowContent, ViewModel } from '../viewModel';
-import { Tuid, Query } from '../../entities';
+import { Tuid, Query, TuidBase } from '../../entities';
 
 export interface VmPickerOptions {
     vmApi: VmApi;
@@ -68,7 +68,7 @@ const Picker = observer(({vm}:{vm:VmPicker}) => {
 
 export type TypeVmTuidPicker = typeof VmTuidPicker;
 export class VmTuidPicker extends VmPicker {
-    constructor(vmApi: VmApi, caption:string, tuid: Tuid, onSelected:(item:any)=>Promise<void>, row:TypeContent) {
+    constructor(vmApi: VmApi, caption:string, tuid: TuidBase, onSelected:(item:any)=>Promise<void>, row:TypeContent) {
         super({
             vmApi: vmApi,
             pagedItems: new TuidPagedItems(tuid),
@@ -80,8 +80,8 @@ export class VmTuidPicker extends VmPicker {
 }
 
 class TuidPagedItems extends PagedItems<any> {
-    private tuid: Tuid;
-    constructor(tuid: Tuid) {
+    private tuid: TuidBase;
+    constructor(tuid: TuidBase) {
         super();
         this.tuid = tuid;
     }

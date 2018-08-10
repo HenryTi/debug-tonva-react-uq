@@ -2,23 +2,22 @@ import * as React from 'react';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import * as _ from 'lodash';
+import * as className from 'classnames';
 import { Button } from 'reactstrap';
 import { List, LMR } from 'tonva-react-form';
-import { Tuid, Book, Entity, Field } from '../../entities';
-import { VmEntity, vmLinkIcon } from '../vmEntity';
 import { Page, nav } from 'tonva-tools';
-import { VmApi } from '../vmApi';
+import { Tuid, Book, Entity, Field, TuidBase } from '../../entities';
 import { VmMap } from './vmMap';
 
 class Item {
     parent: Item;
-    tuid: Tuid;
+    tuid: TuidBase;
     id: any;
     isLeaf: boolean;
     keyIndex:number;
     @observable children: Item[] = [];
     values: any;
-    constructor(parent:Item, tuid:Tuid, id:any, keyIndex:number) {
+    constructor(parent:Item, tuid:TuidBase, id:any, keyIndex:number) {
         this.parent = parent;
         this.tuid = tuid;
         this.id = id;
@@ -26,23 +25,24 @@ class Item {
         this.isLeaf = false;
     }
 }
+/*
 class LeafItem extends Item {
-    constructor(parent:Item, tuid:Tuid, id:any, keyIndex:number, values:any) {
+    constructor(parent:Item, tuid:TuidBase, id:any, keyIndex:number, values:any) {
         super(parent, tuid, id, keyIndex);
         this.isLeaf = true;
         this.values = values;
     }
-}
+}*/
 export class VmMapMain extends VmMap {
     items:Item[];
     keys: Field[];
     protected async beforeStart(param?:any) {
-        let {keys} = this.entity.schema;
+        let {keys} = this.entity;
         let q = this.entity.queries.all;
         let ret = (await q.query({})).ret;
         let keysLen = keys.length;
         this.keys = [];
-        let retFields = q.schema.returns[0].fields;
+        let retFields = q.returns[0].fields;
         for (let i=0; i<keysLen; i++) {
             this.keys.push(retFields[i]);
         }
@@ -56,35 +56,45 @@ export class VmMapMain extends VmMap {
             }
         }
     }
+    private createItem(parent:Item, tuid:TuidBase, id:number, keyIndex:number, values?:any) {
+        let item = new Item(parent, tuid, id, keyIndex);
+        if (keyIndex === this.keys.length - 1) {
+            item.isLeaf = true;
+            item.values = values;
+        }
+        return item;
+            
+}
     addItem(item:Item, row:any):Item {
         let ret:Item = undefined;
         let keysLen = this.keys.length;
-        let p = item || {} as any;
+        let p = item;
         for (let i=0;i<keysLen;i++) {
             let key = this.keys[i];
-            let {_tuid, name, tuid} = key;
-            if (_tuid === undefined) _tuid = this.entity.getTuid(tuid);
+            let {name} = key;
+            let tuid = this.entity.getTuid(key);
             let val = row[name];
             if (val === undefined || val === 0) break;
-            let {children, id} = p;
-            let n:Item = (i === keysLen-1)?
-                new LeafItem(p, _tuid, val, i, row) :
-                new Item(i===0? undefined:p, _tuid, val, i);
-
-            if (val !== id) {
-                if (i===0)
-                    ret = n;
-                else
-                    children.push(n);
+            if (i === 0) {
+                if (p === undefined || p.id !== val) {
+                    ret = p = this.createItem(undefined, tuid, val, i, row);
+                }
             }
             else {
+                let create:boolean = false;
+                let {children, id} = p;
                 let len = children.length;
-                if (len === 0)
-                    children.push(n);
-                else
-                    n = children[len-1];
+                if (len > 0) {
+                    p = children[len-1];
+                    if (p.id !== val) create = true;
+                }
+                else {
+                    create = true;
+                }
+                if (create === true) {
+                    children.push(p = this.createItem(p, tuid, val, i, row));
+                }
             }
-            p = n;
         }
         return ret;
     }
@@ -93,12 +103,12 @@ export class VmMapMain extends VmMap {
         let {keyIndex, children} = item;
         let keysLen = this.keys.length;
         let keysLast = keysLen-1;
-        if (keyIndex >= keysLen-1) return;
-        let key = this.keys[keyIndex+1];
-        let {_tuid, tuid} = key;
-        if (_tuid === undefined) _tuid = this.entity.getTuid(tuid);
+        let idx = keyIndex + 1;
+        if (idx >= keysLen) return;
+        let key = this.keys[idx];
+        let tuid = key._tuid;
         let onTuidSelected = async (selecdItem:any) => {
-            let id = _tuid.getId(selecdItem);
+            let id = tuid.getId(selecdItem);
             let data = {} as any;
             for (let p=item;p!==undefined;p=p.parent) {
                 let {keyIndex:ki, id:pid} = p;
@@ -110,23 +120,34 @@ export class VmMapMain extends VmMap {
             }
             else {
                 data[key.name] = id;
-                for (let i=keyIndex+2;i<keysLast;i++)
+                for (let i=idx+1;i<keysLast;i++)
                     data[this.keys[i].name] = 0;
                 arr1[this.keys[keysLast].name] = 0;
             }
             data.arr1 = [arr1];
             await this.entity.actions.add.submit(data);
             if (children.find(v => v.id === id) === undefined) {
-                _tuid.useId(id);
-                let newItem = (keyIndex+1 === keysLast)?
-                    new LeafItem(item, _tuid, id, keyIndex+1, undefined):
-                    new Item(item, _tuid, id, keyIndex+1);
-                children.push(newItem);
+                tuid.useId(id);
+                children.push(this.createItem(item, tuid, id, idx, undefined));
             }
             this.popPage();
         }
-        let tuidSearch = this.vmApi.newVmTuidSearch(_tuid, onTuidSelected);
-        tuidSearch.start();
+        let {owner} = tuid;
+        if (owner !== undefined) {
+            let onOwnerSelected = async (ownerItem:any) => {
+                this.popPage();
+                let ownerId = owner.getId(ownerItem);
+                owner.useId(ownerId);
+                let tuidSearch = this.vmApi.newVmTuidSearch(tuid, onTuidSelected);
+                await tuidSearch.start(ownerId);
+            }
+            let ownerSearch = this.vmApi.newVmTuidSearch(owner, onOwnerSelected);
+            await ownerSearch.start();
+        }
+        else {
+            let tuidSearch = this.vmApi.newVmTuidSearch(tuid, onTuidSelected);
+            await tuidSearch.start();
+        }
     }
     itemRender = (item:Item, index:number) => {
         return <ItemRow vm={this} item={item} />;
@@ -136,7 +157,7 @@ export class VmMapMain extends VmMap {
 const MainPage = ({vm}:{vm:VmMapMain}) => {
     let {label, entity, items, itemClick, itemRender} = vm;
     return <Page header={label}>
-        <List items={items} item={{className:'mb-3', onClick:undefined, render:itemRender}} />
+        <List items={items} item={{className:'my-2', onClick:undefined, render:itemRender}} />
     </Page>;
 } 
 /*<pre>
@@ -151,15 +172,16 @@ const ItemRow = observer(({vm, item}: {vm:VmMapMain, item:Item}) => {
     if (isLeaf === false) {
         right = <Button color="info" size="sm" onClick={()=>itemClick(item)}>+</Button>;
     }
-    let content;
+    let content, border;
     if (isLeaf === true) {
         content = undefined; //<div className="ml-5">leaf</div>;
     }
     else {
-        content = <List className="ml-5" items={children} item={{onClick:undefined, render:itemRender}} />
+        border = "border-bottom"
+        content = <List className="ml-4" items={children} item={{onClick:undefined, render:itemRender}} />
     }
     return <div className="d-flex flex-column">
-        <LMR className="px-2 py-1 border-bottom" 
+        <LMR className={className('px-2', 'py-1', border)} 
             left={<div className="py-1">{tuid.name} - {JSON.stringify(val)}</div>}
             right={right}
         />
