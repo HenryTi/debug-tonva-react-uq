@@ -16,6 +16,7 @@ interface StateCount {
 }
 
 export class Sheet extends Entity {
+    get typeName(): string { return 'sheet';}
     states: SheetState[];
 
     statesCount:IObservableArray<StateCount> = observable.array<StateCount>([], {deep:true});

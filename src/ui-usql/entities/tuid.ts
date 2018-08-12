@@ -1,21 +1,51 @@
-import {observable} from 'mobx';
+import {observable, IObservableValue} from 'mobx';
 import * as _ from 'lodash';
 import { Entity } from './entity';
 import { Entities, Field } from './entities';
 import { isNumber } from 'util';
 
+export class Box {
+    id: number;
+    readonly obj: any;
+}
+
 const maxCacheSize = 1000;
 export class TuidBase extends Entity {
+    private idCreater: ()=>void;
+    get typeName(): string { return 'tuid';}
     private queue: number[] = [];               // 每次使用，都排到队头
     private waitingIds: number[] = [];          // 等待loading的
     private cache = observable.map({}, {deep: false});    // 已经缓冲的
-    @observable all:any[] = undefined;
-    protected id: string;
+    //@observable all:any[] = undefined;
+    id: string;
     owner: Tuid;                    // 用这个值来区分是不是TuidArr
     unique: string[];
-    //slaves:{[name:string]:Slave};
 
-    getId(item:any) {
+    constructor(entities:Entities, name:string, typeId:number) {
+        super(entities, name, typeId);
+        this.idCreater = function():void {};
+        let prototype = this.idCreater.prototype;
+        Object.defineProperty(prototype, '_$tuid', {
+            value: this,
+            writable: false,
+            enumerable: false,
+        });
+        Object.defineProperty(prototype, 'obj', {
+            enumerable: true,
+            get: function() {
+                return this._$tuid.valueFromId(this.id);
+            }
+        });
+        prototype.toJSON = function() {return {id: this.id, all:this.all}}
+    }
+
+    createID(id:number):Box {
+        let ret:Box = new this.idCreater();
+        ret.id = id;
+        return ret;
+    }
+
+    getIdFromObj(item:any):number {
         return item[this.id];
     }
 
@@ -26,64 +56,12 @@ export class TuidBase extends Entity {
         this.unique = unique;
     }
 
-    /*
-    private buildSlave(slave:any):Slave {
-        let {tuid, book, page, pageSlave, all, add, del} = slave;
-        let tuidTuid:Tuid;
-        if (tuid !== undefined) {
-            tuidTuid = this.entities.tuid(tuid.name);
-            tuidTuid.setSchema(tuid);
-        }
-        let bookBook:Book;
-        if (book !== undefined) {
-            bookBook = this.entities.book(book.name);
-            bookBook.setSchema(book);
-        }
-        let pageQuery:Query;
-        if (page !== undefined){
-            pageQuery = this.entities.query(page.name);
-            pageQuery.setSchema(page);
-        }
-        let pageSlaveQuery:Query;
-        if (pageSlave !== undefined) {
-            pageSlaveQuery = this.entities.query(pageSlave.name);
-            pageSlaveQuery.setSchema(pageSlave);
-        }
-        let allQuery:Query;
-        if (all !== undefined) {
-            allQuery = this.entities.query(all.name);
-            allQuery.setSchema(all);
-        }
-        let addAction:Action;
-        if (add !== undefined) {
-            addAction = this.entities.action(add.name);
-            addAction.setSchema(add);
-        }
-        let delAction:Action;
-        if (del !== undefined) {
-            delAction = this.entities.action(del.name);
-            delAction.setSchema(del);
-        }
-        return {
-            tuid: tuidTuid,
-            book: bookBook,
-            page: pageQuery,
-            pageSlave: pageSlaveQuery,
-            all: allQuery,
-            add: addAction,
-            del: delAction,
-        };
-    }
-    */
-
     private moveToHead(id:number) {
         let index = this.queue.findIndex(v => v === id);
         this.queue.splice(index, 1);
         this.queue.push(id);
     }
-    setItemObservable() {
-        this.cache = observable.map({}, {deep: true});
-    }
+
     valueFromId(id:number):any {
         return this.cache.get(String(id));
     }
@@ -105,6 +83,7 @@ export class TuidBase extends Entity {
             return;
         }
         this.entities.cacheTuids(defer===true?70:20);
+        let idVal = this.createID(id);
         this.cache.set(key, id);
         if (this.waitingIds.findIndex(v => v === id) >= 0) {
             this.moveToHead(id);
@@ -144,7 +123,7 @@ export class TuidBase extends Entity {
     }
     private cacheValue(val:any):boolean {
         if (val === undefined) return false;
-        let id = this.getId(val);
+        let id = this.getIdFromObj(val);
         if (id === undefined) return false;
         let index = this.waitingIds.findIndex(v => v === id);
         if (index>=0) this.waitingIds.splice(index, 1);
@@ -167,7 +146,6 @@ export class TuidBase extends Entity {
     }
     async cacheIds():Promise<void> {
         if (this.waitingIds.length === 0) return;
-        //await this.loadSchema();
         let name:string, arr:string;
         if (this.owner === undefined) {
             name = this.name;
@@ -186,9 +164,10 @@ export class TuidBase extends Entity {
         if (id === undefined || id === 0) return;
         return await this.tvApi.tuidGet(this.name, id);
     }
+    /*
     async loadAll():Promise<any[]> {
         return this.all = await this.tvApi.tuidGetAll(this.name);
-    }
+    }*/
     async save(id:number, props:any) {
         let params = _.clone(props);
         params["$id"] = id;
@@ -211,9 +190,10 @@ export class TuidBase extends Entity {
         if (id === undefined || id === 0) return;
         return await this.tvApi.tuidArrGet(this.name, arr, owner, id);
     }
+    /*
     async loadArrAll(owner:number):Promise<any[]> {
         return this.all = await this.tvApi.tuidGetAll(this.name);
-    }
+    }*/
     async saveArr(arr:string, owner:number, id:number, props:any) {
         let params = _.clone(props);
         params["$id"] = id;

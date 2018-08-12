@@ -1,6 +1,7 @@
 import {UsqlApi} from './usqlApi';
 import { Entities, Field, ArrFields } from './entities';
 import { Tuid, TuidBase } from './tuid';
+import { isPropertyConfigurable } from '../../../node_modules/mobx/lib/utils/utils';
 
 const tab = '\t';
 const ln = '\n';
@@ -11,6 +12,11 @@ export abstract class Entity {
     sys?: boolean;
     readonly name: string;
     readonly typeId: number;
+    abstract get typeName(): string;
+    /*private newMain: ()=>void;
+    private newArr:{[name:string]: ()=>void};
+    private newRet:{[name:string]: ()=>void};
+    */
     fields: Field[];
     arrFields: ArrFields[];
     returns: ArrFields[];
@@ -40,7 +46,57 @@ export abstract class Entity {
         this.entities.buildFieldTuid(this.fields = fields);
         this.entities.buildArrFieldsTuid(this.arrFields = arrs);
         this.entities.buildArrFieldsTuid(this.returns = returns);
-        //this.entities.schemaRefTuids(schema.tuids);
+        //this.newMain = this.buildCreater(fields);
+        //this.newArr = this.buildArrCreater(arrs);
+        //this.newRet = this.buildArrCreater(returns);
+    }
+    private buildCreater(fields:Field[]):()=>void {
+        let creater = function():void {};
+        let prototype = creater.prototype;
+        for (let f of fields) {
+            let {name, _tuid} = f;
+            if (_tuid === undefined) continue;
+            let nTuid = '_$' + _tuid.name;
+            if (prototype.hasOwnProperty(nTuid) === false) {
+                Object.defineProperty(prototype, nTuid, {
+                    value: _tuid,
+                    writable: false,
+                    enumerable: false,
+                });
+            }
+            prototype.toJSON = function() {
+                let ret = {} as any;
+                for (let i in this) {
+                    if (i.startsWith('_$') === true) continue;
+                    ret[i] = this[i];
+                }
+                return ret;
+            };
+            (function(fn:string, nt:string) {
+                let $fn = '$' + fn;
+                Object.defineProperty(prototype, $fn, {
+                    enumerable: true,
+                    get: function() {
+                        let ret = this[fn];
+                        console.log('prop '+fn+' get ');
+                        return (this[nt] as TuidBase).valueFromId(ret);
+                    },
+                    set: function(v) {
+                        this[fn]=v;
+                    }
+                });
+            })(name, nTuid);
+        }
+        return creater;
+    }
+    private buildArrCreater(arrFields:ArrFields[]):{[name:string]: ()=>void} {
+        if (arrFields === undefined) return;
+        let ret:{[name:string]: ()=>void} = {};
+        for (let e of arrFields) {
+            let {name, fields} = e;
+            ret[name] = this.buildCreater(fields);
+        }
+        return ret;
     }
 
     private removeRecursive(parent:any[], obj:any):any {
@@ -136,7 +192,7 @@ export abstract class Entity {
     }
     
     unpackSheet(data:string):any {
-        let ret = {} as any;
+        let ret = {} as any; //new this.newMain();
         //if (schema === undefined || data === undefined) return;
         let fields = this.fields;
         let p = 0;
@@ -159,6 +215,7 @@ export abstract class Entity {
         let arrs = this.returns; //schema['returns'];
         if (arrs !== undefined) {
             for (let arr of arrs) {
+                //let creater = this.newRet[arr.name];
                 p = this.unpackArr(ret, arr, data, p);
             }
         }
@@ -213,8 +270,12 @@ export abstract class Entity {
             case 'int':
             case 'dec': return Number(v);
             case 'bigint':
+                let id = Number(v);
                 let {_tuid} = f;
-                if (_tuid !== undefined) _tuid.useId(Number(v), true);
+                if (_tuid === undefined) return id;
+                _tuid.useId(id, true);
+                //return _tuid.valueFromId(id);
+                return _tuid.createID(id);
                 /*
                 if (tuidKey !== undefined) {
                     let tuid = f._tuid;
@@ -225,7 +286,7 @@ export abstract class Entity {
                     }
                     tuid.useId(Number(v), true);
                 }*/
-                return Number(v);
+                //return Number(v);
         }
     }
 
@@ -238,7 +299,7 @@ export abstract class Entity {
                 ++p;
                 break;
             }
-            let val = {};
+            let val = {} as any; //new creater();
             vals.push(val);
             p = this.unpackRow(val, fields, data, p);
         }
@@ -246,4 +307,3 @@ export abstract class Entity {
         return p;
     }
 }
-

@@ -9,13 +9,13 @@ import { VmSheetNew } from './vmNew';
 import { VmSheetEdit } from './vmEdit';
 import { VmSheetAction } from './vmSheetAction';
 
-export interface ActionUI {
+export interface SheetActionUI {
     label: string;
 }
 
 export interface StateUI {
     label: string;
-    actions: {[name:string]: ActionUI}
+    actions: {[name:string]: SheetActionUI}
 }
 
 export interface SheetUI extends EntityUI {

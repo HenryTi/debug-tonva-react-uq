@@ -7,12 +7,17 @@ import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidView } from './vmView';
 import { VmTuidSearch } from './vmTuidSearch';
+import { RowContent } from '../viewModel';
+import { VmTuidControl, PickerConfig } from '../vmForm';
 
 export interface TuidUI extends EntityUI {
     main: typeof VmTuidMain;
     edit: typeof VmTuidEdit;
     view: typeof VmTuidView;
     search: typeof VmTuidSearch;
+    content: typeof RowContent;
+    input: typeof VmTuidControl;
+    pickerConfig: PickerConfig;
 }
 
 export abstract class VmTuid extends VmEntity {

@@ -1,33 +1,29 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { FA, SearchBox, List } from 'tonva-react-form';
-import { Tuid, Entity, TuidBase } from '../../entities';
+import { Tuid, Entity, TuidBase, Query } from '../../entities';
 import { Page, PagedItems } from 'tonva-tools';
-import { VmTuid } from './vmTuid';
+import { VmQuery } from './vmQuery';
 
 //export type TypeVmTuidList = typeof VmTuidList;
 
-export class VmTuidSearch extends VmTuid {
-    ppp: string;
-    pagedItems:TuidPagedItems;
+export class VmQuerySearch extends VmQuery {
+    pagedItems:QueryPagedItems;
     ownerId: number;
-    param: any;
 
     protected init() {
-        this.pagedItems = new TuidPagedItems(this.entity);
+        this.pagedItems = new QueryPagedItems(this.entity);
     }
 
     protected async beforeStart(param?:any) {
-        this.param = param;
-        if (this.entity.owner !== undefined) this.ownerId = Number(param);
-        // 初始查询, key是空的
-        await this.onSearch('');
+        //if (this.entity.owner !== undefined) this.ownerId = Number(param);
+        await this.onSearch(param);
     }
     onSearch = async (key:string) => {
         await this.pagedItems.first(key);
     }
     renderRow = (item:any, index:number):JSX.Element => {
-        return <div className="px-3 py-2">{JSON.stringify(item)}</div>;
+        return <Row item={item} vm={this} />;
     }
     onSelected: (item:any) => Promise<void>;
     private callOnSelected(item:any) {
@@ -45,36 +41,49 @@ export class VmTuidSearch extends VmTuid {
 }
 
 type TypeRow = typeof Row;
-const Row = (item) => <div className="px-3 py-2">{JSON.stringify(item)}</div>;
+const Row = observer(({item, vm}:{item:any, vm:VmQuerySearch}) => {
+    /*
+    let {entity} = vm;
+    let fields = entity.returns[0].fields;
+    let vItem = {} as any;
+    for (let f of fields) {
+        let {name, _tuid} = f;
+        let v = item[name];
+        if (_tuid !== undefined && typeof v !== 'object') {
+            v = _tuid.valueFromId(v);
+        }
+        vItem[name] = v;
+    }*/
+    return <div className="px-3 py-2">post:{JSON.stringify(item.$post)} - {JSON.stringify(item)}</div>;
+});
 
-const SearchPage = observer(({vm}:{vm:VmTuidSearch}) => {
+const SearchPage = ({vm}:{vm:VmQuerySearch}) => {
     let {label, entity, onSelected, renderRow, clickRow, pagedItems, onSearch, ownerId} = vm;
     let header = <SearchBox className="mx-1 w-100"
         initKey={''}
         onSearch={onSearch} placeholder={'搜索'+label} />;
-    let {owner} = entity;
-    let ownerTop;
-    if (owner !== undefined) {
-        let ownerObj = owner.valueFromId(ownerId);
-        ownerTop = <div>owner: {JSON.stringify(ownerObj)}</div>;
-    }
     return <Page header={header}>
-        {ownerTop}
         <List
             items={pagedItems.items}
             item={{render: renderRow, onClick: clickRow}}
             before={'搜索'+label+'资料'} />
     </Page>;
-});
+};
 
-class TuidPagedItems extends PagedItems<any> {
-    private tuid: TuidBase;
-    constructor(tuid: TuidBase) {
+class QueryPagedItems extends PagedItems<any> {
+    private query: Query;
+    constructor(query: Query) {
         super();
-        this.tuid = tuid;
+        this.query = query;
     }
     protected async load():Promise<any[]> {
-        let ret = await this.tuid.search(this.param, this.pageStart, this.pageSize);
+        let ret:any[];
+        if (this.query.isPaged === true)
+            ret = await this.query.page(this.param, this.pageStart, this.pageSize);
+        else {
+            ret = await this.query.query(this.param);
+            ret = ret[this.query.returns[0].name];
+        }
         return ret;
     }
     protected setPageStart(item:any) {

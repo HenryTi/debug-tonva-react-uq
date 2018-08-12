@@ -6,15 +6,18 @@ import { ViewModel, JSONContent, TypeContent } from './viewModel';
 import { Entities, Tuid, Action, Sheet, Query, Book, Map, Entity, TuidBase } from '../entities';
 import { VmLink, VmEntityLink } from './link';
 import { VmBookMain } from './book';
-import { VmSheetMain, SheetUI } from './sheet';
-import { VmActionMain } from './action';
-import { VmQueryMain } from './query';
+import { VmSheetMain, SheetUI, SheetActionUI } from './sheet';
+import { VmActionMain, ActionUI } from './action';
+import { VmQueryMain, VmQuerySearch } from './query';
 import { VmTuidMain, VmTuidView } from './tuid';
 import { VmTuidControl, TypeVmTuidControl, VmTuidPicker, PickerConfig } from './vmForm';
 import { VmEntity, EntityUI } from './vmEntity';
 import { TuidUI } from './tuid/vmTuid';
-import { VmMapMain } from './map';
+import { VmMapMain, MapUI } from './map';
 import { VmTuidSearch } from './tuid/vmTuidSearch';
+import { VmPage } from './vmPage';
+import { QueryUI } from './query/vmQuery';
+import { BookUI } from './book/vmBook';
 
 export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book' | 'map';
 
@@ -75,6 +78,19 @@ export class VmApi extends ViewModel {
     }
 
     getTuid(name:string) {return this.entities.tuid(name)}
+    async getQuerySearch(name:string):Promise<Query> {
+        let query = this.entities.query(name);
+        if (query === undefined) 
+            alert(`QUERY ${name} 没有定义!`);
+        else {
+            await query.loadSchema();
+            let {returns} = query;
+            if (returns.length > 1) {
+                alert(`QUERY ${name} 返回多张表, 无法做QuerySearch`);
+            }
+        }
+        return query;
+    }
 
     protected isSysVisible = false;
     protected isVisible(entity: Entity):boolean {
@@ -126,7 +142,7 @@ export class VmApi extends ViewModel {
         }
     }
 
-    private getUI(type:string, name:string):any {
+    private getUI<T extends EntityUI>(type:string, name:string):T {
         if (this.ui === undefined) return;
         let t = this.ui[type];
         if (t === undefined) return;
@@ -153,24 +169,16 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmTuid);
     }
     newVmTuid(tuid:Tuid):VmTuidMain {
-        let ui = this.getUI('tuid', tuid.name) as TuidUI;
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmTuidMain;
         return new vm(this, tuid, ui);
     }
     newVmTuidView(tuid:Tuid):VmTuidView {
-        let ui = this.getUI('tuid', tuid.name) as TuidUI;
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
         let vm = ui && ui.view;
         if (vm === undefined) vm = VmTuidView;
         return new vm(this, tuid, ui);
-    }
-    newVmTuidSearch(tuid:TuidBase, onSelected:(item:any)=>Promise<void>):VmTuidSearch {
-        let ui = this.getUI('tuid', tuid.name) as TuidUI;
-        let vm = ui && ui.search;
-        if (vm === undefined) vm = VmTuidSearch;
-        let ret = new vm(this, tuid, ui);
-        ret.onSelected = onSelected;
-        return ret;
     }
 
     get sheetTypeCaption() { return this.getUITypeCaption('sheet') || '凭单'; }
@@ -178,7 +186,7 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmSheet);
     }
     newVmSheet(sheet:Sheet):VmSheetMain {
-        let ui = this.getUI('sheet', sheet.name) as SheetUI;
+        let ui = this.getUI<SheetUI>('sheet', sheet.name);
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmSheetMain;
         return new vm(this, sheet, ui);
@@ -194,7 +202,7 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmAction);
     }
     newVmAction(action:Action):VmActionMain {
-        let ui = this.getUI('action', action.name);
+        let ui = this.getUI<ActionUI>('action', action.name);
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmActionMain;
         return new vm(this, action, ui);
@@ -210,7 +218,7 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmQuery);
     }
     newVmQuery(query:Query):VmQueryMain {
-        let ui = this.getUI('query', query.name);
+        let ui = this.getUI<QueryUI>('query', query.name);
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmQueryMain;
         return new vm(this, query, ui);
@@ -226,7 +234,7 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmBook);
     }
     newVmBook(book:Book):VmBookMain {
-        let ui = this.getUI('book', book.name);
+        let ui = this.getUI<BookUI>('book', book.name);
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmBookMain;
         return new vm(this, book, ui);
@@ -242,7 +250,7 @@ export class VmApi extends ViewModel {
         return new VmEntityLink(vmMap);
     }
     newVmMap(map:Map):VmMapMain {
-        let ui = this.getUI('map', map.name);
+        let ui = this.getUI<MapUI>('map', map.name);
         let vm = ui && ui.main;
         if (vm === undefined) vm = VmMapMain;
         return new vm(this, map, ui);
@@ -251,6 +259,29 @@ export class VmApi extends ViewModel {
         return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
             return this.newVmMapLink(this.newVmMap(v))
         });
+    }
+
+    newVmSearch(entity:Entity, onSelected:(item:any)=>Promise<void>):VmPage {
+        switch (entity.typeName) {
+            case 'tuid': return this.newVmTuidSearch(entity as Tuid, onSelected);
+            case 'query': return this.newVmQuerySearch(entity as Query, onSelected);
+        }
+    }
+    newVmTuidSearch(tuid:TuidBase, onSelected:(item:any)=>Promise<void>):VmPage {
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
+        let vm = ui && ui.search;
+        if (vm === undefined) vm = VmTuidSearch;
+        let ret = new vm(this, tuid, ui);
+        ret.onSelected = onSelected;
+        return ret;
+    }
+    newVmQuerySearch(query:Query, onSelected:(item:any)=>Promise<void>):VmPage {
+        let ui = this.getUI<QueryUI>('query', query.name);
+        let vm = ui && ui.search;
+        if (vm === undefined) vm = VmQuerySearch;
+        let ret = new vm(this, query, ui);
+        ret.onSelected = onSelected;
+        return ret;
     }
 
     renderLink = (vmLink:VmLink, index:number):JSX.Element => {
@@ -262,14 +293,14 @@ export class VmApi extends ViewModel {
     }
 
     typeVmTuidControl(tuid:Tuid): TypeVmTuidControl {
-        let ui = this.getUI('tuid', tuid.name);
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
         let typeVmTuidControl = ui && ui.input;
         if (typeVmTuidControl === undefined) typeVmTuidControl = VmTuidControl;
         return typeVmTuidControl;
     }
 
     pickerConfig(tuid:Tuid): PickerConfig {
-        let ui = this.getUI('tuid', tuid.name);
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
         let pickerConfig:PickerConfig = ui && ui.pickerConfig;
         let pc:PickerConfig = {
             picker: VmTuidPicker,
@@ -279,7 +310,7 @@ export class VmApi extends ViewModel {
     }
 
     typeTuidContent(tuid:Tuid): TypeContent {
-        let ui = this.getUI('tuid', tuid.name);
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
         let typeTuidContent = ui && ui.content;
         if (typeTuidContent === undefined) typeTuidContent = JSONContent;
         return typeTuidContent;

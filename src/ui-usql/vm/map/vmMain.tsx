@@ -6,49 +6,45 @@ import * as className from 'classnames';
 import { Button } from 'reactstrap';
 import { List, LMR } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
-import { Tuid, Book, Entity, Field, TuidBase } from '../../entities';
+import { Tuid, Book, Entity, Field, TuidBase, Box } from '../../entities';
 import { VmMap } from './vmMap';
+import { VmApi } from '../vmApi';
+import { tuidSearch } from '../search';
 
 class Item {
     parent: Item;
     tuid: TuidBase;
-    id: any;
+    box: Box;
     isLeaf: boolean;
     keyIndex:number;
     @observable children: Item[] = [];
     values: any;
-    constructor(parent:Item, tuid:TuidBase, id:any, keyIndex:number) {
+    constructor(parent:Item, tuid:TuidBase, box:Box, keyIndex:number) {
         this.parent = parent;
         this.tuid = tuid;
-        this.id = id;
+        this.box = box;
         this.keyIndex = keyIndex;
         this.isLeaf = false;
     }
 }
-/*
-class LeafItem extends Item {
-    constructor(parent:Item, tuid:TuidBase, id:any, keyIndex:number, values:any) {
-        super(parent, tuid, id, keyIndex);
-        this.isLeaf = true;
-        this.values = values;
-    }
-}*/
+
 export class VmMapMain extends VmMap {
     items:Item[];
-    keys: Field[];
+    keyFields: Field[];
     protected async beforeStart(param?:any) {
         let {keys} = this.entity;
         let q = this.entity.queries.all;
         let ret = (await q.query({})).ret;
         let keysLen = keys.length;
-        this.keys = [];
+        this.keyFields = [];
         let retFields = q.returns[0].fields;
         for (let i=0; i<keysLen; i++) {
-            this.keys.push(retFields[i]);
+            this.keyFields.push(retFields[i]);
         }
         this.items = [];
         let item:Item = undefined;
         for (let r of ret) {
+            let team = r.$team;
             let newItem = this.addItem(item, r);
             if (newItem !== undefined) {
                 this.items.push(newItem);
@@ -56,97 +52,115 @@ export class VmMapMain extends VmMap {
             }
         }
     }
-    private createItem(parent:Item, tuid:TuidBase, id:number, keyIndex:number, values?:any) {
-        let item = new Item(parent, tuid, id, keyIndex);
-        if (keyIndex === this.keys.length - 1) {
+    private createItem(parent:Item, tuid:TuidBase, box:Box, keyIndex:number, values?:any) {
+        let item = new Item(parent, tuid, box, keyIndex);
+        if (keyIndex === this.keyFields.length - 1) {
             item.isLeaf = true;
             item.values = values;
         }
         return item;
-            
-}
+    }
+
     addItem(item:Item, row:any):Item {
         let ret:Item = undefined;
-        let keysLen = this.keys.length;
+        let keysLen = this.keyFields.length;
         let p = item;
         for (let i=0;i<keysLen;i++) {
-            let key = this.keys[i];
+            let key = this.keyFields[i];
             let {name} = key;
-            let tuid = this.entity.getTuid(key);
-            let val = row[name];
-            if (val === undefined || val === 0) break;
+            let tuid = key._tuid;
+            let val:Box = row[name];
+            if (val === undefined) break;
             if (i === 0) {
-                if (p === undefined || p.id !== val) {
+                if (p === undefined || p.box.id !== val.id) {
                     ret = p = this.createItem(undefined, tuid, val, i, row);
                 }
+                continue;
             }
-            else {
-                let create:boolean = false;
-                let {children, id} = p;
-                let len = children.length;
-                if (len > 0) {
-                    p = children[len-1];
-                    if (p.id !== val) create = true;
-                }
-                else {
-                    create = true;
-                }
-                if (create === true) {
-                    children.push(p = this.createItem(p, tuid, val, i, row));
+            let {children, box} = p;
+            let len = children.length;
+            if (len > 0) {
+                let n = children[len-1];
+                if (n.box.id === val.id) {
+                    p = n;
+                    continue;
                 }
             }
+            children.push(p = this.createItem(p, tuid, val, i, row));
         }
         return ret;
     }
     view = MainPage;
+    /*
+    protected keyQuery(key:Field):{queryName:string;idName:string} {
+        return;
+    }
+    protected getSearchId(key:Field): (param:any)=>Promise<number> {
+        let kq = this.keyQuery(key);
+        if (kq !== undefined) {
+            let {queryName,idName} = kq;
+            let query = this.vmApi.getQuery(queryName);
+            return async (param:any):Promise<number> => {
+                await query.loadSchema();
+                if (query === undefined) 
+                    alert('QUERY ' + queryName + ' 没有定义!');
+                else {
+                    let {returns} = query;
+                    if (returns.length > 1) {
+                        alert('QUERY ' + queryName + ' 返回多张表, 无法做QuerySearch')
+                    }
+                }
+                let search = new QuerySearch(this.vmApi, query);
+                let ret = await search.result(param);
+                return ret[idName].id;
+            };
+        }
+        return async (param:any):Promise<number> => {
+            let search = new TuidSearch(this.vmApi, key._tuid);
+            // 怎么把搜索关键字传进来, 还需要考虑
+            let ret = await search.result('');
+            return key._tuid.getIdFromObj(ret);
+        };
+    }
+    */
+    async searchOnKey(keyField:Field, param):Promise<number> {
+        let {_tuid} = keyField;
+        let val = await tuidSearch(this.vmApi, _tuid, param);
+        return _tuid.getIdFromObj(val);
+    }
     itemClick = async(item:Item) => {
         let {keyIndex, children} = item;
-        let keysLen = this.keys.length;
+        let keysLen = this.keyFields.length;
         let keysLast = keysLen-1;
         let idx = keyIndex + 1;
         if (idx >= keysLen) return;
-        let key = this.keys[idx];
-        let tuid = key._tuid;
-        let onTuidSelected = async (selecdItem:any) => {
-            let id = tuid.getId(selecdItem);
-            let data = {} as any;
-            for (let p=item;p!==undefined;p=p.parent) {
-                let {keyIndex:ki, id:pid} = p;
-                data[this.keys[ki].name] = pid;
-            }
-            let arr1 = {} as any;
-            if (keyIndex+1===keysLast) {
-                arr1[key.name] = id;
-            }
-            else {
-                data[key.name] = id;
-                for (let i=idx+1;i<keysLast;i++)
-                    data[this.keys[i].name] = 0;
-                arr1[this.keys[keysLast].name] = 0;
-            }
-            data.arr1 = [arr1];
-            await this.entity.actions.add.submit(data);
-            if (children.find(v => v.id === id) === undefined) {
-                tuid.useId(id);
-                children.push(this.createItem(item, tuid, id, idx, undefined));
-            }
-            this.popPage();
+        let keyField = this.keyFields[idx];
+        let tuid = keyField._tuid;
+        let data = {} as any;
+        for (let p=item;p!==undefined;p=p.parent) {
+            let {keyIndex:ki, box} = p;
+            data[this.keyFields[ki].name] = box.id;
         }
-        let {owner} = tuid;
-        if (owner !== undefined) {
-            let onOwnerSelected = async (ownerItem:any) => {
-                this.popPage();
-                let ownerId = owner.getId(ownerItem);
-                owner.useId(ownerId);
-                let tuidSearch = this.vmApi.newVmTuidSearch(tuid, onTuidSelected);
-                await tuidSearch.start(ownerId);
-            }
-            let ownerSearch = this.vmApi.newVmTuidSearch(owner, onOwnerSelected);
-            await ownerSearch.start();
+        //let searchId = await this.getSearchId(key);
+        //let id = await searchId(data);
+        //let id = await searchId(data);
+        let id = await this.searchOnKey(keyField, data);
+
+        let arr1 = {} as any;
+        if (keyIndex+1===keysLast) {
+            arr1[keyField.name] = id;
         }
         else {
-            let tuidSearch = this.vmApi.newVmTuidSearch(tuid, onTuidSelected);
-            await tuidSearch.start();
+            data[keyField.name] = id;
+            for (let i=idx+1;i<keysLast;i++)
+                data[this.keyFields[i].name] = 0;
+            arr1[this.keyFields[keysLast].name] = 0;
+        }
+        data.arr1 = [arr1];
+        await this.entity.actions.add.submit(data);
+        if (children.find(v => v.box.id === id) === undefined) {
+            tuid.useId(id);
+            children.push(this.createItem(item, tuid, tuid.createID(id), idx, undefined));
         }
     }
     itemRender = (item:Item, index:number) => {
@@ -166,8 +180,8 @@ const MainPage = ({vm}:{vm:VmMapMain}) => {
 
 const ItemRow = observer(({vm, item}: {vm:VmMapMain, item:Item}) => {
     let {itemClick, itemRender} = vm;
-    let {tuid, id, children, isLeaf} = item;
-    let val = tuid.valueFromId(id);
+    let {tuid, box, children, isLeaf} = item;
+    let val = tuid.valueFromId(box.id);
     let right;
     if (isLeaf === false) {
         right = <Button color="info" size="sm" onClick={()=>itemClick(item)}>+</Button>;

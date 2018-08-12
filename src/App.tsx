@@ -10,7 +10,6 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import ui from './ui';
 import {VmApp} from './ui-usql/vm';
-import { isArray } from 'util';
 
 const tStyle = {margin: '2em auto', borderCollapse:'collapse'};
 const rowStyle = {borderBottom: '1px solid gray'};

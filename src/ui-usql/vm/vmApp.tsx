@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {observer} from 'mobx-react';
 import {Page, loadAppApis, nav, getUrlOrDebug, meInFrame} from 'tonva-tools';
+import { List, LMR } from 'tonva-react-form';
 import {Entities} from '../entities';
 import {ViewModel} from './viewModel';
 import { VmApi, EntityType } from './vmApi';
 import { centerApi } from '../centerApi';
-import { List, LMR } from '../../../node_modules/tonva-react-form';
+import { observable } from '../../../node_modules/mobx';
 
 export const entitiesCollection: {[api:string]: Entities} = {};
 
@@ -36,7 +37,8 @@ export class VmApp extends ViewModel {
         for (let appApi of apis) {
             let {id:apiId, apiOwner, apiName, url, urlDebug, ws, access, token} = appApi;
             let api = apiOwner + '/' + apiName;
-            let vmApi = this.newVmApi(apiId, api, access, this.ui && this.ui[api]);
+            let ui = this.ui && this.ui[api];
+            let vmApi = this.newVmApi(apiId, api, access, ui);
             await vmApi.loadSchema();
             this.vmApiCollection[api] = vmApi;
         }

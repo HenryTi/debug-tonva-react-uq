@@ -10,7 +10,7 @@ import { VmPage } from './vmPage';
 
 export interface EntityUI {
     label: string;
-    res: any;
+    res?: any;
 }
 
 export abstract class VmEntity extends VmPage {
@@ -34,7 +34,7 @@ export abstract class VmEntity extends VmPage {
     }
     protected getLabel() {
         let res = this.getRes();
-        return (res && res.label) || this.entity.name;
+        return (res && res.label) || (this.ui && this.ui.label) || this.entity.name;
     }
 
     protected navVm = async <T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T, param?:any) => {

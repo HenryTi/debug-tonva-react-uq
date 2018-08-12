@@ -14,6 +14,7 @@ interface MapQueries {
 }
 
 export class Map extends Entity {
+    get typeName(): string { return 'map';}
     keys: Field[];
     actions: MapActions = {} as any;
     queries: MapQueries = {} as any;

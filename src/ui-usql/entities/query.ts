@@ -1,9 +1,10 @@
 import {observable, IObservableArray} from 'mobx';
-import {Field} from './entities';
+import {Field, ArrFields} from './entities';
 import {Entity} from './entity';
 
 export type QueryPageApi = (name:string, pageStart:any, pageSize:number, params:any) => Promise<string>;
 export class Query extends Entity {
+    get typeName(): string { return 'query';}
     private pageStart: any;
     private pageSize:number;
     private params:any;
@@ -12,17 +13,15 @@ export class Query extends Entity {
     protected queryApiName = 'page';
     //@observable loaded: boolean;
     @observable list:IObservableArray; // = observable.array([], {deep: false});
+    returns: ArrFields[];
+    isPaged: boolean;
 
-    /*
-    protected lowerCaseSchema() {
-        let {returns} = this.schema;
-        this.lowerCaseReturns(returns);
-    }*/
-    /*
-    async unpackReturns(data:any):Promise<any> {
-        if (this.schema === undefined) await this.loadSchema();
-        return super.unpackReturns(data);
-    }*/
+    setSchema(schema:any) {
+        super.setSchema(schema);
+        let {returns} = schema;
+        this.returns = returns;
+        this.isPaged = (returns as any[]).find(v => v.name === '$page') !== undefined;
+    }
 
     resetPage(size:number, params:any) {
         this.pageStart = undefined;
