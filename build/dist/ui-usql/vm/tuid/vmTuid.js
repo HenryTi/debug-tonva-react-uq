@@ -1,8 +1,7 @@
-import { VmEntity, vmLinkIcon } from '../vmEntity';
+import { VmEntity } from '../vmEntity';
 export class VmTuid extends VmEntity {
-    constructor(vmApi, tuid, ui) {
-        super(vmApi, tuid, ui);
+    constructor(crUsq, tuid, ui) {
+        super(crUsq, tuid, ui);
     }
-    get icon() { return vmLinkIcon('text-info', 'list-alt'); }
 }
 //# sourceMappingURL=vmTuid.js.map

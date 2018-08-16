@@ -8,15 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { ViewModel } from '../viewModel';
-/*
-import { nav } from 'tonva-tools';
-import { Entity, Tuid } from '../../entities';
-import { VmActionMain } from '../action';
-import { VmTuidMain } from '../tuid';
-import { VmQueryMain } from '../query';
-import { VmSheetMain } from '../sheet';
-import { VmBookMain } from '../book';
-*/
 export class VmLink extends ViewModel {
 }
 export class VmEntityLink extends VmLink {
@@ -24,9 +15,17 @@ export class VmEntityLink extends VmLink {
         super();
         this.view = Link;
         this.onClick = () => __awaiter(this, void 0, void 0, function* () {
-            this.vmEntity.start();
+            yield this.vmEntity.start();
         });
         this.vmEntity = vmEntity;
+    }
+}
+export class EntityLink {
+    constructor(crUsq, entity) {
+        this.onClick = () => __awaiter(this, void 0, void 0, function* () {
+        });
+        this.crUsq = crUsq;
+        this.entity = entity;
     }
 }
 const Link = ({ vm }) => {

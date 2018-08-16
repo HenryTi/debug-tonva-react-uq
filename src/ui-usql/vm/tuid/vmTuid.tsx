@@ -2,31 +2,15 @@ import * as React from 'react';
 import { Tuid, Entity, TuidBase } from '../../entities';
 import { VmEntity, vmLinkIcon, EntityUI } from '../vmEntity';
 import { Page } from 'tonva-tools';
-import { VmApi } from '../vmApi';
-import { VmTuidMain } from './vmTuidMain';
-import { VmTuidEdit } from './vmTuidEdit';
-import { VmTuidView } from './vmView';
-import { VmTuidSearch } from './vmTuidSearch';
-import { RowContent } from '../viewModel';
-import { VmTuidControl, PickerConfig } from '../vmForm';
-
-export interface TuidUI extends EntityUI {
-    main: typeof VmTuidMain;
-    edit: typeof VmTuidEdit;
-    view: typeof VmTuidView;
-    search: typeof VmTuidSearch;
-    content: typeof RowContent;
-    input: typeof VmTuidControl;
-    pickerConfig: PickerConfig;
-}
+import { CrUsq } from '../crUsq';
+import { TuidUI } from './crTuid';
 
 export abstract class VmTuid extends VmEntity {
     entity: TuidBase;
     protected ui: TuidUI;
 
-    constructor(vmApi: VmApi, tuid: TuidBase, ui?:TuidUI) {
-        super(vmApi, tuid, ui);
+    constructor(crUsq: CrUsq, tuid: TuidBase, ui?:TuidUI) {
+        super(crUsq, tuid, ui);
     }
 
-    get icon() {return vmLinkIcon('text-info', 'list-alt')}
 }

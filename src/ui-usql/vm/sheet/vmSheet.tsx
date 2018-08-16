@@ -3,7 +3,7 @@ import { Page } from 'tonva-tools';
 import {List, Muted, LMR, EasyDate, FA} from 'tonva-react-form';
 import { Tuid, Sheet, Entity } from '../../entities';
 import { VmEntity, vmLinkIcon, EntityUI } from '../vmEntity';
-import { VmApi } from '../vmApi';
+import { CrUsq } from '../crUsq';
 import { VmSheetMain } from './vmMain';
 import { VmSheetNew } from './vmNew';
 import { VmSheetEdit } from './vmEdit';
@@ -29,8 +29,8 @@ export interface SheetUI extends EntityUI {
 export abstract class VmSheet extends VmEntity {
     protected ui: SheetUI;
 
-    constructor(vmApi:VmApi, sheet:Sheet, ui?:SheetUI) {
-        super(vmApi, sheet, ui);
+    constructor(crUsq:CrUsq, sheet:Sheet, ui?:SheetUI) {
+        super(crUsq, sheet, ui);
     }
 
     entity: Sheet;

@@ -4,8 +4,8 @@ import { FA } from 'tonva-react-form';
 import { } from 'tonva-tools';
 import { Entity, Tuid, Field } from '../entities';
 import { TypeContent } from './viewModel';
-import { VmApi } from './vmApi';
-import { VmForm, VmFormOptions, TypeVmTuidControl, PickerConfig } from './vmForm';
+import { CrUsq } from './crUsq';
+import { VmForm, VmFormOptions, TypeVmTuidControl, PickerConfig } from './form';
 import { VmPage } from './vmPage';
 
 export interface EntityUI {
@@ -17,11 +17,11 @@ export abstract class VmEntity extends VmPage {
     entity: Entity;
     protected ui: EntityUI;
     label: string;
-    vmApi:VmApi;
+    crUsq:CrUsq;
 
-    constructor(vmApi:VmApi, entity: Entity, ui?:EntityUI) {
+    constructor(crUsq:CrUsq, entity: Entity, ui?:EntityUI) {
         super();
-        this.vmApi = vmApi;
+        this.crUsq = crUsq;
         this.entity = entity;
         this.ui = ui;
         this.label = this.getLabel();
@@ -37,8 +37,8 @@ export abstract class VmEntity extends VmPage {
         return (res && res.label) || (this.ui && this.ui.label) || this.entity.name;
     }
 
-    protected navVm = async <T extends VmEntity>(vmType: new (vmApi:VmApi, entity:Entity, ui:EntityUI) => T, param?:any) => {
-        await this.vmApi.navVm(vmType, this.entity, this.ui, param);
+    protected navVm = async <T extends VmEntity>(vmType: new (crUsq:CrUsq, entity:Entity, ui:EntityUI) => T, param?:any) => {
+        await this.crUsq.navVm(vmType, this.entity, this.ui, param);
     }
 
     protected createVmFieldsForm() {
@@ -56,7 +56,7 @@ export abstract class VmEntity extends VmPage {
         return {
             fields: fields,
             arrs: arrFields,
-            vmApi: this.vmApi,
+            crUsq: this.crUsq,
             ui: this.ui && this.ui.res,
         }
     }
@@ -74,15 +74,15 @@ export abstract class VmEntity extends VmPage {
     }
 
     typeVmTuidControl(field:Field, tuid:Tuid): TypeVmTuidControl {
-        return this.vmApi.typeVmTuidControl(tuid);
+        return this.crUsq.typeVmTuidControl(tuid);
     }
 
     typeTuidContent(field:Field, tuid:Tuid): TypeContent {
-        return this.vmApi.typeTuidContent(tuid);
+        return this.crUsq.typeTuidContent(tuid);
     }
 
     pickerConfig(field:Field, tuid:Tuid): PickerConfig {
-        return this.vmApi.pickerConfig(tuid);
+        return this.crUsq.pickerConfig(tuid);
     }
     //renderForm = (className) => <div>old VMForm</div>;
 }

@@ -1,7 +1,7 @@
 import res from './res';
-import { VmMyApp } from './vmMyApp';
+import { CrMyApp } from './crMyApp';
 
 export default {
     res: res,
-    VmApp: VmMyApp,
+    CrApp: CrMyApp,
 };

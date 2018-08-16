@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { VmMapMain, MapUI, Field, querySearch }  from '../../../../ui-usql';
+import { VmMapMain, MapUI, Field }  from '../../../../ui-usql';
 
 class VmMapTeamPerson extends VmMapMain {
     protected keyQuery(key:Field):{queryName:string;idName:string} {
@@ -18,8 +18,8 @@ class VmMapTeamPerson extends VmMapMain {
     }
 
     private async searchOnPost(param: any):Promise<number> {
-        let query = await this.vmApi.getQuerySearch('teamPosts');
-        let val = await querySearch(this.vmApi, query, param);
+        let query = await this.crUsq.getQuerySearch('teamPosts');
+        let val = await this.crUsq.querySearch(query, param);
         return val['post'].id;
     }
 }

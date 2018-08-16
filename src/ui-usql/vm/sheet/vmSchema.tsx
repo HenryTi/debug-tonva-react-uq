@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { Button, ButtonProps } from 'reactstrap';
 import { Page } from 'tonva-tools';
-import { List, Muted } from 'tonva-react-form';
-import { VmSheet } from './vmSheet';
+import { Vm_Entity } from '../VM';
+import { Sheet } from '../../entities';
 
-export class VmSheetSchema extends VmSheet {
-    protected view = SchemaPage;
-}
+export class VmSheetSchema extends Vm_Entity<Sheet> {
+    protected async showEntryPage(param?:any) {
+        this.open(this.view);
+    }
 
-const SchemaPage = ({vm}:{vm:VmSheetSchema}) => {
-    let {label, entity} = vm;
-    return <Page header={label + "模板"}>
-        <pre className="mx-3 my-2">{entity.schemaStringify()}</pre>
+    protected view = () => <Page header={this.label + "模板"}>
+        <pre className="mx-3 my-2">{this.entity.schemaStringify()}</pre>
     </Page>;
 }
+

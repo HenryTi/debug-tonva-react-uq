@@ -9,13 +9,13 @@ export class VmMyApp extends VmApp {
     }
 }
 const EntityLink = ({ vm, apiName, type, entityName }) => {
-    let vmApi = vm.getVmApi(apiName);
-    if (vmApi === undefined) {
+    let vmUsq = vm.getVmApi(apiName);
+    if (vmUsq === undefined) {
         return React.createElement("div", null,
             "unkown api: ",
             apiName);
     }
-    let vmLink = vmApi.vmLinkFromName(type, entityName);
+    let vmLink = vmUsq.vmLinkFromName(type, entityName);
     let key = apiName + ':' + entityName;
     if (vmLink === undefined) {
         return React.createElement("div", { key: key },

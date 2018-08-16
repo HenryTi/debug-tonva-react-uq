@@ -20,7 +20,7 @@ export class VmArchived extends VmSheet {
             let data = yield this.entity.getArchive(inBrief.id);
             let { brief, data: sheetData, flows } = data;
             this.brief = brief;
-            this.vmView = new VmView(this.vmApi, this.entity, this.ui, sheetData, this.brief.state, flows);
+            this.vmView = new VmView(this.crUsq, this.entity, this.ui, sheetData, this.brief.state, flows);
         });
     }
 }

@@ -9,6 +9,7 @@ import {Book} from './book';
 import {History} from './history';
 import { ApiBase, Api } from 'tonva-tools';
 import { Map } from './map';
+import { CrApp } from '../vm';
 
 export interface Field {
     name: string;

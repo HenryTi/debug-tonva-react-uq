@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import {List, LMR, FA} from 'tonva-react-form';
-import { VmSheet } from './vmSheet';
-import { VmArchived } from './vmArchived';
+import { Vm_Entity } from '../VM';
+import { Sheet } from '../../entities';
 
-export class VmArchives extends VmSheet {
+export class VmArchives extends Vm_Entity<Sheet> {
     list: any[];
 
-    protected async beforeStart() {
+    protected async showEntryPage() {
         this.list = await this.entity.getArchives(undefined, 10);
+        this.open(this.view);
     }
 
     archiveClick = async (brief:any) => {
         if (brief.processing===1) return;
-        this.navVm(VmArchived, brief);
+        this.resolve('archived', brief);
+        //this.navVm(VmArchived, brief);
     }
     archiveRow = (row:any, index:number) => {
         let left = <>
@@ -24,12 +26,9 @@ export class VmArchives extends VmSheet {
         return <LMR className="px-3 py-2" left={left} right={right} />
     }
 
-    protected view = Archives;
-}
-
-const Archives = ({vm}:{vm:VmArchives}) => {
-    let {label, list, archiveRow, archiveClick} = vm;
-    return <Page header={'已归档' + label}>
-        <List items={list} item={{render:archiveRow, onClick:archiveClick}} />
-    </Page>;
+    protected view = () => {
+        return <Page header={'已归档' + this.label}>
+            <List items={this.list} item={{render:this.archiveRow, onClick:this.archiveClick}} />
+        </Page>;
+    };
 }

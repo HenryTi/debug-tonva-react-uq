@@ -4,25 +4,27 @@ import { FA, SearchBox, List } from 'tonva-react-form';
 import { Tuid, Entity, TuidBase } from '../../entities';
 import { Page, PagedItems } from 'tonva-tools';
 import { VmTuid } from './vmTuid';
+import { Vm_Entity } from '../VM';
 
 //export type TypeVmTuidList = typeof VmTuidList;
 
-export class VmTuidSearch extends VmTuid {
+export class VmTuidSearch  extends Vm_Entity<Tuid> {
+    protected entity: Tuid;
     ppp: string;
     pagedItems:TuidPagedItems;
     ownerId: number;
     param: any;
 
-    protected init() {
+    protected async showEntryPage(param?:any) {
+        this.entity = this.coordinator.entity;
         this.pagedItems = new TuidPagedItems(this.entity);
-    }
-
-    protected async beforeStart(param?:any) {
         this.param = param;
         if (this.entity.owner !== undefined) this.ownerId = Number(param);
         // 初始查询, key是空的
         await this.onSearch('');
+        this.open(this.view);
     }
+
     onSearch = async (key:string) => {
         await this.pagedItems.first(key);
     }
@@ -41,31 +43,29 @@ export class VmTuidSearch extends VmTuid {
         this.callOnSelected(item);
     }
 
-    view = SearchPage;
+    protected view = observer(() => {
+        //let {label, entity, onSelected, renderRow, clickRow, pagedItems, onSearch, ownerId} = vm;
+        let header = <SearchBox className="mx-1 w-100"
+            initKey={''}
+            onSearch={this.onSearch} placeholder={'搜索'+this.label} />;
+        let {owner} = this.entity;
+        let ownerTop;
+        if (owner !== undefined) {
+            let ownerObj = owner.valueFromId(this.ownerId);
+            ownerTop = <div>owner: {JSON.stringify(ownerObj)}</div>;
+        }
+        return <Page header={header}>
+            {ownerTop}
+            <List
+                items={this.pagedItems.items}
+                item={{render: this.renderRow, onClick: this.clickRow}}
+                before={'搜索'+this.label+'资料'} />
+        </Page>;
+    });
 }
 
 type TypeRow = typeof Row;
 const Row = (item) => <div className="px-3 py-2">{JSON.stringify(item)}</div>;
-
-const SearchPage = observer(({vm}:{vm:VmTuidSearch}) => {
-    let {label, entity, onSelected, renderRow, clickRow, pagedItems, onSearch, ownerId} = vm;
-    let header = <SearchBox className="mx-1 w-100"
-        initKey={''}
-        onSearch={onSearch} placeholder={'搜索'+label} />;
-    let {owner} = entity;
-    let ownerTop;
-    if (owner !== undefined) {
-        let ownerObj = owner.valueFromId(ownerId);
-        ownerTop = <div>owner: {JSON.stringify(ownerObj)}</div>;
-    }
-    return <Page header={header}>
-        {ownerTop}
-        <List
-            items={pagedItems.items}
-            item={{render: renderRow, onClick: clickRow}}
-            before={'搜索'+label+'资料'} />
-    </Page>;
-});
 
 class TuidPagedItems extends PagedItems<any> {
     private tuid: TuidBase;

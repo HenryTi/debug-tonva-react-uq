@@ -9,7 +9,7 @@ import {nav, NavView} from 'tonva-tools';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import ui from './ui';
-import {VmApp} from './ui-usql/vm';
+import {CrApp} from './ui-usql/vm';
 
 const tStyle = {margin: '2em auto', borderCollapse:'collapse'};
 const rowStyle = {borderBottom: '1px solid gray'};
@@ -45,7 +45,7 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 
 class App extends React.Component {
     async onLogined() {
-        let vmApp = new VmApp(tonvaApp, ui);
+        let vmApp = new CrApp(tonvaApp, ui);
         await vmApp.start();
     }
     render() {

@@ -36,7 +36,7 @@ export class VmSheetAction extends VmSheet {
             this.brief = brief;
             this.sheetData = sheetData;
             this.flows = flows;
-            this.vmView = new VmView(this.vmApi, this.entity, this.ui, this.sheetData, this.brief.state, flows);
+            this.vmView = new VmView(this.crUsq, this.entity, this.ui, this.sheetData, this.brief.state, flows);
             _super("start").call(this);
         });
     }
@@ -45,7 +45,7 @@ const SheetAction = ({ vm }) => {
     let { label, entity, brief, actionClick, vmView, deleteClick, editClick } = vm;
     let state = brief.state;
     let stateLabel = vm.getStateLabel(state);
-    let { states } = entity.schema;
+    let { states } = entity;
     let s = states.find(v => v.name === state);
     let actionButtons, startButtons;
     if (s === undefined) {

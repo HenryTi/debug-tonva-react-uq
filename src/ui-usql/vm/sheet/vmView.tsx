@@ -2,29 +2,38 @@ import * as React from 'react';
 import {List, Muted, LMR, EasyDate, FA} from 'tonva-react-form';
 import { VmSheet, SheetUI } from './vmSheet';
 import { Sheet } from '../../entities';
-import { VmApi } from '../vmApi';
-import { VmForm, VmFormOptions } from '../vmForm';
+import { CrUsq } from '../crUsq';
+import { VmForm, VmFormOptions } from '../form';
+import { Vm_Entity } from '../VM';
+import { CrSheet } from './crSheet';
 
-export class VmView extends VmSheet {
+export class VmView extends Vm_Entity<Sheet> {
     vmForm: VmForm;
     data: any;
     state: string;
     flows:any[];
 
-    constructor(vmApi:VmApi, sheet: Sheet, ui:SheetUI, data: any, state:string, flows:any[]) {
-        super(vmApi, sheet, ui);
+    constructor(crSheet:CrSheet, data: any, state:string, flows:any[]) {
+        super(crSheet);
         this.data = data;
         this.state = state;
         this.flows = flows;
-        this.vmForm = this.createVmFieldsForm();
-        this.vmForm.values = data;
     }
 
+    protected async showEntryPage(param?:any) {}
+
+    render() {
+        this.vmForm = this.coordinator.createVmFieldsForm();
+        this.vmForm.values = this.data;
+        return <this.view />;
+    }
+
+    /*
     protected get fieldsFormOptions():VmFormOptions {
         let ret = super.fieldsFormOptions;
         ret.readOnly = true;
         return ret;
-    }
+    }*/
 
     flowRow = (item:any, index:number):JSX.Element => {
         let {date, user, preState, state, action} = item;
@@ -42,20 +51,17 @@ export class VmView extends VmSheet {
         </div>;
     }
 
-    protected view = View;
-}
-
-const View = ({vm}:{vm:VmView}) => {
-    let {entity, state, data, vmForm, flows, flowRow} = vm;
-    let removed;
-    if (state === '-')
-        removed = <div className="mx-3 my-2" style={{color:'red'}}>本单据作废</div>;
-    return <div>
-        {removed}
-        {vmForm.render()}
-
-        <List header={<Muted>流程</Muted>}
-            items={flows}
-            item={{render:flowRow}}/>
-    </div>;
+    protected view = () => {
+        let removed;
+        if (this.state === '-')
+            removed = <div className="mx-3 my-2" style={{color:'red'}}>本单据作废</div>;
+        return <div>
+            {removed}
+            {this.vmForm.render()}
+    
+            <List header={<Muted>流程</Muted>}
+                items={this.flows}
+                item={{render:this.flowRow}}/>
+        </div>;
+    };
 }

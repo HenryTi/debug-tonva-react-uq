@@ -10,7 +10,6 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { VmSheetNew, VmTuidPicker, RowContent } from '../../../../ui-usql';
-//import { VmTuidPicker } from '../../../../ui-usql/vm/vmForm';
 export class VmSheetNew单据 extends VmSheetNew {
     constructor() {
         super(...arguments);
@@ -45,8 +44,8 @@ export class VmSheetNew单据 extends VmSheetNew {
         return __awaiter(this, void 0, void 0, function* () {
             //nav.push(this.renderView());
             //alert('started');
-            let tuid = this.entity.getFieldTuid('id1');
-            let vmTuidPicker = new VmTuidPicker(this.vmApi, '选择Id1', tuid, this.onArticleSelected, RowContent);
+            let tuid = this.entity.getTuidFromName('id1');
+            let vmTuidPicker = new VmTuidPicker(this.crUsq, '选择Id1', tuid, this.onArticleSelected, RowContent);
             //nav.push(<SelectId1 vm={this} />)
             vmTuidPicker.start();
         });

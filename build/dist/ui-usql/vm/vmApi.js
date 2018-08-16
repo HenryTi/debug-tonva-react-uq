@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Api } from 'tonva-tools';
+import { Api, nav } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { ViewModel, JSONContent } from './viewModel';
 import { Entities } from '../entities';
@@ -16,11 +16,13 @@ import { VmEntityLink } from './link';
 import { VmBookMain } from './book';
 import { VmSheetMain } from './sheet';
 import { VmActionMain } from './action';
-import { VmQueryMain } from './query';
+import { VmQueryMain, VmQuerySearch } from './query';
 import { VmTuidMain, VmTuidView } from './tuid';
 import { VmTuidControl, VmTuidPicker } from './vmForm';
+import { VmMapMain } from './map';
+import { VmTuidSearch } from './tuid/vmTuidSearch';
 export class VmApi extends ViewModel {
-    constructor(appId, apiId, api, access, ui) {
+    constructor(vmApp, apiId, api, access, ui) {
         super();
         this.isSysVisible = false;
         this.renderLink = (vmLink, index) => {
@@ -34,7 +36,7 @@ export class VmApi extends ViewModel {
             yield vm.start(param);
         });
         this.view = ApiView;
-        //this.vmApp = vmApp;
+        this.vmApp = vmApp;
         this.api = api;
         this.id = apiId;
         this.ui = ui;
@@ -59,30 +61,12 @@ export class VmApi extends ViewModel {
         let baseUrl = hash === undefined || hash === '' ?
             'debug/' : 'tv/';
         let _api = new Api(baseUrl, apiOwner, apiName, true);
-        this.entities = new Entities(appId, apiId, _api, access);
+        this.entities = new Entities(vmApp.id, apiId, _api, access);
     }
     //vmApp: VmApp;
     loadSchema() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.entities.load();
-            // 检查注册的entity viewModels
-            /*
-            let arr = [
-                {regs: VmTuid.vmRegs, type: 'tuid'},
-                {regs: VmSheet.vmRegs, type: 'sheet'},
-                {regs: VmAction.vmRegs, type: 'action'},
-                {regs: VmQuery.vmRegs, type: 'query'},
-                {regs: VmBook.vmRegs, type: 'book'},
-            ];
-            for (let item of arr) {
-                let {regs, type} = item;
-                for (let i in regs) {
-                    if (this.entities[type](i) === undefined) {
-                        let vm = regs[i];
-                        console.warn(type + ':' + '\'' + i + '\' is not usql entity, which register class ' + vm.name);
-                    }
-                }
-            }*/
             for (let i in this.ui) {
                 let g = this.ui[i];
                 if (g === undefined)
@@ -99,6 +83,21 @@ export class VmApi extends ViewModel {
         });
     }
     getTuid(name) { return this.entities.tuid(name); }
+    getQuerySearch(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let query = this.entities.query(name);
+            if (query === undefined)
+                alert(`QUERY ${name} 没有定义!`);
+            else {
+                yield query.loadSchema();
+                let { returns } = query;
+                if (returns.length > 1) {
+                    alert(`QUERY ${name} 返回多张表, 无法做QuerySearch`);
+                }
+            }
+            return query;
+        });
+    }
     isVisible(entity) {
         return entity.sys !== true || this.isSysVisible;
     }
@@ -145,6 +144,12 @@ export class VmApi extends ViewModel {
                     return;
                 let vmBookMain = this.newVmBook(book);
                 return new VmEntityLink(vmBookMain);
+            case 'map':
+                let map = this.entities.map(entityName);
+                if (map === undefined)
+                    return;
+                let vmMapMain = this.newVmMap(map);
+                return new VmEntityLink(vmMapMain);
         }
     }
     getUI(type, name) {
@@ -254,6 +259,46 @@ export class VmApi extends ViewModel {
             return this.newVmBookLink(this.newVmBook(v));
         });
     }
+    get mapTypeCaption() { return this.getUITypeCaption('map') || '对照表'; }
+    newVmMapLink(vmMap) {
+        return new VmEntityLink(vmMap);
+    }
+    newVmMap(map) {
+        let ui = this.getUI('map', map.name);
+        let vm = ui && ui.main;
+        if (vm === undefined)
+            vm = VmMapMain;
+        return new vm(this, map, ui);
+    }
+    get vmMapLinks() {
+        return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
+            return this.newVmMapLink(this.newVmMap(v));
+        });
+    }
+    newVmSearch(entity, onSelected) {
+        switch (entity.typeName) {
+            case 'tuid': return this.newVmTuidSearch(entity, onSelected);
+            case 'query': return this.newVmQuerySearch(entity, onSelected);
+        }
+    }
+    newVmTuidSearch(tuid, onSelected) {
+        let ui = this.getUI('tuid', tuid.name);
+        let vm = ui && ui.search;
+        if (vm === undefined)
+            vm = VmTuidSearch;
+        let ret = new vm(this, tuid, ui);
+        ret.onSelected = onSelected;
+        return ret;
+    }
+    newVmQuerySearch(query, onSelected) {
+        let ui = this.getUI('query', query.name);
+        let vm = ui && ui.search;
+        if (vm === undefined)
+            vm = VmQuerySearch;
+        let ret = new vm(this, query, ui);
+        ret.onSelected = onSelected;
+        return ret;
+    }
     typeVmTuidControl(tuid) {
         let ui = this.getUI('tuid', tuid.name);
         let typeVmTuidControl = ui && ui.input;
@@ -284,14 +329,57 @@ export class VmApi extends ViewModel {
             return vm;
         });
     }
+    tuidSearch(tuid, param) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                let onTuidSelected = (selecdValue) => __awaiter(this, void 0, void 0, function* () {
+                    nav.pop();
+                    resolve(selecdValue);
+                });
+                let { owner } = tuid;
+                if (owner !== undefined) {
+                    let onOwnerSelected = (ownerItem) => __awaiter(this, void 0, void 0, function* () {
+                        nav.pop();
+                        let ownerId = owner.getIdFromObj(ownerItem);
+                        owner.useId(ownerId);
+                        let tuidSearch = this.newVmTuidSearch(tuid, onTuidSelected);
+                        yield tuidSearch.start(ownerId);
+                    });
+                    let ownerSearch = this.newVmTuidSearch(owner, onOwnerSelected);
+                    ownerSearch.start(param);
+                }
+                else {
+                    let tuidSearch = this.newVmTuidSearch(tuid, onTuidSelected);
+                    tuidSearch.start(param);
+                }
+            });
+        });
+    }
+    querySearch(query, param) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                let onSelected = (selecdValue) => __awaiter(this, void 0, void 0, function* () {
+                    nav.pop();
+                    resolve(selecdValue);
+                });
+                let search = this.newVmQuerySearch(query, onSelected);
+                search.start(param);
+            });
+        });
+    }
 }
 const ApiView = ({ vm }) => {
-    let { api, renderLink, linkClick, tuidTypeCaption, vmTuidLinks, sheetTypeCaption, vmSheetLinks, actionTypeCaption, vmActionLinks, queryTypeCaption, vmQueryLinks, bookTypeCaption, vmBookLinks } = vm;
+    let { api, renderLink, linkClick, tuidTypeCaption, vmTuidLinks, mapTypeCaption, vmMapLinks, sheetTypeCaption, vmSheetLinks, actionTypeCaption, vmActionLinks, queryTypeCaption, vmQueryLinks, bookTypeCaption, vmBookLinks } = vm;
     let linkItem = { render: renderLink, onClick: linkClick };
     let lists = [
         {
             header: tuidTypeCaption,
             items: vmTuidLinks,
+        },
+        {
+            cn: 'my-2',
+            header: mapTypeCaption,
+            items: vmMapLinks,
         },
         {
             cn: 'my-2',
@@ -316,6 +404,6 @@ const ApiView = ({ vm }) => {
     ];
     return React.createElement(React.Fragment, null,
         React.createElement("div", { className: "px-3 py-1 small" }, api),
-        lists.map(({ cn, header, items }, index) => React.createElement(List, { key: index, className: cn, header: React.createElement(Muted, null, header), items: items, item: linkItem })));
+        lists.map(({ cn, header, items }, index) => items.length > 0 && React.createElement(List, { key: index, className: cn, header: React.createElement(Muted, null, header), items: items, item: linkItem })));
 };
-//# sourceMappingURL=vmApi.js.map
+//# sourceMappingURL=vmUsq.js.map

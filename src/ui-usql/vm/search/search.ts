@@ -1,10 +1,10 @@
 import { nav } from "tonva-tools";
-import { VmApi } from "../vmApi";
+import { CrUsq } from "../crUsq";
 import { Entity, TuidBase, Tuid, Query } from "../../entities";
 
-//export type SearchFunc = (vmApi:VmApi, entity:Entity, param?:any) => Promise<any>;
+//export type SearchFunc = (crUsq:CrUsq, entity:Entity, param?:any) => Promise<any>;
 
-export async function tuidSearch(vmApi:VmApi, tuid:TuidBase, param?:any):Promise<any> {
+export async function tuidSearch(crUsq:CrUsq, tuid:TuidBase, param?:any):Promise<any> {
     return new Promise<any>((resolve, reject) => {
         let onTuidSelected = async (selecdValue:any) => {
             nav.pop();
@@ -16,26 +16,26 @@ export async function tuidSearch(vmApi:VmApi, tuid:TuidBase, param?:any):Promise
                 nav.pop();
                 let ownerId = owner.getIdFromObj(ownerItem);
                 owner.useId(ownerId);
-                let tuidSearch = vmApi.newVmTuidSearch(tuid, onTuidSelected);
+                let tuidSearch = crUsq.newVmTuidSearch(tuid, onTuidSelected);
                 await tuidSearch.start(ownerId);
             }
-            let ownerSearch = vmApi.newVmTuidSearch(owner, onOwnerSelected);
+            let ownerSearch = crUsq.newVmTuidSearch(owner, onOwnerSelected);
             ownerSearch.start(param);
         }
         else {
-            let tuidSearch = vmApi.newVmTuidSearch(tuid, onTuidSelected);
+            let tuidSearch = crUsq.newVmTuidSearch(tuid, onTuidSelected);
             tuidSearch.start(param);
         }
     });
 }
 
-export async function querySearch(vmApi, query:Query, param?:any):Promise<any> {
+export async function querySearch(crUsq, query:Query, param?:any):Promise<any> {
     return new Promise<any>((resolve, reject) => {
         let onSelected = async (selecdValue:any) => {
             nav.pop();
             resolve(selecdValue);
         };
-        let search = vmApi.newVmQuerySearch(query, onSelected);
+        let search = crUsq.newVmQuerySearch(query, onSelected);
         search.start(param);
     });
 }

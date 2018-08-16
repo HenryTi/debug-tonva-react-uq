@@ -31,7 +31,7 @@ export class VmSheetOrderNew extends VmSheetNew {
             this.popPage();
         });
         this.onSearchCustomer = (key) => __awaiter(this, void 0, void 0, function* () {
-            let vmCustomerPicker = new VmTuidPicker(this.vmApi, '选择客户', this.tuidCustomer, this.onCustomerSelected, RowContent);
+            let vmCustomerPicker = new VmTuidPicker(this.crUsq, '选择客户', this.tuidCustomer, this.onCustomerSelected, RowContent);
             if (key !== undefined) {
                 if (key.trim() === '')
                     key = undefined;
@@ -60,7 +60,7 @@ export class VmSheetOrderNew extends VmSheetNew {
                 yield this.editQuantity();
                 return;
             }
-            let vmPicker = new VmTuidPicker(this.vmApi, '选择产品', this.tuidArticle, ((item) => __awaiter(this, void 0, void 0, function* () {
+            let vmPicker = new VmTuidPicker(this.crUsq, '选择产品', this.tuidArticle, ((item) => __awaiter(this, void 0, void 0, function* () {
                 let { id } = item;
                 this.setArticle(id);
                 yield onRowChanged({
@@ -95,9 +95,9 @@ export class VmSheetOrderNew extends VmSheetNew {
                 this.vmArticles.afterEditRow = this.afterEditArticleRow;
                 this.vmArticles.footer = React.createElement(ArticleFooter, { vm: this });
             }
-            this.tuidCustomer = this.entity.getFieldTuid(field客户);
-            this.tuidArticle = this.entity.getFieldTuid(fieldArticle, arrArticles);
-            this.ArticleContent = this.vmApi.typeTuidContent(this.tuidArticle);
+            this.tuidCustomer = this.entity.getTuidFromName(field客户);
+            this.tuidArticle = this.entity.getTuidFromName(fieldArticle, arrArticles);
+            this.ArticleContent = this.crUsq.typeTuidContent(this.tuidArticle);
             this.regAutorun(() => {
                 let { vmForm, list } = this.vmArticles;
                 let { formValues } = vmForm;
@@ -156,7 +156,7 @@ const ArticleRowPage = observer(({ vm }) => {
     let { controls, formValues, onSubmitButtonClick, onFormSubmit } = vmForm;
     let { values } = formValues;
     let { price, quantity, amount } = values;
-    let article = tuidArticle.getId(articleId);
+    let article = tuidArticle.valueFromId(articleId);
     return React.createElement(Page, { header: "\u4EA7\u54C1" },
         React.createElement("form", { className: "m-3", onSubmit: onFormSubmit },
             React.createElement("div", null,

@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { ViewModel } from '../viewModel';
-import { VmEntity } from '../vmEntity';
+import { VmEntity, EntityUI } from '../vmEntity';
+import { Entity } from '../../entities';
+import { CrUsq } from '../crUsq';
+import { EntityCoordinator } from '../VM';
 
 export abstract class VmLink extends ViewModel {
     abstract onClick: () => void;
 }
 
 export class VmEntityLink extends VmLink {
-    vmEntity: VmEntity
+    vmEntity: VmEntity | EntityCoordinator<Entity, EntityUI>
 
-    constructor(vmEntity: VmEntity) {
+    constructor(vmEntity: VmEntity | EntityCoordinator<Entity, EntityUI>) {
         super();
         this.vmEntity = vmEntity;
     }
@@ -18,6 +21,19 @@ export class VmEntityLink extends VmLink {
 
     onClick = async () => {
         await this.vmEntity.start();
+    }
+}
+
+export class EntityLink<T extends Entity> {
+    private crUsq: CrUsq;
+    private entity: T;
+    constructor(crUsq: CrUsq, entity: T) {
+        this.crUsq = crUsq;
+        this.entity = entity;
+    }
+
+    onClick = async () => {
+
     }
 }
 

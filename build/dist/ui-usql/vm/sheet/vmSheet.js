@@ -1,7 +1,7 @@
 import { VmEntity, vmLinkIcon } from '../vmEntity';
 export class VmSheet extends VmEntity {
-    constructor(vmApi, sheet, ui) {
-        super(vmApi, sheet, ui);
+    constructor(crUsq, sheet, ui) {
+        super(crUsq, sheet, ui);
     }
     get icon() { return vmLinkIcon('text-primary', 'wpforms'); }
     getStateUI(stateName) {

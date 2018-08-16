@@ -10,7 +10,7 @@ import { VmTuidSearch } from './vmTuidSearch';
 export class VmTuidList extends VmTuidSearch {
     onSelected = async (item:any) => {
         let data = await this.entity.load(item.id);
-        let vmEdit = new (this.ui && this.ui.edit || VmTuidEdit)(this.vmApi, this.entity, this.ui);
-        await vmEdit.start(data);
+        //let vmEdit = new (this.ui && this.ui.edit || VmTuidEdit)(this.crUsq, this.entity, this.ui);
+        //await vmEdit.start(data);
     }
 }

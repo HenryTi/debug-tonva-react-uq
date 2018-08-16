@@ -1,7 +1,5 @@
-import {UsqlApi} from './usqlApi';
 import { Entities, Field, ArrFields } from './entities';
 import { Tuid, TuidBase } from './tuid';
-import { isPropertyConfigurable } from '../../../node_modules/mobx/lib/utils/utils';
 
 const tab = '\t';
 const ln = '\n';

@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Page, loadAppApis, nav, meInFrame } from 'tonva-tools';
+import { List, LMR } from 'tonva-react-form';
 import { ViewModel } from './viewModel';
-import { VmApi } from './vmApi';
+import { VmUsq } from './crUsq';
 import { centerApi } from '../centerApi';
-import { List, LMR } from '../../../node_modules/tonva-react-form';
+import { Coord } from '../cr/view';
 export const entitiesCollection = {};
 export class VmApp extends ViewModel {
     constructor(tonvaApp, ui) {
@@ -20,6 +21,11 @@ export class VmApp extends ViewModel {
         this.vmApiCollection = {};
         this.caption = 'View Model 版的 Usql App';
         this.view = AppPage;
+        this.testClick = () => __awaiter(this, void 0, void 0, function* () {
+            let coord = new Coord;
+            let ret = yield coord.main();
+            alert('returned in vmApp: ' + ret + ' value=' + coord.value);
+        });
         this.renderRow = (item, index) => {
             let { id, nick, name } = item;
             return React.createElement(LMR, { className: "p-2", right: 'id: ' + id },
@@ -28,8 +34,9 @@ export class VmApp extends ViewModel {
         this.onRowClick = (item) => __awaiter(this, void 0, void 0, function* () {
             meInFrame.unit = item.id; // 25;
             //await store.loadUnit();
-            nav.clear();
-            nav.replace(this.render());
+            //nav.clear();
+            //nav.replace(this.render());
+            yield this.start();
         });
         let parts = tonvaApp.split('/');
         if (parts.length !== 2) {
@@ -41,21 +48,23 @@ export class VmApp extends ViewModel {
     }
     loadApis() {
         return __awaiter(this, void 0, void 0, function* () {
+            let unit = meInFrame.unit;
             let app = yield loadAppApis(this.appOwner, this.appName);
             let { id, apis } = app;
             this.id = id;
             for (let appApi of apis) {
                 let { id: apiId, apiOwner, apiName, url, urlDebug, ws, access, token } = appApi;
                 let api = apiOwner + '/' + apiName;
-                let vmApi = this.newVmApi(apiId, api, access, this.ui && this.ui[api]);
-                yield vmApi.loadSchema();
-                this.vmApiCollection[api] = vmApi;
+                let ui = this.ui && this.ui[api];
+                let vmUsq = this.newVmApi(apiId, api, access, ui);
+                yield vmUsq.loadSchema();
+                this.vmApiCollection[api] = vmUsq;
             }
         });
     }
     newVmApi(apiId, api, access, ui) {
         // 这里是可以重载的，写自己的VmApi
-        return new VmApi(this.id, apiId, api, access, ui);
+        return new VmUsq(this, apiId, api, access, ui);
     }
     get vmApiArr() {
         let ret = [];
@@ -83,7 +92,13 @@ export class VmApp extends ViewModel {
                             alert('当前登录的用户不支持当前的APP');
                             return;
                         case 1:
-                            meInFrame.unit = this.appUnits[0].id;
+                            unit = this.appUnits[0].id;
+                            if (unit === undefined || unit <= 0) {
+                                alert('当前unit不支持app操作，请重新登录');
+                                yield nav.logout();
+                                return;
+                            }
+                            meInFrame.unit = unit;
                             break;
                         default:
                             nav.clear();
@@ -116,14 +131,14 @@ export class VmApp extends ViewModel {
                     let apiId = Number(parts[3]);
                     let sheetTypeId = Number(parts[4]);
                     let sheetId = Number(parts[5]);
-                    let vmApi = this.getVmApiFromId(apiId);
-                    if (vmApi === undefined) {
+                    let vmUsq = this.getVmApiFromId(apiId);
+                    if (vmUsq === undefined) {
                         alert('unknown apiId: ' + apiId);
                         return;
                     }
                     this.clearPrevPages();
                     //nav.replace(<Page header="Sheet">API: {apiId} 编号：{sheetId}</Page>);
-                    yield vmApi.navSheet(sheetTypeId, sheetId);
+                    yield vmUsq.navSheet(sheetTypeId, sheetId);
                     return;
                 }
             }
@@ -133,9 +148,9 @@ export class VmApp extends ViewModel {
     }
     getVmApiFromId(apiId) {
         for (let i in this.vmApiCollection) {
-            let vmApi = this.vmApiCollection[i];
-            if (vmApi.id === apiId)
-                return vmApi;
+            let vmUsq = this.vmApiCollection[i];
+            if (vmUsq.id === apiId)
+                return vmUsq;
         }
         return;
     }
@@ -148,15 +163,36 @@ export class VmApp extends ViewModel {
             }
         });
     }
+    main() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const a = 1;
+            this.clearPrevPages();
+            nav.push(this.render());
+        });
+    }
+    selectUnit(appUnits) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                const onRowClick = (item) => resolve(item.id);
+                const renderRow = (item, index) => {
+                    let { id, nick, name } = item;
+                    return React.createElement(LMR, { className: "p-2", right: 'id: ' + id },
+                        React.createElement("div", null, nick || name));
+                };
+                const SelectUnit = () => React.createElement(Page, { header: "\u9009\u62E9\u5C0F\u53F7", logout: logout },
+                    React.createElement(List, { items: appUnits, item: { render: renderRow, onClick: onRowClick } }));
+            });
+        });
+    }
 }
 const SheetLink = ({ vm, apiName, type, entityName }) => {
-    let vmApi = vm.getVmApi(apiName);
-    if (vmApi === undefined) {
+    let vmUsq = vm.getVmApi(apiName);
+    if (vmUsq === undefined) {
         return React.createElement("div", null,
             "unkown api: ",
             apiName);
     }
-    let vmLink = vmApi.vmLinkFromName(type, entityName);
+    let vmLink = vmUsq.vmLinkFromName(type, entityName);
     let key = apiName + ':' + entityName;
     if (vmLink === undefined) {
         return React.createElement("div", { key: key },
@@ -168,8 +204,10 @@ const SheetLink = ({ vm, apiName, type, entityName }) => {
     return React.createElement("div", { key: key, className: "bg-white cursor-pointer border-bottom", onClick: vmLink.onClick }, vmLink.render());
 };
 const AppPage = observer(({ vm }) => {
-    let { caption, vmApiArr } = vm;
-    return React.createElement(Page, { header: caption }, vmApiArr.map((v, i) => React.createElement("div", { key: i }, v.render())));
+    let { caption, vmApiArr, testClick } = vm;
+    return React.createElement(Page, { header: caption, logout: () => { } },
+        React.createElement("button", { onClick: testClick }, "Test coordinator"),
+        vmApiArr.map((v, i) => React.createElement("div", { key: i }, v.render())));
 });
 const logout = () => {
     // nothing to do

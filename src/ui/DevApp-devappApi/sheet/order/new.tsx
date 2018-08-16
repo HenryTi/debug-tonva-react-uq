@@ -33,7 +33,7 @@ export class VmSheetOrderNew extends VmSheetNew {
         }
         this.tuidCustomer = this.entity.getTuidFromName(field客户) as Tuid;
         this.tuidArticle = this.entity.getTuidFromName(fieldArticle, arrArticles) as Tuid;
-        this.ArticleContent = this.vmApi.typeTuidContent(this.tuidArticle);
+        this.ArticleContent = this.crUsq.typeTuidContent(this.tuidArticle);
         this.regAutorun(()=>{
             let {vmForm, list} = this.vmArticles;
             let {formValues} = vmForm;
@@ -57,7 +57,7 @@ export class VmSheetOrderNew extends VmSheetNew {
 
     onSearchCustomer = async (key:string) => {
         let vmCustomerPicker = new VmTuidPicker(
-            this.vmApi, 
+            this.crUsq, 
             '选择客户', 
             this.tuidCustomer, 
             this.onCustomerSelected, RowContent);
@@ -96,7 +96,7 @@ export class VmSheetOrderNew extends VmSheetNew {
             await this.editQuantity();
             return;
         }
-        let vmPicker = new VmTuidPicker(this.vmApi, 
+        let vmPicker = new VmTuidPicker(this.crUsq, 
             '选择产品',
             this.tuidArticle, 
             (async (item:any) => {

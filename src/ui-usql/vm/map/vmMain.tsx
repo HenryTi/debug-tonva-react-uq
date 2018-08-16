@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import * as _ from 'lodash';
+//import * as _ from 'lodash';
 import * as className from 'classnames';
 import { Button } from 'reactstrap';
 import { List, LMR } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
-import { Tuid, Book, Entity, Field, TuidBase, Box } from '../../entities';
-import { VmMap } from './vmMap';
-import { VmApi } from '../vmApi';
-import { tuidSearch } from '../search';
+import { Tuid, Book, Entity, Field, TuidBase, Box, Map } from '../../entities';
+import { Vm_Entity } from '../VM';
+import { CrMap } from './crMap';
+//import { CrUsq } from '../crUsq';
+//import { tuidSearch } from '../search';
 
 class Item {
     parent: Item;
@@ -28,10 +29,13 @@ class Item {
     }
 }
 
-export class VmMapMain extends VmMap {
+export class VmMapMain extends Vm_Entity<Map> {
+    private entity: Map;
+    protected coordinator: CrMap;
     items:Item[];
     keyFields: Field[];
-    protected async beforeStart(param?:any) {
+    protected async showEntryPage(param?:any) {
+        this.entity = this.coordinator.entity;
         let {keys} = this.entity;
         let q = this.entity.queries.all;
         let ret = (await q.query({})).ret;
@@ -90,7 +94,6 @@ export class VmMapMain extends VmMap {
         }
         return ret;
     }
-    view = MainPage;
     /*
     protected keyQuery(key:Field):{queryName:string;idName:string} {
         return;
@@ -99,7 +102,7 @@ export class VmMapMain extends VmMap {
         let kq = this.keyQuery(key);
         if (kq !== undefined) {
             let {queryName,idName} = kq;
-            let query = this.vmApi.getQuery(queryName);
+            let query = this.crUsq.getQuery(queryName);
             return async (param:any):Promise<number> => {
                 await query.loadSchema();
                 if (query === undefined) 
@@ -110,13 +113,13 @@ export class VmMapMain extends VmMap {
                         alert('QUERY ' + queryName + ' 返回多张表, 无法做QuerySearch')
                     }
                 }
-                let search = new QuerySearch(this.vmApi, query);
+                let search = new QuerySearch(this.crUsq, query);
                 let ret = await search.result(param);
                 return ret[idName].id;
             };
         }
         return async (param:any):Promise<number> => {
-            let search = new TuidSearch(this.vmApi, key._tuid);
+            let search = new TuidSearch(this.crUsq, key._tuid);
             // 怎么把搜索关键字传进来, 还需要考虑
             let ret = await search.result('');
             return key._tuid.getIdFromObj(ret);
@@ -125,7 +128,7 @@ export class VmMapMain extends VmMap {
     */
     async searchOnKey(keyField:Field, param):Promise<number> {
         let {_tuid} = keyField;
-        let val = await tuidSearch(this.vmApi, _tuid, param);
+        let val = await this.coordinator.crUsq.tuidSearch(_tuid, param);
         return _tuid.getIdFromObj(val);
     }
     itemClick = async(item:Item) => {
@@ -164,41 +167,36 @@ export class VmMapMain extends VmMap {
         }
     }
     itemRender = (item:Item, index:number) => {
-        return <ItemRow vm={this} item={item} />;
+        return <this.ItemRow item={item} />;
     }
+
+    private ItemRow = observer(({item}: {item:Item}) => {
+        //let {itemClick, itemRender} = vm;
+        let {tuid, box, children, isLeaf} = item;
+        let val = tuid.valueFromId(box.id);
+        let right;
+        if (isLeaf === false) {
+            right = <Button color="info" size="sm" onClick={()=>this.itemClick(item)}>+</Button>;
+        }
+        let content, border;
+        if (isLeaf === true) {
+            content = undefined; //<div className="ml-5">leaf</div>;
+        }
+        else {
+            border = "border-bottom"
+            content = <List className="ml-4" items={children} item={{onClick:undefined, render:this.itemRender}} />
+        }
+        return <div className="d-flex flex-column">
+            <LMR className={className('px-2', 'py-1', border)} 
+                left={<div className="py-1">{tuid.name} - {JSON.stringify(val)}</div>}
+                right={right}
+            />
+            {content}
+        </div>;
+    });
+
+    protected get view() { return () => <Page header={this.label}>
+            <List items={this.items} item={{className:'my-2', onClick:undefined, render:this.itemRender}} />
+        </Page>
+    };
 }
-
-const MainPage = ({vm}:{vm:VmMapMain}) => {
-    let {label, entity, items, itemClick, itemRender} = vm;
-    return <Page header={label}>
-        <List items={items} item={{className:'my-2', onClick:undefined, render:itemRender}} />
-    </Page>;
-} 
-/*<pre>
-{JSON.stringify(entity.schema, undefined, '    ')}
-</pre>*/
-
-const ItemRow = observer(({vm, item}: {vm:VmMapMain, item:Item}) => {
-    let {itemClick, itemRender} = vm;
-    let {tuid, box, children, isLeaf} = item;
-    let val = tuid.valueFromId(box.id);
-    let right;
-    if (isLeaf === false) {
-        right = <Button color="info" size="sm" onClick={()=>itemClick(item)}>+</Button>;
-    }
-    let content, border;
-    if (isLeaf === true) {
-        content = undefined; //<div className="ml-5">leaf</div>;
-    }
-    else {
-        border = "border-bottom"
-        content = <List className="ml-4" items={children} item={{onClick:undefined, render:itemRender}} />
-    }
-    return <div className="d-flex flex-column">
-        <LMR className={className('px-2', 'py-1', border)} 
-            left={<div className="py-1">{tuid.name} - {JSON.stringify(val)}</div>}
-            right={right}
-        />
-        {content}
-    </div>;
-});

@@ -4,7 +4,7 @@ import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { VmTuid } from './vmTuid';
-import { VmForm } from '../vmForm';
+import { VmForm } from '../form';
 
 export type TypeVmTuidView = typeof VmTuidView;
 

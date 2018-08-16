@@ -2,8 +2,8 @@ import * as React from 'react';
 import { List, Muted, EasyDate, FA } from 'tonva-react-form';
 import { VmSheet } from './vmSheet';
 export class VmView extends VmSheet {
-    constructor(vmApi, sheet, ui, data, state, flows) {
-        super(vmApi, sheet, ui);
+    constructor(crUsq, sheet, ui, data, state, flows) {
+        super(crUsq, sheet, ui);
         this.flowRow = (item, index) => {
             let { date, user, preState, state, action } = item;
             if (action === undefined)

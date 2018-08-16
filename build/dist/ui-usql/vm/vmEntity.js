@@ -8,15 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { FA } from 'tonva-react-form';
-import { VmForm } from './vmForm';
+import { VmForm } from './form';
 import { VmPage } from './vmPage';
 export class VmEntity extends VmPage {
-    constructor(vmApi, entity, ui) {
+    constructor(crUsq, entity, ui) {
         super();
         this.navVm = (vmType, param) => __awaiter(this, void 0, void 0, function* () {
-            yield this.vmApi.navVm(vmType, this.entity, this.ui, param);
+            yield this.crUsq.navVm(vmType, this.entity, this.ui, param);
         });
-        this.vmApi = vmApi;
+        this.crUsq = crUsq;
         this.entity = entity;
         this.ui = ui;
         this.label = this.getLabel();
@@ -28,7 +28,7 @@ export class VmEntity extends VmPage {
     }
     getLabel() {
         let res = this.getRes();
-        return (res && res.label) || this.entity.name;
+        return (res && res.label) || (this.ui && this.ui.label) || this.entity.name;
     }
     createVmFieldsForm() {
         let ret = this.newVmFieldsForm();
@@ -39,12 +39,11 @@ export class VmEntity extends VmPage {
         return new VmForm();
     }
     get fieldsFormOptions() {
-        let { schema } = this.entity;
-        let { fields, arrs } = schema;
+        let { fields, arrFields } = this.entity;
         return {
             fields: fields,
-            arrs: arrs,
-            vmApi: this.vmApi,
+            arrs: arrFields,
+            crUsq: this.crUsq,
             ui: this.ui && this.ui.res,
         };
     }
@@ -62,13 +61,13 @@ export class VmEntity extends VmPage {
         });
     }
     typeVmTuidControl(field, tuid) {
-        return this.vmApi.typeVmTuidControl(tuid);
+        return this.crUsq.typeVmTuidControl(tuid);
     }
     typeTuidContent(field, tuid) {
-        return this.vmApi.typeTuidContent(tuid);
+        return this.crUsq.typeTuidContent(tuid);
     }
     pickerConfig(field, tuid) {
-        return this.vmApi.pickerConfig(tuid);
+        return this.crUsq.pickerConfig(tuid);
     }
 }
 export function vmLinkIcon(cls, faName) {
