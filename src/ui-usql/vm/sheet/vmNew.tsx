@@ -1,18 +1,15 @@
 import * as React from 'react';
 import { Button, ButtonProps } from 'reactstrap';
 import { Page } from 'tonva-tools';
-import { List, Muted } from 'tonva-react-form';
-import { VmSheet } from './vmSheet';
-import { VmForm } from '../form';
-import { Vm_Entity } from '../VM';
 import { Sheet } from '../../entities';
+import { VmForm } from '../form';
+import { VmEntity } from '../VM';
 
-export class VmSheetNew extends Vm_Entity<Sheet> {
+export class VmSheetNew extends VmEntity<Sheet> {
     vmForm: VmForm;
 
-    protected async showEntryPage(param?:any) {
-        this.vmForm = this.coordinator.createVmFieldsForm();
-        this.vmForm.onSubmit = this.onSubmit;
+    async showEntry(param?:any) {
+        this.vmForm = this.createForm(this.onSubmit, param);
         this.open(this.view);
     }
 

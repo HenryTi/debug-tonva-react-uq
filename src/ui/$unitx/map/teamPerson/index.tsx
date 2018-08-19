@@ -18,15 +18,16 @@ class VmMapTeamPerson extends VmMapMain {
     }
 
     private async searchOnPost(param: any):Promise<number> {
-        let query = await this.crUsq.getQuerySearch('teamPosts');
-        let val = await this.crUsq.querySearch(query, param);
-        return val['post'].id;
+        let query = await this.coordinator.crUsq.getQuerySearch('teamPosts');
+        //let val = await this.coordinator.crUsq.querySearch(query, param);
+        //return val['post'].id;
+        return 0;
     }
 }
 
 const ui:MapUI = {
-    label: '部门员工对照表',
-    main: VmMapTeamPerson,
+    //label: '部门员工对照表',
+    //main: VmMapTeamPerson,
 }
 
 export default ui;

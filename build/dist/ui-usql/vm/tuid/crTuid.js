@@ -8,12 +8,69 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { EntityCoordinator } from "../VM";
 import { vmLinkIcon } from "../vmEntity";
-export class CrTuid extends EntityCoordinator {
+import { VmTuidMain } from './vmTuidMain';
+import { VmTuidEdit } from './vmTuidEdit';
+import { VmTuidSelect } from './vmTuidSelect';
+import { VmTuidList } from "./vmTuidList";
+export class CrTuidBase extends EntityCoordinator {
+    constructor(crUsq, entity, ui, res) {
+        super(crUsq, entity, ui, res);
+        let { owner } = this.entity;
+        if (owner === undefined) {
+            let tuid = this.entity;
+            this.proxies = tuid.proxies;
+            if (this.proxies !== undefined) {
+                this.proxyLinks = [];
+                for (let i in this.proxies) {
+                    let link = this.crUsq.vmLinkFromName('tuid', i);
+                    this.proxyLinks.push(link);
+                }
+            }
+        }
+    }
     get icon() { return vmLinkIcon('text-info', 'list-alt'); }
+}
+export class CrTuid extends CrTuidBase {
+    get VmTuidMain() { return VmTuidMain; }
+    get VmTuidEdit() { return VmTuidEdit; }
+    get VmTuidList() { return VmTuidList; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            alert('tuid: ' + this.entity.name);
+            yield this.showVm(this.VmTuidMain);
         });
     }
+    onEvent(type, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let vm;
+            switch (type) {
+                default: return;
+                case 'new':
+                    vm = this.VmTuidEdit;
+                    break;
+                case 'list':
+                    vm = this.VmTuidList;
+                    break;
+                case 'edit':
+                    yield this.edit(value);
+                    return;
+            }
+            yield this.showVm(vm, value);
+        });
+    }
+    edit(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let ret = yield this.entity.load(id);
+            let vm = this.VmTuidEdit;
+            yield this.showVm(vm, ret);
+        });
+    }
+}
+export class CrTuidSelect extends CrTuidBase {
+    internalStart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.showVm(this.VmTuidSelect);
+        });
+    }
+    get VmTuidSelect() { return VmTuidSelect; }
 }
 //# sourceMappingURL=crTuid.js.map

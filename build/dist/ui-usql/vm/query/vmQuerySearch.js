@@ -10,9 +10,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { SearchBox, List } from 'tonva-react-form';
 import { Page, PagedItems } from 'tonva-tools';
-import { VmQuery } from './vmQuery';
+import { Vm_Entity } from '../VM';
 //export type TypeVmTuidList = typeof VmTuidList;
-export class VmQuerySearch extends VmQuery {
+export class VmQuerySearch extends Vm_Entity {
     constructor() {
         super(...arguments);
         this.onSearch = (key) => __awaiter(this, void 0, void 0, function* () {
@@ -24,15 +24,20 @@ export class VmQuerySearch extends VmQuery {
         this.clickRow = (item) => {
             this.callOnSelected(item);
         };
-        this.view = SearchPage;
+        this.view = () => {
+            //let {label, entity, onSelected, renderRow, clickRow, pagedItems, onSearch, ownerId} = vm;
+            let header = React.createElement(SearchBox, { className: "mx-1 w-100", initKey: '', onSearch: this.onSearch, placeholder: '搜索' + this.label });
+            return React.createElement(Page, { header: header },
+                React.createElement(List, { items: this.pagedItems.items, item: { render: this.renderRow, onClick: this.clickRow }, before: '搜索' + this.label + '资料' }));
+        };
     }
-    init() {
-        this.pagedItems = new QueryPagedItems(this.entity);
-    }
-    beforeStart(param) {
+    showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.entity = this.coordinator.entity;
+            this.pagedItems = new QueryPagedItems(this.entity);
             //if (this.entity.owner !== undefined) this.ownerId = Number(param);
             yield this.onSearch(param);
+            this.open(this.view);
         });
     }
     callOnSelected(item) {
@@ -62,12 +67,6 @@ const Row = observer(({ item, vm }) => {
         " - ",
         JSON.stringify(item));
 });
-const SearchPage = ({ vm }) => {
-    let { label, entity, onSelected, renderRow, clickRow, pagedItems, onSearch, ownerId } = vm;
-    let header = React.createElement(SearchBox, { className: "mx-1 w-100", initKey: '', onSearch: onSearch, placeholder: '搜索' + label });
-    return React.createElement(Page, { header: header },
-        React.createElement(List, { items: pagedItems.items, item: { render: renderRow, onClick: clickRow }, before: '搜索' + label + '资料' }));
-};
 class QueryPagedItems extends PagedItems {
     constructor(query) {
         super();

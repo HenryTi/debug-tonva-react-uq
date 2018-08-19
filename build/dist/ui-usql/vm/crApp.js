@@ -23,8 +23,8 @@ export class CrApp extends ViewModel {
         this.view = AppPage;
         this.testClick = () => __awaiter(this, void 0, void 0, function* () {
             let coord = new TestCoordinator;
-            let ret = yield coord.main();
-            alert('returned in vmApp: ' + ret + ' value=' + coord.value);
+            let ret = yield coord.call();
+            alert('call returned in vmApp: ' + ret);
         });
         this.renderRow = (item, index) => {
             let { id, nick, name } = item;

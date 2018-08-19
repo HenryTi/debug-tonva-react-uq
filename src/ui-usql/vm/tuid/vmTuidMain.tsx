@@ -3,22 +3,17 @@ import { SearchBox, List, Muted } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Tuid, Entity } from '../../entities';
 import { Page } from 'tonva-tools';
-import { VmTuidEdit } from './vmTuidEdit';
-import { VmTuid } from './vmTuid';
-import { VmTuidList } from './vmTuidList';
-import { VmEntityLink, TypeLink } from '../link';
-import { Vm, Vm_Entity } from '../VM';
+import { VmEntityLink } from '../link';
+import { Vm, VmEntity } from '../VM';
 import { CrTuid } from './crTuid';
-import { VmEntity, EntityUI } from '../vmEntity';
-import { CrUsq } from '../crUsq';
 
-export class VmTuidMain extends Vm_Entity<Tuid> {
+export class VmTuidMain extends VmEntity<Tuid> {
     protected coordinator: CrTuid;
-    onNew = () => this.resolve('new'); //this.coordinator.navVm(VmTuidEdit);
-    onList = () => this.resolve('list'); // this.coordinator.navVm(VmTuidList);
-    onSearch = async (key:string) => this.resolve('list', key) //await this.coordinator.navVm(VmTuidList, key);
+    onNew = () => this.event('new'); //this.coordinator.navVm(VmTuidEdit);
+    onList = () => this.event('list'); // this.coordinator.navVm(VmTuidList);
+    onSearch = async (key:string) => this.event('list', key) //await this.coordinator.navVm(VmTuidList, key);
 
-    protected async showEntryPage(param?:any):Promise<void> {
+    async showEntry(param?:any):Promise<void> {
         this.open(this.view);
     }
 

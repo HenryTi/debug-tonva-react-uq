@@ -3,34 +3,49 @@ import { IObservableArray, observable } from 'mobx';
 import * as _ from 'lodash';
 import { List, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
-import { ViewModel, RowContent } from '../viewModel';
+import { ViewModel, RowContent, TypeContent } from '../viewModel';
 import { ArrFields, Field } from '../../entities';
 import { VmForm } from './vmForm';
-import { ArrBandUIX } from './formUIX';
-import { CrUsq } from '../crUsq';
+//import { ArrBandUIX } from './formUIX';
+//import { VmApi } from '../vmApi';
 import { SubmitBandUI } from './formUI';
-import { VmPage } from '../vmPage';
+import { VmBand } from './vmBand';
+//import { VmPage } from '../vmPage';
 
 export type ArrEditRow = (initValues:any, onRowChanged:(values:any)=>Promise<void>) => Promise<void>;
 
-export class VmArr extends VmPage {
-    protected crUsq: CrUsq;
-    protected arrBandUI: ArrBandUIX;
+export class VmArr extends ViewModel {
+    /*
+    //protected vmApi: VmApi;
+    //protected arrBandUI: ArrBandUIX;
     arr: ArrFields;
-    row: any;
-    readOnly: boolean;
     vmForm: VmForm;
     onEditRow: ArrEditRow;
-    list: IObservableArray<any>;
     rowValues: any;                 // 仅仅用来判断是不是新增，undefined则是新增
-    label: any;
-    header: any;
-    footer: any;
-    
-    constructor(crUsq:CrUsq, arr:ArrFields, arrBandUI:ArrBandUIX,) {
+*/
+    protected row: any;
+    protected readOnly: boolean;
+    protected label: any;
+    protected header: any;
+    protected footer: any;
+
+    protected ownerForm:VmForm;
+    protected vmForm:VmForm;
+    protected rowContent:TypeContent;
+    protected bands:VmBand[];
+
+    name:string;
+    list: IObservableArray<any>;
+
+    constructor(ownerForm:VmForm, name:string, rowContent:TypeContent, bands:VmBand[]) {
         super();
+        this.ownerForm = ownerForm;
+        this.name = name;
+        this.rowContent = rowContent;
+        this.bands = bands;
+        /*
         this.start = this.start.bind(this);
-        this.crUsq = crUsq;
+        //this.vmApi = vmApi;
         this.arr = arr;
         this.arrBandUI = arrBandUI;
         let {label, row, form} = arrBandUI;
@@ -48,7 +63,7 @@ export class VmArr extends VmPage {
         this.vmForm = new VmForm();
         this.vmForm.init({
             fields: arr.fields,
-            crUsq: crUsq,
+            //vmApi: vmApi,
             ui: {
                 bands: undefined, // bands,
                 className: undefined,
@@ -56,6 +71,7 @@ export class VmArr extends VmPage {
             readOnly: this.readOnly,
         });
         this.vmForm.onSubmit = this.onSubmit;
+        */
     }
 
     reset() {
@@ -65,15 +81,15 @@ export class VmArr extends VmPage {
 
     onSubmit = async () => {
         let values = this.vmForm.values;
-        await this.onRowChanged(values);
+        //await this.onRowChanged(values);
         if (this.afterEditRow !== undefined) await this.afterEditRow(values);
     }
 
     afterEditRow = async (values:any):Promise<void> => {
-        this.popPage();
+        nav.pop();
         return;
     }
-
+/*
     async start(rowValues?: any) {
         this.rowValues = rowValues;
         if (rowValues === undefined)
@@ -83,10 +99,9 @@ export class VmArr extends VmPage {
         if (this.onEditRow !== undefined)
             await this.onEditRow(rowValues, this.onRowChanged);
         else
-            this.pushPage(<RowPage vm={this} />);
+            nav.push(<RowPage vm={this} />);
     }
 
-    addClick = () => this.start(undefined);
 
     onRowChanged = async (rowValues:any) => {
         if (this.rowValues === undefined) {
@@ -98,14 +113,35 @@ export class VmArr extends VmPage {
         }
         this.vmForm.values = this.rowValues;
     }
+*/
 
     renderItem = (item:any, index:number) => {
         return <this.row {...item} />;
     }
+    addClick = () => this.start(undefined);
+    start = (param:any) => {}
 
-    protected view = ArrList;
+    protected view = ({vm}:{vm:VmArr}) => {
+        //let {label, list, renderItem, start, addClick, header, footer, readOnly} = vm;
+        let button;
+        if (this.readOnly === false) {
+            button = <button onClick={this.addClick}
+                type="button" 
+                className="btn btn-primary btn-sm">
+                <FA name="plus" />
+            </button>;
+        }
+        let header = this.header || <div className="">
+            <div className="flex-fill align-self-center">{this.label}</div>
+            {button}
+        </div>;
+        return <List
+            header={header}
+            items={this.list} 
+            item={{render: this.renderItem, onClick: this.start}} />;
+    }
 }
-
+/*
 const ArrList = ({vm}:{vm:VmArr}) => {
     let {label, list, renderItem, start, addClick, header, footer, readOnly} = vm;
     let button;
@@ -134,3 +170,4 @@ const RowPage = ({vm}:{vm:VmArr}) => {
         {vmForm.render()}
     </Page>
 }
+*/

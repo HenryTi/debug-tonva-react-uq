@@ -1,11 +1,11 @@
 import { isArray } from 'util';
 import App from './App';
-import DevApp_devappApi from './DevApp-devappApi';
+//import DevApp_devappApi from './DevApp-devappApi';
 import $unitx from './$unitx';
 
 const ui = {
     App: App,
-    "DevApp/devappApi": DevApp_devappApi,
+    //"DevApp/devappApi": DevApp_devappApi,
     "$$$/$unitx": $unitx,
 };
 

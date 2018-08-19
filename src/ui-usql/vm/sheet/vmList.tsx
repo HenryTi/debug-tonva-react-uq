@@ -3,16 +3,16 @@ import { Button, ButtonProps } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { List, Muted, FA, LMR } from 'tonva-react-form';
 import { VmSheetAction } from './vmSheetAction';
-import { Vm_Entity } from '../VM';
+import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
 import { CrSheet } from './crSheet';
 
-export class VmSheetList extends Vm_Entity<Sheet> {
+export class VmSheetList extends VmEntity<Sheet> {
     protected coordinator: CrSheet;
     stateName: string;
     stateLabel: string;
 
-    protected async showEntryPage(item:any) {
+    async showEntry(item:any) {
         this.stateName = item.state;
         this.stateLabel = this.coordinator.getStateLabel(this.stateName);
         await this.entity.getStateSheets(this.stateName, 0, 30);
@@ -20,7 +20,7 @@ export class VmSheetList extends Vm_Entity<Sheet> {
 
     rowClick = async (brief:any) => {
         if (brief.processing===1) return;
-        this.resolve('action', brief.id);
+        this.event('action', brief.id);
         //this.navVm(VmSheetAction, brief.id);
     }
 

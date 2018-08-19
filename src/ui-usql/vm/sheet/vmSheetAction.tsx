@@ -2,18 +2,18 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { nav, Page } from 'tonva-tools';
 import { VmView } from './vmView';
-import { Vm_Entity } from '../VM';
+import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
 import { CrSheet } from './crSheet';
 
-export class VmSheetAction extends Vm_Entity<Sheet> {
+export class VmSheetAction extends VmEntity<Sheet> {
     protected coordinator: CrSheet;
     brief: any;
     sheetData: any;
     flows: any[];
     vmView: VmView;
 
-    async showEntryPage(sheetId:number) {
+    async showEntry(sheetId:number) {
         let data = await this.entity.getSheet(sheetId);
         let {brief, data:sheetData, flows} = data;
         this.brief = brief;

@@ -10,9 +10,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { SearchBox, List } from 'tonva-react-form';
 import { Page, PagedItems } from 'tonva-tools';
-import { VmTuid } from './vmTuid';
+import { Vm_Entity } from '../VM';
 //export type TypeVmTuidList = typeof VmTuidList;
-export class VmTuidSearch extends VmTuid {
+export class VmTuidSearch extends Vm_Entity {
     constructor() {
         super(...arguments);
         this.onSearch = (key) => __awaiter(this, void 0, void 0, function* () {
@@ -24,18 +24,32 @@ export class VmTuidSearch extends VmTuid {
         this.clickRow = (item) => {
             this.callOnSelected(item);
         };
-        this.view = SearchPage;
+        this.view = observer(() => {
+            //let {label, entity, onSelected, renderRow, clickRow, pagedItems, onSearch, ownerId} = vm;
+            let header = React.createElement(SearchBox, { className: "mx-1 w-100", initKey: '', onSearch: this.onSearch, placeholder: '搜索' + this.label });
+            let { owner } = this.entity;
+            let ownerTop;
+            if (owner !== undefined) {
+                let ownerObj = owner.valueFromId(this.ownerId);
+                ownerTop = React.createElement("div", null,
+                    "owner: ",
+                    JSON.stringify(ownerObj));
+            }
+            return React.createElement(Page, { header: header },
+                ownerTop,
+                React.createElement(List, { items: this.pagedItems.items, item: { render: this.renderRow, onClick: this.clickRow }, before: '搜索' + this.label + '资料' }));
+        });
     }
-    init() {
-        this.pagedItems = new TuidPagedItems(this.entity);
-    }
-    beforeStart(param) {
+    showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.entity = this.coordinator.entity;
+            this.pagedItems = new TuidPagedItems(this.entity);
             this.param = param;
             if (this.entity.owner !== undefined)
                 this.ownerId = Number(param);
             // 初始查询, key是空的
             yield this.onSearch('');
+            this.open(this.view);
         });
     }
     callOnSelected(item) {
@@ -47,21 +61,6 @@ export class VmTuidSearch extends VmTuid {
     }
 }
 const Row = (item) => React.createElement("div", { className: "px-3 py-2" }, JSON.stringify(item));
-const SearchPage = observer(({ vm }) => {
-    let { label, entity, onSelected, renderRow, clickRow, pagedItems, onSearch, ownerId } = vm;
-    let header = React.createElement(SearchBox, { className: "mx-1 w-100", initKey: '', onSearch: onSearch, placeholder: '搜索' + label });
-    let { owner } = entity;
-    let ownerTop;
-    if (owner !== undefined) {
-        let ownerObj = owner.valueFromId(ownerId);
-        ownerTop = React.createElement("div", null,
-            "owner: ",
-            JSON.stringify(ownerObj));
-    }
-    return React.createElement(Page, { header: header },
-        ownerTop,
-        React.createElement(List, { items: pagedItems.items, item: { render: renderRow, onClick: clickRow }, before: '搜索' + label + '资料' }));
-});
 class TuidPagedItems extends PagedItems {
     constructor(tuid) {
         super();

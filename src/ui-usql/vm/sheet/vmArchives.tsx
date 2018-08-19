@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import {List, LMR, FA} from 'tonva-react-form';
-import { Vm_Entity } from '../VM';
+import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
 
-export class VmArchives extends Vm_Entity<Sheet> {
+export class VmArchives extends VmEntity<Sheet> {
     list: any[];
 
-    protected async showEntryPage() {
+    async showEntry() {
         this.list = await this.entity.getArchives(undefined, 10);
         this.open(this.view);
     }
 
     archiveClick = async (brief:any) => {
         if (brief.processing===1) return;
-        this.resolve('archived', brief);
+        this.event('archived', brief);
         //this.navVm(VmArchived, brief);
     }
     archiveRow = (row:any, index:number) => {

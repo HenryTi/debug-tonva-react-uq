@@ -1,5 +1,5 @@
 import { Sheet } from "../../entities";
-import { EntityCoordinator, Vm } from "../VM";
+import { EntityCoordinator, Vm, CoordinatorBase, VM } from "../VM";
 import { vmLinkIcon, EntityUI } from "../vmEntity";
 import { VmSheetMain } from "./vmMain";
 import { VmSheetNew } from "./vmNew";
@@ -31,7 +31,7 @@ export class CrSheet extends EntityCoordinator<Sheet, SheetUI> {
     get icon() {return vmLinkIcon('text-primary', 'wpforms')}
 
     protected async internalStart() {
-        await this.run(new this.VmSheetMain(this));
+        await this.showVm(this.VmSheetMain);
     }
 
     protected get VmSheetMain():typeof VmSheetMain {
@@ -52,17 +52,17 @@ export class CrSheet extends EntityCoordinator<Sheet, SheetUI> {
     protected get VmSheetList(): typeof VmSheetList {return VmSheetList}
     protected get VmSheetAction(): typeof VmSheetAction {return VmSheetAction}
     protected async onEvent(type:string, value:any) {
-        let vm:Vm;
+        let vm: VM;
         switch (type) {
             default: return;
-            case 'new': vm = new this.VmSheetNew(this); break;
-            case 'schema': vm = new this.VmSheetSchema(this); break;
-            case 'archives': vm = new this.VmArchives(this); break;
-            case 'state': vm = new this.VmSheetList(this); break;
-            case 'action': vm = new this.VmSheetAction(this); break;
-            case 'archived': vm = new this.VmArchived(this); break;
+            case 'new': vm = this.VmSheetNew; break;
+            case 'schema': vm = this.VmSheetSchema; break;
+            case 'archives': vm = this.VmArchives; break;
+            case 'state': vm = this.VmSheetList; break;
+            case 'action': vm = this.VmSheetAction; break;
+            case 'archived': vm = this.VmArchived; break;
         }
-        await this.run(vm, value);
+        await this.showVm(vm, value);
     }
 
     async showSheet(sheetId:number) {

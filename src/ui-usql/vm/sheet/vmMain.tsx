@@ -3,14 +3,14 @@ import { observer } from 'mobx-react';
 import { Button, ButtonProps, Badge } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { List, Muted, LMR } from 'tonva-react-form';
-import { Vm_Entity } from '../VM';
+import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
 import { CrSheet } from './crSheet';
 
-export class VmSheetMain extends Vm_Entity<Sheet> {
+export class VmSheetMain extends VmEntity<Sheet> {
     protected coordinator: CrSheet;
 
-    protected async showEntryPage() {
+    async showEntry() {
         await this.entity.getStateSheetCount();
         this.open(this.view);
     }
@@ -22,13 +22,13 @@ export class VmSheetMain extends Vm_Entity<Sheet> {
     }
     */
 
-    newClick = () => this.resolve('new'); /* {
+    newClick = () => this.event('new'); /* {
         let t = (this.ui && this.ui.new) || this.vmNew;
         await this.navVm(t);
     }*/
-    schemaClick = () => this.resolve('schema'); // await this.navVm(this.vmSchema);
-    archivesClick = () => this.resolve('archives'); //await this.navVm(this.vmArchives);
-    sheetStateClick = (state) => this.resolve('state', state); // await this.navVm(this.vmSheetList, state);
+    schemaClick = () => this.event('schema'); // await this.navVm(this.vmSchema);
+    archivesClick = () => this.event('archives'); //await this.navVm(this.vmArchives);
+    sheetStateClick = (state) => this.event('state', state); // await this.navVm(this.vmSheetList, state);
     /* 移到CrSheet里面去了
     async showSheet(sheetId:number) {
         let vmAction = (this.ui && this.ui.action) || VmSheetAction;

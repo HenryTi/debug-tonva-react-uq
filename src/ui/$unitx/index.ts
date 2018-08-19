@@ -1,8 +1,7 @@
 import map from './map';
+import res from './res';
 
 export default {
-    map: {
-        caption: '对照表',
-        collection: map,
-    },
+    map: map,
+    res: res,
 }

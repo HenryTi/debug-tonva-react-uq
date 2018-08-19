@@ -17,9 +17,10 @@ export class VmTuidControl extends VmControl {
         super(fieldUI, formValues);
         this.onClick = () => __awaiter(this, void 0, void 0, function* () {
             if (this.readOnly === true) {
-                let vm = this.crUsq.newVmTuidView(this.tuid);
-                if (this.value !== undefined)
-                    yield vm.start(this.value);
+                //let vm = this.crUsq.newVmTuidView(this.tuid);
+                //if (this.value !== undefined) await vm.start(this.value);
+                debugger;
+                alert('code not finished');
                 return;
             }
             let typePicker = this.pickerConfig.picker;

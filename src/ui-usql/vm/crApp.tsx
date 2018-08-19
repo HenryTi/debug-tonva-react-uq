@@ -138,8 +138,8 @@ export class CrApp extends ViewModel {
 
     testClick = async () => {
         let coord = new TestCoordinator;
-        let ret = await coord.main();
-        alert('returned in vmApp: ' + ret + ' value=' + coord.value);
+        let ret = await coord.call();
+        alert('call returned in vmApp: ' + ret);
     }
 
     private getCrUsqFromId(apiId:number): CrUsq {

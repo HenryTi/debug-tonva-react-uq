@@ -4,16 +4,14 @@ import { TonvaForm, List, SubmitResult, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
 import { Tuid, Query, Entity } from '../../entities';
 import { VmForm } from '../form';
-import { Vm_Entity } from '../VM';
+import { VmEntity } from '../VM';
 
-export class VmQueryMain extends Vm_Entity<Query> {
-    private entity: Query;
-    vmForm: VmForm;
+export class VmQueryMain extends VmEntity<Query> {
+    protected vmForm: VmForm;
 
-    protected async showEntryPage(param?:any):Promise<void> {
-        this.entity = this.coordinator.entity;
-        this.vmForm = this.coordinator.createVmFieldsForm();
-        this.vmForm.onSubmit = this.onSubmit;
+    async showEntry(param?:any):Promise<void> {
+        this.vmForm = this.createForm(param);
+        //this.vmForm.onSubmit = this.onSubmit;
         this.open(this.view);
     }
 

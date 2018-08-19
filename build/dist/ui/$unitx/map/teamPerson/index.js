@@ -27,15 +27,16 @@ class VmMapTeamPerson extends VmMapMain {
     }
     searchOnPost(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            let query = yield this.crUsq.getQuerySearch('teamPosts');
-            let val = yield this.crUsq.querySearch(query, param);
-            return val['post'].id;
+            let query = yield this.coordinator.crUsq.getQuerySearch('teamPosts');
+            //let val = await this.coordinator.crUsq.querySearch(query, param);
+            //return val['post'].id;
+            return 0;
         });
     }
 }
 const ui = {
-    label: '部门员工对照表',
-    main: VmMapTeamPerson,
+//label: '部门员工对照表',
+//main: VmMapTeamPerson,
 };
 export default ui;
 //# sourceMappingURL=index.js.map

@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { Page } from 'tonva-tools';
-import { Vm } from '../VM';
-export class VmActionMain extends Vm {
+import { VmEntity } from '../VM';
+export class VmActionMain extends VmEntity {
     constructor() {
         super(...arguments);
         this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
@@ -28,10 +28,12 @@ export class VmActionMain extends Vm {
                 React.createElement("pre", null, JSON.stringify(this.returns, undefined, ' ')));
         };
     }
-    show() {
-        this.vmForm = this.coordinator.createVmFieldsForm();
-        this.vmForm.onSubmit = this.onSubmit;
-        this.open(this.mainPage);
+    showEntry(param) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.vmForm = this.createForm(param);
+            //this.vmForm.onSubmit = this.onSubmit;
+            this.open(this.mainPage);
+        });
     }
 }
 //# sourceMappingURL=vmActionMain.js.map

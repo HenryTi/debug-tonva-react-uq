@@ -1,13 +1,11 @@
 import * as React from 'react';
 import {List, Muted, LMR, EasyDate, FA} from 'tonva-react-form';
-import { VmSheet, SheetUI } from './vmSheet';
 import { Sheet } from '../../entities';
-import { CrUsq } from '../crUsq';
-import { VmForm, VmFormOptions } from '../form';
-import { Vm_Entity } from '../VM';
+import { VmForm } from '../form';
+import { VmEntity } from '../VM';
 import { CrSheet } from './crSheet';
 
-export class VmView extends Vm_Entity<Sheet> {
+export class VmView extends VmEntity<Sheet> {
     vmForm: VmForm;
     data: any;
     state: string;
@@ -20,11 +18,10 @@ export class VmView extends Vm_Entity<Sheet> {
         this.flows = flows;
     }
 
-    protected async showEntryPage(param?:any) {}
+    async showEntry(param?:any) {}
 
     render() {
-        this.vmForm = this.coordinator.createVmFieldsForm();
-        this.vmForm.values = this.data;
+        this.vmForm = this.createForm(this.data);
         return <this.view />;
     }
 

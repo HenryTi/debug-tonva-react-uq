@@ -7,27 +7,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
-import { Page } from 'tonva-tools';
-import { VmTuid } from './vmTuid';
-export class VmTuidEdit extends VmTuid {
+import { Page, nav } from 'tonva-tools';
+import { VmEntity } from '../VM';
+export class VmTuidEdit extends VmEntity {
     constructor() {
         super(...arguments);
+        /*
+        protected async beforeStart(param?:any) {
+            this.vmForm = this.createVmFieldsForm();
+            if (param !== undefined) {
+                this.id = param.id;
+                this.vmForm.values = param;
+            }
+            this.vmForm.onSubmit = this.onSubmit;
+        }
+        */
         this.next = () => __awaiter(this, void 0, void 0, function* () {
             this.vmForm.reset();
-            this.popPage();
+            nav.pop();
+            //this.popPage();
         });
         this.finish = () => {
-            this.popPage(2);
+            nav.pop(2);
+            this.event('edit-end');
         };
         this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
             let { values } = this.vmForm;
-            let ret = yield this.entity.save(this.id, values);
+            let ret = yield this.coordinator.entity.save(this.id, values);
             let { id } = ret;
             if (id < 0) {
-                let { unique } = this.entity;
+                let { unique } = this.coordinator.entity;
                 if (unique !== undefined) {
                     for (let u of unique) {
                         this.vmForm.setError(u, '不能重复');
@@ -35,7 +46,7 @@ export class VmTuidEdit extends VmTuid {
                 }
                 return;
             }
-            this.pushPage(React.createElement(Page, { header: this.label + '提交成功', back: "none" },
+            nav.push(React.createElement(Page, { header: this.label + '提交成功', back: "none" },
                 React.createElement("div", { className: 'm-3' },
                     React.createElement("span", { className: "text-success" },
                         React.createElement(FA, { name: 'check-circle', size: 'lg' }),
@@ -45,24 +56,30 @@ export class VmTuidEdit extends VmTuid {
                         React.createElement(Button, { color: "primary", outline: true, onClick: this.finish }, "\u4E0D\u7EE7\u7EED")))));
             return;
         });
-        this.view = TuidNewPage;
+        //protected view = TuidNewPage;
     }
-    beforeStart(param) {
+    showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.vmForm = this.createVmFieldsForm();
+            this.vmForm = this.createForm(this.onSubmit, param);
             if (param !== undefined) {
                 this.id = param.id;
-                this.vmForm.values = param;
             }
-            this.vmForm.onSubmit = this.onSubmit;
+            this.open(this.editView);
         });
+    }
+    get editView() {
+        return () => React.createElement(Page, { header: (this.id === undefined ? '新增' : '编辑') + ' - ' + this.label }, this.vmForm.render('mx-3 my-2'));
     }
     resetForm() {
         this.vmForm.reset();
     }
 }
-const TuidNewPage = observer(({ vm }) => {
-    let { label, id, vmForm } = vm;
-    return React.createElement(Page, { header: (id === undefined ? '新增' : '编辑') + ' - ' + label }, vmForm.render('mx-3 my-2'));
+/*
+const TuidNewPage = observer(({vm}:{vm:VmTuidEdit}) => {
+    let {label, id, vmForm} = vm;
+    return <Page header={(id===undefined? '新增':'编辑') + ' - ' + label}>
+        {vmForm.render('mx-3 my-2')}
+    </Page>;
 });
+*/ 
 //# sourceMappingURL=vmTuidEdit.js.map

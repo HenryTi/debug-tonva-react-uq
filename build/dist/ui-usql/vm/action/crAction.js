@@ -13,12 +13,10 @@ export class CrAction extends EntityCoordinator {
     get icon() { return vmLinkIcon('text-success', 'hand-o-right'); }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.run(new this.VmActionMain(this));
+            yield this.showVm(this.VmActionMain);
         });
     }
-    get VmActionMain() {
-        return (this.ui && this.ui.main) || VmActionMain;
-    }
+    get VmActionMain() { return VmActionMain; }
     submit(values) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.entity.submit(values);

@@ -4,7 +4,7 @@ import { vmLinkIcon, EntityUI } from "../vmEntity";
 import { VmActionMain } from "./vmActionMain";
 
 export interface ActionUI extends EntityUI {
-    main: typeof VmActionMain,
+    //main: typeof VmActionMain,
 }
 
 export class CrAction extends EntityCoordinator<Action, ActionUI> {
@@ -12,12 +12,10 @@ export class CrAction extends EntityCoordinator<Action, ActionUI> {
     get icon() {return vmLinkIcon('text-success', 'hand-o-right')}
 
     protected async internalStart() {
-        await this.run(new this.VmActionMain(this));
+        await this.showVm(this.VmActionMain);
     }
 
-    protected get VmActionMain():typeof VmActionMain {
-        return (this.ui&&this.ui.main) || VmActionMain;
-    }
+    protected get VmActionMain():typeof VmActionMain {return VmActionMain}
 
     async submit(values:any) {
         return this.entity.submit(values);

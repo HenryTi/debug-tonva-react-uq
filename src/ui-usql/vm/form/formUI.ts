@@ -1,60 +1,53 @@
-import * as React from 'react';
-import { TypeContent, ViewModel } from "../viewModel";
-import { Field } from "../../entities";
-import { VmControl } from "./control";
-//import { TypeFieldBand, TypeFieldsBand, TypeArrBand, TypeSubmitBand } from './band';
+export type FieldUIType = 'tuid' | 'query' | 'string' | 'int' | 'dec' | 'text' | 'check' | 'select' | 'radio';
 
 export interface FormUI {
-    bands: BandUI[];
+    bandUIs: BandUI[];
     className?: string;
-    //visibleBands?: BandUI[];
 }
 
-export type BandUI = FieldBandUI | FieldsBandUI | ArrBandUI | SubmitBandUI;
-
-export interface FieldBandUI extends FieldUI {
+export interface BandUI {
+    band: 'arr' | 'fields' | 'submit' | undefined; // undefined表示FieldUI
     label: string;
-    //band?: TypeFieldBand;
-    //key?: string;
 }
 
-export interface FieldsBandUI {
-    label: string;
-    fieldUIs: FieldUI[];                // 对应的多个field ui
-    //type?: 'fields';
-    //band?: TypeFieldsBand;
-    //key?: string;
+export interface FieldBandUI extends BandUI, FieldUI {
+    band: undefined;
 }
 
-export interface ArrBandUI {
-    label: string;
-    row: TypeContent;                   // arr 行的显示方式
-    bands: BandUI[];                    // 下一级页面的展开描述
-
-    //name?: string;
-    //type?: 'arr';
-    //vmList?: ViewModel;                  // list view model
-    //band?: TypeArrBand;
-    //key?: string;
+export interface FieldsBandUI extends BandUI {
+    band: 'fields';
+    fieldUIs: FieldUI[];            // 对应的多个field ui
 }
 
-export interface SubmitBandUI {
-    type: 'submit';
-    content: any;                    // 显示在按钮上的文本
-    //onSubmit?: () => void;
-    //band?: TypeSubmitBand;
-    //key?: string;
+export interface ArrBandUI extends BandUI {
+    name: string;
+    band: 'arr';
+    row: React.StatelessComponent<any>;     // arr 行的显示方式
+    bandUIs: BandUI[];                      // 下一级页面的展开描述
+}
+
+export interface SubmitBandUI extends BandUI {
+    band: 'submit';                         // label显示在按钮上的文本
 }
 
 export interface FieldUI {
-    name: string;           // field name 对应
-    type: 'tuid' | 'string' | 'int' | 'dec' | 'text' | 'check' | 'select' | 'radio';
-    readOnly?: boolean;
+    name: string;                           // field name 对应
+    type: FieldUIType;
+    //readOnly?: boolean;
     required?: boolean;
 }
 
-export interface TuidFieldUI extends FieldUI {
+export interface TuidUI extends FieldUI {
     type: 'tuid';
+}
+export interface TuidBandUI extends BandUI, TuidUI {
+}
+
+export interface QueryUI extends FieldUI {
+    type: 'query';
+    query: (param?:any) => Promise<any>;
+}
+export interface QueryBandUI extends BandUI, QueryUI {
 }
 
 export interface InputUI extends FieldUI {
@@ -63,6 +56,9 @@ export interface InputUI extends FieldUI {
 
 export interface StringUI extends InputUI {
     type: 'string';
+    length?: number;
+}
+export interface StringBandUI extends BandUI, StringUI {
 }
 
 export interface NumberUI extends InputUI {
@@ -73,23 +69,42 @@ export interface NumberUI extends InputUI {
 export interface IntUI extends NumberUI {
     type: 'int';
 }
+export interface IntBandUI extends BandUI, IntUI {
+}
 
 export interface DecUI extends NumberUI {
     type: 'dec';
 }
+export interface DecBandUI extends BandUI, DecUI {
+}
 
 export interface TextUI extends InputUI {
     type: 'text';
-} 
+}
+export interface TextBandUI extends BandUI, TextUI {
+}
 
 export interface CheckUI extends FieldUI {
     type: 'check';
 }
-
-export interface SelectUI extends FieldUI {
-    type: 'select';
+export interface CheckBandUI extends BandUI, CheckUI {
 }
 
-export interface RadioUI extends FieldUI {
+export interface OptionItem {
+    label: string;
+    value: any;
+}
+export interface OptionsUI extends FieldUI {
+    options: OptionItem[];
+}
+export interface SelectUI extends OptionsUI {
+    type: 'select';
+}
+export interface SelectBandUI extends BandUI, SelectUI {
+}
+
+export interface RadioUI extends OptionsUI {
     type: 'radio';
+}
+export interface RadioBandUI extends BandUI, RadioUI {
 }

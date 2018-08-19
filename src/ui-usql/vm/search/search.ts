@@ -1,3 +1,4 @@
+/*
 import { nav } from "tonva-tools";
 import { CrUsq } from "../crUsq";
 import { Entity, TuidBase, Tuid, Query } from "../../entities";
@@ -39,3 +40,4 @@ export async function querySearch(crUsq, query:Query, param?:any):Promise<any> {
         search.start(param);
     });
 }
+*/

@@ -7,7 +7,7 @@ import { Button } from 'reactstrap';
 import { List, LMR } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
 import { Tuid, Book, Entity, Field, TuidBase, Box, Map } from '../../entities';
-import { Vm_Entity } from '../VM';
+import { VmEntity } from '../VM';
 import { CrMap } from './crMap';
 //import { CrUsq } from '../crUsq';
 //import { tuidSearch } from '../search';
@@ -29,12 +29,11 @@ class Item {
     }
 }
 
-export class VmMapMain extends Vm_Entity<Map> {
-    private entity: Map;
+export class VmMapMain extends VmEntity<Map> {
     protected coordinator: CrMap;
     items:Item[];
     keyFields: Field[];
-    protected async showEntryPage(param?:any) {
+    async showEntry(param?:any) {
         this.entity = this.coordinator.entity;
         let {keys} = this.entity;
         let q = this.entity.queries.all;
@@ -55,6 +54,7 @@ export class VmMapMain extends Vm_Entity<Map> {
                 item = newItem;
             }
         }
+        this.open(this.view);
     }
     private createItem(parent:Item, tuid:TuidBase, box:Box, keyIndex:number, values?:any) {
         let item = new Item(parent, tuid, box, keyIndex);
@@ -128,8 +128,9 @@ export class VmMapMain extends Vm_Entity<Map> {
     */
     async searchOnKey(keyField:Field, param):Promise<number> {
         let {_tuid} = keyField;
-        let val = await this.coordinator.crUsq.tuidSearch(_tuid, param);
-        return _tuid.getIdFromObj(val);
+        //let val = await this.coordinator.crUsq.tuidSearch(_tuid, param);
+        //return _tuid.getIdFromObj(val);
+        return 0;
     }
     itemClick = async(item:Item) => {
         let {keyIndex, children} = item;

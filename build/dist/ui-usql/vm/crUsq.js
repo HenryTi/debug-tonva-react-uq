@@ -7,40 +7,69 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Api, nav } from 'tonva-tools';
+import { Api } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
-import { JSONContent } from './viewModel';
 import { Entities } from '../entities';
 import { VmEntityLink } from './link';
-import { VmBookMain } from './book';
-import { VmSheetMain } from './sheet';
+import { CrBook } from './book';
+import { CrSheet } from './sheet';
 import { CrAction } from './action';
-import { VmQueryMain, VmQuerySearch } from './query';
-import { VmTuidView } from './tuid';
-import { VmTuidControl, VmTuidPicker } from './form';
-import { VmMapMain } from './map';
-import { VmTuidSearch } from './tuid/vmTuidSearch';
-import { CrTuid } from './tuid/crTuid';
+import { CrQuery } from './query';
+import { CrTuid } from './tuid';
+import { CrMap } from './map';
 export class CrUsq {
     constructor(vmApp, apiId, api, access, ui) {
         this.isSysVisible = false;
-        this.renderLink = (vmLink, index) => {
-            return vmLink.render();
+        this.view = () => {
+            let linkItem = {
+                render: (vmLink, index) => vmLink.render(),
+                onClick: (vmLink) => vmLink.onClick()
+            };
+            let lists = [
+                {
+                    header: this.res.tuid || 'TUID',
+                    items: this.vmTuidLinks,
+                },
+                {
+                    cn: 'my-2',
+                    header: this.res.map || 'MAP',
+                    items: this.vmMapLinks,
+                },
+                {
+                    cn: 'my-2',
+                    header: this.res.sheet || 'SHEET',
+                    items: this.vmSheetLinks
+                },
+                {
+                    cn: 'my-2',
+                    header: this.res.action || 'ACTION',
+                    items: this.vmActionLinks
+                },
+                {
+                    cn: 'my-2',
+                    header: this.res.query || 'QUERY',
+                    items: this.vmQueryLinks
+                },
+                {
+                    cn: 'mt-2 mb-4',
+                    header: this.res.book || 'BOOK',
+                    items: this.vmBookLinks
+                }
+            ];
+            return React.createElement(React.Fragment, null,
+                React.createElement("div", { className: "px-3 py-1 small" }, this.res.usq || this.api),
+                lists.map(({ cn, header, items }, index) => items.length > 0 && React.createElement(List, { key: index, className: cn, header: React.createElement(Muted, null, header), items: items, item: linkItem })));
         };
-        this.linkClick = (vmLink) => {
-            vmLink.onClick();
-        };
-        this.navVm = (vmType, entity, ui, param) => __awaiter(this, void 0, void 0, function* () {
-            let vm = yield this.create(vmType, entity, ui);
-            yield vm.start(param);
-        });
-        this.view = ApiView;
         //super();
         this.vmApp = vmApp;
         this.api = api;
         this.id = apiId;
         this.ui = ui;
+        if (ui === undefined)
+            this.ui = {};
+        else if (ui.res !== undefined)
+            this.res = ui.res.zh.CN;
+        this.res = this.res || {};
         this.access = access;
         let token = undefined;
         let apiOwner, apiName;
@@ -63,12 +92,6 @@ export class CrUsq {
             'debug/' : 'tv/';
         let _api = new Api(baseUrl, apiOwner, apiName, true);
         this.entities = new Entities(vmApp.id, apiId, _api, access);
-    }
-    //vmApp: VmApp;
-    render() {
-        if (this.view === undefined)
-            return React.createElement("div", null, "??? viewModel \u5FC5\u987B\u5B9A\u4E49 view ???");
-        return React.createElement(this.view, { vm: this });
     }
     loadSchema() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -114,7 +137,7 @@ export class CrUsq {
                 alert('sheetTypeId ' + sheetTypeId + ' is not exists!');
                 return;
             }
-            let vmSheetMain = this.newVmSheet(sheet);
+            let vmSheetMain = this.crSheet(sheet);
             yield vmSheetMain.showSheet(sheetId);
         });
     }
@@ -124,288 +147,197 @@ export class CrUsq {
                 let sheet = this.entities.sheet(entityName);
                 if (sheet === undefined)
                     return;
-                let vmSheetMain = this.newVmSheet(sheet);
-                return new VmEntityLink(vmSheetMain);
+                return this.vmLink(this.crSheet(sheet));
             case 'action':
                 let action = this.entities.action(entityName);
                 if (action === undefined)
                     return;
-                let vmActionMain = this.newVmAction(action);
-                return new VmEntityLink(vmActionMain);
+                return this.vmLink(this.crAction(action));
             case 'tuid':
                 let tuid = this.entities.tuid(entityName);
                 if (tuid === undefined)
                     return;
-                let vmTuidMain = this.newVmTuid(tuid);
-                return new VmEntityLink(vmTuidMain);
+                return this.vmLink(this.ctTuid(tuid));
             case 'query':
                 let query = this.entities.query(entityName);
                 if (query === undefined)
                     return;
-                let vmQueryMain = this.newVmQuery(query);
-                return new VmEntityLink(vmQueryMain);
+                return this.vmLink(this.crQuery(query));
             case 'book':
                 let book = this.entities.book(entityName);
                 if (book === undefined)
                     return;
-                let vmBookMain = this.newVmBook(book);
-                return new VmEntityLink(vmBookMain);
+                return this.vmLink(this.crBook(book));
             case 'map':
                 let map = this.entities.map(entityName);
                 if (map === undefined)
                     return;
-                let vmMapMain = this.newVmMap(map);
-                return new VmEntityLink(vmMapMain);
+                return this.vmLink(this.crMap(map));
         }
     }
-    getUI(type, name) {
-        if (this.ui === undefined)
-            return;
-        let t = this.ui[type];
-        if (t === undefined)
-            return;
-        let { collection } = t;
-        if (collection === undefined)
-            return;
-        return collection[name];
+    getUI(t) {
+        let ui, res;
+        let { name, typeName } = t;
+        if (this.ui !== undefined) {
+            let tUI = this.ui[typeName];
+            if (tUI !== undefined) {
+                ui = tUI[name];
+            }
+        }
+        let { entity } = this.res;
+        if (entity !== undefined) {
+            res = entity[name];
+            //if (res !== undefined) debugger;
+        }
+        return { ui: ui, res: res };
     }
-    getUITypeCaption(type) {
-        if (this.ui === undefined)
-            return;
-        let t = this.ui[type];
-        if (t === undefined)
-            return;
-        let { caption } = t;
-        return caption;
+    /*
+    private getUITypeCaption(type:EntityType):any {
+        if (this.res === undefined) return;
+        return this.res[type];
     }
-    get tuidTypeCaption() { return this.getUITypeCaption('tuid') || '数据字典'; }
+    */
+    vmLink(crEntity) {
+        return new VmEntityLink(crEntity);
+    }
     get vmTuidLinks() {
-        return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => {
-            return this.newVmTuidLink(this.newVmTuid(v));
-        });
+        return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.vmLink(this.ctTuid(v)));
     }
-    newVmTuidLink(vmTuid) {
-        return new VmEntityLink(vmTuid);
+    ctTuid(tuid) {
+        let { ui, res } = this.getUI(tuid);
+        return new CrTuid(this, tuid, ui, res);
     }
-    newVmTuid(tuid) {
-        let ui = this.getUI('tuid', tuid.name);
-        return new CrTuid(this, tuid, ui);
-    }
-    newVmTuidView(tuid) {
-        let ui = this.getUI('tuid', tuid.name);
+    /*
+    newVmTuidView(tuid:Tuid):VmTuidView {
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
         let vm = ui && ui.view;
-        if (vm === undefined)
-            vm = VmTuidView;
+        if (vm === undefined) vm = VmTuidView;
         return new vm(this, tuid, ui);
-    }
-    get sheetTypeCaption() { return this.getUITypeCaption('sheet') || '凭单'; }
-    newVmSheetLink(vmSheet) {
-        return new VmEntityLink(vmSheet);
-    }
-    newVmSheet(sheet) {
-        let ui = this.getUI('sheet', sheet.name);
-        let vm = ui && ui.main;
-        if (vm === undefined)
-            vm = VmSheetMain;
-        return new vm(this, sheet, ui);
+    }*/
+    //get sheetTypeCaption() { return this.getUITypeCaption('sheet') || '凭单'; }
+    //protected newVmSheetLink(vmSheet:CrSheet) {
+    //    return new VmEntityLink(vmSheet);
+    //}
+    crSheet(sheet) {
+        let { ui, res } = this.getUI(sheet);
+        return new CrSheet(this, sheet, ui, res);
     }
     get vmSheetLinks() {
         return this.entities.sheetArr.filter(v => this.isVisible(v)).map(v => {
-            return this.newVmSheetLink(this.newVmSheet(v));
+            return this.vmLink(this.crSheet(v));
         });
     }
-    get actionTypeCaption() { return this.getUITypeCaption('action') || '操作'; }
-    newVmActionLink(crAction) {
-        return new VmEntityLink(crAction);
-    }
-    newVmAction(action) {
-        let ui = this.getUI('action', action.name);
-        //let vm = ui && ui.main;
-        //if (vm === undefined) vm = VmActionMain;
-        return new CrAction(this, action, ui);
+    crAction(action) {
+        let { ui, res } = this.getUI(action);
+        return new CrAction(this, action, ui, res);
     }
     get vmActionLinks() {
         return this.entities.actionArr.filter(v => this.isVisible(v)).map(v => {
-            return this.newVmActionLink(this.newVmAction(v));
+            return this.vmLink(this.crAction(v));
         });
     }
-    get queryTypeCaption() { return this.getUITypeCaption('query') || '查询'; }
-    newVmQueryLink(vmQuery) {
-        return new VmEntityLink(vmQuery);
-    }
-    newVmQuery(query) {
-        let ui = this.getUI('query', query.name);
-        let vm = ui && ui.main;
-        if (vm === undefined)
-            vm = VmQueryMain;
-        return new vm(this, query, ui);
+    crQuery(query) {
+        let { ui, res } = this.getUI(query);
+        return new CrQuery(this, query, ui, res);
     }
     get vmQueryLinks() {
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
-            return this.newVmQueryLink(this.newVmQuery(v));
+            return this.vmLink(this.crQuery(v));
         });
     }
-    get bookTypeCaption() { return this.getUITypeCaption('book') || '帐 - 仅供调试程序使用，普通用户不可见'; }
-    newVmBookLink(vmBook) {
-        return new VmEntityLink(vmBook);
-    }
-    newVmBook(book) {
-        let ui = this.getUI('book', book.name);
-        let vm = ui && ui.main;
-        if (vm === undefined)
-            vm = VmBookMain;
-        return new vm(this, book, ui);
+    //get bookTypeCaption() { return this.getUITypeCaption('book') || '帐 - 仅供调试程序使用，普通用户不可见' }
+    //newVmBookLink(vmBook:CrBook) {
+    //    return new VmEntityLink(vmBook);
+    //}
+    crBook(book) {
+        let { ui, res } = this.getUI(book);
+        return new CrBook(this, book, ui, res);
     }
     get vmBookLinks() {
         return this.entities.bookArr.filter(v => this.isVisible(v)).map(v => {
-            return this.newVmBookLink(this.newVmBook(v));
+            return this.vmLink(this.crBook(v));
         });
     }
-    get mapTypeCaption() { return this.getUITypeCaption('map') || '对照表'; }
-    newVmMapLink(vmMap) {
+    /*
+    get mapTypeCaption() { return this.getUITypeCaption('map') || '对照表' }
+    newVmMapLink(vmMap:CrMap) {
         return new VmEntityLink(vmMap);
-    }
-    newVmMap(map) {
-        let ui = this.getUI('map', map.name);
-        let vm = ui && ui.main;
-        if (vm === undefined)
-            vm = VmMapMain;
-        return new vm(this, map, ui);
+    }*/
+    crMap(map) {
+        let { ui, res } = this.getUI(map);
+        return new CrMap(this, map, ui, res);
     }
     get vmMapLinks() {
         return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
-            return this.newVmMapLink(this.newVmMap(v));
+            return this.vmLink(this.crMap(v));
         });
     }
-    newVmSearch(entity, onSelected) {
+    /*
+    newVmSearch(entity:Entity, onSelected:(item:any)=>Promise<void>):VmPage {
         switch (entity.typeName) {
-            case 'tuid': return this.newVmTuidSearch(entity, onSelected);
-            case 'query': return this.newVmQuerySearch(entity, onSelected);
+            case 'tuid': return this.newVmTuidSearch(entity as Tuid, onSelected);
+            case 'query': return this.newVmQuerySearch(entity as Query, onSelected);
         }
-    }
-    newVmTuidSearch(tuid, onSelected) {
-        let ui = this.getUI('tuid', tuid.name);
-        let vm = ui && ui.search;
-        if (vm === undefined)
-            vm = VmTuidSearch;
-        let ret = new vm(this, tuid, ui);
+    }*/
+    /*
+    newVmTuidSearch(tuid:TuidBase, onSelected:(item:any)=>Promise<void>):VmPage {
+        let ui = this.getUI<TuidUI>('tuid', tuid.name);
+        //let vm = ui && ui.search;
+        //if (vm === undefined) vm = VmTuidSearch;
+        let ret = undefined; // new vm(this, tuid, ui);
         ret.onSelected = onSelected;
         return ret;
     }
-    newVmQuerySearch(query, onSelected) {
-        let ui = this.getUI('query', query.name);
-        let vm = ui && ui.search;
-        if (vm === undefined)
-            vm = VmQuerySearch;
-        let ret = new vm(this, query, ui);
-        ret.onSelected = onSelected;
+    crQuery(query:Query, onSelected:(item:any)=>Promise<void>):CrQuery {
+        let {ui, res} = this.getUI<QueryUI>('query', query.name);
+        let ret = new CrQuery(this, query, ui, res);
+        //ret.onSelected = onSelected;
         return ret;
     }
-    typeVmTuidControl(tuid) {
-        let ui = this.getUI('tuid', tuid.name);
-        let typeVmTuidControl = ui && ui.input;
-        if (typeVmTuidControl === undefined)
-            typeVmTuidControl = VmTuidControl;
+    */
+    /*
+    typeVmTuidControl(tuid:Tuid): TypeVmTuidControl {
+        let {ui, res} = this.getUI<TuidUI>('tuid', tuid.name);
+        let typeVmTuidControl = undefined; //ui && ui.input;
+        if (typeVmTuidControl === undefined) typeVmTuidControl = VmTuidControl;
         return typeVmTuidControl;
     }
-    pickerConfig(tuid) {
-        let ui = this.getUI('tuid', tuid.name);
-        let pickerConfig = ui && ui.pickerConfig;
-        let pc = {
+
+    pickerConfig(tuid:Tuid): PickerConfig {
+        let {ui, res} = this.getUI<TuidUI>('tuid', tuid.name);
+        let pickerConfig:PickerConfig = undefined; //ui && ui.pickerConfig;
+        let pc:PickerConfig = {
             picker: VmTuidPicker,
             row: JSONContent,
         };
         return _.merge(pc, pickerConfig);
     }
-    typeTuidContent(tuid) {
-        let ui = this.getUI('tuid', tuid.name);
+    */
+    /*
+    typeTuidContent(tuid:Tuid): TypeContent {
+        let {ui, res} = this.getUI<TuidUI>('tuid', tuid.name);
         let typeTuidContent = ui && ui.content;
-        if (typeTuidContent === undefined)
-            typeTuidContent = JSONContent;
+        if (typeTuidContent === undefined) typeTuidContent = JSONContent;
         return typeTuidContent;
+    }*/
+    /*
+    async create<T extends VmEntity>(vmType: new (crUsq:CrUsq, entity:Entity, ui:EntityUI) => T,
+        entity:Entity, ui:EntityUI): Promise<T> {
+        let vm = new vmType(this, entity, ui);
+        //await vm.loadSchema();
+        return vm;
     }
-    create(vmType, entity, ui) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let vm = new vmType(this, entity, ui);
-            //await vm.loadSchema();
-            return vm;
-        });
+
+    navVm = async <T extends VmEntity> (vmType: new (crUsq:CrUsq, entity:Entity, ui:EntityUI) => T,
+    entity:Entity, ui:EntityUI, param?:any) => {
+        let vm = await this.create<T>(vmType, entity, ui);
+        await vm.start(param);
     }
-    tuidSearch(tuid, param) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                let onTuidSelected = (selecdValue) => __awaiter(this, void 0, void 0, function* () {
-                    nav.pop();
-                    resolve(selecdValue);
-                });
-                let { owner } = tuid;
-                if (owner !== undefined) {
-                    let onOwnerSelected = (ownerItem) => __awaiter(this, void 0, void 0, function* () {
-                        nav.pop();
-                        let ownerId = owner.getIdFromObj(ownerItem);
-                        owner.useId(ownerId);
-                        let tuidSearch = this.newVmTuidSearch(tuid, onTuidSelected);
-                        yield tuidSearch.start(ownerId);
-                    });
-                    let ownerSearch = this.newVmTuidSearch(owner, onOwnerSelected);
-                    ownerSearch.start(param);
-                }
-                else {
-                    let tuidSearch = this.newVmTuidSearch(tuid, onTuidSelected);
-                    tuidSearch.start(param);
-                }
-            });
-        });
-    }
-    querySearch(query, param) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                let onSelected = (selecdValue) => __awaiter(this, void 0, void 0, function* () {
-                    nav.pop();
-                    resolve(selecdValue);
-                });
-                let search = this.newVmQuerySearch(query, onSelected);
-                search.start(param);
-            });
-        });
+    */
+    render() {
+        if (this.view === undefined)
+            return React.createElement("div", null, "??? viewModel \u5FC5\u987B\u5B9A\u4E49 view ???");
+        return React.createElement(this.view);
     }
 }
-const ApiView = ({ vm }) => {
-    let { api, renderLink, linkClick, tuidTypeCaption, vmTuidLinks, mapTypeCaption, vmMapLinks, sheetTypeCaption, vmSheetLinks, actionTypeCaption, vmActionLinks, queryTypeCaption, vmQueryLinks, bookTypeCaption, vmBookLinks } = vm;
-    let linkItem = { render: renderLink, onClick: linkClick };
-    let lists = [
-        {
-            header: tuidTypeCaption,
-            items: vmTuidLinks,
-        },
-        {
-            cn: 'my-2',
-            header: mapTypeCaption,
-            items: vmMapLinks,
-        },
-        {
-            cn: 'my-2',
-            header: sheetTypeCaption,
-            items: vmSheetLinks
-        },
-        {
-            cn: 'my-2',
-            header: actionTypeCaption,
-            items: vmActionLinks
-        },
-        {
-            cn: 'my-2',
-            header: queryTypeCaption,
-            items: vmQueryLinks
-        },
-        {
-            cn: 'mt-2 mb-4',
-            header: bookTypeCaption,
-            items: vmBookLinks
-        }
-    ];
-    return React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "px-3 py-1 small" }, api),
-        lists.map(({ cn, header, items }, index) => items.length > 0 && React.createElement(List, { key: index, className: cn, header: React.createElement(Muted, null, header), items: items, item: linkItem })));
-};
 //# sourceMappingURL=crUsq.js.map

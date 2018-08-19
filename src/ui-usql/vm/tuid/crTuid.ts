@@ -1,17 +1,15 @@
-import { EntityCoordinator, Vm } from "../VM";
-import { Tuid } from "../../entities";
+import { EntityCoordinator, Vm, VM } from "../VM";
+import { Tuid, TuidBase } from "../../entities";
 import { EntityUI, vmLinkIcon } from "../vmEntity";
 import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
-import { VmTuidView } from './vmView';
-import { VmTuidSearch } from './vmTuidSearch';
-import { RowContent } from '../viewModel';
-import { VmTuidControl, PickerConfig } from '../form';
+import { VmTuidSelect } from './vmTuidSelect';
 import { CrUsq } from "../crUsq";
 import { VmEntityLink } from "../link";
 import { VmTuidList } from "./vmTuidList";
 
 export interface TuidUI extends EntityUI {
+    /*
     main: typeof VmTuidMain;
     edit: typeof VmTuidEdit;
     view: typeof VmTuidView;
@@ -19,14 +17,15 @@ export interface TuidUI extends EntityUI {
     content: typeof RowContent;
     input: typeof VmTuidControl;
     pickerConfig: PickerConfig;
+    */
 }
 
-export class CrTuid extends EntityCoordinator<Tuid, TuidUI> {
+export abstract class CrTuidBase extends EntityCoordinator<Tuid, TuidUI> {
     proxies: {[name:string]: Tuid};
     proxyLinks: VmEntityLink[];
 
-    constructor(crUsq: CrUsq, entity: Tuid, ui: TuidUI) {
-        super(crUsq, entity, ui);
+    constructor(crUsq: CrUsq, entity: Tuid, ui: TuidUI, res) {
+        super(crUsq, entity, ui, res);
         let {owner} = this.entity;
         if (owner === undefined) {
             let tuid = this.entity;
@@ -42,22 +41,38 @@ export class CrTuid extends EntityCoordinator<Tuid, TuidUI> {
     }
 
     get icon() {return vmLinkIcon('text-info', 'list-alt')}
+}
 
+export class CrTuid extends CrTuidBase {
     protected get VmTuidMain():typeof VmTuidMain {return VmTuidMain}
     protected get VmTuidEdit():typeof VmTuidEdit {return VmTuidEdit}
     protected get VmTuidList():typeof VmTuidList {return VmTuidList}
 
     protected async internalStart():Promise<void> {
-        await this.show(new this.VmTuidMain(this));
+        await this.showVm(this.VmTuidMain);
     }
 
     protected async onEvent(type:string, value:any) {
-        let vm:Vm;
+        let vm: VM;
         switch (type) {
             default: return;
-            case 'new': vm = new this.VmTuidEdit(this); break;
-            case 'list': vm = new this.VmTuidList(this); break;
+            case 'new': vm = this.VmTuidEdit; break;
+            case 'list': vm = this.VmTuidList; break;
+            case 'edit': await this.edit(value); return;
         }
-        await this.run(vm);
+        await this.showVm(vm, value);
     }
+
+    protected async edit(id:number) {
+        let ret = await this.entity.load(id);
+        let vm = this.VmTuidEdit;
+        await this.showVm(vm, ret);
+    }
+}
+
+export class CrTuidSelect extends CrTuidBase {
+    protected async internalStart():Promise<void> {
+        await this.showVm(this.VmTuidSelect);
+    }
+    protected get VmTuidSelect():typeof VmTuidSelect {return VmTuidSelect}
 }

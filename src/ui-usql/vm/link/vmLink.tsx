@@ -1,47 +1,32 @@
 import * as React from 'react';
-import { ViewModel } from '../viewModel';
-import { VmEntity, EntityUI } from '../vmEntity';
-import { Entity } from '../../entities';
-import { CrUsq } from '../crUsq';
-import { EntityCoordinator } from '../VM';
+import { CrEntity } from '../VM';
 
-export abstract class VmLink extends ViewModel {
+export abstract class VmLink {
     abstract onClick: () => void;
 }
 
 export class VmEntityLink extends VmLink {
-    vmEntity: VmEntity | EntityCoordinator<Entity, EntityUI>
+    private crEntity: CrEntity;
 
-    constructor(vmEntity: VmEntity | EntityCoordinator<Entity, EntityUI>) {
+    constructor(crEntity: CrEntity) {
         super();
-        this.vmEntity = vmEntity;
-    }
-
-    protected view = Link;
-
-    onClick = async () => {
-        await this.vmEntity.start();
-    }
-}
-
-export class EntityLink<T extends Entity> {
-    private crUsq: CrUsq;
-    private entity: T;
-    constructor(crUsq: CrUsq, entity: T) {
-        this.crUsq = crUsq;
-        this.entity = entity;
+        this.crEntity = crEntity;
     }
 
     onClick = async () => {
+        await this.crEntity.start();
+    }
 
+    render() {
+        return React.createElement(this.view);
+    }
+
+    protected get view() {
+        return () => {
+            let {icon, label} = this.crEntity;
+            return <div className="px-3 py-2  align-items-center">
+                {icon} &nbsp; {label}
+            </div>;
+        }
     }
 }
-
-export type TypeLink = React.StatelessComponent<{vm: VmEntityLink}>;
-
-const Link = ({vm}:{vm: VmEntityLink}) => {
-    let {vmEntity} = vm;
-    return <div className="px-3 py-2  align-items-center">
-        {vmEntity.icon} &nbsp; {vmEntity.label}
-    </div>;
-};

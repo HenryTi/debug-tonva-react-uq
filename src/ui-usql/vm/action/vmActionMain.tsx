@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { VmForm } from '../form';
-import { Vm, Vm_Entity } from '../VM';
+import { Vm, VmEntity } from '../VM';
 import { CrAction, ActionUI } from './crAction';
 import { Action } from '../../entities';
 
-export class VmActionMain extends Vm_Entity<Action> {
+export class VmActionMain extends VmEntity<Action> {
     protected coordinator: CrAction;
     private vmForm: VmForm;
     private returns: any;
@@ -16,9 +16,9 @@ export class VmActionMain extends Vm_Entity<Action> {
         this.open(this.resultPage);
     }
 
-    protected async showEntryPage(param?:any):Promise<void> {
-        this.vmForm = this.coordinator.createVmFieldsForm();
-        this.vmForm.onSubmit = this.onSubmit;
+    async showEntry(param?:any):Promise<void> {
+        this.vmForm = this.createForm(param);
+        //this.vmForm.onSubmit = this.onSubmit;
         this.open(this.mainPage);
     }
 

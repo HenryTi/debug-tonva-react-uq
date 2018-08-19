@@ -20,7 +20,7 @@ import * as className from 'classnames';
 import { Button } from 'reactstrap';
 import { List, LMR } from 'tonva-react-form';
 import { Page } from 'tonva-tools';
-import { VmMap } from './vmMap';
+import { VmEntity } from '../VM';
 //import { CrUsq } from '../crUsq';
 //import { tuidSearch } from '../search';
 class Item {
@@ -36,7 +36,7 @@ class Item {
 __decorate([
     observable
 ], Item.prototype, "children", void 0);
-export class VmMapMain extends VmMap {
+export class VmMapMain extends VmEntity {
     constructor() {
         super(...arguments);
         this.itemClick = (item) => __awaiter(this, void 0, void 0, function* () {
@@ -101,8 +101,9 @@ export class VmMapMain extends VmMap {
                 content);
         });
     }
-    beforeStart(param) {
+    showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.entity = this.coordinator.entity;
             let { keys } = this.entity;
             let q = this.entity.queries.all;
             let ret = (yield q.query({})).ret;
@@ -122,6 +123,7 @@ export class VmMapMain extends VmMap {
                     item = newItem;
                 }
             }
+            this.open(this.view);
         });
     }
     createItem(parent, tuid, box, keyIndex, values) {
@@ -197,8 +199,9 @@ export class VmMapMain extends VmMap {
     searchOnKey(keyField, param) {
         return __awaiter(this, void 0, void 0, function* () {
             let { _tuid } = keyField;
-            let val = yield this.crUsq.tuidSearch(_tuid, param);
-            return _tuid.getIdFromObj(val);
+            //let val = await this.coordinator.crUsq.tuidSearch(_tuid, param);
+            //return _tuid.getIdFromObj(val);
+            return 0;
         });
     }
     get view() {
@@ -207,35 +210,4 @@ export class VmMapMain extends VmMap {
     }
     ;
 }
-const MainPage = ({ vm }) => {
-    let { label, entity, items, itemClick, itemRender } = vm;
-    return React.createElement(Page, { header: label },
-        React.createElement(List, { items: items, item: { className: 'my-2', onClick: undefined, render: itemRender } }));
-};
-/*<pre>
-{JSON.stringify(entity.schema, undefined, '    ')}
-</pre>*/
-const ItemRow = observer(({ vm, item }) => {
-    let { itemClick, itemRender } = vm;
-    let { tuid, box, children, isLeaf } = item;
-    let val = tuid.valueFromId(box.id);
-    let right;
-    if (isLeaf === false) {
-        right = React.createElement(Button, { color: "info", size: "sm", onClick: () => itemClick(item) }, "+");
-    }
-    let content, border;
-    if (isLeaf === true) {
-        content = undefined; //<div className="ml-5">leaf</div>;
-    }
-    else {
-        border = "border-bottom";
-        content = React.createElement(List, { className: "ml-4", items: children, item: { onClick: undefined, render: itemRender } });
-    }
-    return React.createElement("div", { className: "d-flex flex-column" },
-        React.createElement(LMR, { className: className('px-2', 'py-1', border), left: React.createElement("div", { className: "py-1" },
-                tuid.name,
-                " - ",
-                JSON.stringify(val)), right: right }),
-        content);
-});
 //# sourceMappingURL=vmMain.js.map

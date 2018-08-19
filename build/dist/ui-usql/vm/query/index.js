@@ -1,3 +1,4 @@
+export * from './crQuery';
 export * from './vmQueryMain';
-export * from './vmQuerySearch';
+export * from './vmQuerySelect';
 //# sourceMappingURL=index.js.map

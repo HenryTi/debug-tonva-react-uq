@@ -4,23 +4,21 @@ import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page, nav } from 'tonva-tools';
 import { VmForm } from '../form';
-import { Vm, Vm_Entity } from '../VM';
+import { Vm, VmEntity } from '../VM';
 import { CrTuid } from './crTuid';
-import { Tuid } from '../../entities';
+import { Tuid, TuidBase } from '../../entities';
 
 export type TypeVmTuidEdit = typeof VmTuidEdit;
 
-export class VmTuidEdit extends Vm_Entity<Tuid> {
+export class VmTuidEdit extends VmEntity<TuidBase> {
     private vmForm: VmForm;
     private id: number;
     protected coordinator: CrTuid;
 
-    protected async showEntryPage(param?:any):Promise<void> {
-        this.vmForm = this.coordinator.createVmFieldsForm();
-        this.vmForm.onSubmit = this.onSubmit;
+    async showEntry(param?:any):Promise<void> {
+        this.vmForm = this.createForm(this.onSubmit, param);
         if (param !== undefined) {
             this.id = param.id;
-            this.vmForm.values = param;
         }
         this.open(this.editView);
     }
@@ -50,7 +48,7 @@ export class VmTuidEdit extends Vm_Entity<Tuid> {
 
     protected finish = () => {
         nav.pop(2);
-        this.resolve('edit-end');
+        this.event('edit-end');
     }
 
     protected resetForm() {

@@ -2,17 +2,13 @@ import * as React from 'react';
 import { observable } from 'mobx';
 import { FA } from 'tonva-react-form';
 import { } from 'tonva-tools';
-import { Entity, Tuid, Field } from '../entities';
-import { TypeContent } from './viewModel';
-import { CrUsq } from './crUsq';
-import { VmForm, VmFormOptions, TypeVmTuidControl, PickerConfig } from './form';
-import { VmPage } from './vmPage';
 
 export interface EntityUI {
-    label: string;
-    res?: any;
+    form?: any;
+    //label: string;
+    //res?: any;
 }
-
+/*
 export abstract class VmEntity extends VmPage {
     entity: Entity;
     protected ui: EntityUI;
@@ -86,7 +82,7 @@ export abstract class VmEntity extends VmPage {
     }
     //renderForm = (className) => <div>old VMForm</div>;
 }
-
+*/
 export function vmLinkIcon(cls:string, faName:string) {
     return <FA className={cls} size="lg" name={faName} fixWidth={true} />;
 }

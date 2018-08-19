@@ -12,12 +12,10 @@ export class CrBook extends EntityCoordinator<Book, BookUI> {
     get icon() {return vmLinkIcon('text-muted', 'book')}
 
     protected async internalStart() {
-        await this.run(new this.VmBookMain(this));
+        await this.showVm(this.VmBookMain);
     }
 
-    protected get VmBookMain():typeof VmBookMain {
-        return (this.ui&&this.ui.main) || VmBookMain;
-    }
+    protected get VmBookMain():typeof VmBookMain {return VmBookMain}
     /*
     async submit(values:any) {
         return this.entity.submit(values);
