@@ -1,7 +1,8 @@
 import { EntityCoordinator } from "../VM";
 import { Action } from "../../entities";
-import { vmLinkIcon, EntityUI } from "../vmEntity";
+import { EntityUI } from "../entityUI";
 import { VmActionMain } from "./vmActionMain";
+import { vmLinkIcon } from '../link';
 
 export interface ActionUI extends EntityUI {
     //main: typeof VmActionMain,

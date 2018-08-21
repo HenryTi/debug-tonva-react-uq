@@ -9,11 +9,17 @@ import { VmArr } from './vmArr';
 //import { VmControl, buildControl } from './control/control';
 import { FieldUI } from './formUI';
 import { VmField } from './vmField';
+import { VmSubmit } from './vmSubmit';
 
 export type FieldCall = (form:VmForm, field:string, values:any) => Promise<any>;
+export interface FieldInput {
+    call: FieldCall;
+    content: React.StatelessComponent<any>;
+    nullCaption: string;
+}
 // [arr.field]: FieldCall;
-export interface FieldCalls {
-    [field:string]: FieldCall;
+export interface FieldInputs {
+    [fieldOrArr:string]: FieldInput | {[field:string]: FieldInput};
 }
 
 export interface FormValues {
@@ -26,7 +32,10 @@ export interface FormOptions {
     arrs?: ArrFields[];
     ui: any;
     res: any;
-    calls: FieldCalls;
+    inputs: FieldInputs;
+    submitCaption: string;
+    arrNewCaption: string;
+    arrEditCaption: string;
 }
 
 export class VmForm {
@@ -36,24 +45,42 @@ export class VmForm {
     constructor(options: FormOptions, onSubmit: (values:any)=>Promise<void>) {
         this.fields = options.fields;
         this.arrs = options.arrs;
-        this.calls = options.calls;
+        this.ui = options.ui;
+        this.res = options.res;
+        this.inputs = options.inputs;
+        this.submitCaption = options.submitCaption;
+        this.arrNewCaption = options.arrNewCaption;
+        this.arrEditCaption = options.arrEditCaption;
         this.readOnly = onSubmit === undefined;
         this.formValues = this.buildFormValues(this.fields);
-        this.bands = this.buildBands(options, onSubmit);
+        this.buildBands(options, onSubmit);
         this.onSubmit = onSubmit;
     }
 
     onSubmit: (values:any)=>Promise<void>;
-
+    ui: any;
+    res: any;
     formValues: FormValues;
     readOnly: boolean;
     vmFields: {[name:string]:VmField} = {};
     vmArrs: {[name:string]: VmArr} = {};
-    calls: FieldCalls;
+    vmSubmit: VmSubmit;
+    inputs: FieldInputs;
+    submitCaption: string;
+    arrNewCaption: string;
+    arrEditCaption: string;
 
     private buildBands(options: FormOptions, onSubmit: (values:any)=>Promise<void>) {
-        let bb = new BandsBuilder(this, options, onSubmit);
-        return bb.build();
+        let bandsBuilder = new BandsBuilder(this, options, onSubmit);
+        this.bands = bandsBuilder.build();
+        for (let band of this.bands) {
+            let vmFields = band.getVmFields();
+            if (vmFields !== undefined) for (let f of vmFields) this.vmFields[f.name] = f;
+            let vmArr = band.getVmArr();
+            if (vmArr !== undefined) this.vmArrs[vmArr.name] = vmArr;
+            let vmSubmit = band.getVmSubmit();
+            if (vmSubmit !== undefined) this.vmSubmit = vmSubmit;
+        }
     }
 
     private onFormSubmit = (event:React.FormEvent<any>) => {

@@ -1,7 +1,8 @@
 import { EntityCoordinator } from "../VM";
 import { Map } from "../../entities";
-import { vmLinkIcon, EntityUI } from "../vmEntity";
+import { EntityUI } from "../entityUI";
 import { VmMapMain } from "./vmMain";
+import { vmLinkIcon } from '../link';
 
 export interface MapUI extends EntityUI {
     //main: typeof VmMapMain,

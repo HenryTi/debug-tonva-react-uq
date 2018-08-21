@@ -2,9 +2,10 @@ import * as React from 'react';
 import Button from 'reactstrap/lib/Button';
 import { nav, Page } from 'tonva-tools';
 import { Entity, Field, Tuid } from '../entities';
-import { CrUsq } from './crUsq';
-import { EntityUI } from './vmEntity';
-import { VmForm, FieldCalls } from './form';
+import { CrUsq } from './usq/crUsq';
+import { EntityUI } from './entityUI';
+import { VmForm, FieldInputs, FieldCall, FormOptions } from './form';
+import { JSONContent } from './viewModel';
 
 export abstract class CoordinatorBase {
     disposer = () => {
@@ -85,60 +86,80 @@ export abstract class CrEntity extends Coordinator {
     }
 
     createForm(onSubmit:(values:any)=>Promise<void>, values?:any) {
-        let {fields, arrFields} = this.entity;
-        let ret = new VmForm({
-            fields: fields,
-            arrs: arrFields,
-            ui: this.ui && this.ui.form,
-            res: this.res,
-            calls: this.buildCalls(),
-        }, onSubmit);
-        //ret.init(this.fieldsFormOptions);
+        let ret = new VmForm(this.buildFormOptions(), onSubmit);
         ret.setValues(values);
         return ret;
     }
 
-    protected fieldCalls(): FieldCalls {
-        return;
+    private buildFormOptions():FormOptions {
+        let {fields, arrFields} = this.entity;
+        let submitCaption, arrNewCaption, arrEditCaption;
+        if (this.res !== undefined) {
+            submitCaption = this.res['submit'];
+            arrNewCaption = this.res['arrNew'];
+            arrEditCaption = this.res['arrEdit'];
+        }
+        if (submitCaption === undefined)
+            submitCaption = this.crUsq.res['submit'] || 'Submit';
+        if (arrNewCaption === undefined)
+            arrNewCaption = this.crUsq.res['arrNew'] || 'New';
+        if (arrEditCaption === undefined)
+            arrEditCaption = this.crUsq.res['arrEdit'] || 'Edit';
+        let ret:FormOptions = {
+            fields: fields,
+            arrs: arrFields,
+            ui: this.ui && this.ui.form,
+            res: this.res || {},
+            inputs: this.buildInputs(),
+            submitCaption: submitCaption,
+            arrNewCaption: arrNewCaption,
+            arrEditCaption: arrEditCaption,
+        }
+        return ret;
     }
 
-    private buildCalls():FieldCalls {
+    private buildInputs():FieldInputs {
         let {fields, arrFields} = this.entity;
-        let ret:FieldCalls = {};
-        this.buildFieldsCalls(ret, fields, undefined);
+        let ret:FieldInputs = {};
+        this.buildFieldsInputs(ret, fields, undefined);
         if (arrFields !== undefined) {
             for (let arr of arrFields) {
                 let {name, fields} = arr;
-                this.buildFieldsCalls(ret, fields, name);
+                this.buildFieldsInputs(ret, fields, name);
             }
         }
         return ret;
     }
 
-    private buildFieldsCalls(ret:FieldCalls, fields:Field[], arr:string) {
-        for (let field of fields) this.buildCall(ret, field, arr);
+    private buildFieldsInputs(ret:FieldInputs, fields:Field[], arr:string) {
+        for (let field of fields) {
+            let {name, tuid, _tuid} = field;
+            if (tuid === undefined) continue;
+            let fn = arr === undefined? name : arr+'.'+name;
+            ret[fn] = {
+                call: this.buildCall(field, arr),
+                content: this.buildContent(field, arr),
+                nullCaption: this.crUsq.getTuidNullCaption(_tuid),
+            };
+        }
     }
 
-    private buildCall(ret:FieldCalls, field:Field, arr:string) {
-        let {name, type, tuid, _tuid} = field;
-        if (tuid === undefined) return;
-        let fn = arr === undefined? name : arr+'.'+name;
-        ret[fn] = async (form:VmForm, field:string, values:any):Promise<any> => {
+    protected buildCall(field:Field, arr:string):FieldCall {
+        let {_tuid} = field;
+        return async (form:VmForm, field:string, values:any):Promise<any> => {
             let crTuidSelect = this.crUsq.crTuidSelect(_tuid as Tuid);
-            return await crTuidSelect.call();
+            let ret = await crTuidSelect.call();
+            let id = ret.id;
+            _tuid.useId(id);
+            return id;
         };
     }
 
-    /*
-    protected get fieldsFormOptions():VmFormOptions {
-        let {fields, arrFields} = this.entity;
-        return {
-            fields: fields || [],
-            arrs: arrFields,
-            crUsq: this.crUsq,
-            ui: this.res,
-        }
-    }*/
+    protected buildContent(field:Field, arr:string): React.StatelessComponent<any> {
+        //return this.crUsq.getTuidContent(field._tuid);
+        //return JSONContent;
+        return;
+    }
 
     protected getRes() {
         return this.res;
@@ -176,8 +197,8 @@ export abstract class Vm {
 
     abstract showEntry(param?:any):Promise<void>;
 
-    protected open(view: React.StatelessComponent) {
-        nav.push(React.createElement(view));
+    protected open(view: React.StatelessComponent, param?:any) {
+        nav.push(React.createElement(view, param));
     }
 
     protected close(level?:number) {

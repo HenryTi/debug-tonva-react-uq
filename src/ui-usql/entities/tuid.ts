@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {observable, IObservableValue} from 'mobx';
 import * as _ from 'lodash';
 import { Entity } from './entity';
@@ -6,12 +7,13 @@ import { isNumber } from 'util';
 
 export class Box {
     id: number;
-    readonly obj: any;
+    content: (templet?:React.StatelessComponent)=>JSX.Element;
 }
 
 const maxCacheSize = 1000;
 export class TuidBase extends Entity {
     private idCreater: ()=>void;
+    //private valCreater: ()=>void;
     get typeName(): string { return 'tuid';}
     private queue: number[] = [];               // 每次使用，都排到队头
     private waitingIds: number[] = [];          // 等待loading的
@@ -23,6 +25,11 @@ export class TuidBase extends Entity {
 
     constructor(entities:Entities, name:string, typeId:number) {
         super(entities, name, typeId);
+        this.buildIdCreater();
+        //this.buildValCreater();
+    }
+
+    private buildIdCreater() {
         this.idCreater = function():void {};
         let prototype = this.idCreater.prototype;
         Object.defineProperty(prototype, '_$tuid', {
@@ -30,21 +37,67 @@ export class TuidBase extends Entity {
             writable: false,
             enumerable: false,
         });
+        /*
         Object.defineProperty(prototype, 'obj', {
-            enumerable: true,
+            enumerable: false,
             get: function() {
                 return this._$tuid.valueFromId(this.id);
             }
+        });*/
+        prototype.content = function(templet?:React.StatelessComponent) {
+            let t:TuidBase = this['_$tuid'];
+            let com = templet || t.entities.usq.getTuidContent(t);
+            let val = this._$tuid.valueFromId(this.id);
+            if (typeof val === 'number') val = {id: val};
+            return React.createElement(com, val);
+        }
+        /*
+        Object.defineProperty(prototype, 'content', {
+            enumerable: false,
+            get: function() {
+                let t:TuidBase = this['_$tuid'];
+                let content = t.entities.usq.getTuidContent(t);
+                let val = this._$tuid.valueFromId(this.id);
+                return React.createElement(content, val || {id: this.id});
+            }
         });
-        prototype.toJSON = function() {return {id: this.id, all:this.all}}
+        */
+        prototype.toJSON = function() {return this.id}
     }
-
+    /*
+    private buildValCreater() {
+        this.valCreater = function():void {};
+        let prototype = this.valCreater.prototype;
+        Object.defineProperty(prototype, '_$tuid', {
+            value: this,
+            writable: false,
+            enumerable: false,
+        });
+        Object.defineProperty(prototype, 'content', {
+            enumerable: false,
+            get: function() {
+                let t:TuidBase = this['_$tuid'];
+                let content = this.templet || t.entities.usq.getTuidContent(t);
+                return React.createElement(content, this.obj);
+            }
+        });
+        prototype.toJSON = function() {return {id: this.id, obj:this.obj}}
+    }
+    */
     createID(id:number):Box {
         let ret:Box = new this.idCreater();
         ret.id = id;
+        //ret.obj = val;
         return ret;
     }
-
+    /*
+    createVal(id:number, obj:any) {
+        let ret:Box = new this.valCreater();
+        ret.id = id;
+        ret.obj = obj;
+        return ret;
+    }
+    */
     getIdFromObj(item:any):number {
         return item[this.id];
     }
@@ -71,9 +124,11 @@ export class TuidBase extends Entity {
         this.queue.splice(index, 1);
         this.useId(id);
     }
+    /*
     cacheItem(id:number, item:any) {
-        this.cache.set(String(id), item);
-    }
+        let val = this.createVal(id, item);
+        this.cache.set(String(id), val);
+    }*/
     useId(id:number, defer?:boolean):void {
         if (id === undefined || id === 0) return;
         if (isNumber(id) === false) return;
@@ -83,7 +138,7 @@ export class TuidBase extends Entity {
             return;
         }
         this.entities.cacheTuids(defer===true?70:20);
-        let idVal = this.createID(id);
+        //let idVal = this.createID(id);
         this.cache.set(key, id);
         if (this.waitingIds.findIndex(v => v === id) >= 0) {
             this.moveToHead(id);
@@ -127,6 +182,7 @@ export class TuidBase extends Entity {
         if (id === undefined) return false;
         let index = this.waitingIds.findIndex(v => v === id);
         if (index>=0) this.waitingIds.splice(index, 1);
+        //let cacheVal = this.createID(id, val);
         this.cache.set(String(id), val);
         // 下面的代码应该是cache proxy id, 需要的时候再写吧
         /*

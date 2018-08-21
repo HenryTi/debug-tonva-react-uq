@@ -2,6 +2,7 @@ import * as React from 'react';
 import { VmField } from './vmField';
 import { VmArr } from './vmArr';
 import { VmSubmit } from './vmSubmit';
+import { uid } from 'tonva-react-form';
 
 export abstract class VmBand {
     protected label: string;
@@ -16,13 +17,16 @@ export abstract class VmBand {
             <label className='col-sm-2 col-form-label'>
                 {this.label}
             </label>
-            <div className="col-sm-10">
+            <div className="col-sm-10 d-flex">
                 {this.renderContent()}
             </div>
         </div>;
     }
 
     protected get key() {return this.label}
+    public getVmFields():VmField[] {return;}
+    public getVmArr():VmArr {return;}
+    public getVmSubmit():VmSubmit {return;}
 
     protected renderContent():JSX.Element {
         return <div className="form-control form-control-plaintext bg-white border border-info rounded ">content</div>;
@@ -37,6 +41,7 @@ export class VmFieldBand extends VmBand {
     }
 
     protected get key() {return this.vmField.name}
+    public getVmFields():VmField[] {return [this.vmField];}
 
     protected renderContent():JSX.Element {
         return this.vmField.render();
@@ -55,9 +60,12 @@ export class VmArrBand extends VmBand {
     }
 
     protected get key() {return this.vmArr.name}
+    public getVmArr():VmArr {return this.vmArr;}
 
     render():JSX.Element {
-        return <div>VmArrBand</div>
+        return <div key={this.key} className="form-group row flex-column">
+            {this.vmArr && this.vmArr.render()}
+        </div>;
     }
 }
 
@@ -67,6 +75,9 @@ export class VmFieldsBand extends VmBand {
         super(label);
         this.vmFields = vmFields;
     }
+
+    protected get key() {return this.label || uid()}
+    public getVmFields():VmField[] {return this.vmFields;}
 
     protected renderContent():JSX.Element {
         return <div className="form-control form-control-plaintext bg-white border border-info rounded ">
@@ -82,17 +93,12 @@ export class VmSubmitBand extends VmBand {
         this.vmSubmit = vmSubmit;
     }
 
+    public getVmSubmit():VmSubmit {return this.vmSubmit;}
+
     render():JSX.Element {
-        let {vmForm} = this.vmSubmit;
-        let {onSubmit, isOk} = vmForm;
         return <div key="$submit" className="form-group row">
             <div className="offset-sm-2 col-sm-10">
-                <button type="button" 
-                    onClick={vmForm.onSubmit} 
-                    className="btn btn-primary"
-                    disabled={isOk === false}>
-                    Submit
-                </button>
+                {this.vmSubmit.render()}
             </div>
         </div>;
     }

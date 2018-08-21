@@ -2,29 +2,41 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Api, nav } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
-import { Entities, Tuid, Action, Sheet, Query, Book, Map, Entity, TuidBase } from '../entities';
-import { VmLink, VmEntityLink } from './link';
-import { CrBook, BookUI } from './book';
-import { CrSheet, SheetUI } from './sheet';
-import { ActionUI, CrAction } from './action';
-import { QueryUI, CrQuery } from './query';
-import { CrTuid, TuidUI, CrTuidSelect } from './tuid';
-import { EntityUI } from './vmEntity';
-import { MapUI, CrMap } from './map';
-import { CrApp } from './crApp';
-import { CrEntity } from './VM';
-import { debug } from 'util';
+import { Entities, Tuid, Action, Sheet, Query, Book, Map, Entity, TuidBase, Usq } from '../../entities';
+import { VmLink, VmEntityLink } from '../link';
+import { CrBook, BookUI } from '../book';
+import { CrSheet, SheetUI } from '../sheet';
+import { ActionUI, CrAction } from '../action';
+import { QueryUI, CrQuery } from '../query';
+import { CrTuid, TuidUI, CrTuidSelect } from '../tuid';
+import { EntityUI } from '../entityUI';
+import { MapUI, CrMap } from '../map';
+import { CrApp } from '../crApp';
+import { CrEntity } from '../VM';
+import { JSONContent } from '../viewModel';
+import { VmUsq } from './vmUsq';
 
 export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book' | 'map';
 
-export class CrUsq {
+export interface UsqUI {
+    CrTuid?: typeof CrTuid;
+    CrQuery?: typeof CrQuery;
+    CrMap?: typeof CrMap;
+    tuid?: {[name:string]: TuidUI};
+    map?: {[name:string]: MapUI};
+    query?: {[name:string]: QueryUI};
+    res: any;
+}
+
+export class CrUsq implements Usq {
     vmApp: CrApp;
     private access:string;
     private ui:any;
-    private res: any;
-    private entities:Entities;
+    private CrTuid: typeof CrTuid;
+    private CrQuery: typeof CrQuery;
+    private CrMap: typeof CrMap;
 
-    constructor(vmApp:CrApp, apiId:number, api:string, access:string, ui:any) {
+    constructor(vmApp:CrApp, apiId:number, api:string, access:string, ui:UsqUI) {
         //super();
         this.vmApp = vmApp;
         this.api = api;
@@ -34,6 +46,11 @@ export class CrUsq {
             this.ui = {};
         else if (ui.res !== undefined)
             this.res = ui.res.zh.CN;
+
+        this.CrTuid = ui.CrTuid;
+        this.CrQuery = ui.CrQuery;
+        this.CrMap = ui.CrMap;
+
         this.res = this.res || {};
         this.access = access;
 
@@ -58,11 +75,13 @@ export class CrUsq {
         let baseUrl = hash===undefined || hash===''? 
             'debug/':'tv/';
         let _api = new Api(baseUrl, apiOwner, apiName, true);
-        this.entities = new Entities(vmApp.id, apiId, _api, access);
+        this.entities = new Entities(this, vmApp.id, apiId, _api, access);
     }
 
     api: string;
     id: number;
+    res: any;
+    entities:Entities;
 
     async loadSchema() {
         await this.entities.load();
@@ -93,6 +112,19 @@ export class CrUsq {
             }
         }
         return query;
+    }
+
+    getTuidNullCaption(tuid:TuidBase) {
+        let {tuidNullCaption, entity} = this.res;
+        let {name} = tuid;
+        let type:string;
+        if (entity !== undefined) {
+            let en = entity[name];
+            if (en !== undefined) {
+                type = en.label;
+            }
+        }
+        return (tuidNullCaption || 'Select ') + (type || name);
     }
 
     protected isSysVisible = false;
@@ -172,11 +204,11 @@ export class CrUsq {
     }
     crTuid(tuid:Tuid):CrTuid {
         let {ui, res} = this.getUI<Tuid, TuidUI>(tuid);
-        return new CrTuid(this, tuid, ui, res);
+        return new (ui && ui.CrTuid || this.CrTuid || CrTuid)(this, tuid, ui, res);
     }
     crTuidSelect(tuid:Tuid):CrTuidSelect {
         let {ui, res} = this.getUI<TuidBase, TuidUI>(tuid);
-        return new CrTuidSelect(this, tuid, ui, res);
+        return new (ui && ui.CrTuidSelect || CrTuidSelect)(this, tuid, ui, res);
     }
     /*
     newVmTuidView(tuid:Tuid):VmTuidView {
@@ -212,7 +244,7 @@ export class CrUsq {
 
     crQuery(query:Query):CrQuery {
         let {ui, res} = this.getUI<Query, QueryUI>(query);
-        return new CrQuery(this, query, ui, res);
+        return new (ui && ui.CrQuery || this.CrQuery || CrQuery)(this, query, ui, res);
     }
     get vmQueryLinks() {
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
@@ -245,8 +277,20 @@ export class CrUsq {
     }
     get vmMapLinks() { 
         return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
-            return this.vmLink(this.crMap(v))
+            return this.vmLink(this.crMap(v));
         });
+    }
+
+    getTuidContent(tuid:TuidBase): React.StatelessComponent<any> {
+        let {ui} = this.getUI<Tuid, TuidUI>(tuid.owner || tuid as Tuid);
+        return (ui && ui.content) || JSONContent;
+    }
+
+    protected get VmUsq():typeof VmUsq {return VmUsq}
+
+    show() {
+        let vm = new (this.VmUsq)(this);
+        return vm.render();
     }
 
     /*
@@ -312,59 +356,6 @@ export class CrUsq {
         await vm.start(param);
     }
     */
-    render() {
-        if (this.view === undefined) return <div>??? viewModel 必须定义 view ???</div>
-        return React.createElement(this.view);
-    }
-
-    protected view = () => {
-        let linkItem = {
-            render: (vmLink:VmEntityLink, index:number):JSX.Element => vmLink.render(), 
-            onClick: (vmLink:VmLink) => vmLink.onClick() 
-        };
-        let lists = [
-            {
-                header: this.res.tuid || 'TUID',
-                items: this.vmTuidLinks,
-            },
-            {
-                cn: 'my-2',
-                header: this.res.map || 'MAP',
-                items: this.vmMapLinks,
-            },
-            {
-                cn: 'my-2',
-                header: this.res.sheet || 'SHEET',
-                items: this.vmSheetLinks
-            },
-            {
-                cn: 'my-2',
-                header: this.res.action || 'ACTION',
-                items: this.vmActionLinks
-            },
-            {
-                cn: 'my-2',
-                header: this.res.query || 'QUERY',
-                items: this.vmQueryLinks
-            },
-            {
-                cn: 'mt-2 mb-4',
-                header: this.res.book || 'BOOK',
-                items: this.vmBookLinks
-            }
-        ];
-        return <>
-            <div className="px-3 py-1 small">{this.res.usq || this.api}</div>
-            {lists.map(({cn, header, items},index) => items.length > 0 && <List
-                key={index}
-                className={cn}
-                header={<Muted>{header}</Muted>}
-                items={items}
-                item={linkItem} />
-            )}
-        </>;
-    }
-
     /*
     async tuidSearch(tuid:TuidBase, param?:any):Promise<any> {
         return new Promise<any>((resolve, reject) => {

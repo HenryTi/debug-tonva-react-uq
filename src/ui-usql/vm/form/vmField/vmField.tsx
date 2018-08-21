@@ -2,7 +2,7 @@ import * as React from 'react';
 import { computed, action } from 'mobx';
 import { observer } from 'mobx-react';
 import { ViewModel } from "../../viewModel";
-import { FormValues, FieldCall, FieldCalls } from '../vmForm';
+import { FormValues, FieldCall, FieldInputs } from '../vmForm';
 import { Rule, RuleRequired, RuleInt, RuleNum, RuleMin, RuleMax } from '../rule';
 import { Field } from '../../../entities';
 import { FieldUI, InputUI, NumberUI } from '../formUI';

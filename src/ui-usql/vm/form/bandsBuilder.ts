@@ -1,6 +1,6 @@
 import { VmBand, VmFieldBand, VmArrBand, VmFieldsBand, VmSubmitBand } from "./vmBand";
 import { Field, ArrFields } from "../../entities";
-import { VmForm, FieldCalls, FormOptions, FormValues } from "./vmForm";
+import { VmForm, FieldInputs, FormOptions, FormValues } from "./vmForm";
 import { FormUI, BandUI, FieldBandUI, ArrBandUI, FieldsBandUI, SubmitBandUI, FieldUI } from "./formUI";
 import { VmSubmit } from "./vmSubmit";
 import { VmField, buildVmField } from "./vmField";
@@ -15,7 +15,6 @@ export class BandsBuilder {
     private arrs: ArrFields[];
     private ui: any;
     private res: any;
-    private calls: FieldCalls;
     private formValues: FormValues;
     private readOnly: boolean;
     constructor(vmForm:VmForm, options: FormOptions, onSubmit: (values:any)=>Promise<void>) {
@@ -25,7 +24,6 @@ export class BandsBuilder {
         this.arrs = options.arrs;
         this.ui = options.ui;
         this.res = options.res;
-        this.calls = options.calls;
         this.formValues = vmForm.formValues;
         this.readOnly = vmForm.readOnly;
     }
@@ -41,18 +39,19 @@ export class BandsBuilder {
         return fields[name] || name;
     }
 
+    /*
     private arrResFromName(name:string):any {
         if (this.res === undefined) return;
         let {arrs} = this.res;
         if (arrs === undefined) return;
         return arrs[name];
     }
-
+    */
     private bandsOnFly():VmBand[] {
         let bands:VmBand[] = [];
         this.bandsFromFields(bands, this.fields, this.res);
         if (this.arrs !== undefined) {
-            for (let arr of this.arrs) bands.push(this.bandFromArr(arr, this.arrResFromName[arr.name]));
+            for (let arr of this.arrs) bands.push(this.bandFromArr(arr));
         }
         if (this.onSubmit !== undefined) {
             bands.push(new VmSubmitBand(new VmSubmit(this.vmForm)));
@@ -114,41 +113,6 @@ export class BandsBuilder {
         let ret = buildVmField(field, fieldUI, this.formValues, this.readOnly);
         if (ret !== undefined) return ret;
         return new VmTuidField(field, fieldUI, this.vmForm);
-        /*
-        let control:new (field:Field, ui:FieldUI, formValues:FormValues, readOnly:boolean) => VmControl;
-        let vmField: new (vmForm:VmForm, name:string, control:VmControl)=>VmField;
-        switch (type) {
-            default: debugger; return;
-            case 'tinyint':
-            case 'smallint':
-            case 'int':
-                control = VmIntControl;
-                vmField = VmIntField;
-                break;
-            case 'bigint':
-                let tuid = field.tuid;
-                control = VmIntControl;
-                vmField = tuid !== undefined? VmTuidField: VmIntField;
-                break;
-            case 'dec':
-                control = VmDecControl;
-                vmField = VmDecField;
-                break;
-            case 'char':
-                control = VmStringControl;
-                vmField = VmStringField;
-                break;
-            case 'text':
-                control = VmTextControl;
-                vmField = VmTextField;
-                break;
-            case 'datetime':
-                control = VmDateTimeControl;
-                vmField = VmDateTimeField;
-                break;
-        }
-        return new vmField(this.vmForm, name, new control(field, fieldUI, this.formValues, this.readOnly));
-        */
     }
     private bandFromField(field:Field, res:any):VmBand {
         let {name} = field;
@@ -156,12 +120,12 @@ export class BandsBuilder {
         return new VmFieldBand(this.labelFromName(name, res) || name, vmField);
     }
 
-    private bandFromArr(arr: ArrFields, res:any):VmBand {
+    private bandFromArr(arr: ArrFields):VmBand {
         let {name, fields} = arr;
-        let row = JSONContent;
-        let bands:VmBand[] = [];
-        this.bandsFromFields(bands, fields, res);
-        let vmArr = new VmArr(this.vmForm, name, row, bands);
+        //let row = JSONContent;
+        //let bands:VmBand[] = [];
+        //this.bandsFromFields(bands, fields, res);
+        let vmArr = new VmArr(this.vmForm, arr); // name, res && res.label || name, row, bands);
         return new VmArrBand(name, vmArr);
     }
 

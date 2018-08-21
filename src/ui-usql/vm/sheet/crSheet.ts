@@ -1,6 +1,7 @@
 import { Sheet } from "../../entities";
 import { EntityCoordinator, Vm, CoordinatorBase, VM } from "../VM";
-import { vmLinkIcon, EntityUI } from "../vmEntity";
+import { EntityUI } from "../entityUI";
+import { vmLinkIcon } from '../link';
 import { VmSheetMain } from "./vmMain";
 import { VmSheetNew } from "./vmNew";
 import { VmSheetEdit } from "./vmEdit";

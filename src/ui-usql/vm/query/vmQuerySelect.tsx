@@ -78,8 +78,9 @@ class QueryPagedItems extends PagedItems<any> {
         if (this.query.isPaged === true)
             ret = await this.query.page(this.param, this.pageStart, this.pageSize);
         else {
-            ret = await this.query.query(this.param);
-            ret = ret[this.query.returns[0].name];
+            let data = await this.query.query(this.param);
+            //let data = await this.query.unpackReturns(res);
+            ret = data[this.query.returns[0].name];
         }
         return ret;
     }

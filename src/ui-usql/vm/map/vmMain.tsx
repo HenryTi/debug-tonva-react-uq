@@ -37,7 +37,9 @@ export class VmMapMain extends VmEntity<Map> {
         this.entity = this.coordinator.entity;
         let {keys} = this.entity;
         let q = this.entity.queries.all;
-        let ret = (await q.query({})).ret;
+        let res = await q.query({});
+        //let data = await this.entity.unpackReturns(res);
+        let ret = res.ret;
         let keysLen = keys.length;
         this.keyFields = [];
         let retFields = q.returns[0].fields;

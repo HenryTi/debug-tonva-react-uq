@@ -1,14 +1,17 @@
 import { EntityCoordinator, Vm, VM } from "../VM";
 import { Tuid, TuidBase } from "../../entities";
-import { EntityUI, vmLinkIcon } from "../vmEntity";
+import { EntityUI } from "../entityUI";
 import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidSelect } from './vmTuidSelect';
-import { CrUsq } from "../crUsq";
-import { VmEntityLink } from "../link";
+import { CrUsq } from "../usq/crUsq";
+import { VmEntityLink, vmLinkIcon } from "../link";
 import { VmTuidList } from "./vmTuidList";
 
 export interface TuidUI extends EntityUI {
+    CrTuid?: typeof CrTuid;
+    CrTuidSelect?: typeof CrTuidSelect;
+    content?: React.StatelessComponent<any>;
     /*
     main: typeof VmTuidMain;
     edit: typeof VmTuidEdit;

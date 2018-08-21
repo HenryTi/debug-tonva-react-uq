@@ -272,7 +272,8 @@ export abstract class Entity {
                 let {_tuid} = f;
                 if (_tuid === undefined) return id;
                 _tuid.useId(id, true);
-                //return _tuid.valueFromId(id);
+                //let val = _tuid.valueFromId(id);
+                //return val.obj || val;
                 return _tuid.createID(id);
                 /*
                 if (tuidKey !== undefined) {

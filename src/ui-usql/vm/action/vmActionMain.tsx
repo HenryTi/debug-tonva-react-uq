@@ -17,8 +17,7 @@ export class VmActionMain extends VmEntity<Action> {
     }
 
     async showEntry(param?:any):Promise<void> {
-        this.vmForm = this.createForm(param);
-        //this.vmForm.onSubmit = this.onSubmit;
+        this.vmForm = this.createForm(this.onSubmit, param);
         this.open(this.mainPage);
     }
 

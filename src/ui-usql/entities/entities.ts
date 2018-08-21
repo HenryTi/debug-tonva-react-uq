@@ -11,6 +11,10 @@ import { ApiBase, Api } from 'tonva-tools';
 import { Map } from './map';
 import { CrApp } from '../vm';
 
+export interface Usq {
+    getTuidContent(tuid:TuidBase): React.StatelessComponent<any>;
+}
+
 export interface Field {
     name: string;
     type: 'tinyint' | 'smallint' | 'int' | 'bigint' | 'dec' | 'char' | 'text' 
@@ -41,11 +45,13 @@ export class Entities {
     private maps: {[name:string]: Map} = {};
     private histories: {[name:string]: History} = {};
     private cacheTimer: any;
+    usq:Usq;
     tvApi: UsqlApi;
     appId: number;
     apiId: number;
 
-    constructor(appId:number, apiId:number, api:Api, access?:string) {
+    constructor(usq:Usq, appId:number, apiId:number, api:Api, access?:string) {
+        this.usq = usq;
         this.appId = appId;
         this.apiId = apiId;
         this.loadIds = this.loadIds.bind(this);
@@ -121,8 +127,15 @@ export class Entities {
             let {name, typeId, proxies} = schema;
             let tuid = this.newTuid(name, typeId);
             tuid.sys = true;
-            tuid.setSchema(schema);
+            //tuid.setSchema(schema);
             if (proxies !== undefined) proxyColl[i] = proxies;
+        }
+        for (let i in tuids) {
+            let schema = tuids[i];
+            let {name} = schema;
+            let tuid = this.getTuid(name);
+            //tuid.sys = true;
+            tuid.setSchema(schema);
         }
         for (let i in proxyColl) {
             let proxies:string[] = proxyColl[i];

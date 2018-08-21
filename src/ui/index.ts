@@ -4,7 +4,7 @@ import App from './App';
 import $unitx from './$unitx';
 
 const ui = {
-    App: App,
+    //App: App,
     //"DevApp/devappApi": DevApp_devappApi,
     "$$$/$unitx": $unitx,
 };

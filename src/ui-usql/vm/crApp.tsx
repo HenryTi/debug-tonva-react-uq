@@ -4,7 +4,7 @@ import {Page, loadAppApis, nav, getUrlOrDebug, meInFrame} from 'tonva-tools';
 import { List, LMR } from 'tonva-react-form';
 import {Entities} from '../entities';
 import {ViewModel} from './viewModel';
-import { CrUsq, EntityType } from './crUsq';
+import { CrUsq, EntityType } from './usq';
 import { centerApi } from '../centerApi';
 import { TestCoordinator } from './VM';
 
@@ -221,7 +221,7 @@ const AppPage = observer(({vm}:{vm:CrApp}) => {
     let {caption, crUsqArr, testClick} = vm;
     return <Page header={caption} logout={()=>{}}>
         <button onClick={testClick}>Test coordinator</button>
-        {crUsqArr.map((v,i) => <div key={i}>{v.render()}</div>)}
+        {crUsqArr.map((v,i) => <div key={i}>{v.show()}</div>)}
     </Page>;
 });
 

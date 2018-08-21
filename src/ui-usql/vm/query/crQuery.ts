@@ -1,11 +1,13 @@
 import { EntityCoordinator } from "../VM";
 import { Query } from "../../entities";
-import { vmLinkIcon, EntityUI } from "../vmEntity";
+import { EntityUI } from "../entityUI";
 import { VmQueryMain } from "./vmQueryMain";
 import { VmQuerySelect } from "./vmQuerySelect";
+import { vmLinkIcon } from '../link';
 
 export interface QueryUI extends EntityUI {
-    //main: typeof VmQueryMain;
+    CrQuery?: typeof CrQuery;
+    main: typeof VmQueryMain;
     //search: typeof VmQuerySearch;
 }
 
@@ -18,7 +20,7 @@ export class CrQuery extends CrQueryBase {
         await this.showVm(this.VmQueryMain);
     }
 
-    protected get VmQueryMain():typeof VmQueryMain {return VmQueryMain}
+    protected get VmQueryMain():typeof VmQueryMain {return this.ui && this.ui.main || VmQueryMain}
 }
 
 export class CrQuerySelect extends CrQueryBase {

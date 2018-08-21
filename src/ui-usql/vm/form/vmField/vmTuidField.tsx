@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Field } from '../../../entities';
+import { Field, TuidBase } from '../../../entities';
 import { VmField, RedMark } from "./vmField";
 import { FieldUI } from '../formUI';
-import { FieldCalls, FormValues, FieldCall, VmForm } from '../vmForm';
+import { FieldInputs, FormValues, FieldCall, VmForm, FieldInput } from '../vmForm';
 
 const buttonStyle:React.CSSProperties = {
     textAlign:'left', 
@@ -14,10 +14,14 @@ const buttonStyle:React.CSSProperties = {
 
 export class VmTuidField extends VmField {
     protected vmForm: VmForm;
+    protected input: FieldInput;
+    protected tuid: TuidBase;
 
     constructor(field:Field, fieldUI: FieldUI, vmForm: VmForm) {
         super(field, fieldUI, vmForm.formValues, vmForm.readOnly);
+        this.tuid = field._tuid;
         this.vmForm = vmForm;
+        this.input = vmForm.inputs[field.name] as FieldInput;
     }
 
     onClick = async () => {
@@ -25,24 +29,28 @@ export class VmTuidField extends VmField {
             alert('await super.onClick();');
             return;
         }
-        let calls = this.vmForm.calls;
-        let call = calls[this.field.name];
         let id:number;
-        if (call !== undefined) {
-            id = await call(this.vmForm, this.field.tuid, this.vmForm.values);
+        if (this.input !== undefined) {
+            id = await this.input.call(this.vmForm, this.field.tuid, this.vmForm.values);
         }
         else {
             alert('call undefined');
             id = 0;
         }
-        alert('id = ' + id);
         this.setValue(id);
-        //this.vmContent.setValue(id);
     }
     protected view = observer(() => {
-        let content = this.value === undefined?
-            <>点击选择</> : 
-            'this.vmContent.render()';
+        let content;
+        if (this.value === null)
+            content = <>{this.input.nullCaption}</>;
+        else {
+            //this.tuid.useId(this.value);
+            //let v = this.tuid.valueFromId(this.value);
+            //v.templet = this.input.content;
+            //content = <this.input.content {...v} />;
+            //content = v.content;
+            content = this.tuid.createID(this.value).content();
+        }
         if (this.readOnly === true) {
             return <div 
                 className="form-control form-control-plaintext border border-info rounded bg-light cursor-pointer"

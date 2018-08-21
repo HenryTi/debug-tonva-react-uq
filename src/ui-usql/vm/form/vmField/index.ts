@@ -1,5 +1,5 @@
 import { FieldUI } from '../formUI';
-import { FieldCalls, FormValues } from '..';
+import { FieldInputs, FormValues } from '..';
 import { VmField, VmIntField, VmDecField, VmStringField, VmTextField, VmDateTimeField } from './vmField';
 import { VmTuidField } from './vmTuidField';
 import { Field } from '../../../entities';

@@ -1,14 +1,16 @@
+/*
 import * as React from 'react';
 import { observer } from "mobx-react";
 import { Page } from 'tonva-tools';
-import { CrApp } from "../../ui-usql";
+import { CrUsq, VmUsq } from "../../ui-usql";
 
-export class CrMyApp extends CrApp {
+export class CrMyUsq extends CrUsq {
     protected view = AppPage;
+    protected get VmUsq():typeof VmUsq {return MyVmUsq}
 }
 
 interface Props {
-    vm: CrApp;
+    vm: CrUsq;
     apiName: string;
     type: 'sheet' | 'action' | 'tuid' | 'query' | 'book';
     entityName: string;
@@ -30,6 +32,20 @@ const EntityLink = ({vm, apiName, type, entityName}:Props) => {
     </div>;
 }
 
+class MyVmUsq extends VmUsq {
+    protected get view() {return () => {
+        let {caption, crUsqArr, crUsqCollection} = vm;
+        let api = 'DevApp/devappApi';
+        let sheets = ['order', '单据'];
+        return <Page header={caption}>
+            <div className="p-3">自定义的app界面</div>
+            {sheets.map(v => <EntityLink key={v} vm={vm} apiName={api} type="sheet" entityName={v} />)}
+            <br />
+            {crUsqArr.map((v,i) => <div key={i}>{v.show()}</div>)}
+        </Page>;
+    }}
+}
+
 const AppPage = observer(({vm}:{vm:CrApp}) => {
     let {caption, crUsqArr, crUsqCollection} = vm;
     let api = 'DevApp/devappApi';
@@ -38,6 +54,7 @@ const AppPage = observer(({vm}:{vm:CrApp}) => {
         <div className="p-3">自定义的app界面</div>
         {sheets.map(v => <EntityLink key={v} vm={vm} apiName={api} type="sheet" entityName={v} />)}
         <br />
-        {crUsqArr.map((v,i) => <div key={i}>{v.render()}</div>)}
+        {crUsqArr.map((v,i) => <div key={i}>{v.show()}</div>)}
     </Page>;
 });
+*/

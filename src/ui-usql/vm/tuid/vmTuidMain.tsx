@@ -17,11 +17,11 @@ export class VmTuidMain extends VmEntity<Tuid> {
         this.open(this.view);
     }
 
-    private entityRender(link: VmEntityLink, index: number): JSX.Element {
+    protected entityRender(link: VmEntityLink, index: number): JSX.Element {
         return link.render();
     }
 
-    async entityClick(link: VmEntityLink) {
+    protected async entityClick(link: VmEntityLink) {
         await link.onClick();
     }
 
