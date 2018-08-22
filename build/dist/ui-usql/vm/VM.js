@@ -80,46 +80,89 @@ export class CrEntity extends Coordinator {
         });
     }
     createForm(onSubmit, values) {
-        let { fields, arrFields } = this.entity;
-        let ret = new VmForm({
-            fields: fields,
-            arrs: arrFields,
-            ui: this.ui && this.ui.form,
-            res: this.res,
-            calls: this.fieldCalls(),
-        }, onSubmit);
-        //ret.init(this.fieldsFormOptions);
+        let ret = new VmForm(this.buildFormOptions(), onSubmit);
         ret.setValues(values);
         return ret;
     }
-    fieldCalls() {
+    buildFormOptions() {
+        let { fields, arrFields } = this.entity;
+        let submitCaption, arrNewCaption, arrEditCaption;
+        if (this.res !== undefined) {
+            submitCaption = this.res['submit'];
+            arrNewCaption = this.res['arrNew'];
+            arrEditCaption = this.res['arrEdit'];
+        }
+        if (submitCaption === undefined)
+            submitCaption = this.crUsq.res['submit'] || 'Submit';
+        if (arrNewCaption === undefined)
+            arrNewCaption = this.crUsq.res['arrNew'] || 'New';
+        if (arrEditCaption === undefined)
+            arrEditCaption = this.crUsq.res['arrEdit'] || 'Edit';
+        let ret = {
+            fields: fields,
+            arrs: arrFields,
+            ui: this.ui && this.ui.form,
+            res: this.res || {},
+            inputs: this.buildInputs(),
+            submitCaption: submitCaption,
+            arrNewCaption: arrNewCaption,
+            arrEditCaption: arrEditCaption,
+        };
+        return ret;
+    }
+    buildInputs() {
+        let { fields, arrFields } = this.entity;
+        let ret = {};
+        this.buildFieldsInputs(ret, fields, undefined);
+        if (arrFields !== undefined) {
+            for (let arr of arrFields) {
+                let { name, fields } = arr;
+                this.buildFieldsInputs(ret, fields, name);
+            }
+        }
+        return ret;
+    }
+    buildFieldsInputs(ret, fields, arr) {
+        for (let field of fields) {
+            let { name, tuid, _tuid } = field;
+            if (tuid === undefined)
+                continue;
+            let fn = arr === undefined ? name : arr + '.' + name;
+            ret[fn] = {
+                call: this.buildCall(field, arr),
+                content: this.buildContent(field, arr),
+                nullCaption: this.crUsq.getTuidNullCaption(_tuid),
+            };
+        }
+    }
+    buildCall(field, arr) {
+        let { _tuid } = field;
+        return (form, field, values) => __awaiter(this, void 0, void 0, function* () {
+            let crTuidSelect = this.crUsq.crTuidSelect(_tuid);
+            let ret = yield crTuidSelect.call();
+            let id = ret.id;
+            _tuid.useId(id);
+            return id;
+        });
+    }
+    buildContent(field, arr) {
+        //return this.crUsq.getTuidContent(field._tuid);
+        //return JSONContent;
         return;
     }
-    /*
-    protected get fieldsFormOptions():VmFormOptions {
-        let {fields, arrFields} = this.entity;
-        return {
-            fields: fields || [],
-            arrs: arrFields,
-            crUsq: this.crUsq,
-            ui: this.res,
-        }
-    }*/
     getRes() {
         return this.res;
     }
-}
-export class EntityCoordinator extends CrEntity {
-    constructor(crUsq, entity, ui, res) {
-        super(crUsq, entity, ui, res);
+    crQuerySelect(queryName) {
+        return this.crUsq.crQuerySelect(queryName);
     }
 }
 export class Vm {
     constructor(coordinator) {
         this.coordinator = coordinator;
     }
-    open(view) {
-        nav.push(React.createElement(view));
+    open(view, param) {
+        nav.push(React.createElement(view, param));
     }
     close(level) {
         nav.pop(level);
@@ -148,6 +191,8 @@ export class VmEntity extends Vm {
     constructor(coordinator) {
         super(coordinator);
         this.entity = coordinator.entity;
+        this.ui = coordinator.ui;
+        this.res = coordinator.res;
     }
     get label() { return this.coordinator.label; }
     createForm(onSubmit, values) {

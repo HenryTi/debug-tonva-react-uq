@@ -6,16 +6,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { VmMapMain } from '../../../../ui-usql';
-class VmMapTeamPerson extends VmMapMain {
-    keyQuery(key) {
-        switch (key.name) {
-            case 'post': return {
-                queryName: 'teamPosts',
-                idName: 'post'
-            };
-        }
-    }
+import * as React from 'react';
+import { Muted } from 'tonva-react-form';
+import { left0 } from 'tonva-tools';
+import { dictionary as x } from '../../res';
+import { VmMapMain, CrMap } from '../../../../ui-usql';
+class CrMapTeamPerson extends CrMap {
     searchOnKey(keyField, param) {
         const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
@@ -27,16 +23,46 @@ class VmMapTeamPerson extends VmMapMain {
     }
     searchOnPost(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            let query = yield this.coordinator.crUsq.getQuerySearch('teamPosts');
-            //let val = await this.coordinator.crUsq.querySearch(query, param);
-            //return val['post'].id;
-            return 0;
+            let querySelect = this.crQuerySelect('teamPosts');
+            let val = yield querySelect.call(param);
+            return val['post'].id;
         });
     }
 }
+class VmMapTeamPerson extends VmMapMain {
+}
 const ui = {
-//label: '部门员工对照表',
-//main: VmMapTeamPerson,
+    CrMap: CrMapTeamPerson,
+    //label: '部门员工对照表',
+    //main: VmMapTeamPerson,
+    keys: [
+        {
+            content: ({ name, id }) => React.createElement(React.Fragment, null,
+                React.createElement(Muted, null, x.team),
+                " ",
+                name),
+            none: () => x.noStaff,
+        },
+        {
+            content: ({ name, id }) => React.createElement(React.Fragment, null,
+                React.createElement(Muted, null, x.staff),
+                " ",
+                name,
+                " \u00A0 ",
+                React.createElement(Muted, null,
+                    x.no,
+                    " ",
+                    left0(id, 4))),
+            none: () => x.noPost,
+        },
+        {
+            content: ({ title, id }) => React.createElement(React.Fragment, null,
+                React.createElement(Muted, null, x.post),
+                " ",
+                title),
+            none: undefined,
+        },
+    ]
 };
 export default ui;
 //# sourceMappingURL=index.js.map

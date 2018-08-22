@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { uid } from 'tonva-react-form';
 export class VmBand {
     constructor(label) {
         this.view = () => React.createElement("div", null);
@@ -7,9 +8,12 @@ export class VmBand {
     render() {
         return React.createElement("div", { key: this.key, className: 'form-group row' },
             React.createElement("label", { className: 'col-sm-2 col-form-label' }, this.label),
-            React.createElement("div", { className: "col-sm-10" }, this.renderContent()));
+            React.createElement("div", { className: "col-sm-10 d-flex" }, this.renderContent()));
     }
     get key() { return this.label; }
+    getVmFields() { return; }
+    getVmArr() { return; }
+    getVmSubmit() { return; }
     renderContent() {
         return React.createElement("div", { className: "form-control form-control-plaintext bg-white border border-info rounded " }, "content");
     }
@@ -20,6 +24,7 @@ export class VmFieldBand extends VmBand {
         this.vmField = vmField;
     }
     get key() { return this.vmField.name; }
+    getVmFields() { return [this.vmField]; }
     renderContent() {
         return this.vmField.render();
         /*
@@ -34,8 +39,9 @@ export class VmArrBand extends VmBand {
         this.vmArr = vmArr;
     }
     get key() { return this.vmArr.name; }
+    getVmArr() { return this.vmArr; }
     render() {
-        return React.createElement("div", null, "VmArrBand");
+        return React.createElement("div", { key: this.key, className: "form-group row flex-column" }, this.vmArr && this.vmArr.render());
     }
 }
 export class VmFieldsBand extends VmBand {
@@ -43,6 +49,8 @@ export class VmFieldsBand extends VmBand {
         super(label);
         this.vmFields = vmFields;
     }
+    get key() { return this.label || uid(); }
+    getVmFields() { return this.vmFields; }
     renderContent() {
         return React.createElement("div", { className: "form-control form-control-plaintext bg-white border border-info rounded " }, "fields");
     }
@@ -52,12 +60,10 @@ export class VmSubmitBand extends VmBand {
         super(undefined);
         this.vmSubmit = vmSubmit;
     }
+    getVmSubmit() { return this.vmSubmit; }
     render() {
-        let { vmForm } = this.vmSubmit;
-        let { onSubmit, isOk } = vmForm;
         return React.createElement("div", { key: "$submit", className: "form-group row" },
-            React.createElement("div", { className: "offset-sm-2 col-sm-10" },
-                React.createElement("button", { type: "button", onClick: vmForm.onSubmit, className: "btn btn-primary", disabled: isOk === false }, "Submit")));
+            React.createElement("div", { className: "offset-sm-2 col-sm-10" }, this.vmSubmit.render()));
     }
 }
 //# sourceMappingURL=vmBand.js.map

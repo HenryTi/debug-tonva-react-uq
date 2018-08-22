@@ -1,11 +1,14 @@
 import { isArray } from 'util';
-import App from './App';
+import { dict } from './dict';
 //import DevApp_devappApi from './DevApp-devappApi';
 import $unitx from './$unitx';
 const ui = {
-    App: App,
+    //App: App,
     //"DevApp/devappApi": DevApp_devappApi,
-    "$$$/$unitx": $unitx,
+    dict: dict,
+    usqs: {
+        "$$$/$unitx": $unitx,
+    }
 };
 (function converUIKeyToLowercase(obj) {
     for (let i in obj) {

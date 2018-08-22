@@ -7,20 +7,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import { SearchBox, List } from 'tonva-react-form';
 import { Page, PagedItems } from 'tonva-tools';
 import { VmEntity } from '../VM';
-//export type TypeVmTuidList = typeof VmTuidList;
+import { DefaultRow } from './defaultRow';
 export class VmQuerySelect extends VmEntity {
     constructor() {
         super(...arguments);
         this.onSearch = (key) => __awaiter(this, void 0, void 0, function* () {
             yield this.pagedItems.first(key);
         });
-        this.renderRow = (item, index) => {
-            return React.createElement(Row, { item: item, vm: this });
-        };
+        this.renderRow = (item, index) => React.createElement(this.row, Object.assign({}, item));
         this.clickRow = (item) => {
             this.callOnSelected(item);
         };
@@ -33,40 +30,32 @@ export class VmQuerySelect extends VmEntity {
     }
     showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
+            let { row, selectRow } = this.ui;
+            this.row = selectRow || row || DefaultRow;
             this.entity = this.coordinator.entity;
             this.pagedItems = new QueryPagedItems(this.entity);
-            //if (this.entity.owner !== undefined) this.ownerId = Number(param);
             yield this.onSearch(param);
             this.open(this.view);
         });
     }
     callOnSelected(item) {
+        /*
         if (this.onSelected === undefined) {
             alert('onSelect is undefined');
             return;
         }
         this.onSelected(item);
+        */
+        this.close();
+        this.return(item);
     }
 }
-const Row = observer(({ item, vm }) => {
-    /*
-    let {entity} = vm;
-    let fields = entity.returns[0].fields;
-    let vItem = {} as any;
-    for (let f of fields) {
-        let {name, _tuid} = f;
-        let v = item[name];
-        if (_tuid !== undefined && typeof v !== 'object') {
-            v = _tuid.valueFromId(v);
-        }
-        vItem[name] = v;
-    }*/
-    return React.createElement("div", { className: "px-3 py-2" },
-        "post:",
-        JSON.stringify(item.$post),
-        " - ",
-        JSON.stringify(item));
+/*
+type TypeRow = typeof Row;
+const Row = observer(({item, vm}:{item:any, vm:VmQuerySelect}) => {
+    return <div className="px-3 py-2">post:{JSON.stringify(item.$post)} - {JSON.stringify(item)}</div>;
 });
+*/
 class QueryPagedItems extends PagedItems {
     constructor(query) {
         super();
@@ -78,8 +67,9 @@ class QueryPagedItems extends PagedItems {
             if (this.query.isPaged === true)
                 ret = yield this.query.page(this.param, this.pageStart, this.pageSize);
             else {
-                ret = yield this.query.query(this.param);
-                ret = ret[this.query.returns[0].name];
+                let data = yield this.query.query(this.param);
+                //let data = await this.query.unpackReturns(res);
+                ret = data[this.query.returns[0].name];
             }
             return ret;
         });

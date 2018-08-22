@@ -22,14 +22,32 @@ export class VmForm {
         });
         this.fields = options.fields;
         this.arrs = options.arrs;
+        this.ui = options.ui;
+        this.res = options.res;
+        this.inputs = options.inputs;
+        this.submitCaption = options.submitCaption;
+        this.arrNewCaption = options.arrNewCaption;
+        this.arrEditCaption = options.arrEditCaption;
         this.readOnly = onSubmit === undefined;
         this.formValues = this.buildFormValues(this.fields);
-        this.bands = this.buildBands(options, onSubmit);
+        this.buildBands(options, onSubmit);
         this.onSubmit = onSubmit;
     }
     buildBands(options, onSubmit) {
-        let bb = new BandsBuilder(this, options, onSubmit);
-        return bb.build();
+        let bandsBuilder = new BandsBuilder(this, options, onSubmit);
+        this.bands = bandsBuilder.build();
+        for (let band of this.bands) {
+            let vmFields = band.getVmFields();
+            if (vmFields !== undefined)
+                for (let f of vmFields)
+                    this.vmFields[f.name] = f;
+            let vmArr = band.getVmArr();
+            if (vmArr !== undefined)
+                this.vmArrs[vmArr.name] = vmArr;
+            let vmSubmit = band.getVmSubmit();
+            if (vmSubmit !== undefined)
+                this.vmSubmit = vmSubmit;
+        }
     }
     get values() {
         let values = {};

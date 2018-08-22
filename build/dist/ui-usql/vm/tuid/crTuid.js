@@ -6,31 +6,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { EntityCoordinator } from "../VM";
-import { vmLinkIcon } from "../vmEntity";
+import { CrEntity } from "../VM";
 import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidSelect } from './vmTuidSelect';
+import { vmLinkIcon } from "../link";
 import { VmTuidList } from "./vmTuidList";
-export class CrTuidBase extends EntityCoordinator {
+export class CrTuid extends CrEntity {
     constructor(crUsq, entity, ui, res) {
         super(crUsq, entity, ui, res);
-        let { owner } = this.entity;
-        if (owner === undefined) {
-            let tuid = this.entity;
-            this.proxies = tuid.proxies;
-            if (this.proxies !== undefined) {
-                this.proxyLinks = [];
-                for (let i in this.proxies) {
-                    let link = this.crUsq.vmLinkFromName('tuid', i);
-                    this.proxyLinks.push(link);
-                }
-            }
-        }
     }
     get icon() { return vmLinkIcon('text-info', 'list-alt'); }
 }
-export class CrTuid extends CrTuidBase {
+export class CrTuidMain extends CrTuid {
+    constructor(crUsq, entity, ui, res) {
+        super(crUsq, entity, ui, res);
+        let tuid = this.entity;
+        this.proxies = tuid.proxies;
+        if (this.proxies !== undefined) {
+            this.proxyLinks = [];
+            for (let i in this.proxies) {
+                let link = this.crUsq.vmLinkFromName('tuid', i);
+                this.proxyLinks.push(link);
+            }
+        }
+    }
+    getLable(tuid) {
+        if (tuid === this.entity)
+            return this.label;
+        let { name } = tuid;
+        if (this.res !== undefined) {
+            let { arrs } = this.res;
+            if (arrs !== undefined) {
+                let arr = arrs[name];
+                if (arr !== undefined) {
+                    let label = arr.label;
+                    if (label !== undefined)
+                        return label;
+                }
+            }
+        }
+        return name;
+    }
     get VmTuidMain() { return VmTuidMain; }
     get VmTuidEdit() { return VmTuidEdit; }
     get VmTuidList() { return VmTuidList; }
@@ -65,7 +82,15 @@ export class CrTuid extends CrTuidBase {
         });
     }
 }
-export class CrTuidSelect extends CrTuidBase {
+export class CrTuidMainSelect extends CrTuid {
+    internalStart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.showVm(this.VmTuidSelect);
+        });
+    }
+    get VmTuidSelect() { return VmTuidSelect; }
+}
+export class CrTuidDivSelect extends CrTuid {
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.showVm(this.VmTuidSelect);

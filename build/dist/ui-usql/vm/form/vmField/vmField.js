@@ -10,24 +10,6 @@ import { observer } from 'mobx-react';
 import { ViewModel } from "../../viewModel";
 import { RuleRequired, RuleInt, RuleNum, RuleMin, RuleMax } from '../rule';
 //export type TypeControl = React.StatelessComponent<{vm: ViewModel, className:string}>;
-export function buildVmField(field, fieldUI, formValues, readOnly) {
-    let ctrl;
-    switch (fieldUI.type) {
-        default:
-            ctrl = new VmUnknownField(field, fieldUI, formValues, readOnly);
-            break;
-        case 'string':
-            ctrl = new VmStringField(field, fieldUI, formValues, readOnly);
-            break;
-        case 'dec':
-            ctrl = new VmDecField(field, fieldUI, formValues, readOnly);
-            break;
-        case 'int':
-            ctrl = new VmIntField(field, fieldUI, formValues, readOnly);
-            break;
-    }
-    return ctrl;
-}
 export class VmField extends ViewModel {
     constructor(field, fieldUI, formValues, readOnly) {
         super();
@@ -65,9 +47,8 @@ export class VmField extends ViewModel {
     set error(err) { this.formValues.errors[this.name] = err; }
     parse(str) { return str; }
     get readOnly() {
-        let { readOnly } = this.fieldUI;
-        if (readOnly === true)
-            return true;
+        //let {readOnly} = this.fieldUI;
+        //if (readOnly === true) return true;
         return this.formReadOnly === true;
     }
 }
@@ -190,8 +171,8 @@ export class VmIntField extends VmNumberControl {
 }
 export class VmDecField extends VmNumberControl {
 }
-export class VmTextControl extends VmStringField {
+export class VmTextField extends VmStringField {
 }
-export class VmDateTimeControl extends VmStringField {
+export class VmDateTimeField extends VmStringField {
 }
 //# sourceMappingURL=vmField.js.map

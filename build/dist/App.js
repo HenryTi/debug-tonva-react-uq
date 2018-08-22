@@ -48,8 +48,8 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 class App extends React.Component {
     onLogined() {
         return __awaiter(this, void 0, void 0, function* () {
-            let vmApp = new CrApp(tonvaApp, ui);
-            yield vmApp.start();
+            let crApp = new CrApp(tonvaApp, ui);
+            yield crApp.start();
         });
     }
     render() {

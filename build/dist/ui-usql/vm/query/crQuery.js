@@ -6,11 +6,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { EntityCoordinator } from "../VM";
-import { vmLinkIcon } from "../vmEntity";
+import { CrEntity } from "../VM";
 import { VmQueryMain } from "./vmQueryMain";
 import { VmQuerySelect } from "./vmQuerySelect";
-export class CrQueryBase extends EntityCoordinator {
+import { vmLinkIcon } from '../link';
+export class CrQueryBase extends CrEntity {
     get icon() { return vmLinkIcon('text-warning', 'search'); }
 }
 export class CrQuery extends CrQueryBase {
@@ -19,12 +19,12 @@ export class CrQuery extends CrQueryBase {
             yield this.showVm(this.VmQueryMain);
         });
     }
-    get VmQueryMain() { return VmQueryMain; }
+    get VmQueryMain() { return this.ui && this.ui.main || VmQueryMain; }
 }
 export class CrQuerySelect extends CrQueryBase {
-    internalStart() {
+    internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmQuerySelect);
+            yield this.showVm(this.VmQuerySelect, param);
         });
     }
     get VmQuerySelect() { return VmQuerySelect; }

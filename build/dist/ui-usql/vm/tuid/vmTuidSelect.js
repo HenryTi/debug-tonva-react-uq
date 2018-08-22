@@ -6,12 +6,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { nav } from 'tonva-tools';
 import { VmTuidListBase } from './vmTuidList';
-//export type TypeVmTuidList = typeof VmTuidList;
 export class VmTuidSelect extends VmTuidListBase {
     onSelected(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.return(item.id);
+            nav.pop();
+            this.return(item);
         });
     }
 }

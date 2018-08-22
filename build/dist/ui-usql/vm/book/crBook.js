@@ -6,10 +6,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { EntityCoordinator } from "../VM";
-import { vmLinkIcon } from "../vmEntity";
+import { CrEntity } from "../VM";
 import { VmBookMain } from "./vmBookMain";
-export class CrBook extends EntityCoordinator {
+import { vmLinkIcon } from '../link';
+export class CrBook extends CrEntity {
     get icon() { return vmLinkIcon('text-muted', 'book'); }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {

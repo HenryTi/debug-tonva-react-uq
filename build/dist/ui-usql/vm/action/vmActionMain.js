@@ -30,8 +30,7 @@ export class VmActionMain extends VmEntity {
     }
     showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.vmForm = this.createForm(param);
-            //this.vmForm.onSubmit = this.onSubmit;
+            this.vmForm = this.createForm(this.onSubmit, param);
             this.open(this.mainPage);
         });
     }

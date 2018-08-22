@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { UsqlApi } from './usqlApi';
-import { Tuid } from './tuid';
+import { TuidMain } from './tuid';
 import { Action } from './action';
 import { Sheet } from './sheet';
 import { Query } from './query';
@@ -18,7 +18,7 @@ import { Map } from './map';
 // access: acc1; acc2
 //const entitiesCollection: {[api:string]: Entities} = {};
 export class Entities {
-    constructor(appId, apiId, api, access) {
+    constructor(usq, appId, apiId, api, access) {
         this.tuids = {};
         this.actions = {};
         this.sheets = {};
@@ -33,6 +33,7 @@ export class Entities {
         this.bookArr = [];
         this.mapArr = [];
         this.historyArr = [];
+        this.usq = usq;
         this.appId = appId;
         this.apiId = apiId;
         this.loadIds = this.loadIds.bind(this);
@@ -73,7 +74,7 @@ export class Entities {
             return;
         if (arr === undefined)
             return tuid;
-        return tuid.arrs[arr];
+        return tuid.divs[arr];
     }
     cacheTuids(defer) {
         this.clearCacheTimer();
@@ -99,9 +100,16 @@ export class Entities {
             let { name, typeId, proxies } = schema;
             let tuid = this.newTuid(name, typeId);
             tuid.sys = true;
-            tuid.setSchema(schema);
+            //tuid.setSchema(schema);
             if (proxies !== undefined)
                 proxyColl[i] = proxies;
+        }
+        for (let i in tuids) {
+            let schema = tuids[i];
+            let { name } = schema;
+            let tuid = this.getTuid(name);
+            //tuid.sys = true;
+            tuid.setSchema(schema);
         }
         for (let i in proxyColl) {
             let proxies = proxyColl[i];
@@ -141,7 +149,7 @@ export class Entities {
         let tuid = this.tuids[name];
         if (tuid !== undefined)
             return tuid;
-        tuid = this.tuids[name] = new Tuid(this, name, id);
+        tuid = this.tuids[name] = new TuidMain(this, name, id);
         this.tuidArr.push(tuid);
         return tuid;
     }

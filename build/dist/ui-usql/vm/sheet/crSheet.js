@@ -6,8 +6,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { EntityCoordinator } from "../VM";
-import { vmLinkIcon } from "../vmEntity";
+import { CrEntity } from "../VM";
+import { vmLinkIcon } from '../link';
 import { VmSheetMain } from "./vmMain";
 import { VmSheetNew } from "./vmNew";
 import { VmSheetEdit } from "./vmEdit";
@@ -16,7 +16,7 @@ import { VmSheetSchema } from "./vmSchema";
 import { VmArchives } from "./vmArchives";
 import { VmSheetList } from "./vmList";
 import { VmArchived } from "./vmArchived";
-export class CrSheet extends EntityCoordinator {
+export class CrSheet extends CrEntity {
     get icon() { return vmLinkIcon('text-primary', 'wpforms'); }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {

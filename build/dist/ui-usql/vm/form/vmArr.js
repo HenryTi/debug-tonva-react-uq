@@ -7,78 +7,132 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
+import { observable } from 'mobx';
+import * as _ from 'lodash';
 import { List, FA } from 'tonva-react-form';
-import { nav } from 'tonva-tools';
-import { ViewModel } from '../viewModel';
+import { Page, nav } from 'tonva-tools';
+import { ViewModel, JSONContent } from '../viewModel';
+import { VmForm } from './vmForm';
 export class VmArr extends ViewModel {
-    constructor(ownerForm, name, rowContent, bands) {
+    constructor(ownerForm, arr, onEditRow) {
         super();
-        this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
-            let values = this.vmForm.values;
-            //await this.onRowChanged(values);
-            if (this.afterEditRow !== undefined)
-                yield this.afterEditRow(values);
-        });
-        this.afterEditRow = (values) => __awaiter(this, void 0, void 0, function* () {
+        /*
+        afterEditRow = async (values:any):Promise<void> => {
             nav.pop();
             return;
+        }
+    
+        async showRowPage(rowValues?: any) {
+            this.rowValues = rowValues;
+            if (rowValues === undefined)
+                this.vmForm.reset();
+            else
+                this.vmForm.setValues(rowValues);
+            if (this.onEditRow !== undefined)
+                await this.onEditRow(rowValues);
+            else
+                nav.push(<this.rowPage />);
+        }
+        */
+        this.rowPage = () => {
+            return React.createElement(Page, { header: this.label }, this.vmForm.render('p-3'));
+        };
+        this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
+            let values = this.vmForm.values;
+            yield this.onRowChanged(values);
+            //if (this.afterEditRow !== undefined) await this.afterEditRow(values);
         });
-        /*
-            async start(rowValues?: any) {
-                this.rowValues = rowValues;
-                if (rowValues === undefined)
+        this.onRowChanged = (rowValues) => __awaiter(this, void 0, void 0, function* () {
+            if (this.rowValues === undefined) {
+                this.list.push(rowValues);
+                if (this.onEditRow === undefined)
                     this.vmForm.reset();
                 else
-                    this.vmForm.values = rowValues;
-                if (this.onEditRow !== undefined)
-                    await this.onEditRow(rowValues, this.onRowChanged);
-                else
-                    nav.push(<RowPage vm={this} />);
+                    yield this.onEditRow(undefined, this.onRowChanged);
             }
-        
-        
-            onRowChanged = async (rowValues:any) => {
-                if (this.rowValues === undefined) {
-                    let len = this.list.push(rowValues);
-                    this.rowValues = this.list[len-1];
-                }
-                else {
-                    _.merge(this.rowValues, rowValues);
-                }
-                this.vmForm.values = this.rowValues;
+            else {
+                _.merge(this.rowValues, rowValues);
+                if (this.onEditRow === undefined)
+                    nav.pop();
             }
-        */
+        });
         this.renderItem = (item, index) => {
-            return React.createElement(this.row, Object.assign({}, item));
+            return React.createElement("div", { className: "px-3 py-2" },
+                React.createElement(this.rowContent, Object.assign({}, item)));
         };
-        this.addClick = () => this.start(undefined);
-        this.start = (param) => { };
-        this.view = ({ vm }) => {
+        this.showRow = (rowValues) => __awaiter(this, void 0, void 0, function* () {
+            if (this.onEditRow !== undefined) {
+                yield this.onEditRow(rowValues, this.onRowChanged);
+                return;
+            }
+            this.vmForm.reset();
+            if (rowValues !== undefined)
+                this.vmForm.setValues(rowValues);
+            nav.push(React.createElement(this.rowPage, null));
+        });
+        this.editRow = (rowValues) => __awaiter(this, void 0, void 0, function* () {
+            this.rowValues = rowValues;
+            let { vmSubmit } = this.vmForm;
+            vmSubmit.caption = this.editSubmitCaption;
+            vmSubmit.className = 'btn btn-outline-success';
+            yield this.showRow(rowValues);
+        });
+        this.addRow = () => __awaiter(this, void 0, void 0, function* () {
+            this.rowValues = undefined;
+            let { vmSubmit } = this.vmForm;
+            vmSubmit.caption = this.newSubmitCaption;
+            vmSubmit.className = 'btn btn-outline-success';
+            yield this.showRow(undefined);
+            this.vmForm.reset();
+        });
+        this.view = () => {
             //let {label, list, renderItem, start, addClick, header, footer, readOnly} = vm;
             let button;
             if (this.readOnly === false) {
-                button = React.createElement("button", { onClick: this.addClick, type: "button", className: "btn btn-primary btn-sm" },
+                button = React.createElement("button", { onClick: this.addRow, type: "button", className: "btn btn-outline-info btn-sm" },
                     React.createElement(FA, { name: "plus" }));
             }
-            let header = this.header || React.createElement("div", { className: "" },
+            let header = this.header || React.createElement("div", { className: "px-3 bg-light", style: { paddingTop: '1px', paddingBottom: '1px' } },
                 React.createElement("div", { className: "flex-fill align-self-center" }, this.label),
                 button);
-            return React.createElement(List, { header: header, items: this.list, item: { render: this.renderItem, onClick: this.start } });
+            return React.createElement(List, { header: header, items: this.list, item: { render: this.renderItem, onClick: this.editRow } });
         };
         this.ownerForm = ownerForm;
+        let { name, fields } = arr;
         this.name = name;
-        this.rowContent = rowContent;
-        this.bands = bands;
+        let { ui, res, readOnly, inputs } = ownerForm;
+        let arrsRes = res.arrs;
+        let arrRes = arrsRes !== undefined ? arrsRes[name] : {};
+        let { label, newSubmit, editSubmit } = arrRes;
+        this.newSubmitCaption = newSubmit || ownerForm.arrNewCaption;
+        this.editSubmitCaption = editSubmit || ownerForm.arrEditCaption;
+        this.label = label || name;
+        let arrUI = ui && ui[name];
+        this.rowContent = JSONContent;
+        this.readOnly = readOnly;
+        if (this.onEditRow === undefined) {
+            this.vmForm = new VmForm({
+                fields: fields,
+                arrs: undefined,
+                ui: arrUI,
+                res: arrRes,
+                inputs: inputs[name],
+                submitCaption: 'submit',
+                arrNewCaption: undefined,
+                arrEditCaption: undefined,
+            }, this.onSubmit);
+        }
+        else {
+            this.onEditRow = onEditRow;
+        }
+        this.list = observable.array([], { deep: true });
         /*
         this.start = this.start.bind(this);
         //this.vmApi = vmApi;
         this.arr = arr;
         this.arrBandUI = arrBandUI;
         let {label, row, form} = arrBandUI;
-        this.readOnly = form.readOnly;
-        this.label = label;
         this.row = row || RowContent;
-        this.list = observable.array([], {deep:true});
 
         //let bands = this.arrBandUI.bands.slice();
         let submitBand:SubmitBandUI = {

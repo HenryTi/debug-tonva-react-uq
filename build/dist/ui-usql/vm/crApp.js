@@ -8,10 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Page, loadAppApis, nav, meInFrame } from 'tonva-tools';
+import { setXLang, Page, loadAppApis, nav, meInFrame } from 'tonva-tools';
 import { List, LMR } from 'tonva-react-form';
 import { ViewModel } from './viewModel';
-import { CrUsq } from './crUsq';
+import { CrUsq } from './usq';
 import { centerApi } from '../centerApi';
 import { TestCoordinator } from './VM';
 export const entitiesCollection = {};
@@ -45,6 +45,7 @@ export class CrApp extends ViewModel {
         this.appOwner = parts[0];
         this.appName = parts[1];
         this.ui = ui;
+        setXLang('zh', 'CN');
     }
     loadApis() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -55,7 +56,7 @@ export class CrApp extends ViewModel {
             for (let appApi of apis) {
                 let { id: apiId, apiOwner, apiName, url, urlDebug, ws, access, token } = appApi;
                 let api = apiOwner + '/' + apiName;
-                let ui = this.ui && this.ui[api];
+                let ui = this.ui && this.ui.usqs && this.ui.usqs[api];
                 let crUsq = this.newCrUsq(apiId, api, access, ui);
                 yield crUsq.loadSchema();
                 this.crUsqCollection[api] = crUsq;
@@ -207,7 +208,7 @@ const AppPage = observer(({ vm }) => {
     let { caption, crUsqArr, testClick } = vm;
     return React.createElement(Page, { header: caption, logout: () => { } },
         React.createElement("button", { onClick: testClick }, "Test coordinator"),
-        crUsqArr.map((v, i) => React.createElement("div", { key: i }, v.render())));
+        crUsqArr.map((v, i) => React.createElement("div", { key: i }, v.show())));
 });
 const logout = () => {
     // nothing to do
