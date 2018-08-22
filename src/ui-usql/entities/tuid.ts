@@ -26,6 +26,8 @@ export abstract class Tuid extends Entity {
         this.buildIdCreater();
     }
 
+    abstract get Main();
+
     private buildIdCreater() {
         this.idCreater = function():void {};
         let prototype = this.idCreater.prototype;
@@ -224,6 +226,8 @@ export abstract class Tuid extends Entity {
 }
 
 export class TuidMain extends Tuid {
+    get Main() {return this}
+
     divs: {[name:string]: TuidDiv};
     proxies: {[name:string]: TuidMain};
 
@@ -278,4 +282,5 @@ export class TuidMain extends Tuid {
 }
 
 export class TuidDiv extends Tuid {
+    get Main() {return this.owner}
 }

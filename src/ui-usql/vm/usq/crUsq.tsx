@@ -8,7 +8,7 @@ import { CrBook, BookUI } from '../book';
 import { CrSheet, SheetUI } from '../sheet';
 import { ActionUI, CrAction } from '../action';
 import { QueryUI, CrQuery, CrQuerySelect } from '../query';
-import { CrTuidMain, TuidUI, CrTuidMainSelect } from '../tuid';
+import { CrTuidMain, TuidUI, CrTuidMainSelect, CrTuid } from '../tuid';
 import { MapUI, CrMap } from '../map';
 import { CrApp } from '../crApp';
 import { CrEntity, EntityUI } from '../VM';
@@ -18,7 +18,7 @@ import { VmUsq } from './vmUsq';
 export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book' | 'map';
 
 export interface UsqUI {
-    CrTuid?: typeof CrTuidMain;
+    CrTuidMain?: typeof CrTuidMain;
     CrQuery?: typeof CrQuery;
     CrQuerySelect?: typeof CrQuerySelect;
     CrMap?: typeof CrMap;
@@ -32,7 +32,7 @@ export class CrUsq implements Usq {
     vmApp: CrApp;
     private access:string;
     private ui:any;
-    private CrTuid: typeof CrTuidMain;
+    private CrTuidMain: typeof CrTuidMain;
     private CrQuery: typeof CrQuery;
     private CrQuerySelect: typeof CrQuerySelect;
     private CrMap: typeof CrMap;
@@ -48,7 +48,7 @@ export class CrUsq implements Usq {
         else if (ui.res !== undefined)
             this.res = ui.res.zh.CN;
 
-        this.CrTuid = ui.CrTuid;
+        this.CrTuidMain = ui.CrTuidMain;
         this.CrQuery = ui.CrQuery;
         this.CrQuerySelect = ui.CrQuerySelect;
         this.CrMap = ui.CrMap;
@@ -157,7 +157,7 @@ export class CrUsq implements Usq {
         case 'tuid':
             let tuid = this.entities.tuid(entityName);
             if (tuid === undefined) return;
-            return this.vmLink(this.crTuid(tuid));
+            return this.vmLink(this.crTuidMain(tuid));
         case 'query':
             let query = this.entities.query(entityName);
             if (query === undefined) return;
@@ -202,11 +202,11 @@ export class CrUsq implements Usq {
     }
 
     get vmTuidLinks() {
-        return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.vmLink(this.crTuid(v)));
+        return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.vmLink(this.crTuidMain(v)));
     }
-    crTuid(tuid:TuidMain):CrTuidMain {
+    crTuidMain(tuid:TuidMain):CrTuidMain {
         let {ui, res} = this.getUI<TuidMain, TuidUI>(tuid);
-        return new (ui && ui.CrTuid || this.CrTuid || CrTuidMain)(this, tuid, ui, res);
+        return new (ui && ui.CrTuidMain || this.CrTuidMain || CrTuidMain)(this, tuid, ui, res);
     }
     crTuidSelect(tuid:TuidMain):CrTuidMainSelect {
         let {ui, res} = this.getUI<Tuid, TuidUI>(tuid);

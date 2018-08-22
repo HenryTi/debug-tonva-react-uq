@@ -17,7 +17,7 @@ export class VmUsq {
     constructor(crUsq: CrUsq) {
         this.crUsq = crUsq;
         let {tuidArr, mapArr, sheetArr, actionArr, queryArr, bookArr} = crUsq.entities;
-        this.vmTuidLinks = tuidArr.filter(v => this.isVisible(v)).map(v => new VmEntityLink(this.crUsq.crTuid(v)));
+        this.vmTuidLinks = tuidArr.filter(v => this.isVisible(v)).map(v => new VmEntityLink(this.crUsq.crTuidMain(v)));
         this.vmMapLinks = mapArr.filter(v => this.isVisible(v)).map(v => new VmEntityLink(this.crUsq.crMap(v)));
         this.vmSheetLinks = sheetArr.filter(v => this.isVisible(v)).map(v => new VmEntityLink(this.crUsq.crSheet(v)));
         this.vmActionLinks = actionArr.filter(v => this.isVisible(v)).map(v => new VmEntityLink(this.crUsq.crAction(v)));

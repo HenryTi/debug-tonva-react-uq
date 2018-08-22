@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 export default {
     $: {
@@ -69,13 +70,25 @@ export default {
         teamPerson: {
             label: '部门员工职位',
             fields: {
-            }
+            },
+            confirmDelete: _.template('真的要删除${label}吗'),
         },
         teamOrganization: {
             label: '部门机构对照表',
         },
         teamPosts: {
             label: '部门职位',
+        },
+        person: {
+            label: '员工',
+        },
+        organization: {
+            label: '组织结构',
+            arrs: {
+                post: {
+                    label: '职位',
+                }
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ import res from './res';
 import { MyCrTuid } from './crTuid';
 
 const usqUI:UsqUI = {
-    CrTuid: MyCrTuid,
+    CrTuidMain: MyCrTuid,
     tuid: tuid,
     map: map,
     query: query,

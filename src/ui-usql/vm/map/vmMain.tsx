@@ -1,17 +1,11 @@
 import * as React from 'react';
-import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-//import * as _ from 'lodash';
 import * as className from 'classnames';
-import { Button } from 'reactstrap';
 import { List, LMR, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
-import { TuidMain, Book, Entity, Field, Tuid, Box, Map } from '../../entities';
+import { Map } from '../../entities';
 import { VmEntity } from '../VM';
 import { CrMap, MapItem, MapKey, MapUI } from './crMap';
-import { JSONContent } from '../viewModel';
-//import { CrUsq } from '../crUsq';
-//import { tuidSearch } from '../search';
 
 export class VmMapMain extends VmEntity<Map, MapUI> {
     protected coordinator: CrMap;
@@ -20,51 +14,30 @@ export class VmMapMain extends VmEntity<Map, MapUI> {
     async showEntry(param?:any) {
         this.open(this.view);
     }
-    /*
-    protected keyQuery(key:Field):{queryName:string;idName:string} {
-        return;
-    }
-    protected getSearchId(key:Field): (param:any)=>Promise<number> {
-        let kq = this.keyQuery(key);
-        if (kq !== undefined) {
-            let {queryName,idName} = kq;
-            let query = this.crUsq.getQuery(queryName);
-            return async (param:any):Promise<number> => {
-                await query.loadSchema();
-                if (query === undefined) 
-                    alert('QUERY ' + queryName + ' 没有定义!');
-                else {
-                    let {returns} = query;
-                    if (returns.length > 1) {
-                        alert('QUERY ' + queryName + ' 返回多张表, 无法做QuerySearch')
-                    }
-                }
-                let search = new QuerySearch(this.crUsq, query);
-                let ret = await search.result(param);
-                return ret[idName].id;
-            };
-        }
-        return async (param:any):Promise<number> => {
-            let search = new TuidSearch(this.crUsq, key._tuid);
-            // 怎么把搜索关键字传进来, 还需要考虑
-            let ret = await search.result('');
-            return key._tuid.getIdFromObj(ret);
-        };
-    }
-    */
+
     itemRender = (item:MapItem, index:number) => {
         return <this.ItemRow item={item} />;
     }
 
     private ItemRow = observer(({item}: {item:MapItem}) => {
-        let {tuid, box, children, isLeaf} = item;
-        let keyUI = this.coordinator.keyUIs[item.keyIndex];
+        let {tuid, box, children, isLeaf, keyIndex} = item;
+        let keyUI = this.coordinator.keyUIs[keyIndex];
         let {content:keyContent, none:keyNone} = keyUI;
+        let add = <button className="btn btn-link btn-sm" onClick={()=>this.coordinator.addClick(item)}>
+            <FA name="plus" />
+        </button>;
+        let remove = <button className="btn btn-link btn-sm" onClick={()=>this.coordinator.removeClick(item)}>
+            <FA className="text-info" name="trash" />
+        </button>;
         let right;
         if (isLeaf === false) {
-            right = <button className="btn btn-link btn-sm" onClick={()=>this.coordinator.itemClick(item)}>
-                <FA name="plus" />
-            </button>;
+            if (keyIndex === 0)
+                right = add;
+            else
+                right = <>{remove} &nbsp; {add}</>;
+        }
+        else if (keyIndex > 0) {
+            right = remove;
         }
         let content, border;
         if (isLeaf === true) {

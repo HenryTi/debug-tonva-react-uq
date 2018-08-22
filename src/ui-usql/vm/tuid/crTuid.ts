@@ -8,7 +8,7 @@ import { VmEntityLink, vmLinkIcon } from "../link";
 import { VmTuidList } from "./vmTuidList";
 
 export interface TuidUI extends EntityUI {
-    CrTuid?: typeof CrTuidMain;
+    CrTuidMain?: typeof CrTuidMain;
     CrTuidSelect?: typeof CrTuidMainSelect;
     content?: React.StatelessComponent<any>;
     divs?: {
@@ -39,6 +39,22 @@ export class CrTuidMain extends CrTuid<TuidMain> {
                 this.proxyLinks.push(link);
             }
         }
+    }
+
+    getLable(tuid:Tuid):string {
+        if (tuid === this.entity) return this.label;
+        let {name} = tuid;
+        if (this.res !== undefined) {
+            let {arrs} = this.res;
+            if (arrs !== undefined) {
+                let arr = arrs[name];
+                if (arr !== undefined) {
+                    let label = arr.label;
+                    if (label !== undefined) return label;
+                }
+            }
+        }
+        return name;
     }
 
     proxies: {[name:string]: TuidMain};

@@ -123,7 +123,7 @@ export class CrMap extends CrEntity<Map, MapUI> {
         return _tuid.getIdFromObj(ret);
     }
 
-    itemClick = async(item:MapItem) => {
+    addClick = async(item:MapItem) => {
         let {keyIndex, children} = item;
         let keysLen = this.keyFields.length;
         let keysLast = keysLen-1;
@@ -158,6 +158,15 @@ export class CrMap extends CrEntity<Map, MapUI> {
                 children.push(this.createItem(item, tuid, tuid.createID(id), idx, undefined));
             }
         }
+    }
+
+    removeClick = async(item:MapItem) => {
+        let keyField = this.keyFields[item.keyIndex];
+        let tuid = keyField._tuid;
+        let crTuidMain = this.crUsq.crTuidMain(tuid.Main);
+        let label = crTuidMain.getLable(tuid);
+        if (confirm(this.res.confirmDelete({label:label})) === false) return;
+        alert(`程序还没有实现删除${label}`);
     }
 
     protected get VmMapMain():typeof VmMapMain {return VmMapMain}
