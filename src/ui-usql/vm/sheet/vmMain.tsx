@@ -5,9 +5,9 @@ import { Page } from 'tonva-tools';
 import { List, Muted, LMR } from 'tonva-react-form';
 import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
-import { CrSheet } from './crSheet';
+import { CrSheet, SheetUI } from './crSheet';
 
-export class VmSheetMain extends VmEntity<Sheet> {
+export class VmSheetMain extends VmEntity<Sheet, SheetUI> {
     protected coordinator: CrSheet;
 
     async showEntry() {

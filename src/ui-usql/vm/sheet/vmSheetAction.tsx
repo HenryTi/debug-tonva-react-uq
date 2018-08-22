@@ -4,9 +4,9 @@ import { nav, Page } from 'tonva-tools';
 import { VmView } from './vmView';
 import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
-import { CrSheet } from './crSheet';
+import { CrSheet, SheetUI } from './crSheet';
 
-export class VmSheetAction extends VmEntity<Sheet> {
+export class VmSheetAction extends VmEntity<Sheet, SheetUI> {
     protected coordinator: CrSheet;
     brief: any;
     sheetData: any;

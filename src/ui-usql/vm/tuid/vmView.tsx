@@ -5,11 +5,12 @@ import { Button } from 'reactstrap';
 import { Page } from 'tonva-tools';
 import { VmForm } from '../form';
 import { VmEntity } from '../VM';
-import { Tuid } from '../../entities';
+import { TuidMain } from '../../entities';
+import { TuidUI } from './crTuid';
 
 export type TypeVmTuidView = typeof VmTuidView;
 
-export class VmTuidView extends VmEntity<Tuid> {
+export class VmTuidView extends VmEntity<TuidMain, TuidUI> {
     vmForm: VmForm;
     id: number;
 

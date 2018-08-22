@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Tuid, Book, Entity } from '../../entities';
+import { TuidMain, Book, Entity } from '../../entities';
 import { Page } from 'tonva-tools';
 import { VmEntity } from '../VM';
-import { CrBook } from './crBook';
+import { CrBook, BookUI } from './crBook';
 
-export class VmBookMain extends VmEntity<Book> {
+export class VmBookMain extends VmEntity<Book, BookUI> {
     protected coordinator: CrBook;
 
     async showEntry(param?:any):Promise<void> {

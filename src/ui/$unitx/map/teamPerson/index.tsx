@@ -1,15 +1,10 @@
 import * as React from 'react';
-import { VmMapMain, MapUI, Field }  from '../../../../ui-usql';
+import { Muted } from 'tonva-react-form';
+import { left0 } from 'tonva-tools';
+import { dictionary as x } from '../../res';
+import { VmMapMain, MapUI, Field, CrMap }  from '../../../../ui-usql'; 
 
-class VmMapTeamPerson extends VmMapMain {
-    protected keyQuery(key:Field):{queryName:string;idName:string} {
-        switch (key.name) {
-            case 'post': return {
-                queryName: 'teamPosts',
-                idName: 'post'
-             };
-        }
-    }
+class CrMapTeamPerson extends CrMap {
     async searchOnKey(keyField:Field, param):Promise<number> {
         switch (keyField.name) {
             default: return await super.searchOnKey(keyField, param);
@@ -18,16 +13,33 @@ class VmMapTeamPerson extends VmMapMain {
     }
 
     private async searchOnPost(param: any):Promise<number> {
-        let query = await this.coordinator.crUsq.getQuerySearch('teamPosts');
-        //let val = await this.coordinator.crUsq.querySearch(query, param);
-        //return val['post'].id;
-        return 0;
+        let querySelect = this.crQuerySelect('teamPosts');
+        let val = await querySelect.call(param);
+        return val['post'].id;
     }
 }
 
+class VmMapTeamPerson extends VmMapMain {
+}
+
 const ui:MapUI = {
+    CrMap: CrMapTeamPerson,
     //label: '部门员工对照表',
     //main: VmMapTeamPerson,
+    keys: [
+        {
+            content: ({name, id}:any) => <><Muted>{x.team}</Muted> {name}</>,
+            none: ()=>x.noStaff,
+        },
+        {
+            content: ({name, id}:any) => <><Muted>{x.staff}</Muted> {name} &nbsp; <Muted>{x.no} {left0(id, 4)}</Muted></>,
+            none: ()=>x.noPost,
+        },
+        {
+            content: ({title, id}:any) => <><Muted>{x.post}</Muted> {title}</>,
+            none: undefined,
+        },
+    ]
 }
 
 export default ui;

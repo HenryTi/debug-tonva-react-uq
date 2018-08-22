@@ -5,15 +5,15 @@ import { Button } from 'reactstrap';
 import { Page, nav } from 'tonva-tools';
 import { VmForm } from '../form';
 import { Vm, VmEntity } from '../VM';
-import { CrTuid } from './crTuid';
-import { Tuid, TuidBase } from '../../entities';
+import { CrTuidMain, TuidUI } from './crTuid';
+import { TuidMain, Tuid } from '../../entities';
 
 export type TypeVmTuidEdit = typeof VmTuidEdit;
 
-export class VmTuidEdit extends VmEntity<TuidBase> {
+export class VmTuidEdit extends VmEntity<Tuid, TuidUI> {
     private vmForm: VmForm;
     private id: number;
-    protected coordinator: CrTuid;
+    protected coordinator: CrTuidMain;
 
     async showEntry(param?:any):Promise<void> {
         this.vmForm = this.createForm(this.onSubmit, param);

@@ -3,9 +3,9 @@ import {List, Muted, LMR, EasyDate, FA} from 'tonva-react-form';
 import { Sheet } from '../../entities';
 import { VmForm } from '../form';
 import { VmEntity } from '../VM';
-import { CrSheet } from './crSheet';
+import { CrSheet, SheetUI } from './crSheet';
 
-export class VmView extends VmEntity<Sheet> {
+export class VmView extends VmEntity<Sheet, SheetUI> {
     vmForm: VmForm;
     data: any;
     state: string;

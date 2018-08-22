@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Field, TuidBase } from '../../../entities';
+import { Field, Tuid } from '../../../entities';
 import { VmField, RedMark } from "./vmField";
 import { FieldUI } from '../formUI';
 import { FieldInputs, FormValues, FieldCall, VmForm, FieldInput } from '../vmForm';
@@ -15,7 +15,7 @@ const buttonStyle:React.CSSProperties = {
 export class VmTuidField extends VmField {
     protected vmForm: VmForm;
     protected input: FieldInput;
-    protected tuid: TuidBase;
+    protected tuid: Tuid;
 
     constructor(field:Field, fieldUI: FieldUI, vmForm: VmForm) {
         super(field, fieldUI, vmForm.formValues, vmForm.readOnly);

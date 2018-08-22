@@ -45,8 +45,8 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 
 class App extends React.Component {
     async onLogined() {
-        let vmApp = new CrApp(tonvaApp, ui);
-        await vmApp.start();
+        let crApp = new CrApp(tonvaApp, ui);
+        await crApp.start();
     }
     render() {
         return <NavView onLogined={this.onLogined} />;

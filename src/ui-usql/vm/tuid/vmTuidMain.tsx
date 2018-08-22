@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { SearchBox, List, Muted } from 'tonva-react-form';
 import { Button } from 'reactstrap';
-import { Tuid, Entity } from '../../entities';
+import { TuidMain, Entity } from '../../entities';
 import { Page } from 'tonva-tools';
 import { VmEntityLink } from '../link';
 import { Vm, VmEntity } from '../VM';
-import { CrTuid } from './crTuid';
+import { CrTuidMain, TuidUI } from './crTuid';
 
-export class VmTuidMain extends VmEntity<Tuid> {
-    protected coordinator: CrTuid;
+export class VmTuidMain extends VmEntity<TuidMain, TuidUI> {
+    protected coordinator: CrTuidMain;
     onNew = () => this.event('new'); //this.coordinator.navVm(VmTuidEdit);
     onList = () => this.event('list'); // this.coordinator.navVm(VmTuidList);
     onSearch = async (key:string) => this.event('list', key) //await this.coordinator.navVm(VmTuidList, key);

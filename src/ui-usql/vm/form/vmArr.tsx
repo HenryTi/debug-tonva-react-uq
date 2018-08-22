@@ -44,16 +44,14 @@ export class VmArr extends ViewModel {
         this.ownerForm = ownerForm;
         let {name, fields} = arr;
         this.name = name;
-        //this.rowContent = rowContent;
-        //this.bands = bands;
-        //this.label = label;
         let {ui, res, readOnly, inputs} = ownerForm;
         let arrsRes = res.arrs;
         let arrRes = arrsRes !== undefined? arrsRes[name] : {};
-        this.newSubmitCaption = arrRes.newSubmit || ownerForm.arrNewCaption;
-        this.editSubmitCaption = arrRes.editSubmit || ownerForm.arrEditCaption;
+        let {label, newSubmit, editSubmit} = arrRes;
+        this.newSubmitCaption = newSubmit || ownerForm.arrNewCaption;
+        this.editSubmitCaption = editSubmit || ownerForm.arrEditCaption;
+        this.label = label || name;
         let arrUI = ui && ui[name];
-        this.label = arrRes.label || name;
         this.rowContent = JSONContent;
         this.readOnly = readOnly;
         if (this.onEditRow === undefined) {
@@ -183,11 +181,11 @@ export class VmArr extends ViewModel {
         if (this.readOnly === false) {
             button = <button onClick={this.addRow}
                 type="button" 
-                className="btn btn-primary btn-sm">
+                className="btn btn-outline-info btn-sm">
                 <FA name="plus" />
             </button>;
         }
-        let header = this.header || <div className="">
+        let header = this.header || <div className="px-3 bg-light" style={{paddingTop:'1px', paddingBottom:'1px'}}>
             <div className="flex-fill align-self-center">{this.label}</div>
             {button}
         </div>;

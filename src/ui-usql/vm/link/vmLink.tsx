@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { CrEntity } from '../VM';
+import { CrEntity, EntityUI } from '../VM';
+import { Entity } from '../../entities';
 
 export abstract class VmLink {
     abstract onClick: () => void;
 }
 
 export class VmEntityLink extends VmLink {
-    private crEntity: CrEntity;
+    private crEntity: CrEntity<Entity, EntityUI>;
 
-    constructor(crEntity: CrEntity) {
+    constructor(crEntity: CrEntity<Entity, EntityUI>) {
         super();
         this.crEntity = crEntity;
     }

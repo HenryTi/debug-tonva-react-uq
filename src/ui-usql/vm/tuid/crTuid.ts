@@ -1,6 +1,5 @@
-import { EntityCoordinator, Vm, VM } from "../VM";
-import { Tuid, TuidBase } from "../../entities";
-import { EntityUI } from "../entityUI";
+import { CrEntity, EntityUI, VmEntity, VM } from "../VM";
+import { TuidMain, Tuid, TuidDiv } from "../../entities";
 import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidSelect } from './vmTuidSelect';
@@ -9,44 +8,42 @@ import { VmEntityLink, vmLinkIcon } from "../link";
 import { VmTuidList } from "./vmTuidList";
 
 export interface TuidUI extends EntityUI {
-    CrTuid?: typeof CrTuid;
-    CrTuidSelect?: typeof CrTuidSelect;
+    CrTuid?: typeof CrTuidMain;
+    CrTuidSelect?: typeof CrTuidMainSelect;
     content?: React.StatelessComponent<any>;
-    /*
-    main: typeof VmTuidMain;
-    edit: typeof VmTuidEdit;
-    view: typeof VmTuidView;
-    search: typeof VmTuidSearch;
-    content: typeof RowContent;
-    input: typeof VmTuidControl;
-    pickerConfig: PickerConfig;
-    */
+    divs?: {
+        [div:string]: {
+            CrTuidDivSelect?: typeof CrTuidDivSelect;
+            content?: React.StatelessComponent<any>;
+        }
+    }
 }
 
-export abstract class CrTuidBase extends EntityCoordinator<Tuid, TuidUI> {
-    proxies: {[name:string]: Tuid};
-    proxyLinks: VmEntityLink[];
-
-    constructor(crUsq: CrUsq, entity: Tuid, ui: TuidUI, res) {
+export abstract class CrTuid<T extends Tuid> extends CrEntity<T, TuidUI> {
+    constructor(crUsq: CrUsq, entity: T, ui: TuidUI, res) {
         super(crUsq, entity, ui, res);
-        let {owner} = this.entity;
-        if (owner === undefined) {
-            let tuid = this.entity;
-            this.proxies = tuid.proxies;
-            if (this.proxies !== undefined) {
-                this.proxyLinks = [];
-                for (let i in this.proxies) {
-                    let link = this.crUsq.vmLinkFromName('tuid', i);
-                    this.proxyLinks.push(link);
-                }
-            }
-        }
     }
 
     get icon() {return vmLinkIcon('text-info', 'list-alt')}
 }
 
-export class CrTuid extends CrTuidBase {
+export class CrTuidMain extends CrTuid<TuidMain> {
+    constructor(crUsq: CrUsq, entity: TuidMain, ui: TuidUI, res) {
+        super(crUsq, entity, ui, res);
+        let tuid = this.entity;
+        this.proxies = tuid.proxies;
+        if (this.proxies !== undefined) {
+            this.proxyLinks = [];
+            for (let i in this.proxies) {
+                let link = this.crUsq.vmLinkFromName('tuid', i);
+                this.proxyLinks.push(link);
+            }
+        }
+    }
+
+    proxies: {[name:string]: TuidMain};
+    proxyLinks: VmEntityLink[];
+
     protected get VmTuidMain():typeof VmTuidMain {return VmTuidMain}
     protected get VmTuidEdit():typeof VmTuidEdit {return VmTuidEdit}
     protected get VmTuidList():typeof VmTuidList {return VmTuidList}
@@ -73,7 +70,14 @@ export class CrTuid extends CrTuidBase {
     }
 }
 
-export class CrTuidSelect extends CrTuidBase {
+export class CrTuidMainSelect extends CrTuid<TuidMain> {
+    protected async internalStart():Promise<void> {
+        await this.showVm(this.VmTuidSelect);
+    }
+    protected get VmTuidSelect():typeof VmTuidSelect {return VmTuidSelect}
+}
+
+export class CrTuidDivSelect extends CrTuid<TuidDiv> {
     protected async internalStart():Promise<void> {
         await this.showVm(this.VmTuidSelect);
     }

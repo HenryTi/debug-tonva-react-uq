@@ -1,7 +1,7 @@
 import {observable} from 'mobx';
 import {Entity} from './entity';
 import {UsqlApi} from './usqlApi';
-import {Tuid, TuidBase} from './tuid';
+import {TuidMain, Tuid} from './tuid';
 import {Action} from './action';
 import {Sheet, SheetState, SheetAction} from './sheet';
 import {Query} from './query';
@@ -12,7 +12,7 @@ import { Map } from './map';
 import { CrApp } from '../vm';
 
 export interface Usq {
-    getTuidContent(tuid:TuidBase): React.StatelessComponent<any>;
+    getTuidContent(tuid:Tuid): React.StatelessComponent<any>;
 }
 
 export interface Field {
@@ -24,7 +24,7 @@ export interface Field {
     url?: string;
     null?: boolean;
     size?: number;
-    _tuid: TuidBase;
+    _tuid: Tuid;
 }
 export interface ArrFields {
     name:string;
@@ -37,7 +37,7 @@ export interface ArrFields {
 //const entitiesCollection: {[api:string]: Entities} = {};
 
 export class Entities {
-    private tuids: {[name:string]: Tuid} = {};
+    private tuids: {[name:string]: TuidMain} = {};
     private actions: {[name:string]: Action} = {};
     private sheets: {[name:string]: Sheet} = {};
     private queries: {[name:string]: Query} = {};
@@ -66,7 +66,7 @@ export class Entities {
         this.tvApi = new UsqlApi(api, acc);
     }
 
-    tuid(name:string):Tuid {return this.tuids[name.toLowerCase()]}
+    tuid(name:string):TuidMain {return this.tuids[name.toLowerCase()]}
     action(name:string):Action {return this.actions[name.toLowerCase()]}
     sheet(name:string):Sheet {return this.sheets[name.toLowerCase()]}
     query(name:string):Query {return this.queries[name.toLowerCase()]}
@@ -81,7 +81,7 @@ export class Entities {
         }
     }
 
-    tuidArr: Tuid[] = [];
+    tuidArr: TuidMain[] = [];
     actionArr: Action[] = [];
     sheetArr: Sheet[] = [];
     queryArr: Query[] = [];
@@ -96,11 +96,11 @@ export class Entities {
         this.buildAccess(access);
     }
 
-    getTuid(name:string, arr?:string, tuidUrl?:string): TuidBase {
+    getTuid(name:string, arr?:string, tuidUrl?:string): Tuid {
         let tuid = this.tuids[name];
         if (tuid === undefined) return;
         if (arr === undefined) return tuid;
-        return tuid.arrs[arr];
+        return tuid.divs[arr];
     }
 
     cacheTuids(defer:number) {
@@ -168,10 +168,10 @@ export class Entities {
         this.actionArr.push(action);
         return action;
     }
-    newTuid(name:string, id:number):Tuid {
+    newTuid(name:string, id:number):TuidMain {
         let tuid = this.tuids[name];
         if (tuid !== undefined) return tuid;
-        tuid = this.tuids[name] = new Tuid(this, name, id);
+        tuid = this.tuids[name] = new TuidMain(this, name, id);
         this.tuidArr.push(tuid);
         return tuid;
     }

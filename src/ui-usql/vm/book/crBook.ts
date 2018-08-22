@@ -1,6 +1,5 @@
-import { EntityCoordinator } from "../VM";
+import { CrEntity, EntityUI } from "../VM";
 import { Book } from "../../entities";
-import { EntityUI } from "../entityUI";
 import { VmBookMain } from "./vmBookMain";
 import { vmLinkIcon } from '../link';
 
@@ -8,7 +7,7 @@ export interface BookUI extends EntityUI {
     main: typeof VmBookMain,
 }
 
-export class CrBook extends EntityCoordinator<Book, BookUI> {
+export class CrBook extends CrEntity<Book, BookUI> {
 
     get icon() {return vmLinkIcon('text-muted', 'book')}
 

@@ -5,7 +5,7 @@ import { Vm, VmEntity } from '../VM';
 import { CrAction, ActionUI } from './crAction';
 import { Action } from '../../entities';
 
-export class VmActionMain extends VmEntity<Action> {
+export class VmActionMain extends VmEntity<Action, ActionUI> {
     protected coordinator: CrAction;
     private vmForm: VmForm;
     private returns: any;

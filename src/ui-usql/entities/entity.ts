@@ -1,5 +1,5 @@
 import { Entities, Field, ArrFields } from './entities';
-import { Tuid, TuidBase } from './tuid';
+import { TuidMain, Tuid } from './tuid';
 
 const tab = '\t';
 const ln = '\n';
@@ -77,7 +77,7 @@ export abstract class Entity {
                     get: function() {
                         let ret = this[fn];
                         console.log('prop '+fn+' get ');
-                        return (this[nt] as TuidBase).valueFromId(ret);
+                        return (this[nt] as Tuid).valueFromId(ret);
                     },
                     set: function(v) {
                         this[fn]=v;
@@ -112,14 +112,14 @@ export abstract class Entity {
         return JSON.stringify(obj, undefined, 4);
     }
 
-    getTuid(field:Field):TuidBase {
+    getTuid(field:Field):Tuid {
         let {_tuid, tuid} = field;
         if (tuid === undefined) return;
         if (_tuid !== undefined) return _tuid;
         return field._tuid = this.entities.getTuid(tuid, undefined);
     }
 
-    getTuidFromName(fieldName:string, arrName?:string):TuidBase {
+    getTuidFromName(fieldName:string, arrName?:string):Tuid {
         if (this.schema === undefined) return;
         let {fields, arrs} = this.schema;
         let entities = this.entities;

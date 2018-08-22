@@ -1,11 +1,10 @@
 import * as React from 'react';
 import Button from 'reactstrap/lib/Button';
 import { nav, Page } from 'tonva-tools';
-import { Entity, Field, Tuid } from '../entities';
+import { Entity, Field, TuidMain } from '../entities';
 import { CrUsq } from './usq/crUsq';
-import { EntityUI } from './entityUI';
 import { VmForm, FieldInputs, FieldCall, FormOptions } from './form';
-import { JSONContent } from './viewModel';
+import { CrQuerySelect } from './query';
 
 export abstract class CoordinatorBase {
     disposer = () => {
@@ -66,17 +65,23 @@ export abstract class Coordinator extends CoordinatorBase{
     }
 }
 
-export abstract class CrEntity extends Coordinator {
-    protected ui: EntityUI;
-    protected res: any;
-    constructor(crUsq: CrUsq, entity: Entity, ui: EntityUI, res: any) {
+export interface EntityUI {
+    form?: any;
+    //label: string;
+    //res?: any;
+}
+
+export abstract class CrEntity<T extends Entity, UI extends EntityUI> extends Coordinator {
+    constructor(crUsq: CrUsq, entity: T, ui: UI, res: any) {
         super(crUsq);
         this.entity = entity;
         this.ui = ui;
         this.res = res;
         this.label = (res && res.label) || entity.name;
     }
-    entity: Entity;
+    entity: T;
+    ui: UI;
+    res: any;
     abstract get icon(): any;
     readonly label:string;
 
@@ -147,7 +152,7 @@ export abstract class CrEntity extends Coordinator {
     protected buildCall(field:Field, arr:string):FieldCall {
         let {_tuid} = field;
         return async (form:VmForm, field:string, values:any):Promise<any> => {
-            let crTuidSelect = this.crUsq.crTuidSelect(_tuid as Tuid);
+            let crTuidSelect = this.crUsq.crTuidSelect(_tuid as TuidMain);
             let ret = await crTuidSelect.call();
             let id = ret.id;
             _tuid.useId(id);
@@ -164,13 +169,9 @@ export abstract class CrEntity extends Coordinator {
     protected getRes() {
         return this.res;
     }
-}
 
-export abstract class EntityCoordinator<T extends Entity, UI extends EntityUI> extends CrEntity {
-    protected ui: UI;
-    entity: T;
-    constructor(crUsq: CrUsq, entity: T, ui: UI, res: any) {
-        super(crUsq, entity, ui, res);
+    crQuerySelect(queryName:string):CrQuerySelect {
+        return this.crUsq.crQuerySelect(queryName);
     }
 }
 
@@ -232,12 +233,16 @@ export abstract class Vm {
 
 export type VM = new (coordinator: CoordinatorBase)=>Vm;
 
-export abstract class VmEntity<T extends Entity> extends Vm {
-    protected coordinator: EntityCoordinator<T, EntityUI>;
+export abstract class VmEntity<T extends Entity, UI extends EntityUI> extends Vm {
+    protected coordinator: CrEntity<T, UI>;
     protected entity: T;
-    constructor(coordinator: EntityCoordinator<T, EntityUI>) {
+    protected ui: UI;
+    protected res: any;
+    constructor(coordinator: CrEntity<T, UI>) {
         super(coordinator);
         this.entity = coordinator.entity;
+        this.ui = coordinator.ui;
+        this.res = coordinator.res;
     }
 
     get label():string {return this.coordinator.label}

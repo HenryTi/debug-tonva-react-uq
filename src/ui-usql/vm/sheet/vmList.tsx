@@ -5,9 +5,9 @@ import { List, Muted, FA, LMR } from 'tonva-react-form';
 import { VmSheetAction } from './vmSheetAction';
 import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
-import { CrSheet } from './crSheet';
+import { CrSheet, SheetUI } from './crSheet';
 
-export class VmSheetList extends VmEntity<Sheet> {
+export class VmSheetList extends VmEntity<Sheet, SheetUI> {
     protected coordinator: CrSheet;
     stateName: string;
     stateLabel: string;

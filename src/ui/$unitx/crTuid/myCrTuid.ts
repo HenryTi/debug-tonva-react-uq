@@ -1,7 +1,7 @@
-import { CrTuid, VmTuidMain, Field, FieldCall, VmForm, Tuid } from "../../../ui-usql";
+import { CrTuidMain, VmTuidMain, Field, FieldCall, VmForm, TuidMain } from "../../../ui-usql";
 import { MyVmTuidMain } from "./vmTuidMain";
 
-export class MyCrTuid extends CrTuid {
+export class MyCrTuid extends CrTuidMain {
     protected get VmTuidMain():typeof VmTuidMain {return MyVmTuidMain}
 
     protected buildCall(field:Field, arr:string):FieldCall {
@@ -11,7 +11,7 @@ export class MyCrTuid extends CrTuid {
             switch (name) {
             case 'fromUser':
                 return async (form:VmForm, field:string, values:any):Promise<any> => {
-                    let crTuidSelect = this.crUsq.crTuidSelect(_tuid as Tuid);
+                    let crTuidSelect = this.crUsq.crTuidSelect(_tuid as TuidMain);
                     let ret = await crTuidSelect.call();
                     return ret.id;
                 };

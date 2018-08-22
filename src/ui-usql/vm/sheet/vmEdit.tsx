@@ -3,8 +3,9 @@ import { Page } from 'tonva-tools';
 import { Sheet } from '../../entities';
 import { VmForm } from '../form';
 import { VmEntity } from '../VM';
+import { SheetUI } from './crSheet';
 
-export class VmSheetEdit extends VmEntity<Sheet> {
+export class VmSheetEdit extends VmEntity<Sheet, SheetUI> {
     vmForm: VmForm;
 
     async showEntry(param?:any) {

@@ -1,36 +1,42 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { FA, SearchBox, List } from 'tonva-react-form';
-import { Tuid, Entity, TuidBase, Query } from '../../entities';
+import { TuidMain, Entity, Tuid, Query } from '../../entities';
 import { Page, PagedItems } from 'tonva-tools';
 import { VmEntity } from '../VM';
+import { QueryUI } from './crQuery';
+import { DefaultRow } from './defaultRow';
 
-//export type TypeVmTuidList = typeof VmTuidList;
+export class VmQuerySelect extends VmEntity<Query, QueryUI> {
+    private row: React.StatelessComponent;
 
-export class VmQuerySelect extends VmEntity<Query> {
     pagedItems:QueryPagedItems;
     ownerId: number;
 
     async showEntry(param?:any) {
+        let {row, selectRow} = this.ui;
+        this.row = selectRow || row || DefaultRow;
         this.entity = this.coordinator.entity;
         this.pagedItems = new QueryPagedItems(this.entity);
-        //if (this.entity.owner !== undefined) this.ownerId = Number(param);
         await this.onSearch(param);
         this.open(this.view);
     }
     onSearch = async (key:string) => {
         await this.pagedItems.first(key);
     }
-    renderRow = (item:any, index:number):JSX.Element => {
-        return <Row item={item} vm={this} />;
-    }
-    onSelected: (item:any) => Promise<void>;
+
+    renderRow = (item:any, index:number) => <this.row {...item} />;
+
     private callOnSelected(item:any) {
+        /*
         if (this.onSelected === undefined) {
             alert('onSelect is undefined');
             return;
         }
         this.onSelected(item);
+        */
+       this.close();
+       this.return(item);
     }
     clickRow = (item:any) => {
         this.callOnSelected(item);
@@ -50,23 +56,12 @@ export class VmQuerySelect extends VmEntity<Query> {
     };
 }
 
+/*
 type TypeRow = typeof Row;
 const Row = observer(({item, vm}:{item:any, vm:VmQuerySelect}) => {
-    /*
-    let {entity} = vm;
-    let fields = entity.returns[0].fields;
-    let vItem = {} as any;
-    for (let f of fields) {
-        let {name, _tuid} = f;
-        let v = item[name];
-        if (_tuid !== undefined && typeof v !== 'object') {
-            v = _tuid.valueFromId(v);
-        }
-        vItem[name] = v;
-    }*/
     return <div className="px-3 py-2">post:{JSON.stringify(item.$post)} - {JSON.stringify(item)}</div>;
 });
-
+*/
 class QueryPagedItems extends PagedItems<any> {
     private query: Query;
     constructor(query: Query) {

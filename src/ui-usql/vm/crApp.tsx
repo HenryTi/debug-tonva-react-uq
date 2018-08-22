@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {observer} from 'mobx-react';
-import {Page, loadAppApis, nav, getUrlOrDebug, meInFrame} from 'tonva-tools';
+import { setXLang, Page, loadAppApis, nav, getUrlOrDebug, meInFrame} from 'tonva-tools';
 import { List, LMR } from 'tonva-react-form';
 import {Entities} from '../entities';
 import {ViewModel} from './viewModel';
@@ -27,6 +27,7 @@ export class CrApp extends ViewModel {
         this.appOwner = parts[0];
         this.appName = parts[1];
         this.ui = ui;
+        setXLang('zh', 'CN');
     }
     crUsqCollection: {[api:string]: CrUsq} = {};
     async loadApis(): Promise<void> {
@@ -37,7 +38,7 @@ export class CrApp extends ViewModel {
         for (let appApi of apis) {
             let {id:apiId, apiOwner, apiName, url, urlDebug, ws, access, token} = appApi;
             let api = apiOwner + '/' + apiName;
-            let ui = this.ui && this.ui[api];
+            let ui = this.ui && this.ui.usqs && this.ui.usqs[api];
             let crUsq = this.newCrUsq(apiId, api, access, ui);
             await crUsq.loadSchema();
             this.crUsqCollection[api] = crUsq;

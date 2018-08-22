@@ -2,25 +2,25 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Api, nav } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
-import { Entities, Tuid, Action, Sheet, Query, Book, Map, Entity, TuidBase, Usq } from '../../entities';
+import { Entities, TuidMain, Action, Sheet, Query, Book, Map, Entity, Tuid, Usq } from '../../entities';
 import { VmLink, VmEntityLink } from '../link';
 import { CrBook, BookUI } from '../book';
 import { CrSheet, SheetUI } from '../sheet';
 import { ActionUI, CrAction } from '../action';
-import { QueryUI, CrQuery } from '../query';
-import { CrTuid, TuidUI, CrTuidSelect } from '../tuid';
-import { EntityUI } from '../entityUI';
+import { QueryUI, CrQuery, CrQuerySelect } from '../query';
+import { CrTuidMain, TuidUI, CrTuidMainSelect } from '../tuid';
 import { MapUI, CrMap } from '../map';
 import { CrApp } from '../crApp';
-import { CrEntity } from '../VM';
-import { JSONContent } from '../viewModel';
+import { CrEntity, EntityUI } from '../VM';
+import { JSONContent, PureJSONContent } from '../viewModel';
 import { VmUsq } from './vmUsq';
 
 export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book' | 'map';
 
 export interface UsqUI {
-    CrTuid?: typeof CrTuid;
+    CrTuid?: typeof CrTuidMain;
     CrQuery?: typeof CrQuery;
+    CrQuerySelect?: typeof CrQuerySelect;
     CrMap?: typeof CrMap;
     tuid?: {[name:string]: TuidUI};
     map?: {[name:string]: MapUI};
@@ -32,8 +32,9 @@ export class CrUsq implements Usq {
     vmApp: CrApp;
     private access:string;
     private ui:any;
-    private CrTuid: typeof CrTuid;
+    private CrTuid: typeof CrTuidMain;
     private CrQuery: typeof CrQuery;
+    private CrQuerySelect: typeof CrQuerySelect;
     private CrMap: typeof CrMap;
 
     constructor(vmApp:CrApp, apiId:number, api:string, access:string, ui:UsqUI) {
@@ -49,6 +50,7 @@ export class CrUsq implements Usq {
 
         this.CrTuid = ui.CrTuid;
         this.CrQuery = ui.CrQuery;
+        this.CrQuerySelect = ui.CrQuerySelect;
         this.CrMap = ui.CrMap;
 
         this.res = this.res || {};
@@ -114,7 +116,7 @@ export class CrUsq implements Usq {
         return query;
     }
 
-    getTuidNullCaption(tuid:TuidBase) {
+    getTuidNullCaption(tuid:Tuid) {
         let {tuidNullCaption, entity} = this.res;
         let {name} = tuid;
         let type:string;
@@ -195,20 +197,20 @@ export class CrUsq implements Usq {
     }
     */
 
-    vmLink(crEntity:CrEntity) {
+    vmLink(crEntity:CrEntity<Entity, EntityUI>) {
         return new VmEntityLink(crEntity);
     }
 
     get vmTuidLinks() {
         return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.vmLink(this.crTuid(v)));
     }
-    crTuid(tuid:Tuid):CrTuid {
-        let {ui, res} = this.getUI<Tuid, TuidUI>(tuid);
-        return new (ui && ui.CrTuid || this.CrTuid || CrTuid)(this, tuid, ui, res);
+    crTuid(tuid:TuidMain):CrTuidMain {
+        let {ui, res} = this.getUI<TuidMain, TuidUI>(tuid);
+        return new (ui && ui.CrTuid || this.CrTuid || CrTuidMain)(this, tuid, ui, res);
     }
-    crTuidSelect(tuid:Tuid):CrTuidSelect {
-        let {ui, res} = this.getUI<TuidBase, TuidUI>(tuid);
-        return new (ui && ui.CrTuidSelect || CrTuidSelect)(this, tuid, ui, res);
+    crTuidSelect(tuid:TuidMain):CrTuidMainSelect {
+        let {ui, res} = this.getUI<Tuid, TuidUI>(tuid);
+        return new (ui && ui.CrTuidSelect || CrTuidMainSelect)(this, tuid, ui, res);
     }
     /*
     newVmTuidView(tuid:Tuid):VmTuidView {
@@ -246,6 +248,12 @@ export class CrUsq implements Usq {
         let {ui, res} = this.getUI<Query, QueryUI>(query);
         return new (ui && ui.CrQuery || this.CrQuery || CrQuery)(this, query, ui, res);
     }
+    crQuerySelect(queryName:string):CrQuerySelect {
+        let query = this.entities.query(queryName);
+        if (query === undefined) return;
+        let {ui, res} = this.getUI<Query, QueryUI>(query);
+        return new (ui && ui.CrQuerySelect || this.CrQuerySelect || CrQuerySelect)(this, query, ui, res);
+    }
     get vmQueryLinks() {
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
             return this.vmLink(this.crQuery(v))
@@ -273,7 +281,7 @@ export class CrUsq implements Usq {
     }*/
     crMap(map:Map):CrMap {
         let {ui, res} = this.getUI<Map, MapUI>(map);
-        return new CrMap(this, map, ui, res);
+        return new (ui && ui.CrMap || this.CrMap || CrMap)(this, map, ui, res);
     }
     get vmMapLinks() { 
         return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
@@ -281,9 +289,16 @@ export class CrUsq implements Usq {
         });
     }
 
-    getTuidContent(tuid:TuidBase): React.StatelessComponent<any> {
-        let {ui} = this.getUI<Tuid, TuidUI>(tuid.owner || tuid as Tuid);
-        return (ui && ui.content) || JSONContent;
+    getTuidContent(tuid:Tuid): React.StatelessComponent<any> {
+        let {owner} = tuid;
+        if (owner === undefined) {
+            let {ui} = this.getUI<Tuid, TuidUI>(tuid);
+            return (ui && ui.content) || PureJSONContent;
+        }
+        else {
+            let {ui} = this.getUI<Tuid, TuidUI>(owner);
+            return (ui && ui.divs && ui.divs[tuid.name].content) || PureJSONContent;
+        }
     }
 
     protected get VmUsq():typeof VmUsq {return VmUsq}

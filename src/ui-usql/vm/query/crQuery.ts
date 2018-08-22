@@ -1,17 +1,20 @@
-import { EntityCoordinator } from "../VM";
+import { StatelessComponent } from "react";
+import { CrEntity, EntityUI } from "../VM";
 import { Query } from "../../entities";
-import { EntityUI } from "../entityUI";
 import { VmQueryMain } from "./vmQueryMain";
 import { VmQuerySelect } from "./vmQuerySelect";
 import { vmLinkIcon } from '../link';
 
 export interface QueryUI extends EntityUI {
     CrQuery?: typeof CrQuery;
-    main: typeof VmQueryMain;
-    //search: typeof VmQuerySearch;
+    CrQuerySelect?: typeof CrQuerySelect;
+    main?: typeof VmQueryMain;
+    row?: StatelessComponent;
+    queryRow?: StatelessComponent;
+    selectRow?: StatelessComponent;
 }
 
-export abstract class CrQueryBase extends EntityCoordinator<Query, QueryUI> {
+export abstract class CrQueryBase extends CrEntity<Query, QueryUI> {
     get icon() {return vmLinkIcon('text-warning', 'search')}
 }
 
@@ -24,8 +27,8 @@ export class CrQuery extends CrQueryBase {
 }
 
 export class CrQuerySelect extends CrQueryBase {
-    protected async internalStart() {
-        await this.showVm(this.VmQuerySelect);
+    protected async internalStart(param?:any) {
+        await this.showVm(this.VmQuerySelect, param);
     }
 
     protected get VmQuerySelect():typeof VmQuerySelect {return VmQuerySelect}

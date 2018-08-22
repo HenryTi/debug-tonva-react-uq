@@ -14,9 +14,8 @@ export abstract class ViewModel {
     }
 }
 
-export const JSONContent = observer(
-    (values) => <>content: {JSON.stringify(values)}</>
-);
+export const PureJSONContent = (values) => <>content: {JSON.stringify(values)}</>;
+export const JSONContent = observer(PureJSONContent);
 export const RowContent = 
     (values) => <div className="px-3 py-2">Row: {JSON.stringify(values)}</div>
 ;

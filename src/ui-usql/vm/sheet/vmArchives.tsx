@@ -3,8 +3,9 @@ import { Page } from 'tonva-tools';
 import {List, LMR, FA} from 'tonva-react-form';
 import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
+import { SheetUI } from './crSheet';
 
-export class VmArchives extends VmEntity<Sheet> {
+export class VmArchives extends VmEntity<Sheet, SheetUI> {
     list: any[];
 
     async showEntry() {

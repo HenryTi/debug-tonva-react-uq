@@ -2,17 +2,20 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { TonvaForm, List, SubmitResult, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
-import { Tuid, Query, Entity } from '../../entities';
+import { TuidMain, Query, Entity } from '../../entities';
 import { VmForm } from '../form';
 import { VmEntity } from '../VM';
+import { QueryUI } from './crQuery';
+import { DefaultRow } from './defaultRow';
 
-export class VmQueryMain extends VmEntity<Query> {
+export class VmQueryMain extends VmEntity<Query, QueryUI> {
     protected vmForm: VmForm;
-    //protected result: any;
+    private row: React.StatelessComponent;
 
     async showEntry(param?:any):Promise<void> {
         this.vmForm = this.createForm(this.onSubmit, param);
-        //this.vmForm.onSubmit = this.onSubmit;
+        let {row, queryRow} = this.ui;
+        this.row = queryRow || row || DefaultRow;
         this.open(this.view);
     }
 
@@ -46,6 +49,8 @@ export class VmQueryMain extends VmEntity<Query> {
         return;
     }
 
+    renderRow = (item:any, index:number) => <this.row {...item} />;
+
     protected view = () => <Page header={this.label}>
         {this.vmForm.render('mx-3 my-2')}
         {this.renderExtra()}
@@ -59,7 +64,7 @@ export class VmQueryMain extends VmEntity<Query> {
             <FA name="search" /> 再查询
         </button>;
         return <Page header={this.label} right={rightClose}>
-            <List items={list} item={{}} />
+            <List items={list} item={{render: this.renderRow}} />
         </Page>;
     }
 

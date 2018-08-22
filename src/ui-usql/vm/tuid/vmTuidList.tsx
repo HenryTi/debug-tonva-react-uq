@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { FA, SearchBox, List } from 'tonva-react-form';
-import { Tuid, Entity, TuidBase } from '../../entities';
+import { TuidMain, Entity, Tuid } from '../../entities';
 import { Page, PagedItems } from 'tonva-tools';
 import { VmEntity } from '../VM';
+import { TuidUI } from './crTuid';
 
-export abstract class VmTuidListBase  extends VmEntity<Tuid> {
-    protected entity: Tuid;
+export abstract class VmTuidListBase  extends VmEntity<TuidMain, TuidUI> {
+    protected entity: TuidMain;
     ppp: string;
     pagedItems:TuidPagedItems;
     ownerId: number;
@@ -64,8 +65,8 @@ type TypeRow = typeof Row;
 const Row = (item) => <div className="px-3 py-2">{JSON.stringify(item)}</div>;
 
 class TuidPagedItems extends PagedItems<any> {
-    private tuid: TuidBase;
-    constructor(tuid: TuidBase) {
+    private tuid: Tuid;
+    constructor(tuid: Tuid) {
         super();
         this.tuid = tuid;
     }

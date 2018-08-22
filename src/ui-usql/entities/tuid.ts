@@ -11,22 +11,19 @@ export class Box {
 }
 
 const maxCacheSize = 1000;
-export class TuidBase extends Entity {
+export abstract class Tuid extends Entity {
     private idCreater: ()=>void;
-    //private valCreater: ()=>void;
     get typeName(): string { return 'tuid';}
     private queue: number[] = [];               // 每次使用，都排到队头
     private waitingIds: number[] = [];          // 等待loading的
     private cache = observable.map({}, {deep: false});    // 已经缓冲的
-    //@observable all:any[] = undefined;
-    id: string;
-    owner: Tuid;                    // 用这个值来区分是不是TuidArr
+    idName: string;
+    owner: TuidMain;                    // 用这个值来区分是不是TuidArr
     unique: string[];
 
     constructor(entities:Entities, name:string, typeId:number) {
         super(entities, name, typeId);
         this.buildIdCreater();
-        //this.buildValCreater();
     }
 
     private buildIdCreater() {
@@ -37,75 +34,35 @@ export class TuidBase extends Entity {
             writable: false,
             enumerable: false,
         });
-        /*
-        Object.defineProperty(prototype, 'obj', {
-            enumerable: false,
-            get: function() {
-                return this._$tuid.valueFromId(this.id);
-            }
-        });*/
         prototype.content = function(templet?:React.StatelessComponent) {
-            let t:TuidBase = this['_$tuid'];
+            let t:Tuid = this._$tuid;
             let com = templet || t.entities.usq.getTuidContent(t);
             let val = this._$tuid.valueFromId(this.id);
             if (typeof val === 'number') val = {id: val};
             return React.createElement(com, val);
         }
-        /*
-        Object.defineProperty(prototype, 'content', {
+        Object.defineProperty(prototype, 'obj', {
             enumerable: false,
             get: function() {
-                let t:TuidBase = this['_$tuid'];
-                let content = t.entities.usq.getTuidContent(t);
-                let val = this._$tuid.valueFromId(this.id);
-                return React.createElement(content, val || {id: this.id});
+                return this._$tuid.valueFromId(this.id);
             }
         });
-        */
         prototype.toJSON = function() {return this.id}
     }
-    /*
-    private buildValCreater() {
-        this.valCreater = function():void {};
-        let prototype = this.valCreater.prototype;
-        Object.defineProperty(prototype, '_$tuid', {
-            value: this,
-            writable: false,
-            enumerable: false,
-        });
-        Object.defineProperty(prototype, 'content', {
-            enumerable: false,
-            get: function() {
-                let t:TuidBase = this['_$tuid'];
-                let content = this.templet || t.entities.usq.getTuidContent(t);
-                return React.createElement(content, this.obj);
-            }
-        });
-        prototype.toJSON = function() {return {id: this.id, obj:this.obj}}
-    }
-    */
     createID(id:number):Box {
         let ret:Box = new this.idCreater();
         ret.id = id;
-        //ret.obj = val;
         return ret;
     }
-    /*
-    createVal(id:number, obj:any) {
-        let ret:Box = new this.valCreater();
-        ret.id = id;
-        ret.obj = obj;
-        return ret;
-    }
-    */
+
     getIdFromObj(item:any):number {
-        return item[this.id];
+        return item[this.idName];
     }
 
     setSchema(schema:any) {
         super.setSchema(schema);
         let {id, unique} = schema;
-        this.id = id;
+        this.idName = id;
         this.unique = unique;
     }
 
@@ -124,11 +81,6 @@ export class TuidBase extends Entity {
         this.queue.splice(index, 1);
         this.useId(id);
     }
-    /*
-    cacheItem(id:number, item:any) {
-        let val = this.createVal(id, item);
-        this.cache.set(String(id), val);
-    }*/
     useId(id:number, defer?:boolean):void {
         if (id === undefined || id === 0) return;
         if (isNumber(id) === false) return;
@@ -220,10 +172,6 @@ export class TuidBase extends Entity {
         if (id === undefined || id === 0) return;
         return await this.tvApi.tuidGet(this.name, id);
     }
-    /*
-    async loadAll():Promise<any[]> {
-        return this.all = await this.tvApi.tuidGetAll(this.name);
-    }*/
     async save(id:number, props:any) {
         let params = _.clone(props);
         params["$id"] = id;
@@ -275,21 +223,9 @@ export class TuidBase extends Entity {
     //}
 }
 
-/*
-export interface Slave {
-    tuid: Tuid,
-    book: Book;
-    page: Query;
-    pageSlave: Query;
-    all: Query;
-    add: Action;
-    del: Action;
-}
-*/
-
-export class Tuid extends TuidBase {
-    arrs: {[name:string]: TuidArr};
-    proxies: {[name:string]: Tuid};
+export class TuidMain extends Tuid {
+    divs: {[name:string]: TuidDiv};
+    proxies: {[name:string]: TuidMain};
 
     public setSchema(schema:any) {
         super.setSchema(schema);
@@ -302,21 +238,22 @@ export class Tuid extends TuidBase {
         //}
         let {arrs} = schema;
         if (arrs !== undefined) {
-            this.arrs = {};
+            this.divs = {};
             for (let arr of arrs) {
                 let {name} = arr;
-                let tuidArr = new TuidArr(this.entities, name, this.typeId, this);
-                this.arrs[name] = tuidArr;
-                tuidArr.setSchema(arr);
+                let tuidDiv = new TuidDiv(this.entities, name, this.typeId);
+                tuidDiv.owner = this;
+                this.divs[name] = tuidDiv;
+                tuidDiv.setSchema(arr);
             }
         }
     }
 
     async cacheIds():Promise<void> {
         await super.cacheIds();
-        if (this.arrs === undefined) return;
-        for (let i in this.arrs) {
-            await this.arrs[i].cacheIds();
+        if (this.divs === undefined) return;
+        for (let i in this.divs) {
+            await this.divs[i].cacheIds();
         }
     }
 
@@ -340,9 +277,5 @@ export class Tuid extends TuidBase {
     }
 }
 
-export class TuidArr extends TuidBase {
-    constructor(entities:Entities, name:string, typeId:number, owner:Tuid) {
-        super(entities, name, typeId);
-        this.owner = owner;
-    }
+export class TuidDiv extends Tuid {
 }

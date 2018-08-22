@@ -74,7 +74,7 @@ export class VmUsq {
             {lists.map(({cn, header, items},index) => items.length > 0 && <List
                 key={index}
                 className={cn}
-                header={<Muted>{header}</Muted>}
+                header={<div className="px-3 py-1 bg-light"><Muted>{header}</Muted></div>}
                 items={items}
                 item={linkItem} />
             )}
