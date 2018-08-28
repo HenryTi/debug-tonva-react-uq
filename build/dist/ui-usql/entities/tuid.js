@@ -11,7 +11,7 @@ import { observable } from 'mobx';
 import * as _ from 'lodash';
 import { Entity } from './entity';
 import { isNumber } from 'util';
-export class Box {
+export class IdBox {
 }
 const maxCacheSize = 1000;
 export class Tuid extends Entity {

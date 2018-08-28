@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { CrEntity, EntityUI } from "../VM";
-import { Map, Tuid, Box, Field, TuidMain } from "../../entities";
+import { Map, Tuid, IdBox, Field, TuidMain } from "../../entities";
 import { VmMapMain } from "./vmMain";
 import { vmLinkIcon } from '../link';
 import { observable } from "mobx";
@@ -20,12 +20,12 @@ export interface MapUI extends EntityUI {
 export class MapItem {
     parent: MapItem;
     tuid: Tuid;
-    box: Box;
+    box: IdBox;
     isLeaf: boolean;
     keyIndex:number;
     @observable children: MapItem[] = [];
     values: any;
-    constructor(parent:MapItem, tuid:Tuid, box:Box, keyIndex:number) {
+    constructor(parent:MapItem, tuid:Tuid, box:IdBox, keyIndex:number) {
         this.parent = parent;
         this.tuid = tuid;
         this.box = box;
@@ -73,7 +73,7 @@ export class CrMap extends CrEntity<Map, MapUI> {
         await this.showVm(this.VmMapMain);
     }
 
-    private createItem(parent:MapItem, tuid:Tuid, box:Box, keyIndex:number, values?:any) {
+    private createItem(parent:MapItem, tuid:Tuid, box:IdBox, keyIndex:number, values?:any) {
         let item = new MapItem(parent, tuid, box, keyIndex);
         if (keyIndex === this.keyFields.length - 1) {
             item.isLeaf = true;
@@ -90,7 +90,7 @@ export class CrMap extends CrEntity<Map, MapUI> {
             let key = this.keyFields[i];
             let {name} = key;
             let tuid = key._tuid;
-            let val:Box = row[name];
+            let val:IdBox = row[name];
             if (val === undefined) break;
             let {id} = val;
             if (i === 0) {

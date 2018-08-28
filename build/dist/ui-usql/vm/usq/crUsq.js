@@ -271,7 +271,7 @@ export class CrUsq {
         }
     }
     get VmUsq() { return VmUsq; }
-    show() {
+    render() {
         let vm = new (this.VmUsq)(this);
         return vm.render();
     }

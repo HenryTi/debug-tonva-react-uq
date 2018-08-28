@@ -1,25 +1,31 @@
 import * as React from 'react';
-import {observer} from 'mobx-react';
+import _ from 'lodash';
 import { setXLang, Page, loadAppApis, nav, getUrlOrDebug, meInFrame} from 'tonva-tools';
-import { List, LMR } from 'tonva-react-form';
+import { List, LMR, FA } from 'tonva-react-form';
 import {Entities} from '../entities';
-import {ViewModel} from './viewModel';
+import res from '../res';
 import { CrUsq, EntityType } from './usq';
 import { centerApi } from '../centerApi';
-import { TestCoordinator } from './VM';
+import { Coordinator } from './VM';
+import { OpCoordinator  } from '../op';
 
 export const entitiesCollection: {[api:string]: Entities} = {};
 
-export class CrApp extends ViewModel {
+export class CrApp extends Coordinator {
     private appOwner:string;
     private appName:string;
     private ui:any;
-    private isProduction:boolean;
+    private res:any;
+    private isProduction:boolean;    
     id: number;
     appUnits:any[];
 
     constructor(tonvaApp:string, ui:any) {
         super();
+        this.init(tonvaApp, ui);
+    }
+    private init(tonvaApp:string, ui:any) {
+        setXLang('zh', 'CN');
         let parts = tonvaApp.split('/');
         if (parts.length !== 2) {
             throw 'tonvaApp name must be / separated, owner/app';
@@ -27,8 +33,11 @@ export class CrApp extends ViewModel {
         this.appOwner = parts[0];
         this.appName = parts[1];
         this.ui = ui;
-        setXLang('zh', 'CN');
+        this.res = _.clone(res);
+        if (ui !== undefined) _.merge(this.res, ui.res);
+        this.caption = this.res.caption || 'Tonva';
     }
+
     crUsqCollection: {[api:string]: CrUsq} = {};
     async loadApis(): Promise<void> {
         let unit = meInFrame.unit;
@@ -50,9 +59,7 @@ export class CrApp extends ViewModel {
         return new CrUsq(this, apiId, api, access, ui);
     }
 
-    caption = 'View Model 版的 Usql App';
-
-    protected view = AppPage;
+    protected caption: string; // = 'View Model 版的 Usql App';
 
     get crUsqArr():CrUsq[] {
         let ret:CrUsq[] = [];
@@ -66,7 +73,7 @@ export class CrApp extends ViewModel {
         return this.crUsqCollection[apiName];
     }
 
-    async start() {
+    async internalStart() {
         try {
             let hash = document.location.hash;
             this.isProduction = hash.startsWith('#tv');
@@ -80,7 +87,7 @@ export class CrApp extends ViewModel {
                     case 0: alert('当前登录的用户不支持当前的APP'); return;
                     case 1:
                         unit = this.appUnits[0].id;
-                        if (unit === undefined || unit <= 0) {
+                        if (unit === undefined || unit < 0) {
                             alert('当前unit不支持app操作，请重新登录');
                             await nav.logout();
                             return;
@@ -89,7 +96,7 @@ export class CrApp extends ViewModel {
                         break;
                     default: 
                         nav.clear();
-                        nav.push(<SelectUnit vm={this} />)
+                        nav.push(<this.selectUnitPage />)
                         return;
                 }
             }
@@ -134,11 +141,11 @@ export class CrApp extends ViewModel {
             }
         }
         this.clearPrevPages();
-        nav.push(this.render());
+        nav.push(<this.appPage />);
     }
 
-    testClick = async () => {
-        let coord = new TestCoordinator;
+    opClick = async () => {
+        let coord = new OpCoordinator;
         let ret = await coord.call();
         alert('call returned in vmApp: ' + ret);
     }
@@ -167,71 +174,21 @@ export class CrApp extends ViewModel {
     }
     onRowClick = async (item: any) => {
         meInFrame.unit = item.id; // 25;
-        //await store.loadUnit();
-        //nav.clear();
-        //nav.replace(this.render());
         await this.start();
     }
 
-    async main():Promise<void> {
-        const a = 1;
-        this.clearPrevPages();
-        nav.push(this.render());
+    protected appPage = () => {
+        return <Page header={this.caption} logout={()=>{}}>
+            <LMR className="px-3 py-2 my-2 bg-light"
+                left={<FA name='cog' fixWidth={true} size="lg" className="text-info mr-2 pt-1" />}
+                onClick={this.opClick}>设置操作权限</LMR>
+            {this.crUsqArr.map((v,i) => <div key={i}>{v.render()}</div>)}
+        </Page>;
+    };
+    
+    protected selectUnitPage = () => {
+        return <Page header="选择小号" logout={true}>
+            <List items={this.appUnits} item={{render: this.renderRow, onClick: this.onRowClick}}/>
+        </Page>
     }
-
-    async selectUnit(appUnits:any[]):Promise<number> {
-        return new Promise<any>((resolve, reject) => {
-            const onRowClick = (item: any) => resolve(item.id);
-            const renderRow = (item: any, index: number):JSX.Element => {
-                let {id, nick, name} = item;
-                return <LMR className="p-2" right={'id: ' + id}>
-                    <div>{nick || name}</div>
-                </LMR>;
-            }
-            const SelectUnit = () => <Page header="选择小号" logout={logout}>
-                <List items={appUnits} item={{render: renderRow, onClick: onRowClick}}/>
-            </Page>;
-        });
-    }
-}
-
-interface SheetLinkProps {
-    vm: CrApp;
-    apiName: string;
-    type: EntityType;
-    entityName: string;
-}
-const SheetLink = ({vm, apiName, type, entityName}:SheetLinkProps) => {
-    let crUsq = vm.getCrUsq(apiName);
-    if (crUsq === undefined) {
-        return <div>unkown api: {apiName}</div>;
-    }
-    let vmLink = crUsq.vmLinkFromName(type, entityName);
-    let key = apiName + ':' + entityName;
-    if (vmLink === undefined) {
-        return <div key={key}>unkown {apiName}:{entityName}</div>;
-    }
-    return <div key={key}
-        className="bg-white cursor-pointer border-bottom" 
-        onClick={vmLink.onClick}>
-        {vmLink.render()}
-    </div>;
-}
-
-const AppPage = observer(({vm}:{vm:CrApp}) => {
-    let {caption, crUsqArr, testClick} = vm;
-    return <Page header={caption} logout={()=>{}}>
-        <button onClick={testClick}>Test coordinator</button>
-        {crUsqArr.map((v,i) => <div key={i}>{v.show()}</div>)}
-    </Page>;
-});
-
-const logout = () => {
-    // nothing to do
-}
-const SelectUnit = ({vm}:{vm:CrApp}) => {
-    let {appUnits, renderRow, onRowClick} = vm;
-    return <Page header="选择小号" logout={logout}>
-        <List items={appUnits} item={{render: renderRow, onClick: onRowClick}}/>
-    </Page>
 }

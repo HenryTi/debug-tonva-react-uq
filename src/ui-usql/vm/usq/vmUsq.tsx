@@ -36,7 +36,7 @@ export class VmUsq {
         let {res, api} = this.crUsq;
         let linkItem = {
             render: (vmLink:VmEntityLink, index:number):JSX.Element => vmLink.render(), 
-            onClick: (vmLink:VmLink) => vmLink.onClick() 
+            onClick: undefined, //(vmLink:VmLink) => vmLink.onClick() 
         };
         let lists = [
             {

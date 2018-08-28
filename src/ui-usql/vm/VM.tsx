@@ -6,12 +6,12 @@ import { CrUsq } from './usq/crUsq';
 import { VmForm, FieldInputs, FieldCall, FormOptions } from './form';
 import { CrQuerySelect } from './query';
 
-export abstract class CoordinatorBase {
+export abstract class Coordinator {
     disposer = () => {
         // message listener的清理
     }
 
-    protected async showVm(vm: new (coordinator: CoordinatorBase)=>Vm, param?:any):Promise<void> {
+    protected async showVm(vm: new (coordinator: Coordinator)=>Vm, param?:any):Promise<void> {
         await (new vm(this)).showEntry(param);
     }
 
@@ -57,7 +57,7 @@ export abstract class CoordinatorBase {
     protected abstract internalStart(param?:any):Promise<void>;
 }
 
-export abstract class Coordinator extends CoordinatorBase{
+export abstract class CoordinatorUsq extends Coordinator{
     crUsq: CrUsq;
     constructor(crUsq: CrUsq) {
         super();
@@ -71,7 +71,7 @@ export interface EntityUI {
     //res?: any;
 }
 
-export abstract class CrEntity<T extends Entity, UI extends EntityUI> extends Coordinator {
+export abstract class CrEntity<T extends Entity, UI extends EntityUI> extends CoordinatorUsq {
     constructor(crUsq: CrUsq, entity: T, ui: UI, res: any) {
         super(crUsq);
         this.entity = entity;
@@ -177,9 +177,9 @@ export abstract class CrEntity<T extends Entity, UI extends EntityUI> extends Co
 
 export abstract class Vm {
     //private _resolve_$_: (value?:any) => void;
-    protected coordinator: CoordinatorBase;
+    protected coordinator: Coordinator;
 
-    constructor(coordinator: CoordinatorBase) {
+    constructor(coordinator: Coordinator) {
         this.coordinator = coordinator;
     }
 
@@ -231,7 +231,7 @@ export abstract class Vm {
     }*/
 }
 
-export type VM = new (coordinator: CoordinatorBase)=>Vm;
+export type VM = new (coordinator: Coordinator)=>Vm;
 
 export abstract class VmEntity<T extends Entity, UI extends EntityUI> extends Vm {
     protected coordinator: CrEntity<T, UI>;
@@ -252,73 +252,4 @@ export abstract class VmEntity<T extends Entity, UI extends EntityUI> extends Vm
         if (this._form_$ !== undefined) return this._form_$;
         return this.coordinator.createForm(onSubmit, values);
     }
-}
-
-export class TestCoordinator extends CoordinatorBase {
-    protected async internalStart():Promise<void> {
-        await this.showVm(TestVm);
-    }
-
-    protected async onEvent(type:string, value:any) {
-        switch (type) {
-            case 'vm1': await this.testVm1(); return;
-            case 'click': alert('click: ' + value); return;
-            case 'click1': alert('click1'); return;
-        }
-    }
-
-    private async testVm1() {
-        this.showVm(TestVm1);
-    }
-}
-
-class TestVm extends Vm {
-    async showEntry():Promise<void> {
-        this.open(this.view);
-    }
-    
-    private click = () => {
-        this.close();
-        this.event('click', 'kkkk');
-    }
-
-    private vm1Click = () => alert('dddd');
-    private showVm1 = () => this.event('vm1');
-
-    private click1 = () => {
-        this.open(() => <Page header="TestVm inner page">
-            Test1 VM <br/>
-            <Button onClick={this.vm1Click}>Button</Button> <br/>
-            <Button onClick={this.showVm1}>show TestVm1</Button> <br/>
-        </Page>);
-    }
-
-    protected view = () => <Page>
-        Test View <br/>
-        <Button onClick={this.click}>Button</Button> <br/>
-        <Button onClick={this.click1}>显示新页面</Button> <br/>
-    </Page>;
-}
-
-class TestVm1 extends Vm {
-    async showEntry():Promise<void> {
-        this.open(this.view);
-    }
-    
-    private click = () => {
-        this.close();
-        this.event('click', 'kkkk');
-    }
-
-    private click1 = () => {
-        this.close(3);
-        //this.event('click1');
-        this.return('click1 returned');
-    }
-
-    protected view = () => <Page header="TestVm1">
-        Test1 VM <br/>
-        <Button onClick={this.click}>Button</Button> <br/>
-        <Button onClick={this.click1}>return call</Button> <br/>
-    </Page>;
 }

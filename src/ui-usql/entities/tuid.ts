@@ -5,7 +5,7 @@ import { Entity } from './entity';
 import { Entities, Field } from './entities';
 import { isNumber } from 'util';
 
-export class Box {
+export class IdBox {
     id: number;
     content: (templet?:React.StatelessComponent)=>JSX.Element;
 }
@@ -51,8 +51,8 @@ export abstract class Tuid extends Entity {
         });
         prototype.toJSON = function() {return this.id}
     }
-    createID(id:number):Box {
-        let ret:Box = new this.idCreater();
+    createID(id:number):IdBox {
+        let ret:IdBox = new this.idCreater();
         ret.id = id;
         return ret;
     }

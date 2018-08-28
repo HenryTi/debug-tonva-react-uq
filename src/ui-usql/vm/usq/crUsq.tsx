@@ -42,16 +42,19 @@ export class CrUsq implements Usq {
         this.vmApp = vmApp;
         this.api = api;
         this.id = apiId;
-        this.ui = ui;
         if (ui === undefined)
             this.ui = {};
-        else if (ui.res !== undefined)
+        else if (ui.res !== undefined) {
+            this.ui = ui;
             this.res = ui.res.zh.CN;
+        }
 
-        this.CrTuidMain = ui.CrTuidMain;
-        this.CrQuery = ui.CrQuery;
-        this.CrQuerySelect = ui.CrQuerySelect;
-        this.CrMap = ui.CrMap;
+        if (ui !== undefined) {
+            this.CrTuidMain = ui.CrTuidMain;
+            this.CrQuery = ui.CrQuery;
+            this.CrQuerySelect = ui.CrQuerySelect;
+            this.CrMap = ui.CrMap;
+        }
 
         this.res = this.res || {};
         this.access = access;
@@ -142,7 +145,7 @@ export class CrUsq implements Usq {
         }
         let vmSheetMain = this.crSheet(sheet);
         await vmSheetMain.showSheet(sheetId);
-}
+    }
 
     vmLinkFromName(entityType:EntityType, entityName:string) {
         switch (entityType) {
@@ -187,7 +190,7 @@ export class CrUsq implements Usq {
             res = entity[name];
             //if (res !== undefined) debugger;
         }
-        return {ui: ui, res: res };
+        return {ui: ui || {}, res: res };
     }
 
     /*
@@ -303,7 +306,7 @@ export class CrUsq implements Usq {
 
     protected get VmUsq():typeof VmUsq {return VmUsq}
 
-    show() {
+    render() {
         let vm = new (this.VmUsq)(this);
         return vm.render();
     }

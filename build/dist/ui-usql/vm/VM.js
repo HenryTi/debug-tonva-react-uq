@@ -10,7 +10,7 @@ import * as React from 'react';
 import Button from 'reactstrap/lib/Button';
 import { nav, Page } from 'tonva-tools';
 import { VmForm } from './form';
-export class CoordinatorBase {
+export class Coordinator {
     constructor() {
         this.disposer = () => {
             // message listener的清理
@@ -59,13 +59,13 @@ export class CoordinatorBase {
         this._resolve_$ = undefined;
     }
 }
-export class Coordinator extends CoordinatorBase {
+export class CoordinatorUsq extends Coordinator {
     constructor(crUsq) {
         super();
         this.crUsq = crUsq;
     }
 }
-export class CrEntity extends Coordinator {
+export class CrEntity extends CoordinatorUsq {
     constructor(crUsq, entity, ui, res) {
         super(crUsq);
         this.entity = entity;
@@ -201,7 +201,7 @@ export class VmEntity extends Vm {
         return this.coordinator.createForm(onSubmit, values);
     }
 }
-export class TestCoordinator extends CoordinatorBase {
+export class TestCoordinator extends Coordinator {
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.showVm(TestVm);

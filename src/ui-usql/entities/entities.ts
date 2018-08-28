@@ -1,5 +1,3 @@
-import {observable} from 'mobx';
-import {Entity} from './entity';
 import {UsqlApi} from './usqlApi';
 import {TuidMain, Tuid} from './tuid';
 import {Action} from './action';
@@ -9,7 +7,6 @@ import {Book} from './book';
 import {History} from './history';
 import { ApiBase, Api } from 'tonva-tools';
 import { Map } from './map';
-import { CrApp } from '../vm';
 
 export interface Usq {
     getTuidContent(tuid:Tuid): React.StatelessComponent<any>;

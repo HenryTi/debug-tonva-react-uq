@@ -1,13 +1,13 @@
 import { isArray } from 'util';
-import { dict } from './dict';
 import App from './App';
 //import DevApp_devappApi from './DevApp-devappApi';
 import $unitx from './$unitx';
 
 const ui = {
+    label: 'xxx yyy zzz',
     //App: App,
     //"DevApp/devappApi": DevApp_devappApi,
-    dict: dict,
+    //res: res,
     usqs: {
         "$$$/$unitx": $unitx,
     }

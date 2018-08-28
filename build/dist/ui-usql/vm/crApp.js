@@ -7,20 +7,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { observer } from 'mobx-react';
+import _ from 'lodash';
 import { setXLang, Page, loadAppApis, nav, meInFrame } from 'tonva-tools';
 import { List, LMR } from 'tonva-react-form';
-import { ViewModel } from './viewModel';
+import res from '../res';
 import { CrUsq } from './usq';
 import { centerApi } from '../centerApi';
-import { TestCoordinator } from './VM';
+import { TestCoordinator, Coordinator } from './VM';
 export const entitiesCollection = {};
-export class CrApp extends ViewModel {
+const logout = () => {
+    // nothing to do
+};
+export class CrApp extends Coordinator {
     constructor(tonvaApp, ui) {
         super();
         this.crUsqCollection = {};
-        this.caption = 'View Model 版的 Usql App';
-        this.view = AppPage;
         this.testClick = () => __awaiter(this, void 0, void 0, function* () {
             let coord = new TestCoordinator;
             let ret = yield coord.call();
@@ -38,6 +39,32 @@ export class CrApp extends ViewModel {
             //nav.replace(this.render());
             yield this.start();
         });
+        /*
+        async selectUnit(appUnits:any[]):Promise<number> {
+            return new Promise<any>((resolve, reject) => {
+                const onRowClick = (item: any) => resolve(item.id);
+                const renderRow = (item: any, index: number):JSX.Element => {
+                    let {id, nick, name} = item;
+                    return <LMR className="p-2" right={'id: ' + id}>
+                        <div>{nick || name}</div>
+                    </LMR>;
+                }
+                const SelectUnit = () => <Page header="选择小号" logout={logout}>
+                    <List items={appUnits} item={{render: renderRow, onClick: onRowClick}}/>
+                </Page>;
+            });
+        }
+        */
+        this.appPage = () => {
+            return React.createElement(Page, { header: this.caption, logout: () => { } },
+                React.createElement("button", { onClick: this.testClick }, "Test coordinator"),
+                this.crUsqArr.map((v, i) => React.createElement("div", { key: i }, v.render())));
+        };
+        this.selectUnitPage = () => {
+            return React.createElement(Page, { header: "\u9009\u62E9\u5C0F\u53F7", logout: logout },
+                React.createElement(List, { items: this.appUnits, item: { render: this.renderRow, onClick: this.onRowClick } }));
+        };
+        setXLang('zh', 'CN');
         let parts = tonvaApp.split('/');
         if (parts.length !== 2) {
             throw 'tonvaApp name must be / separated, owner/app';
@@ -45,7 +72,9 @@ export class CrApp extends ViewModel {
         this.appOwner = parts[0];
         this.appName = parts[1];
         this.ui = ui;
-        setXLang('zh', 'CN');
+        this.res = _.clone(res);
+        _.merge(this.res, ui.res);
+        this.caption = this.res.caption || 'Tonva';
     }
     loadApis() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -77,7 +106,7 @@ export class CrApp extends ViewModel {
     getCrUsq(apiName) {
         return this.crUsqCollection[apiName];
     }
-    start() {
+    internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let hash = document.location.hash;
@@ -103,7 +132,7 @@ export class CrApp extends ViewModel {
                             break;
                         default:
                             nav.clear();
-                            nav.push(React.createElement(SelectUnit, { vm: this }));
+                            nav.push(React.createElement(this.selectUnitPage, null));
                             return;
                     }
                 }
@@ -144,7 +173,7 @@ export class CrApp extends ViewModel {
                 }
             }
             this.clearPrevPages();
-            nav.push(this.render());
+            nav.push(React.createElement(this.appPage, null));
         });
     }
     getCrUsqFromId(apiId) {
@@ -166,23 +195,8 @@ export class CrApp extends ViewModel {
     }
     main() {
         return __awaiter(this, void 0, void 0, function* () {
-            const a = 1;
             this.clearPrevPages();
-            nav.push(this.render());
-        });
-    }
-    selectUnit(appUnits) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                const onRowClick = (item) => resolve(item.id);
-                const renderRow = (item, index) => {
-                    let { id, nick, name } = item;
-                    return React.createElement(LMR, { className: "p-2", right: 'id: ' + id },
-                        React.createElement("div", null, nick || name));
-                };
-                const SelectUnit = () => React.createElement(Page, { header: "\u9009\u62E9\u5C0F\u53F7", logout: logout },
-                    React.createElement(List, { items: appUnits, item: { render: renderRow, onClick: onRowClick } }));
-            });
+            nav.push(React.createElement(this.appPage, null));
         });
     }
 }
@@ -203,19 +217,5 @@ const SheetLink = ({ vm, apiName, type, entityName }) => {
             entityName);
     }
     return React.createElement("div", { key: key, className: "bg-white cursor-pointer border-bottom", onClick: vmLink.onClick }, vmLink.render());
-};
-const AppPage = observer(({ vm }) => {
-    let { caption, crUsqArr, testClick } = vm;
-    return React.createElement(Page, { header: caption, logout: () => { } },
-        React.createElement("button", { onClick: testClick }, "Test coordinator"),
-        crUsqArr.map((v, i) => React.createElement("div", { key: i }, v.show())));
-});
-const logout = () => {
-    // nothing to do
-};
-const SelectUnit = ({ vm }) => {
-    let { appUnits, renderRow, onRowClick } = vm;
-    return React.createElement(Page, { header: "\u9009\u62E9\u5C0F\u53F7", logout: logout },
-        React.createElement(List, { items: appUnits, item: { render: renderRow, onClick: onRowClick } }));
 };
 //# sourceMappingURL=crApp.js.map

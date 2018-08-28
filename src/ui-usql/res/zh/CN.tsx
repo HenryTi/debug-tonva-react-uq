@@ -1,6 +1,7 @@
 import React from 'react';
 
-export const dict = {
+export default {    
+    caption: '同花',
     a: 'aaa',
     b: 'bbb',
     c: ()=><span className="text-danger">ccc</span>,
