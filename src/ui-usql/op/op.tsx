@@ -1,53 +1,39 @@
 import { Page, meInFrame, nav } from "tonva-tools";
 import React from "react";
 import { Button } from "reactstrap";
+import { List, Muted, LMR, FA } from "tonva-react-form";
 import { Coordinator, Vm } from "../vm/VM";
+import { CrApp } from '../vm/crApp';
 import { centerApi } from "../centerApi";
-import { List, Muted, LMR } from "tonva-react-form";
-
-interface App {
-    id: number;
-    unit: number;
-    name: string;
-    discription: string;
-    icon: string;
-    inUnit: number;
-    date_init: Date;
-    date_update: Date;
-    apis: Api[];
-}
-
-interface Sheet {
-    name: string;
-    states: string[];
-}
-
-interface Api {
-    app: number;
-    id: number;
-    unit: number;
-    name: string;
-    discription: string;
-    icon: string;
-    inUnit: number;
-    public: number;
-    entities: string;
-    date_init: Date;
-    date_update: Date;
-
-    tuids: string[];
-    maps: string[];
-    books: string[];
-    histories: string[];
-    queries: string[];
-    actions: string[];
-    sheets: Sheet[];
-}
+import { entitiesRes } from '../res';
+import { VmSheet } from './vmSheet';
+import { CrQuery, CrUsq } from "../vm";
+import { Organization, Team, Section, Post, Sheet, App, Api, To } from "./model";
+import { observable } from "mobx";
+import { CrAction } from "../vm/action";
 
 export class OpCoordinator extends Coordinator {
+    private crApp: CrApp;
+    private unitxUsq: CrUsq;
     private apps: App[];
+    organizations: Organization[];
+    teams: Team[];
+    sections: Section[];
+    posts: Post[];
+    postDict: {[id:number]:Post};
+    teamDict: {[id:number]:Team};
+    organizationDict: {[id:number]:Organization};
+    sectionDict: {[id:number]:Section};
 
     protected async internalStart():Promise<void> {
+        this.crApp = CrApp.instance;
+        this.unitxUsq = this.crApp.getCrUsq('$$$/$unitx');
+        await this.buildPosts();
+        await this.buildAppsApis();
+        nav.push(<this.appsView />);
+    }
+
+    private async buildAppsApis() {
         let unit = meInFrame.unit;
         let ret:any[][] = await centerApi.get('/unit/apps-apis', {unit: unit});
         this.apps = ret[0];
@@ -62,9 +48,56 @@ export class OpCoordinator extends Coordinator {
             app.apis.push(api);
             this.setApiEntities(api);
         }
+    }
 
-        //await this.showVm(OpVm);
-        nav.push(<this.appsView />);
+    private async buildPosts() {
+        let queryAllTeams = this.unitxUsq.crFromName('query', 'allteams') as CrQuery;
+        let ret:any[][] = await queryAllTeams.entity.query(undefined);
+        this.teams = ret['teams'];
+        this.organizations = ret['organization'];
+        this.posts = ret['organizationpost'];
+        this.sections = ret['sections'];
+        this.postDict = {};
+        this.teamDict = {};
+        this.organizationDict = {};
+        this.sectionDict = {};
+        for (let organization of this.organizations) {
+            organization.posts = [];
+            organization.teams = [];
+            this.organizationDict[organization.id] = organization;
+        }
+        for (let team of this.teams) {
+            team.organizations = [];
+            team.sections = [];
+            this.teamDict[team.id] = team;
+        }
+        for (let section of this.sections) {
+            section.teams = [];
+            this.sectionDict[section.id] = section;
+        }
+        for (let post of this.posts) {
+            this.postDict[post.id] = post;
+            let organization = this.organizationDict[post.owner];
+            if (organization === undefined) continue;
+            post.organization = organization;
+            organization.posts.push(post);
+        }
+        // teamOrganization
+        for (let teamOrganization of ret['teamorganization']) {
+            let {team:tm, organization:og} = teamOrganization;
+            let team = this.teamDict[tm];
+            let organization = this.organizationDict[og];
+            team.organizations.push(organization);
+            organization.teams.push(team);
+        }
+        // sectionTeam
+        for (let sectionTeam of ret['sectionteam']) {
+            let {section:sec, team:tm} = sectionTeam;
+            let section = this.sectionDict[sec];
+            let team = this.teamDict[tm];
+            section.teams.push(team);
+            team.sections.push(section);
+        }
     }
 
     private setApiEntities(api:Api) {
@@ -92,7 +125,7 @@ export class OpCoordinator extends Coordinator {
 
     private setNames(names:string[], lines:string[], p:number):number {
         let len = lines.length;
-        let i = p;
+        let i = p+1;
         for (; i<len; i++) {
             let ln = lines[i];
             if (ln.length > 0) names.push(ln);
@@ -103,14 +136,16 @@ export class OpCoordinator extends Coordinator {
 
     private setSheets(sheets:Sheet[], lines:string[], p:number):number {
         let len = lines.length;
-        let i = p;
+        let i = p+1;
         for (; i<len; i++) {
             let ln = lines[i];
             if (ln.length > 0) {
                 let parts:string[] = ln.split('\t');
+                let name = parts[0];
+                parts[0] = '$';
                 let sheet:Sheet = {
-                    name: parts[0],
-                    states: parts.slice(1),
+                    name: name,
+                    states: parts,
                 }
                 sheets.push(sheet);
             }
@@ -119,16 +154,14 @@ export class OpCoordinator extends Coordinator {
         return i;
     }
 
-    protected async onEvent(type:string, value:any) {
-        switch (type) {
-            case 'vm1': await this.testVm1(); return;
-            case 'click': alert('click: ' + value); return;
-            case 'click1': alert('click1'); return;
-        }
-    }
-
-    private async testVm1() {
-        this.showVm(TestVm1);
+    async saveSheetStatePosts(sheetName:string, stateName:string, toArr:{post:number, team:number, section:number}[]) {
+        let actionSaveEntityOpPost = this.unitxUsq.crFromName('action', 'saveentityoppost') as CrAction;
+        //let ret:any[][] = await queryAllTeams.entity.query(undefined);
+        await actionSaveEntityOpPost.submit({
+            entityName: sheetName,
+            opName: stateName,
+            posts: toArr
+        });
     }
 
     private appRender = (app:App, index:number) => {
@@ -146,11 +179,48 @@ export class OpCoordinator extends Coordinator {
         <List items={this.apps} item={{render:this.appRender, onClick:this.appClick}} />
     </Page>;
 
-    private nameRender(name:string, index:number) {
-        return <div className="px-3 py-2">{name}</div>
+    private nameRender(name:string, icon:any) {
+        return <div className="px-3 py-2 align-items-center">{icon} &nbsp; {name}</div>
     }
-    private sheetRender(sheet:Sheet, index:number) {
-        return <div className="px-3 py-2">{sheet.name} {sheet.states.join(', ')}</div>
+    private sheetRender(sheet:Sheet, icon:any) {
+        let {name, states} = sheet;
+        return <div className="px-3 py-2 align-items-center">
+            {icon} &nbsp; {name} <Muted> &nbsp; {sheet.states.join(', ')}</Muted>
+        </div>
+    }
+    private tuidClick = (entityName:string) => {
+        alert(entityName);
+    }
+    private mapClick = (entityName:string) => {
+        alert(entityName);
+    }
+    private actionClick = (entityName:string) => {
+        alert(entityName);
+    }
+    private bookClick = (entityName:string) => {
+        alert(entityName);
+    }
+    private queryClick = (entityName:string) => {
+        alert(entityName);
+    }
+    private historyClick = (entityName:string) => {
+        alert(entityName);
+    }
+    private sheetClick = async (sheet:Sheet) => {
+        let entityPosts = this.unitxUsq.crFromName('query', 'getEntityPost') as CrQuery;
+        let ret = await entityPosts.entity.query({entityName: sheet.name});
+        let opTos:{[op:string]:To[]} = {};
+        for (let row of ret.ret) {
+            let {op, post, team, section} = row;
+            let opTo = opTos[op];
+            if (opTo === undefined) opTos[op] = opTo = [];
+            opTo.push({
+                post: this.postDict[post],
+                team: this.teamDict[team],
+                section: this.sectionDict[section],
+            });
+        }
+        this.showVm(VmSheet, {sheet:sheet, opTos:opTos});
     }
     private apiRender = (api:Api, index:number) => {
         let {name, tuids, actions, maps, books, queries, histories, sheets} = api;
@@ -158,18 +228,23 @@ export class OpCoordinator extends Coordinator {
         function headerCaption(caption:string):JSX.Element {
             return <Muted className="px-3 pt-1 bg-light w-100">{caption}</Muted>
         }
-        function itemList(items:any[], caption:string, render:((s:any, index:number)=>JSX.Element) = nameRender) {
-            return items && <List className="mt-3" header={headerCaption(caption)} items={items} item={{render:render}} />;
+        function itemList(items:any[], type:string, itemClick:(item:any)=>void, render:((item:any, icon:any)=>JSX.Element) = nameRender) {
+            let {caption, icon} = entitiesRes[type];
+            return items && 
+                <List className="mt-3"
+                    header={headerCaption(caption)} 
+                    items={items} 
+                    item={{render:(item:any, index:number)=>render(item, icon), onClick: itemClick}} />;
         }
         return <div key={name} className="my-2">
             <div className="px-3 font-weight-bold">{name}</div>
-            {itemList(tuids, 'Tuid')}
-            {itemList(actions, 'Action')}
-            {itemList(maps, 'Map')}
-            {itemList(books, 'Book')}
-            {itemList(queries, 'Query')}
-            {itemList(histories, 'History')}
-            {itemList(sheets, 'Sheet', this.sheetRender)}
+            {itemList(tuids, 'tuid', this.tuidClick)}
+            {itemList(actions, 'action', this.actionClick)}
+            {itemList(maps, 'map', this.mapClick)}
+            {itemList(books, 'book', this.bookClick)}
+            {itemList(queries, 'query', this.queryClick)}
+            {itemList(histories, 'history', this.historyClick)}
+            {itemList(sheets, 'sheet', this.sheetClick, this.sheetRender)}
         </div>;
     }
 
@@ -177,56 +252,5 @@ export class OpCoordinator extends Coordinator {
         {
             app.apis.map((v, index) => this.apiRender(v, index))
         }
-    </Page>;
-}
-
-class OpVm extends Vm {
-    async showEntry():Promise<void> {
-        this.open(this.view);
-    }
-    
-    private click = () => {
-        this.close();
-        this.event('click', 'kkkk');
-    }
-
-    private vm1Click = () => alert('dddd');
-    private showVm1 = () => this.event('vm1');
-
-    private click1 = () => {
-        this.open(() => <Page header="TestVm inner page">
-            Test1 VM <br/>
-            <Button onClick={this.vm1Click}>Button</Button> <br/>
-            <Button onClick={this.showVm1}>show TestVm1</Button> <br/>
-        </Page>);
-    }
-
-    protected view = () => <Page header="设置操作权限">
-        Test View <br/>
-        <Button onClick={this.click}>Button</Button> <br/>
-        <Button onClick={this.click1}>显示新页面</Button> <br/>
-    </Page>;
-}
-
-class TestVm1 extends Vm {
-    async showEntry():Promise<void> {
-        this.open(this.view);
-    }
-    
-    private click = () => {
-        this.close();
-        this.event('click', 'kkkk');
-    }
-
-    private click1 = () => {
-        this.close(3);
-        //this.event('click1');
-        this.return('click1 returned');
-    }
-
-    protected view = () => <Page header="TestVm1">
-        Test1 VM <br/>
-        <Button onClick={this.click}>Button</Button> <br/>
-        <Button onClick={this.click1}>return call</Button> <br/>
     </Page>;
 }

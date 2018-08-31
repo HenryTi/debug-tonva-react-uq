@@ -10,3 +10,5 @@ const res = x({
 });
 
 export default res;
+
+export * from './icons';

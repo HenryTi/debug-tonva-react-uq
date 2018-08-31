@@ -25,7 +25,7 @@ export class VmEntityLink extends VmLink {
     protected get view() {
         return () => {
             let {icon, label} = this.crEntity;
-            return <div className="px-3 py-2  align-items-center cursor-pointer" onClick={this.onClick}>
+            return <div className="px-3 py-2 align-items-center cursor-pointer" onClick={this.onClick}>
                 {icon} &nbsp; {label}
             </div>;
         }

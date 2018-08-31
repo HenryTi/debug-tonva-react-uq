@@ -1,6 +1,6 @@
 import { Sheet } from "../../entities";
 import { CrEntity, EntityUI, VM } from "../VM";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 import { VmSheetMain } from "./vmMain";
 import { VmSheetNew } from "./vmNew";
 import { VmSheetEdit } from "./vmEdit";
@@ -28,7 +28,7 @@ export interface SheetUI extends EntityUI {
 }
 
 export class CrSheet extends CrEntity<Sheet, SheetUI> {
-    get icon() {return vmLinkIcon('text-primary', 'wpforms')}
+    get icon() {return entitiesRes['sheet'].icon}
 
     protected async internalStart() {
         await this.showVm(this.VmSheetMain);

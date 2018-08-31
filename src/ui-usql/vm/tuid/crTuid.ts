@@ -4,8 +4,9 @@ import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidSelect } from './vmTuidSelect';
 import { CrUsq } from "../usq/crUsq";
-import { VmEntityLink, vmLinkIcon } from "../link";
+import { VmEntityLink } from "../link";
 import { VmTuidList } from "./vmTuidList";
+import { entitiesRes } from '../../res';
 
 export interface TuidUI extends EntityUI {
     CrTuidMain?: typeof CrTuidMain;
@@ -24,7 +25,7 @@ export abstract class CrTuid<T extends Tuid> extends CrEntity<T, TuidUI> {
         super(crUsq, entity, ui, res);
     }
 
-    get icon() {return vmLinkIcon('text-info', 'list-alt')}
+    get icon() {return entitiesRes['tuid'].icon}
 }
 
 export class CrTuidMain extends CrTuid<TuidMain> {

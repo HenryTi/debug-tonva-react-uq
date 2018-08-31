@@ -3,7 +3,7 @@ import { CrEntity, EntityUI } from "../VM";
 import { Query } from "../../entities";
 import { VmQueryMain } from "./vmQueryMain";
 import { VmQuerySelect } from "./vmQuerySelect";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 
 export interface QueryUI extends EntityUI {
     CrQuery?: typeof CrQuery;
@@ -15,7 +15,7 @@ export interface QueryUI extends EntityUI {
 }
 
 export abstract class CrQueryBase extends CrEntity<Query, QueryUI> {
-    get icon() {return vmLinkIcon('text-warning', 'search')}
+    get icon() {return entitiesRes['query'].icon}
 }
 
 export class CrQuery extends CrQueryBase {

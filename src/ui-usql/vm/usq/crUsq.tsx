@@ -147,33 +147,37 @@ export class CrUsq implements Usq {
         await vmSheetMain.showSheet(sheetId);
     }
 
-    vmLinkFromName(entityType:EntityType, entityName:string) {
+    crFromName(entityType:EntityType, entityName:string): CrEntity<Entity, EntityUI> {
         switch (entityType) {
-        case 'sheet':
-            let sheet = this.entities.sheet(entityName);
-            if (sheet === undefined) return;
-            return this.vmLink(this.crSheet(sheet));
-        case 'action':
-            let action = this.entities.action(entityName);
-            if (action === undefined) return;
-            return this.vmLink(this.crAction(action));
-        case 'tuid':
-            let tuid = this.entities.tuid(entityName);
-            if (tuid === undefined) return;
-            return this.vmLink(this.crTuidMain(tuid));
-        case 'query':
-            let query = this.entities.query(entityName);
-            if (query === undefined) return;
-            return this.vmLink(this.crQuery(query));
-        case 'book':
-            let book = this.entities.book(entityName);
-            if (book === undefined) return;
-            return this.vmLink(this.crBook(book));
-        case 'map':
-            let map = this.entities.map(entityName);
-            if (map === undefined) return;
-            return this.vmLink(this.crMap(map));
+            case 'sheet':
+                let sheet = this.entities.sheet(entityName);
+                if (sheet === undefined) return;
+                return this.crSheet(sheet);
+            case 'action':
+                let action = this.entities.action(entityName);
+                if (action === undefined) return;
+                return this.crAction(action);
+            case 'tuid':
+                let tuid = this.entities.tuid(entityName);
+                if (tuid === undefined) return;
+                return this.crTuidMain(tuid);
+            case 'query':
+                let query = this.entities.query(entityName);
+                if (query === undefined) return;
+                return this.crQuery(query);
+            case 'book':
+                let book = this.entities.book(entityName);
+                if (book === undefined) return;
+                return this.crBook(book);
+            case 'map':
+                let map = this.entities.map(entityName);
+                if (map === undefined) return;
+                return this.crMap(map);
+            }
         }
+
+    vmLinkFromName(entityType:EntityType, entityName:string) {
+        return this.vmLink(this.crFromName(entityType, entityName));
     }
 
     private getUI<T extends Entity, UI extends EntityUI>(t:T):{ui:UI, res:any} {

@@ -12,6 +12,7 @@ import { OpCoordinator  } from '../op';
 export const entitiesCollection: {[api:string]: Entities} = {};
 
 export class CrApp extends Coordinator {
+    static instance:CrApp;
     private appOwner:string;
     private appName:string;
     private ui:any;
@@ -22,6 +23,7 @@ export class CrApp extends Coordinator {
 
     constructor(tonvaApp:string, ui:any) {
         super();
+        CrApp.instance = this;        
         this.init(tonvaApp, ui);
     }
     private init(tonvaApp:string, ui:any) {
@@ -178,9 +180,9 @@ export class CrApp extends Coordinator {
     }
 
     protected appPage = () => {
-        return <Page header={this.caption} logout={()=>{}}>
+        return <Page header={this.caption} logout={()=>{meInFrame.unit = undefined}}>
             <LMR className="px-3 py-2 my-2 bg-light"
-                left={<FA name='cog' fixWidth={true} size="lg" className="text-info mr-2 pt-1" />}
+                left={<FA name='cog' fixWidth={true} className="text-info mr-2 pt-1" />}
                 onClick={this.opClick}>设置操作权限</LMR>
             {this.crUsqArr.map((v,i) => <div key={i}>{v.render()}</div>)}
         </Page>;

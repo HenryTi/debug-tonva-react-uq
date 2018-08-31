@@ -1,15 +1,14 @@
 import { CrEntity, EntityUI } from "../VM";
 import { Book } from "../../entities";
 import { VmBookMain } from "./vmBookMain";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 
 export interface BookUI extends EntityUI {
     main: typeof VmBookMain,
 }
 
 export class CrBook extends CrEntity<Book, BookUI> {
-
-    get icon() {return vmLinkIcon('text-muted', 'book')}
+    get icon() {return entitiesRes['action'].icon}
 
     protected async internalStart() {
         await this.showVm(this.VmBookMain);

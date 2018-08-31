@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { CrEntity, EntityUI } from "../VM";
 import { Map, Tuid, IdBox, Field, TuidMain } from "../../entities";
 import { VmMapMain } from "./vmMain";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 import { observable } from "mobx";
 import { PureJSONContent } from '../viewModel';
 
@@ -39,7 +39,7 @@ export class CrMap extends CrEntity<Map, MapUI> {
     keyFields: Field[];
     keyUIs: MapKey[];
 
-    get icon() {return vmLinkIcon('text-muted', 'list-ul')}
+    get icon() {return entitiesRes['map'].icon}
 
     protected async internalStart() {
         let {keys} = this.entity;
