@@ -20,11 +20,11 @@ export interface StateUI {
 }
 
 export interface SheetUI extends EntityUI {
-    states: {[name:string]: StateUI};
-    main: typeof VmSheetMain;
-    new: typeof VmSheetNew;
-    edit: typeof VmSheetEdit;
-    action: typeof VmSheetAction;
+    states?: {[name:string]: StateUI};
+    main?: typeof VmSheetMain;
+    new?: typeof VmSheetNew;
+    edit?: typeof VmSheetEdit;
+    action?: typeof VmSheetAction;
 }
 
 export class CrSheet extends CrEntity<Sheet, SheetUI> {
@@ -96,8 +96,11 @@ export class CrSheet extends CrEntity<Sheet, SheetUI> {
         return (action && action.label) || actionName;
     }
 
-    /*
-    async submit(values:any) {
-        return this.entity.submit(values);
-    }*/
+    async getSheetData(sheetId:number):Promise<any> {
+        return await this.entity.getSheet(sheetId);
+    }
+
+    async getArchived(sheetId:number):Promise<any> {
+        return await this.entity.getArchive(sheetId);
+    }
 }

@@ -23,7 +23,7 @@ export class CrApp extends Coordinator {
 
     constructor(tonvaApp:string, ui:any) {
         super();
-        CrApp.instance = this;        
+        CrApp.instance = this;
         this.init(tonvaApp, ui);
     }
     private init(tonvaApp:string, ui:any) {
@@ -86,7 +86,10 @@ export class CrApp extends Coordinator {
                 this.id = id;
                 await this.loadAppUnits();
                 switch (this.appUnits.length) {
-                    case 0: alert('当前登录的用户不支持当前的APP'); return;
+                    case 0:
+                        alert('当前登录的用户不支持当前的APP');
+                        await nav.logout();
+                        return;
                     case 1:
                         unit = this.appUnits[0].id;
                         if (unit === undefined || unit < 0) {

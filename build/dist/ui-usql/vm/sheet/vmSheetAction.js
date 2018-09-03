@@ -10,8 +10,7 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { nav, Page } from 'tonva-tools';
 import { VmView } from './vmView';
-import { VmEntity } from '../VM';
-export class VmSheetAction extends VmEntity {
+export class VmSheetAction extends VmView {
     constructor() {
         super(...arguments);
         this.actionClick = (action) => __awaiter(this, void 0, void 0, function* () {
@@ -26,7 +25,7 @@ export class VmSheetAction extends VmEntity {
         this.editClick = () => __awaiter(this, void 0, void 0, function* () {
             alert('修改单据：程序正在设计中');
         });
-        this.view = () => {
+        this.page = () => {
             let state = this.brief.state;
             let stateLabel = this.coordinator.getStateLabel(state);
             let { states } = this.entity;
@@ -67,17 +66,23 @@ export class VmSheetAction extends VmEntity {
                     React.createElement("div", { className: "d-flex mx-3 mb-3" },
                         actionButtons,
                         startButtons),
-                    this.vmView.render()));
+                    React.createElement(this.view, null)));
         };
     }
+    //sheetData: any;
+    //flows: any[];
+    //vmView: VmView;
     showEntry(sheetId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let data = yield this.entity.getSheet(sheetId);
-            let { brief, data: sheetData, flows } = data;
+            let { brief, data, flows } = yield this.coordinator.getSheetData(sheetId);
             this.brief = brief;
-            this.sheetData = sheetData;
+            //this.sheetData = sheetData;
             this.flows = flows;
-            this.vmView = new VmView(this.coordinator, this.sheetData, this.brief.state, flows);
+            this.data = data;
+            this.state = this.brief.state;
+            //this.vmView = new VmView(this.coordinator, this.sheetData, this.brief.state, flows);
+            this.vmForm = this.createForm(undefined, this.data);
+            this.open(this.page);
         });
     }
 }

@@ -46,7 +46,7 @@ export class VmSheetMain extends VmEntity {
                 React.createElement("div", { className: "mx-3 my-2" },
                     React.createElement(Button, { className: "mr-2", color: "primary", onClick: this.newClick }, "\u65B0\u5EFA"),
                     React.createElement(Button, { className: "mr-2", color: "primary", onClick: this.schemaClick }, "\u6A21\u677F")),
-                React.createElement(List, { className: "my-2", header: React.createElement(Muted, null,
+                React.createElement(List, { className: "my-2", header: React.createElement(Muted, { className: "mx-3 my-1" },
                         "\u5F85\u5904\u7406",
                         this.label), none: "[ \u65E0 ]", items: list, item: { render: this.renderState, onClick: this.sheetStateClick } }),
                 React.createElement("div", { className: "mx-3 my-2" },

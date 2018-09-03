@@ -1,8 +1,17 @@
 export type FieldUIType = 'tuid' | 'query' | 'string' | 'int' | 'dec' | 'text' | 'check' | 'select' | 'radio';
 
-export interface FormUI {
-    bandUIs: BandUI[];
+export interface Compute {
+    [field:string]: ()=>number;
+}
+
+export interface FormUIBase {
     className?: string;
+    bandUIs?: BandUI[];
+    compute?: Compute;
+}
+
+export interface FormUI extends FormUIBase {
+    arrs?: {[arr:string]: ArrUI},
 }
 
 export interface BandUI {
@@ -19,11 +28,18 @@ export interface FieldsBandUI extends BandUI {
     fieldUIs: FieldUI[];            // 对应的多个field ui
 }
 
+export interface ArrUI extends FormUIBase {
+    row?: React.StatelessComponent<any>;     // arr 行的显示方式
+}
+
 export interface ArrBandUI extends BandUI {
     name: string;
     band: 'arr';
-    row: React.StatelessComponent<any>;     // arr 行的显示方式
-    bandUIs: BandUI[];                      // 下一级页面的展开描述
+    /*
+    row?: React.StatelessComponent<any>;     // arr 行的显示方式
+    bandUIs?: BandUI[];                      // 下一级页面的展开描述
+    compute?: Compute;
+    */
 }
 
 export interface SubmitBandUI extends BandUI {

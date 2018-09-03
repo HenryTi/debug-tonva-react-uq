@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CrEntity } from "../VM";
 import { VmActionMain } from "./vmActionMain";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 export class CrAction extends CrEntity {
-    get icon() { return vmLinkIcon('text-success', 'hand-o-right'); }
+    get icon() { return entitiesRes['action'].icon; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.showVm(this.VmActionMain);

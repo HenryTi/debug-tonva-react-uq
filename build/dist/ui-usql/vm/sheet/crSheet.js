@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CrEntity } from "../VM";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 import { VmSheetMain } from "./vmMain";
 import { VmSheetNew } from "./vmNew";
 import { VmSheetEdit } from "./vmEdit";
@@ -17,7 +17,7 @@ import { VmArchives } from "./vmArchives";
 import { VmSheetList } from "./vmList";
 import { VmArchived } from "./vmArchived";
 export class CrSheet extends CrEntity {
-    get icon() { return vmLinkIcon('text-primary', 'wpforms'); }
+    get icon() { return entitiesRes['sheet'].icon; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.showVm(this.VmSheetMain);
@@ -101,6 +101,16 @@ export class CrSheet extends CrEntity {
             return actionName;
         let action = actions[actionName];
         return (action && action.label) || actionName;
+    }
+    getSheetData(sheetId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.entity.getSheet(sheetId);
+        });
+    }
+    getArchived(sheetId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.entity.getArchive(sheetId);
+        });
     }
 }
 //# sourceMappingURL=crSheet.js.map

@@ -7,12 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { observable } from 'mobx';
 import * as _ from 'lodash';
 import { List, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
 import { ViewModel, JSONContent } from '../viewModel';
 import { VmForm } from './vmForm';
+import { observer } from 'mobx-react';
 export class VmArr extends ViewModel {
     constructor(ownerForm, arr, onEditRow) {
         super();
@@ -85,7 +85,7 @@ export class VmArr extends ViewModel {
             yield this.showRow(undefined);
             this.vmForm.reset();
         });
-        this.view = () => {
+        this.view = observer(() => {
             //let {label, list, renderItem, start, addClick, header, footer, readOnly} = vm;
             let button;
             if (this.readOnly === false) {
@@ -96,11 +96,11 @@ export class VmArr extends ViewModel {
                 React.createElement("div", { className: "flex-fill align-self-center" }, this.label),
                 button);
             return React.createElement(List, { header: header, items: this.list, item: { render: this.renderItem, onClick: this.editRow } });
-        };
+        });
         this.ownerForm = ownerForm;
         let { name, fields } = arr;
         this.name = name;
-        let { ui, res, readOnly, inputs } = ownerForm;
+        let { ui, res, readOnly, inputs, formValues } = ownerForm;
         let arrsRes = res.arrs;
         let arrRes = arrsRes !== undefined ? arrsRes[name] : {};
         let { label, newSubmit, editSubmit } = arrRes;
@@ -125,7 +125,7 @@ export class VmArr extends ViewModel {
         else {
             this.onEditRow = onEditRow;
         }
-        this.list = observable.array([], { deep: true });
+        this.list = formValues.values[name]; //observable.array([], {deep:true});
         /*
         this.start = this.start.bind(this);
         //this.vmApi = vmApi;

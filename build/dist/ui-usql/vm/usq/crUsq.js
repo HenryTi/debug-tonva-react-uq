@@ -24,15 +24,20 @@ export class CrUsq {
         this.vmApp = vmApp;
         this.api = api;
         this.id = apiId;
-        this.ui = ui;
         if (ui === undefined)
             this.ui = {};
-        else if (ui.res !== undefined)
-            this.res = ui.res.zh.CN;
-        this.CrTuidMain = ui.CrTuidMain;
-        this.CrQuery = ui.CrQuery;
-        this.CrQuerySelect = ui.CrQuerySelect;
-        this.CrMap = ui.CrMap;
+        else {
+            this.ui = ui;
+            if (ui.res !== undefined) {
+                this.res = ui.res.zh.CN;
+            }
+        }
+        if (ui !== undefined) {
+            this.CrTuidMain = ui.CrTuidMain;
+            this.CrQuery = ui.CrQuery;
+            this.CrQuerySelect = ui.CrQuerySelect;
+            this.CrMap = ui.CrMap;
+        }
         this.res = this.res || {};
         this.access = access;
         let token = undefined;
@@ -117,39 +122,42 @@ export class CrUsq {
             yield vmSheetMain.showSheet(sheetId);
         });
     }
-    vmLinkFromName(entityType, entityName) {
+    crFromName(entityType, entityName) {
         switch (entityType) {
             case 'sheet':
                 let sheet = this.entities.sheet(entityName);
                 if (sheet === undefined)
                     return;
-                return this.vmLink(this.crSheet(sheet));
+                return this.crSheet(sheet);
             case 'action':
                 let action = this.entities.action(entityName);
                 if (action === undefined)
                     return;
-                return this.vmLink(this.crAction(action));
+                return this.crAction(action);
             case 'tuid':
                 let tuid = this.entities.tuid(entityName);
                 if (tuid === undefined)
                     return;
-                return this.vmLink(this.crTuidMain(tuid));
+                return this.crTuidMain(tuid);
             case 'query':
                 let query = this.entities.query(entityName);
                 if (query === undefined)
                     return;
-                return this.vmLink(this.crQuery(query));
+                return this.crQuery(query);
             case 'book':
                 let book = this.entities.book(entityName);
                 if (book === undefined)
                     return;
-                return this.vmLink(this.crBook(book));
+                return this.crBook(book);
             case 'map':
                 let map = this.entities.map(entityName);
                 if (map === undefined)
                     return;
-                return this.vmLink(this.crMap(map));
+                return this.crMap(map);
         }
+    }
+    vmLinkFromName(entityType, entityName) {
+        return this.vmLink(this.crFromName(entityType, entityName));
     }
     getUI(t) {
         let ui, res;
@@ -165,7 +173,7 @@ export class CrUsq {
             res = entity[name];
             //if (res !== undefined) debugger;
         }
-        return { ui: ui, res: res };
+        return { ui: ui || {}, res: res };
     }
     /*
     private getUITypeCaption(type:EntityType):any {

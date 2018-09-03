@@ -29,7 +29,7 @@ export class VmForm {
         this.arrNewCaption = options.arrNewCaption;
         this.arrEditCaption = options.arrEditCaption;
         this.readOnly = onSubmit === undefined;
-        this.formValues = this.buildFormValues(this.fields);
+        this.formValues = this.buildFormValues();
         this.buildBands(options, onSubmit);
         this.onSubmit = onSubmit;
     }
@@ -59,9 +59,12 @@ export class VmForm {
     }
     setValues(initValues) {
         let { values, errors } = this.formValues;
+        let compute = this.ui && this.ui.compute;
         for (let f of this.fields) {
             let fn = f.name;
-            values[fn] = initValues === undefined ? null : initValues[fn];
+            if (compute === undefined || compute[fn] === undefined) {
+                values[fn] = initValues === undefined ? null : initValues[fn];
+            }
             errors[fn] = undefined;
         }
         // 还要设置arrs的values
@@ -71,7 +74,10 @@ export class VmForm {
             let list = initValues[i];
             if (list === undefined)
                 continue;
-            this.vmArrs[i].list.push(...list);
+            //this.vmArrs[i].list.push(...list);
+            let arrList = values[i];
+            arrList.clear();
+            arrList.push(...list);
         }
     }
     get isOk() {
@@ -106,19 +112,40 @@ export class VmForm {
         return buildControl(field, fieldUI, formValues, this.readOnly);
     }
     */
-    buildObservableValues(fields) {
+    buildFieldValues(fields) {
         let v = {};
         for (let f of fields)
             v[f.name] = null;
+        return v;
+    }
+    buildObservableValues() {
+        let v = this.buildFieldValues(this.fields);
+        if (this.arrs !== undefined) {
+            for (let arr of this.arrs) {
+                v[arr.name] = observable.array([], { deep: true });
+            }
+        }
+        let compute = this.ui && this.ui.compute;
+        if (compute !== undefined) {
+            for (let i in compute) {
+                let c = compute[i];
+                if (typeof c === 'function') {
+                    Object.defineProperty(v, i, {
+                        enumerable: false,
+                        get: c
+                    });
+                }
+            }
+        }
         return observable(v);
     }
-    buildFormValues(fields) {
+    buildFormValues() {
         return {
-            values: this.buildObservableValues(fields),
-            errors: this.buildObservableValues(fields),
+            values: this.buildObservableValues(),
+            errors: observable(this.buildFieldValues(this.fields)),
         };
     }
-    render(className) {
+    render(className = "p-3") {
         return React.createElement(this.view, { className: className });
     }
 }

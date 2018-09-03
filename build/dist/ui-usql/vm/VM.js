@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import Button from 'reactstrap/lib/Button';
 import { nav, Page } from 'tonva-tools';
 import { VmForm } from './form';
 export class Coordinator {
@@ -123,12 +122,19 @@ export class CrEntity extends CoordinatorUsq {
         return ret;
     }
     buildFieldsInputs(ret, fields, arr) {
+        if (arr !== undefined) {
+            let arrFieldInputs = ret[arr];
+            if (arrFieldInputs === undefined) {
+                ret[arr] = arrFieldInputs = {};
+                ret = arrFieldInputs;
+            }
+        }
         for (let field of fields) {
             let { name, tuid, _tuid } = field;
             if (tuid === undefined)
                 continue;
-            let fn = arr === undefined ? name : arr + '.' + name;
-            ret[fn] = {
+            //let fn = arr === undefined? name : arr+'.'+name;
+            ret[name] = {
                 call: this.buildCall(field, arr),
                 content: this.buildContent(field, arr),
                 nullCaption: this.crUsq.getTuidNullCaption(_tuid),
@@ -199,97 +205,6 @@ export class VmEntity extends Vm {
         if (this._form_$ !== undefined)
             return this._form_$;
         return this.coordinator.createForm(onSubmit, values);
-    }
-}
-export class TestCoordinator extends Coordinator {
-    internalStart() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(TestVm);
-        });
-    }
-    onEvent(type, value) {
-        return __awaiter(this, void 0, void 0, function* () {
-            switch (type) {
-                case 'vm1':
-                    yield this.testVm1();
-                    return;
-                case 'click':
-                    alert('click: ' + value);
-                    return;
-                case 'click1':
-                    alert('click1');
-                    return;
-            }
-        });
-    }
-    testVm1() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.showVm(TestVm1);
-        });
-    }
-}
-class TestVm extends Vm {
-    constructor() {
-        super(...arguments);
-        this.click = () => {
-            this.close();
-            this.event('click', 'kkkk');
-        };
-        this.vm1Click = () => alert('dddd');
-        this.showVm1 = () => this.event('vm1');
-        this.click1 = () => {
-            this.open(() => React.createElement(Page, { header: "TestVm inner page" },
-                "Test1 VM ",
-                React.createElement("br", null),
-                React.createElement(Button, { onClick: this.vm1Click }, "Button"),
-                " ",
-                React.createElement("br", null),
-                React.createElement(Button, { onClick: this.showVm1 }, "show TestVm1"),
-                " ",
-                React.createElement("br", null)));
-        };
-        this.view = () => React.createElement(Page, null,
-            "Test View ",
-            React.createElement("br", null),
-            React.createElement(Button, { onClick: this.click }, "Button"),
-            " ",
-            React.createElement("br", null),
-            React.createElement(Button, { onClick: this.click1 }, "\u663E\u793A\u65B0\u9875\u9762"),
-            " ",
-            React.createElement("br", null));
-    }
-    showEntry() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.open(this.view);
-        });
-    }
-}
-class TestVm1 extends Vm {
-    constructor() {
-        super(...arguments);
-        this.click = () => {
-            this.close();
-            this.event('click', 'kkkk');
-        };
-        this.click1 = () => {
-            this.close(3);
-            //this.event('click1');
-            this.return('click1 returned');
-        };
-        this.view = () => React.createElement(Page, { header: "TestVm1" },
-            "Test1 VM ",
-            React.createElement("br", null),
-            React.createElement(Button, { onClick: this.click }, "Button"),
-            " ",
-            React.createElement("br", null),
-            React.createElement(Button, { onClick: this.click1 }, "return call"),
-            " ",
-            React.createElement("br", null));
-    }
-    showEntry() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.open(this.view);
-        });
     }
 }
 //# sourceMappingURL=VM.js.map

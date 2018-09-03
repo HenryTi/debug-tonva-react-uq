@@ -7,10 +7,12 @@ import { CrUsq } from "../usq/crUsq";
 import { VmEntityLink } from "../link";
 import { VmTuidList } from "./vmTuidList";
 import { entitiesRes } from '../../res';
+import { VmTuidInfo } from "./vmTuidInfo";
 
 export interface TuidUI extends EntityUI {
     CrTuidMain?: typeof CrTuidMain;
     CrTuidSelect?: typeof CrTuidMainSelect;
+    CrTuidInfo?: typeof CrTuidInfo;
     content?: React.StatelessComponent<any>;
     divs?: {
         [div:string]: {
@@ -88,15 +90,22 @@ export class CrTuidMain extends CrTuid<TuidMain> {
 }
 
 export class CrTuidMainSelect extends CrTuid<TuidMain> {
-    protected async internalStart():Promise<void> {
-        await this.showVm(this.VmTuidSelect);
+    protected async internalStart(param?: any):Promise<void> {
+        await this.showVm(this.VmTuidSelect, param);
     }
     protected get VmTuidSelect():typeof VmTuidSelect {return VmTuidSelect}
 }
 
 export class CrTuidDivSelect extends CrTuid<TuidDiv> {
-    protected async internalStart():Promise<void> {
-        await this.showVm(this.VmTuidSelect);
+    protected async internalStart(param?: any):Promise<void> {
+        await this.showVm(this.VmTuidSelect, param);
     }
     protected get VmTuidSelect():typeof VmTuidSelect {return VmTuidSelect}
+}
+
+export class CrTuidInfo extends CrTuid<Tuid> {
+    protected async internalStart(param?: any):Promise<void> {
+        await this.showVm(this.VmTuidInfo, param);
+    }
+    protected get VmTuidInfo():typeof VmTuidInfo {return VmTuidInfo}
 }

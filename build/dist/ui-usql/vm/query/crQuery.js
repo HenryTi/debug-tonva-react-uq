@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { CrEntity } from "../VM";
 import { VmQueryMain } from "./vmQueryMain";
 import { VmQuerySelect } from "./vmQuerySelect";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 export class CrQueryBase extends CrEntity {
-    get icon() { return vmLinkIcon('text-warning', 'search'); }
+    get icon() { return entitiesRes['query'].icon; }
 }
 export class CrQuery extends CrQueryBase {
     internalStart() {

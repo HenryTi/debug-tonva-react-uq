@@ -75,8 +75,9 @@ export interface To {
 
 export interface StateTo {
     name: string;
-    caption: string;
-    tos: To[];
-    tosText: IObservableValue<string[]>;
+    caption: string | JSX.Element;
+    configable: boolean;
+    tos?: To[];
+    tosText?: IObservableValue<string[]>;
 }
 

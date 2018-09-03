@@ -67,10 +67,10 @@ export class Tuid extends Entity {
         this.queue.push(id);
     }
     valueFromId(id) {
-        return this.cache.get(String(id));
+        return this.cache.get(id);
     }
     resetCache(id) {
-        this.cache.delete(String(id));
+        this.cache.delete(id);
         let index = this.queue.findIndex(v => v === id);
         this.queue.splice(index, 1);
         this.useId(id);
@@ -80,14 +80,14 @@ export class Tuid extends Entity {
             return;
         if (isNumber(id) === false)
             return;
-        let key = String(id);
-        if (this.cache.has(key) === true) {
+        //let key = String(id);
+        if (this.cache.has(id) === true) {
             this.moveToHead(id);
             return;
         }
         this.entities.cacheTuids(defer === true ? 70 : 20);
         //let idVal = this.createID(id);
-        this.cache.set(key, id);
+        this.cache.set(id, id);
         if (this.waitingIds.findIndex(v => v === id) >= 0) {
             this.moveToHead(id);
             return;
@@ -101,10 +101,10 @@ export class Tuid extends Entity {
                 this.queue.push(r);
                 return;
             }
-            let rKey = String(r);
-            if (this.cache.has(rKey) === true) {
+            //let rKey = String(r);
+            if (this.cache.has(r) === true) {
                 // 如果移除r已经缓存
-                this.cache.delete(rKey);
+                this.cache.delete(r);
             }
             else {
                 // 如果移除r还没有缓存
@@ -134,7 +134,7 @@ export class Tuid extends Entity {
         if (index >= 0)
             this.waitingIds.splice(index, 1);
         //let cacheVal = this.createID(id, val);
-        this.cache.set(String(id), val);
+        this.cache.set(id, val);
         // 下面的代码应该是cache proxy id, 需要的时候再写吧
         /*
         let {tuids, fields} = this.schema;

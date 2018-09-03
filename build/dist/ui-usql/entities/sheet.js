@@ -21,17 +21,23 @@ export class Sheet extends Entity {
             this.setStateAccess(this.states.find(s=>s.name==state.name), state);
         }
     }*/
+    setSchema(schema) {
+        super.setSchema(schema);
+        this.states = schema.states;
+    }
     build(obj) {
         this.states = [];
+        for (let op of obj.ops) {
+            this.states.push({ name: op, actions: undefined });
+        }
+        /*
         for (let p in obj) {
-            switch (p) {
+            switch(p) {
                 case '#':
                 case '$': continue;
-                default:
-                    this.states.push(this.createSheetState(p, obj[p]));
-                    break;
+                default: this.states.push(this.createSheetState(p, obj[p])); break;
             }
-        }
+        }*/
     }
     createSheetState(name, obj) {
         let ret = { name: name, actions: [] };

@@ -16,7 +16,7 @@ export class VmTuidView extends VmEntity<TuidMain, TuidUI> {
 
     async showEntry(param?:any) {
         let data = await this.entity.valueFromId(param)
-        this.vmForm = this.createForm(data);
+        this.vmForm = this.createForm(undefined, data);
         //this.vmForm.values = data;
         //this.vmForm.readOnly = true;
         //this.vmForm.onSubmit = this.onSubmit;

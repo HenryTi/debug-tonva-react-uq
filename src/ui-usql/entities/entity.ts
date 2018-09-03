@@ -7,14 +7,12 @@ const ln = '\n';
 export abstract class Entity {
     protected entities: Entities;
     private schema: any;
+    private jName: string;
     sys?: boolean;
     readonly name: string;
     readonly typeId: number;
     abstract get typeName(): string;
-    /*private newMain: ()=>void;
-    private newArr:{[name:string]: ()=>void};
-    private newRet:{[name:string]: ()=>void};
-    */
+    get sName():string {return this.jName || this.name}
     fields: Field[];
     arrFields: ArrFields[];
     returns: ArrFields[];
@@ -40,61 +38,14 @@ export abstract class Entity {
         if (schema === undefined) return;
         if (this.schema !== undefined) return;
         this.schema = schema;
-        let {fields, arrs, returns} = schema;
+        let {name, fields, arrs, returns} = schema;
+        if (name !== this.name) this.jName = name;
         this.entities.buildFieldTuid(this.fields = fields);
         this.entities.buildArrFieldsTuid(this.arrFields = arrs);
         this.entities.buildArrFieldsTuid(this.returns = returns);
         //this.newMain = this.buildCreater(fields);
         //this.newArr = this.buildArrCreater(arrs);
         //this.newRet = this.buildArrCreater(returns);
-    }
-    private buildCreater(fields:Field[]):()=>void {
-        let creater = function():void {};
-        let prototype = creater.prototype;
-        for (let f of fields) {
-            let {name, _tuid} = f;
-            if (_tuid === undefined) continue;
-            let nTuid = '_$' + _tuid.name;
-            if (prototype.hasOwnProperty(nTuid) === false) {
-                Object.defineProperty(prototype, nTuid, {
-                    value: _tuid,
-                    writable: false,
-                    enumerable: false,
-                });
-            }
-            prototype.toJSON = function() {
-                let ret = {} as any;
-                for (let i in this) {
-                    if (i.startsWith('_$') === true) continue;
-                    ret[i] = this[i];
-                }
-                return ret;
-            };
-            (function(fn:string, nt:string) {
-                let $fn = '$' + fn;
-                Object.defineProperty(prototype, $fn, {
-                    enumerable: true,
-                    get: function() {
-                        let ret = this[fn];
-                        console.log('prop '+fn+' get ');
-                        return (this[nt] as Tuid).valueFromId(ret);
-                    },
-                    set: function(v) {
-                        this[fn]=v;
-                    }
-                });
-            })(name, nTuid);
-        }
-        return creater;
-    }
-    private buildArrCreater(arrFields:ArrFields[]):{[name:string]: ()=>void} {
-        if (arrFields === undefined) return;
-        let ret:{[name:string]: ()=>void} = {};
-        for (let e of arrFields) {
-            let {name, fields} = e;
-            ret[name] = this.buildCreater(fields);
-        }
-        return ret;
     }
 
     private removeRecursive(parent:any[], obj:any):any {

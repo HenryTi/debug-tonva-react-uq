@@ -1,10 +1,12 @@
 import { x } from 'tonva-tools';
 import CN from './zh/CN';
-const res = {
+const res = x({
     zh: {
-        CN: CN
+        CN: {
+            $: CN
+        }
     }
-};
-export const dictionary = x(res);
+});
 export default res;
+export * from './icons';
 //# sourceMappingURL=index.js.map

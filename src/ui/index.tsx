@@ -2,6 +2,7 @@ import { isArray } from 'util';
 import App from './App';
 //import DevApp_devappApi from './DevApp-devappApi';
 import $unitx from './$unitx';
+import devApp from './devApp';
 
 const ui = {
     label: 'xxx yyy zzz',
@@ -10,6 +11,7 @@ const ui = {
     //res: res,
     usqs: {
         "$$$/$unitx": $unitx,
+        "DevApp/devappApi": devApp,
     }
 };
 

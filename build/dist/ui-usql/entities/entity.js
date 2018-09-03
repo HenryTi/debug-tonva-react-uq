@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const tab = '\t';
 const ln = '\n';
 export class Entity {
+    get sName() { return this.jName || this.name; }
     constructor(entities, name, typeId) {
         this.entities = entities;
         this.name = name;
@@ -30,7 +31,9 @@ export class Entity {
         if (this.schema !== undefined)
             return;
         this.schema = schema;
-        let { fields, arrs, returns } = schema;
+        let { name, fields, arrs, returns } = schema;
+        if (name !== this.name)
+            this.jName = name;
         this.entities.buildFieldTuid(this.fields = fields);
         this.entities.buildArrFieldsTuid(this.arrFields = arrs);
         this.entities.buildArrFieldsTuid(this.returns = returns);

@@ -98,7 +98,7 @@ export class Entities {
         for (let i in tuids) {
             let schema = tuids[i];
             let { name, typeId, proxies } = schema;
-            let tuid = this.newTuid(name, typeId);
+            let tuid = this.newTuid(i, typeId);
             tuid.sys = true;
             //tuid.setSchema(schema);
             if (proxies !== undefined)
@@ -107,7 +107,7 @@ export class Entities {
         for (let i in tuids) {
             let schema = tuids[i];
             let { name } = schema;
-            let tuid = this.getTuid(name);
+            let tuid = this.getTuid(i);
             //tuid.sys = true;
             tuid.setSchema(schema);
         }

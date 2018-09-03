@@ -10,13 +10,13 @@ import { CrEntity } from "../VM";
 import { VmTuidMain } from './vmTuidMain';
 import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidSelect } from './vmTuidSelect';
-import { vmLinkIcon } from "../link";
 import { VmTuidList } from "./vmTuidList";
+import { entitiesRes } from '../../res';
 export class CrTuid extends CrEntity {
     constructor(crUsq, entity, ui, res) {
         super(crUsq, entity, ui, res);
     }
-    get icon() { return vmLinkIcon('text-info', 'list-alt'); }
+    get icon() { return entitiesRes['tuid'].icon; }
 }
 export class CrTuidMain extends CrTuid {
     constructor(crUsq, entity, ui, res) {

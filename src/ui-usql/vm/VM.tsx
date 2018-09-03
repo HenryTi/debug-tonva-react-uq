@@ -1,10 +1,10 @@
 import * as React from 'react';
-import Button from 'reactstrap/lib/Button';
 import { nav, Page } from 'tonva-tools';
 import { Entity, Field, TuidMain } from '../entities';
 import { CrUsq } from './usq/crUsq';
 import { VmForm, FieldInputs, FieldCall, FormOptions } from './form';
 import { CrQuerySelect } from './query';
+import { FormUI } from './formUI';
 
 export abstract class Coordinator {
     disposer = () => {
@@ -66,7 +66,7 @@ export abstract class CoordinatorUsq extends Coordinator{
 }
 
 export interface EntityUI {
-    form?: any;
+    form?: FormUI;
     //label: string;
     //res?: any;
 }
@@ -137,11 +137,18 @@ export abstract class CrEntity<T extends Entity, UI extends EntityUI> extends Co
     }
 
     private buildFieldsInputs(ret:FieldInputs, fields:Field[], arr:string) {
+        if (arr !== undefined) {
+            let arrFieldInputs = ret[arr];
+            if (arrFieldInputs === undefined) {
+                ret[arr] = arrFieldInputs = {};
+                ret = arrFieldInputs;
+            }
+        }
         for (let field of fields) {
             let {name, tuid, _tuid} = field;
             if (tuid === undefined) continue;
-            let fn = arr === undefined? name : arr+'.'+name;
-            ret[fn] = {
+            //let fn = arr === undefined? name : arr+'.'+name;
+            ret[name] = {
                 call: this.buildCall(field, arr),
                 content: this.buildContent(field, arr),
                 nullCaption: this.crUsq.getTuidNullCaption(_tuid),

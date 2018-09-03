@@ -9,21 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as React from 'react';
 import _ from 'lodash';
 import { setXLang, Page, loadAppApis, nav, meInFrame } from 'tonva-tools';
-import { List, LMR } from 'tonva-react-form';
+import { List, LMR, FA } from 'tonva-react-form';
 import res from '../res';
 import { CrUsq } from './usq';
 import { centerApi } from '../centerApi';
-import { TestCoordinator, Coordinator } from './VM';
+import { Coordinator } from './VM';
+import { OpCoordinator } from '../op';
 export const entitiesCollection = {};
-const logout = () => {
-    // nothing to do
-};
 export class CrApp extends Coordinator {
     constructor(tonvaApp, ui) {
         super();
         this.crUsqCollection = {};
-        this.testClick = () => __awaiter(this, void 0, void 0, function* () {
-            let coord = new TestCoordinator;
+        this.opClick = () => __awaiter(this, void 0, void 0, function* () {
+            let coord = new OpCoordinator;
             let ret = yield coord.call();
             alert('call returned in vmApp: ' + ret);
         });
@@ -34,36 +32,21 @@ export class CrApp extends Coordinator {
         };
         this.onRowClick = (item) => __awaiter(this, void 0, void 0, function* () {
             meInFrame.unit = item.id; // 25;
-            //await store.loadUnit();
-            //nav.clear();
-            //nav.replace(this.render());
             yield this.start();
         });
-        /*
-        async selectUnit(appUnits:any[]):Promise<number> {
-            return new Promise<any>((resolve, reject) => {
-                const onRowClick = (item: any) => resolve(item.id);
-                const renderRow = (item: any, index: number):JSX.Element => {
-                    let {id, nick, name} = item;
-                    return <LMR className="p-2" right={'id: ' + id}>
-                        <div>{nick || name}</div>
-                    </LMR>;
-                }
-                const SelectUnit = () => <Page header="选择小号" logout={logout}>
-                    <List items={appUnits} item={{render: renderRow, onClick: onRowClick}}/>
-                </Page>;
-            });
-        }
-        */
         this.appPage = () => {
-            return React.createElement(Page, { header: this.caption, logout: () => { } },
-                React.createElement("button", { onClick: this.testClick }, "Test coordinator"),
+            return React.createElement(Page, { header: this.caption, logout: () => { meInFrame.unit = undefined; } },
+                React.createElement(LMR, { className: "px-3 py-2 my-2 bg-light", left: React.createElement(FA, { name: 'cog', fixWidth: true, className: "text-info mr-2 pt-1" }), onClick: this.opClick }, "\u8BBE\u7F6E\u64CD\u4F5C\u6743\u9650"),
                 this.crUsqArr.map((v, i) => React.createElement("div", { key: i }, v.render())));
         };
         this.selectUnitPage = () => {
-            return React.createElement(Page, { header: "\u9009\u62E9\u5C0F\u53F7", logout: logout },
+            return React.createElement(Page, { header: "\u9009\u62E9\u5C0F\u53F7", logout: true },
                 React.createElement(List, { items: this.appUnits, item: { render: this.renderRow, onClick: this.onRowClick } }));
         };
+        CrApp.instance = this;
+        this.init(tonvaApp, ui);
+    }
+    init(tonvaApp, ui) {
         setXLang('zh', 'CN');
         let parts = tonvaApp.split('/');
         if (parts.length !== 2) {
@@ -73,7 +56,8 @@ export class CrApp extends Coordinator {
         this.appName = parts[1];
         this.ui = ui;
         this.res = _.clone(res);
-        _.merge(this.res, ui.res);
+        if (ui !== undefined)
+            _.merge(this.res, ui.res);
         this.caption = this.res.caption || 'Tonva';
     }
     loadApis() {
@@ -123,7 +107,7 @@ export class CrApp extends Coordinator {
                             return;
                         case 1:
                             unit = this.appUnits[0].id;
-                            if (unit === undefined || unit <= 0) {
+                            if (unit === undefined || unit < 0) {
                                 alert('当前unit不支持app操作，请重新登录');
                                 yield nav.logout();
                                 return;
@@ -193,29 +177,5 @@ export class CrApp extends Coordinator {
             }
         });
     }
-    main() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.clearPrevPages();
-            nav.push(React.createElement(this.appPage, null));
-        });
-    }
 }
-const SheetLink = ({ vm, apiName, type, entityName }) => {
-    let crUsq = vm.getCrUsq(apiName);
-    if (crUsq === undefined) {
-        return React.createElement("div", null,
-            "unkown api: ",
-            apiName);
-    }
-    let vmLink = crUsq.vmLinkFromName(type, entityName);
-    let key = apiName + ':' + entityName;
-    if (vmLink === undefined) {
-        return React.createElement("div", { key: key },
-            "unkown ",
-            apiName,
-            ":",
-            entityName);
-    }
-    return React.createElement("div", { key: key, className: "bg-white cursor-pointer border-bottom", onClick: vmLink.onClick }, vmLink.render());
-};
 //# sourceMappingURL=crApp.js.map

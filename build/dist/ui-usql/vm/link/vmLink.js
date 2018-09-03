@@ -23,7 +23,7 @@ export class VmEntityLink extends VmLink {
     get view() {
         return () => {
             let { icon, label } = this.crEntity;
-            return React.createElement("div", { className: "px-3 py-2  align-items-center" },
+            return React.createElement("div", { className: "px-3 py-2 align-items-center cursor-pointer", onClick: this.onClick },
                 icon,
                 " \u00A0 ",
                 label);

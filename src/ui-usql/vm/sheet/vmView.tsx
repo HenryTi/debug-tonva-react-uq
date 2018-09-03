@@ -5,26 +5,29 @@ import { VmForm } from '../form';
 import { VmEntity } from '../VM';
 import { CrSheet, SheetUI } from './crSheet';
 
-export class VmView extends VmEntity<Sheet, SheetUI> {
+export abstract class VmView extends VmEntity<Sheet, SheetUI> {
     vmForm: VmForm;
     data: any;
     state: string;
     flows:any[];
 
+    /*
     constructor(crSheet:CrSheet, data: any, state:string, flows:any[]) {
         super(crSheet);
         this.data = data;
         this.state = state;
         this.flows = flows;
     }
+    */
 
-    async showEntry(param?:any) {}
+    //async showEntry(param?:any) {}
 
+    /*
     render() {
         this.vmForm = this.createForm(this.data);
         return <this.view />;
     }
-
+    */
     /*
     protected get fieldsFormOptions():VmFormOptions {
         let ret = super.fieldsFormOptions;
@@ -56,7 +59,7 @@ export class VmView extends VmEntity<Sheet, SheetUI> {
             {removed}
             {this.vmForm.render()}
     
-            <List header={<Muted>流程</Muted>}
+            <List header={<Muted className="mx-3 my-1">流程</Muted>}
                 items={this.flows}
                 item={{render:this.flowRow}}/>
         </div>;

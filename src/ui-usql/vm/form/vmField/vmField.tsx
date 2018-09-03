@@ -5,7 +5,7 @@ import { ViewModel } from "../../viewModel";
 import { FormValues, FieldCall, FieldInputs } from '../vmForm';
 import { Rule, RuleRequired, RuleInt, RuleNum, RuleMin, RuleMax } from '../rule';
 import { Field } from '../../../entities';
-import { FieldUI, InputUI, NumberUI } from '../formUI';
+import { FieldUI, InputUI, NumberUI, Compute } from '../../formUI';
 
 //export type TypeControl = React.StatelessComponent<{vm: ViewModel, className:string}>;
 
@@ -15,12 +15,14 @@ export abstract class VmField extends ViewModel {
     protected formValues: FormValues;
     protected formReadOnly: boolean;
     protected rules: Rule[];
-    constructor(field:Field, fieldUI: FieldUI, formValues:FormValues, readOnly:boolean) {
+    protected formCompute: Compute;
+    constructor(field:Field, fieldUI: FieldUI, formValues:FormValues, formCompute: Compute, readOnly:boolean) {
         super();
         this.field = field;
         this.name = field.name;
         this.fieldUI = fieldUI || {} as any;
         this.formValues = formValues;
+        this.formCompute = formCompute;
         this.formReadOnly = readOnly;
         this.buildRules();
     }
@@ -48,7 +50,7 @@ export abstract class VmField extends ViewModel {
     }
 
     @computed get value() { return this.formValues.values[this.name]; }
-    setValue(v:any) { 
+    setValue(v:any) {
         this.formValues.values[this.name]=v; 
     }
     get error() { return this.formValues.errors[this.name]; }
@@ -105,6 +107,12 @@ export abstract class VmInputControl extends VmField {
         let defy = this.checkRules;
         if (defy.length > 0) {
             this.error = defy[0];
+        }
+        if (this.formCompute !== undefined) {
+            let {values} = this.formValues;
+            for (let i in this.formCompute) {
+                values[i] = this.formCompute[i].call(values);
+            }
         }
     }
 

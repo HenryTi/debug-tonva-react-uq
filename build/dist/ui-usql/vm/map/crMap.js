@@ -15,7 +15,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import _ from 'lodash';
 import { CrEntity } from "../VM";
 import { VmMapMain } from "./vmMain";
-import { vmLinkIcon } from '../link';
+import { entitiesRes } from '../../res';
 import { observable } from "mobx";
 import { PureJSONContent } from '../viewModel';
 export class MapItem {
@@ -85,7 +85,7 @@ export class CrMap extends CrEntity {
             return this.entity.submit(values);
         }*/
     }
-    get icon() { return vmLinkIcon('text-muted', 'list-ul'); }
+    get icon() { return entitiesRes['map'].icon; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
             let { keys } = this.entity;

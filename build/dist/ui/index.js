@@ -1,6 +1,7 @@
 import { isArray } from 'util';
 //import DevApp_devappApi from './DevApp-devappApi';
 import $unitx from './$unitx';
+import devApp from './devApp';
 const ui = {
     label: 'xxx yyy zzz',
     //App: App,
@@ -8,6 +9,7 @@ const ui = {
     //res: res,
     usqs: {
         "$$$/$unitx": $unitx,
+        "DevApp/devappApi": devApp,
     }
 };
 (function converUIKeyToLowercase(obj) {

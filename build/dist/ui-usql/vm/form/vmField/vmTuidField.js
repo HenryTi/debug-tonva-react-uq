@@ -37,12 +37,16 @@ export class VmTuidField extends VmField {
             let content;
             if (this.value === null)
                 content = React.createElement(React.Fragment, null, this.input.nullCaption);
-            else {
+            else if (typeof this.value === 'object') {
                 //this.tuid.useId(this.value);
                 //let v = this.tuid.valueFromId(this.value);
                 //v.templet = this.input.content;
                 //content = <this.input.content {...v} />;
                 //content = v.content;
+                // content = this.tuid.createID(this.value).content();
+                content = this.value.content();
+            }
+            else {
                 content = this.tuid.createID(this.value).content();
             }
             if (this.readOnly === true) {

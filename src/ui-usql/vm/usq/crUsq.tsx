@@ -8,7 +8,7 @@ import { CrBook, BookUI } from '../book';
 import { CrSheet, SheetUI } from '../sheet';
 import { ActionUI, CrAction } from '../action';
 import { QueryUI, CrQuery, CrQuerySelect } from '../query';
-import { CrTuidMain, TuidUI, CrTuidMainSelect, CrTuid } from '../tuid';
+import { CrTuidMain, TuidUI, CrTuidMainSelect, CrTuid, CrTuidInfo } from '../tuid';
 import { MapUI, CrMap } from '../map';
 import { CrApp } from '../crApp';
 import { CrEntity, EntityUI } from '../VM';
@@ -23,9 +23,10 @@ export interface UsqUI {
     CrQuerySelect?: typeof CrQuerySelect;
     CrMap?: typeof CrMap;
     tuid?: {[name:string]: TuidUI};
+    sheet?: {[name:string]: SheetUI};
     map?: {[name:string]: MapUI};
     query?: {[name:string]: QueryUI};
-    res: any;
+    res?: any;
 }
 
 export class CrUsq implements Usq {
@@ -44,9 +45,11 @@ export class CrUsq implements Usq {
         this.id = apiId;
         if (ui === undefined)
             this.ui = {};
-        else if (ui.res !== undefined) {
+        else {
             this.ui = ui;
-            this.res = ui.res.zh.CN;
+            if (ui.res !== undefined) {
+                this.res = ui.res.zh.CN;
+            }
         }
 
         if (ui !== undefined) {
@@ -219,6 +222,10 @@ export class CrUsq implements Usq {
         let {ui, res} = this.getUI<Tuid, TuidUI>(tuid);
         return new (ui && ui.CrTuidSelect || CrTuidMainSelect)(this, tuid, ui, res);
     }
+    crTuidInfo(tuid:Tuid):CrTuidInfo {
+        let {ui, res} = this.getUI<Tuid, TuidUI>(tuid);
+        return new (ui && ui.CrTuidInfo || CrTuidInfo)(this, tuid, ui, res);
+    }
     /*
     newVmTuidView(tuid:Tuid):VmTuidView {
         let ui = this.getUI<TuidUI>('tuid', tuid.name);
@@ -306,6 +313,11 @@ export class CrUsq implements Usq {
             let {ui} = this.getUI<Tuid, TuidUI>(owner);
             return (ui && ui.divs && ui.divs[tuid.name].content) || PureJSONContent;
         }
+    }
+
+    async showTuid(tuid:Tuid, id:number):Promise<void> {
+        let cr = this.crTuidInfo(tuid);
+        await cr.start(id);
     }
 
     protected get VmUsq():typeof VmUsq {return VmUsq}

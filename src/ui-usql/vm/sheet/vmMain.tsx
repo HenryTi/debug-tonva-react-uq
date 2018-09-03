@@ -50,7 +50,7 @@ export class VmSheetMain extends VmEntity<Sheet, SheetUI> {
                 <Button className="mr-2" color="primary" onClick={this.schemaClick}>模板</Button>
             </div>
             <List className="my-2"
-                header={<Muted>待处理{this.label}</Muted>}
+                header={<Muted className="mx-3 my-1">待处理{this.label}</Muted>}
                 none="[ 无 ]"
                 items={list}
                 item={{render:this.renderState, onClick:this.sheetStateClick}} />

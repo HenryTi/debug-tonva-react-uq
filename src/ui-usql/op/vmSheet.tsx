@@ -152,13 +152,26 @@ export class VmSheet extends Vm {
     }
 
     private renderState(stateTo:StateTo) {
-        let {name, caption, tos, tosText} = stateTo;
-        let right = <FA className="text-muted align-self-center" name="chevron-right" />;
-        return <div key={name} className="border border-light rounded mx-1 my-3">
-            <LMR className="bg-white py-1 px-2 cursor-pointer" right={right} onClick={() => this.stateClick(stateTo)}>
+        let {name, caption, tos, tosText, configable} = stateTo;
+        let content;
+        if (configable === true) {
+            let right = <FA className="text-muted align-self-center" name="chevron-right" />;
+            let onClick = () => this.stateClick(stateTo);
+            let tosView = <this.stateTosView tosText={tosText} />;
+            content = <>
+                <LMR className="bg-white py-1 px-2 cursor-pointer" right={right} onClick={onClick}>
+                    {caption}
+                </LMR>
+                {tosView}
+            </>
+        }
+        else {
+            content = <div className="bg-white py-1 px-2">
                 {caption}
-            </LMR>
-            <this.stateTosView tosText={tosText} />
+            </div>;
+        }
+        return <div key={name} className="border border-light rounded mx-1 my-3">
+            {content}
         </div>
     }
 
@@ -194,10 +207,28 @@ export class VmSheet extends Vm {
         this.sheet = sheet;
         let {name, states} = sheet;
         this.states = states.map(v => {
-            let tos = opTos[v];
+            let prefix = v.substr(0, 1);
+            let caption: string | JSX.Element;
+            let configable: boolean;
+            let tos;
+            switch (prefix) {
+                case '<': caption = <>{v.substr(1)} &nbsp; <Muted>回复</Muted></>; configable = false; break;
+                case '#': caption = <>{v.substr(1)} &nbsp; <Muted>返初</Muted></>; configable = false; break;
+                case '$': 
+                    caption = '[新开单]'; 
+                    configable = true; 
+                    tos = opTos[v];
+                    break;
+                default:
+                    caption = v;
+                    configable = true; 
+                    tos = opTos[v];
+                    break;
+            }
             return {
                 name: v,
-                caption: v === '$'? '[新开单]' : v,
+                caption: caption,
+                configable: configable,
                 tos: tos,
                 tosText: observable.box<string[]>(this.tosTexts(tos)),
             };
@@ -365,7 +396,7 @@ export class VmSheet extends Vm {
         let teamsList;
         let defaultSelected = selected.get();
         if (defaultSelected === true) {
-            teamsList = <List className="ml-4 mb-2" items={teams} item={{render:this.teamRow}} />
+            teamsList = <List className="ml-4 va-list-top-border" items={teams} item={{render:this.teamRow}} />
         }
         return <div className="flex-column">
             <label className="px-3 py-2 w-100 mb-0">
@@ -385,7 +416,7 @@ export class VmSheet extends Vm {
         let teamsList;
         let defaultSelected = selected.get();
         if (defaultSelected === true && sections.length > 0) {
-            teamsList = <List className="ml-4 mb-2" items={sections} item={{render:this.sectionRow}} />
+            teamsList = <List className="ml-4 va-list-top-border" items={sections} item={{render:this.sectionRow}} />
         }
         return <div className="flex-column">
             <label className="px-3 py-2 w-100 mb-0">

@@ -16,10 +16,6 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import ui from './ui';
 import { CrApp } from './ui-usql/vm';
-const tStyle = { margin: '2em auto', borderCollapse: 'collapse' };
-const rowStyle = { borderBottom: '1px solid gray' };
-const lStyle = { textAlign: 'right', padding: '1em 0.5em', color: 'gray' };
-const rStyle = { textAlign: 'left', paddin: '1em 0.5em' };
 /*
 const tonvaApp = '$$$/ui-usql-first';
 const uiMappers: {[api:string]: EntitiesMapper} = {
@@ -27,8 +23,8 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
     "$$$/货主": 货主Mapper,
 };
 */
-//const tonvaApp = 'devapp/DevApp';
-const tonvaApp = '$$$/$unitx';
+const tonvaApp = 'devapp/DevApp';
+//const tonvaApp = '$$$/$unitx';
 /*
 const uiMappers: {[api:string]: EntitiesMapper} = {
     "DevApp/devappApi": pageMapper,
@@ -54,32 +50,6 @@ class App extends React.Component {
     }
     render() {
         return React.createElement(NavView, { onLogined: this.onLogined });
-        //return (<NavView view={<UsqlHome appName={tonvaApp} ui={ui} uiMappers={uiMappers} />} />);
-        /*
-            view={<Page>
-            <div className="d-flex flex-fill align-items-center justify-content-center text-info" style={{height:'90%'}}>
-                努力加载中...
-            </div>
-        </Page>} />);
-        return (
-            <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <h1 className="App-title">Welcome to React</h1>
-                </header>
-                <table style={tStyle}>
-                    {
-                      envs.map((v,index) => <tr key={index} style={{borderBottom: '1px solid gray'}}>
-                        <td style={lStyle}>{v[0]}:</td>
-                        <td style={rStyle}>{v[1]}</td>
-                      </tr>)}
-                </table>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <button onClick=
-            </div>
-        );*/
     }
 }
 export default App;

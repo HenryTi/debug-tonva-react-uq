@@ -1,17 +1,24 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import * as React from 'react';
 import { List, Muted, EasyDate, FA } from 'tonva-react-form';
 import { VmEntity } from '../VM';
 export class VmView extends VmEntity {
-    constructor(crSheet, data, state, flows) {
-        super(crSheet);
+    constructor() {
+        super(...arguments);
+        /*
+        constructor(crSheet:CrSheet, data: any, state:string, flows:any[]) {
+            super(crSheet);
+            this.data = data;
+            this.state = state;
+            this.flows = flows;
+        }
+        */
+        //async showEntry(param?:any) {}
+        /*
+        render() {
+            this.vmForm = this.createForm(this.data);
+            return <this.view />;
+        }
+        */
         /*
         protected get fieldsFormOptions():VmFormOptions {
             let ret = super.fieldsFormOptions;
@@ -55,18 +62,8 @@ export class VmView extends VmEntity {
             return React.createElement("div", null,
                 removed,
                 this.vmForm.render(),
-                React.createElement(List, { header: React.createElement(Muted, null, "\u6D41\u7A0B"), items: this.flows, item: { render: this.flowRow } }));
+                React.createElement(List, { header: React.createElement(Muted, { className: "mx-3 my-1" }, "\u6D41\u7A0B"), items: this.flows, item: { render: this.flowRow } }));
         };
-        this.data = data;
-        this.state = state;
-        this.flows = flows;
-    }
-    showEntry(param) {
-        return __awaiter(this, void 0, void 0, function* () { });
-    }
-    render() {
-        this.vmForm = this.createForm(this.data);
-        return React.createElement(this.view, null);
     }
 }
 //# sourceMappingURL=vmView.js.map
