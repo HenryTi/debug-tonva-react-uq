@@ -55,7 +55,7 @@ export class VmView extends VmEntity {
                         React.createElement(Muted, null,
                             React.createElement(EasyDate, { date: date })))));
         };
-        this.view = () => {
+        this.sheetView = () => {
             let removed;
             if (this.state === '-')
                 removed = React.createElement("div", { className: "mx-3 my-2", style: { color: 'red' } }, "\u672C\u5355\u636E\u4F5C\u5E9F");

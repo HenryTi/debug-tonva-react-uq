@@ -23,14 +23,14 @@ export class VmSheetAction extends VmView { //} VmEntity<Sheet, SheetUI> {
         this.state = this.brief.state;
         //this.vmView = new VmView(this.coordinator, this.sheetData, this.brief.state, flows);
         this.vmForm = this.createForm(undefined, this.data);
-        this.open(this.page);
+        this.openPage(this.page);
     }
 
     actionClick = async (action:any) => {
         let {id, flow, state} = this.brief;
-        let res = await this.entity.action(id, flow, state, action.name);
+        let res = await this.coordinator.action(id, flow, state, action.name);
         alert(JSON.stringify(res));
-        await nav.back();
+        await this.backPage();
     }
 
     deleteClick = async () => {
@@ -89,7 +89,7 @@ export class VmSheetAction extends VmView { //} VmEntity<Sheet, SheetUI> {
                     {actionButtons}
                     {startButtons}
                 </div>
-                <this.view />
+                <this.sheetView />
             </div>
         </Page>;
     }

@@ -16,7 +16,7 @@ export class VmSheetList extends VmEntity<Sheet, SheetUI> {
         this.stateName = item.state;
         this.stateLabel = this.coordinator.getStateLabel(this.stateName);
         await this.entity.getStateSheets(this.stateName, 0, 30);
-        this.open(this.view);
+        this.openPage(this.view);
     }
 
     rowClick = async (brief:any) => {

@@ -4,9 +4,14 @@ const orderUI = {
             sumAmount: () => {
                 return 1;
             },
+        },
+        arrs: {
             articles: {
-                amount: function () {
-                    return this.quantity * this.price;
+                compute: {
+                    amount: function () {
+                        return (this.quantity === undefined || this.quantity === null ? 0 : this.quantity) *
+                            (this.price === undefined || this.price === null ? 0 : this.price);
+                    }
                 }
             }
         }

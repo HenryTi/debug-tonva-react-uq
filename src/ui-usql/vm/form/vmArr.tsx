@@ -65,7 +65,7 @@ export class VmArr extends ViewModel {
                 submitCaption: 'submit',
                 arrNewCaption: undefined,
                 arrEditCaption: undefined,
-            }, this.onSubmit);
+            }, this.readOnly===true? undefined: this.onSubmit);
         }
         else {
             this.onEditRow = onEditRow;
@@ -79,7 +79,7 @@ export class VmArr extends ViewModel {
     }
 
     protected rowPage = () => {
-        return <Page header={this.label}>
+        return <Page header={this.label} back="close">
             {this.vmForm.render('p-3')}
         </Page>
     }
@@ -118,8 +118,10 @@ export class VmArr extends ViewModel {
     private editRow = async (rowValues:any): Promise<void> => {
         this.rowValues = rowValues;
         let {vmSubmit} = this.vmForm;
-        vmSubmit.caption = this.editSubmitCaption;
-        vmSubmit.className = 'btn btn-outline-success';
+        if (vmSubmit !== undefined) {
+            vmSubmit.caption = this.editSubmitCaption;
+            vmSubmit.className = 'btn btn-outline-success';
+        }
         await this.showRow(rowValues);
     }
     private addRow = async () => {

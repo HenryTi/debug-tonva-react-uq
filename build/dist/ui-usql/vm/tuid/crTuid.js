@@ -12,6 +12,7 @@ import { VmTuidEdit } from './vmTuidEdit';
 import { VmTuidSelect } from './vmTuidSelect';
 import { VmTuidList } from "./vmTuidList";
 import { entitiesRes } from '../../res';
+import { VmTuidInfo } from "./vmTuidInfo";
 export class CrTuid extends CrEntity {
     constructor(crUsq, entity, ui, res) {
         super(crUsq, entity, ui, res);
@@ -83,19 +84,27 @@ export class CrTuidMain extends CrTuid {
     }
 }
 export class CrTuidMainSelect extends CrTuid {
-    internalStart() {
+    internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmTuidSelect);
+            yield this.showVm(this.VmTuidSelect, param);
         });
     }
     get VmTuidSelect() { return VmTuidSelect; }
 }
 export class CrTuidDivSelect extends CrTuid {
-    internalStart() {
+    internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmTuidSelect);
+            yield this.showVm(this.VmTuidSelect, param);
         });
     }
     get VmTuidSelect() { return VmTuidSelect; }
+}
+export class CrTuidInfo extends CrTuid {
+    internalStart(param) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.showVm(this.VmTuidInfo, param);
+        });
+    }
+    get VmTuidInfo() { return VmTuidInfo; }
 }
 //# sourceMappingURL=crTuid.js.map

@@ -6,7 +6,7 @@ const ln = '\n';
 
 export abstract class Entity {
     protected entities: Entities;
-    private schema: any;
+    protected schema: any;
     private jName: string;
     sys?: boolean;
     readonly name: string;
@@ -48,19 +48,11 @@ export abstract class Entity {
         //this.newRet = this.buildArrCreater(returns);
     }
 
-    private removeRecursive(parent:any[], obj:any):any {
-        if (typeof obj !== 'object') return obj;
-        let ret = {} as any;
-        parent.push(obj);
-        for (let i in obj) {
-            ret[i] = this.removeRecursive(parent, obj[i]);
-        }
-        parent.pop();
-        return ret;
-    }
     schemaStringify():string {
-        let obj = this.removeRecursive([], this.schema);
-        return JSON.stringify(obj, undefined, 4);
+        return JSON.stringify(this.schema, (key:string, value:any) => {
+            if (key === '_tuid') return undefined;
+            return value;
+        }, 4);
     }
 
     getTuid(field:Field):Tuid {

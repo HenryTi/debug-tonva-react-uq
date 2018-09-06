@@ -13,15 +13,15 @@ import { CrBook } from '../book';
 import { CrSheet } from '../sheet';
 import { CrAction } from '../action';
 import { CrQuery, CrQuerySelect } from '../query';
-import { CrTuidMain, CrTuidMainSelect } from '../tuid';
+import { CrTuidMain, CrTuidMainSelect, CrTuidInfo } from '../tuid';
 import { CrMap } from '../map';
 import { PureJSONContent } from '../viewModel';
 import { VmUsq } from './vmUsq';
 export class CrUsq {
-    constructor(vmApp, apiId, api, access, ui) {
+    constructor(crApp, apiId, api, access, ui) {
         this.isSysVisible = false;
         //super();
-        this.vmApp = vmApp;
+        this.crApp = crApp;
         this.api = api;
         this.id = apiId;
         if (ui === undefined)
@@ -60,7 +60,7 @@ export class CrUsq {
         let baseUrl = hash === undefined || hash === '' ?
             'debug/' : 'tv/';
         let _api = new Api(baseUrl, apiOwner, apiName, true);
-        this.entities = new Entities(this, vmApp.id, apiId, _api, access);
+        this.entities = new Entities(this, crApp.id, apiId, _api, access);
     }
     loadSchema() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -195,6 +195,10 @@ export class CrUsq {
         let { ui, res } = this.getUI(tuid);
         return new (ui && ui.CrTuidSelect || CrTuidMainSelect)(this, tuid, ui, res);
     }
+    crTuidInfo(tuid) {
+        let { ui, res } = this.getUI(tuid);
+        return new (ui && ui.CrTuidInfo || CrTuidInfo)(this, tuid, ui, res);
+    }
     /*
     newVmTuidView(tuid:Tuid):VmTuidView {
         let ui = this.getUI<TuidUI>('tuid', tuid.name);
@@ -277,6 +281,12 @@ export class CrUsq {
             let { ui } = this.getUI(owner);
             return (ui && ui.divs && ui.divs[tuid.name].content) || PureJSONContent;
         }
+    }
+    showTuid(tuid, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let cr = this.crTuidInfo(tuid);
+            yield cr.start(id);
+        });
     }
     get VmUsq() { return VmUsq; }
     render() {

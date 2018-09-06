@@ -104,6 +104,7 @@ export class CrApp extends Coordinator {
                     switch (this.appUnits.length) {
                         case 0:
                             alert('当前登录的用户不支持当前的APP');
+                            yield nav.logout();
                             return;
                         case 1:
                             unit = this.appUnits[0].id;

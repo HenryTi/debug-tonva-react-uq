@@ -13,7 +13,11 @@ export class Coordinator {
     constructor() {
         this.disposer = () => {
             // message listener的清理
+            nav.unregisterReceiveHandler(this.receiveHandlerId);
         };
+        this.onMessageReceive = (message) => __awaiter(this, void 0, void 0, function* () {
+            yield this.onMessage(message);
+        });
     }
     showVm(vm, param) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,11 +37,20 @@ export class Coordinator {
         alert(text);
     }
     errorPage(header, err) {
-        nav.push(React.createElement(Page, { header: "App error!" },
+        this.openPage(React.createElement(Page, { header: "App error!" },
             React.createElement("pre", null, typeof err === 'string' ? err : err.message)));
+    }
+    onMessage(message) {
+        return;
+    }
+    beforeStart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.receiveHandlerId = nav.registerReceiveHandler(this.onMessageReceive);
+        });
     }
     start(param) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.beforeStart();
             yield this.internalStart(param);
         });
     }
@@ -57,6 +70,23 @@ export class Coordinator {
         this._resolve_$(value);
         this._resolve_$ = undefined;
     }
+    openPage(page) {
+        nav.push(page, this.disposer);
+        this.disposer = undefined;
+    }
+    replacePage(page) {
+        nav.replace(page, this.disposer);
+        this.disposer = undefined;
+    }
+    backPage() {
+        nav.back();
+    }
+    closePage(level) {
+        nav.pop(level);
+    }
+    regConfirmClose(confirmClose) {
+        nav.regConfirmClose(confirmClose);
+    }
 }
 export class CoordinatorUsq extends Coordinator {
     constructor(crUsq) {
@@ -72,10 +102,11 @@ export class CrEntity extends CoordinatorUsq {
         this.res = res;
         this.label = (res && res.label) || entity.name;
     }
-    start(param) {
+    beforeStart() {
+        const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
+            yield _super("beforeStart").call(this);
             yield this.entity.loadSchema();
-            yield this.internalStart(param);
         });
     }
     createForm(onSubmit, values) {
@@ -167,18 +198,27 @@ export class Vm {
     constructor(coordinator) {
         this.coordinator = coordinator;
     }
-    open(view, param) {
-        nav.push(React.createElement(view, param));
+    openPage(view, param) {
+        this.coordinator.openPage(React.createElement(view, param));
     }
-    close(level) {
-        nav.pop(level);
+    replacePage(view, param) {
+        this.coordinator.replacePage(React.createElement(view, param));
     }
-    /*
-    protected async retn(type:string, value?:any) {
-        nav.pop();
-        await this.resolve(type, value);
+    openPageElement(page) {
+        this.coordinator.openPage(page);
     }
-    */
+    replacePageElement(page) {
+        this.coordinator.replacePage(page);
+    }
+    backPage() {
+        this.coordinator.backPage();
+    }
+    closePage(level) {
+        this.coordinator.closePage(level);
+    }
+    regConfirmClose(confirmClose) {
+        this.coordinator.regConfirmClose(confirmClose);
+    }
     event(type, value) {
         return __awaiter(this, void 0, void 0, function* () {
             /*

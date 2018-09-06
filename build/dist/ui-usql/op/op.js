@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Page, meInFrame, nav } from "tonva-tools";
+import { Page, meInFrame } from "tonva-tools";
 import React from "react";
 import { List, Muted, LMR } from "tonva-react-form";
 import { Coordinator } from "../vm/VM";
@@ -14,6 +14,7 @@ import { CrApp } from '../vm/crApp';
 import { centerApi } from "../centerApi";
 import { entitiesRes } from '../res';
 import { VmSheet } from './vmSheet';
+// 单据跟操作的绑定设置
 export class OpCoordinator extends Coordinator {
     constructor() {
         super(...arguments);
@@ -22,7 +23,7 @@ export class OpCoordinator extends Coordinator {
             return React.createElement(LMR, { className: "px-3 py-2", right: discription && React.createElement(Muted, null, discription) }, name);
         };
         this.appClick = (app) => {
-            nav.push(React.createElement(this.appView, Object.assign({}, app)));
+            this.openPage(React.createElement(this.appView, Object.assign({}, app)));
         };
         this.appsView = () => React.createElement(Page, { header: "\u8BBE\u7F6E\u64CD\u4F5C\u6743\u9650" },
             React.createElement(List, { items: this.apps, item: { render: this.appRender, onClick: this.appClick } }));
@@ -90,7 +91,7 @@ export class OpCoordinator extends Coordinator {
             this.unitxUsq = this.crApp.getCrUsq('$$$/$unitx');
             yield this.buildPosts();
             yield this.buildAppsApis();
-            nav.push(React.createElement(this.appsView, null));
+            this.openPage(React.createElement(this.appsView, null));
         });
     }
     buildAppsApis() {
@@ -222,6 +223,7 @@ export class OpCoordinator extends Coordinator {
                 let name = parts[0];
                 parts[0] = '$';
                 let sheet = {
+                    typeId: 0,
                     name: name,
                     states: parts,
                 };

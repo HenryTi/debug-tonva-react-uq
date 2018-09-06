@@ -51,7 +51,7 @@ export abstract class VmView extends VmEntity<Sheet, SheetUI> {
         </div>;
     }
 
-    protected view = () => {
+    protected sheetView = () => {
         let removed;
         if (this.state === '-')
             removed = <div className="mx-3 my-2" style={{color:'red'}}>本单据作废</div>;

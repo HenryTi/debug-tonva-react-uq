@@ -54,7 +54,8 @@ export class VmTuidField extends VmField {
             content = this.value.content();
         }
         else {
-            content = this.tuid.createID(this.value).content();
+            let idBox = this.tuid.createID(this.value);
+            content = idBox.content();
         }
         if (this.readOnly === true) {
             return <div 

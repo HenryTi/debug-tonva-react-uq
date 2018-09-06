@@ -14,7 +14,7 @@ export class VmTuidMain extends VmEntity<TuidMain, TuidUI> {
     onSearch = async (key:string) => this.event('list', key) //await this.coordinator.navVm(VmTuidList, key);
 
     async showEntry(param?:any):Promise<void> {
-        this.open(this.view);
+        this.openPage(this.view);
     }
 
     protected entityRender(link: VmEntityLink, index: number): JSX.Element {

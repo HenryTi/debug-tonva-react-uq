@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import React from 'react';
-import { nav, Page } from 'tonva-tools';
+import { Page } from 'tonva-tools';
 import { Muted, LMR, FA, List } from 'tonva-react-form';
 import { Vm } from '../vm/VM';
 import { observer } from 'mobx-react';
@@ -117,8 +117,8 @@ export class VmSheet extends Vm {
             }
         });*/
         this.sheetOpsChanged = false;
-        nav.push(React.createElement(this.stateView, Object.assign({}, state)));
-        nav.regConfirmClose(() => __awaiter(this, void 0, void 0, function* () {
+        this.openPage(this.stateView, state);
+        this.regConfirmClose(() => __awaiter(this, void 0, void 0, function* () {
             if (this.sheetOpsChanged === false)
                 return true;
             return confirm('未保存\n真的不保存吗？');
@@ -287,7 +287,7 @@ export class VmSheet extends Vm {
                     tosText: observable.box(this.tosTexts(tos)),
                 };
             });
-            nav.push(React.createElement(Page, { header: '单据状态对应岗位 - ' + name }, this.states.map(v => this.renderState(v))));
+            this.openPageElement(React.createElement(Page, { header: '单据状态对应岗位 - ' + name }, this.states.map(v => this.renderState(v))));
         });
     }
     saveOps(stateTo) {
@@ -352,7 +352,7 @@ export class VmSheet extends Vm {
             let state = this.states.find(v => v.name === stateToName);
             state.tos = tos;
             state.tosText.set(this.tosTexts(tos));
-            nav.pop();
+            this.closePage();
         });
     }
     /*

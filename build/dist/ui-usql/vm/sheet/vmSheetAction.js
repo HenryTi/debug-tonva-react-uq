@@ -6,18 +6,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as React from 'react';
+import React from 'react';
+import classNames from 'classnames';
 import { Button } from 'reactstrap';
-import { nav, Page } from 'tonva-tools';
+import { Page } from 'tonva-tools';
 import { VmView } from './vmView';
 export class VmSheetAction extends VmView {
     constructor() {
         super(...arguments);
         this.actionClick = (action) => __awaiter(this, void 0, void 0, function* () {
             let { id, flow, state } = this.brief;
-            let res = yield this.entity.action(id, flow, state, action.name);
+            let res = yield this.coordinator.action(id, flow, state, action.name);
             alert(JSON.stringify(res));
-            yield nav.back();
+            yield this.backPage();
         });
         this.deleteClick = () => __awaiter(this, void 0, void 0, function* () {
             alert('单据作废：程序正在设计中');
@@ -47,7 +48,7 @@ export class VmSheetAction extends VmView {
                         cn = 'text-success';
                         break;
                 }
-                actionButtons = React.createElement("div", { className: cn },
+                actionButtons = React.createElement("div", { className: classNames(cn) },
                     "[",
                     text,
                     "]");
@@ -62,11 +63,11 @@ export class VmSheetAction extends VmView {
             }
             ;
             return React.createElement(Page, { header: this.label + ':' + stateLabel + '-' + this.brief.no },
-                React.createElement("div", { className: "my-3" },
-                    React.createElement("div", { className: "d-flex mx-3 mb-3" },
+                React.createElement("div", { className: "mb-2" },
+                    React.createElement("div", { className: "d-flex px-3 py-2 border-bottom bg-light" },
                         actionButtons,
                         startButtons),
-                    React.createElement(this.view, null)));
+                    React.createElement(this.sheetView, null)));
         };
     }
     //sheetData: any;
@@ -82,7 +83,7 @@ export class VmSheetAction extends VmView {
             this.state = this.brief.state;
             //this.vmView = new VmView(this.coordinator, this.sheetData, this.brief.state, flows);
             this.vmForm = this.createForm(undefined, this.data);
-            this.open(this.page);
+            this.openPage(this.page);
         });
     }
 }

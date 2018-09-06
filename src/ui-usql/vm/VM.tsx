@@ -7,8 +7,10 @@ import { CrQuerySelect } from './query';
 import { FormUI } from './formUI';
 
 export abstract class Coordinator {
-    disposer = () => {
+    private receiveHandlerId:number;
+    private disposer = () => {
         // message listener的清理
+        nav.unregisterReceiveHandler(this.receiveHandlerId);
     }
 
     protected async showVm(vm: new (coordinator: Coordinator)=>Vm, param?:any):Promise<void> {
@@ -26,22 +28,34 @@ export abstract class Coordinator {
         alert(text);
     }
     protected errorPage(header:string, err:any) {
-        nav.push(<Page header="App error!">
+        this.openPage(<Page header="App error!">
             <pre>
                 {typeof err === 'string'? err : err.message}
             </pre>
         </Page>);
     }
 
+    protected onMessage(message:any):Promise<void> {
+        return;
+    }
+
+    private onMessageReceive = async (message:any):Promise<void> => {
+        await this.onMessage(message);
+    }
+    protected async beforeStart() {
+        this.receiveHandlerId = nav.registerReceiveHandler(this.onMessageReceive);
+    }
+    protected abstract internalStart(param?:any):Promise<void>;
     async start(param?:any):Promise<void> {
+        await this.beforeStart();
         await this.internalStart(param);
     }
 
     private _resolve_$:(value:any) => void;
     async call(param?:any):Promise<any> {
-        return new Promise<any> ((resolve, reject) => {
+        return new Promise<any> (async (resolve, reject) => {
             this._resolve_$ = resolve;
-            this.start(param);
+            await this.start(param);
         });
     }
 
@@ -54,7 +68,27 @@ export abstract class Coordinator {
         this._resolve_$ = undefined;
     }
 
-    protected abstract internalStart(param?:any):Promise<void>;
+    openPage(page:JSX.Element) {
+        nav.push(page, this.disposer);
+        this.disposer = undefined;
+    }
+
+    replacePage(page:JSX.Element) {
+        nav.replace(page, this.disposer);
+        this.disposer = undefined;
+    }
+
+    backPage() {
+        nav.back();
+    }
+
+    closePage(level?:number) {
+        nav.pop(level);
+    }
+
+    regConfirmClose(confirmClose: ()=>Promise<boolean>) {
+        nav.regConfirmClose(confirmClose);
+    }
 }
 
 export abstract class CoordinatorUsq extends Coordinator{
@@ -85,9 +119,9 @@ export abstract class CrEntity<T extends Entity, UI extends EntityUI> extends Co
     abstract get icon(): any;
     readonly label:string;
 
-    async start(param?:any):Promise<void> {
+    protected async beforeStart() {
+        await super.beforeStart();
         await this.entity.loadSchema();
-        await this.internalStart(param);
     }
 
     createForm(onSubmit:(values:any)=>Promise<void>, values?:any) {
@@ -205,19 +239,34 @@ export abstract class Vm {
 
     abstract showEntry(param?:any):Promise<void>;
 
-    protected open(view: React.StatelessComponent, param?:any) {
-        nav.push(React.createElement(view, param));
+    protected openPage(view: React.StatelessComponent, param?:any) {
+        this.coordinator.openPage(React.createElement(view, param));
     }
 
-    protected close(level?:number) {
-        nav.pop(level);
+    protected replacePage(view: React.StatelessComponent, param?:any) {
+        this.coordinator.replacePage(React.createElement(view, param));
     }
-    /*
-    protected async retn(type:string, value?:any) {
-        nav.pop();
-        await this.resolve(type, value);
+
+    protected openPageElement(page: JSX.Element) {
+        this.coordinator.openPage(page);
     }
-    */
+
+    protected replacePageElement(page: JSX.Element) {
+        this.coordinator.replacePage(page);
+    }
+
+    protected backPage() {
+        this.coordinator.backPage();
+    }
+
+    protected closePage(level?:number) {
+        this.coordinator.closePage(level);
+    }
+
+    protected regConfirmClose(confirmClose: ()=>Promise<boolean>) {
+        this.coordinator.regConfirmClose(confirmClose);
+    }
+
     protected async event(type:string, value?:any) {
         /*
         if (this._resolve_$_ !== undefined) {

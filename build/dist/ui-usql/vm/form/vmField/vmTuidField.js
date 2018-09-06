@@ -17,10 +17,11 @@ const buttonStyle = {
 };
 export class VmTuidField extends VmField {
     constructor(field, fieldUI, vmForm) {
-        super(field, fieldUI, vmForm.formValues, vmForm.readOnly);
+        super(field, fieldUI, vmForm.formValues, vmForm.compute, vmForm.readOnly);
         this.onClick = () => __awaiter(this, void 0, void 0, function* () {
             if (this.readOnly === true) {
-                alert('await super.onClick();');
+                //alert('await super.onClick();');
+                yield this.tuid.showInfo(this.value.id);
                 return;
             }
             let id;

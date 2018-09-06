@@ -26,11 +26,10 @@ export class CrSheet extends CrEntity {
     get VmSheetMain() {
         return (this.ui && this.ui.main) || VmSheetMain;
     }
-    onReceive(msg) {
+    onMessage(msg) {
         return __awaiter(this, void 0, void 0, function* () {
             //这个必须接上，否则没有websocket push
-            //await super.onReceive(msg);
-            this.entity.onReceive(msg);
+            this.entity.onMessage(msg);
         });
     }
     get VmSheetNew() { return VmSheetNew; }
@@ -102,6 +101,11 @@ export class CrSheet extends CrEntity {
         let action = actions[actionName];
         return (action && action.label) || actionName;
     }
+    getStateSheetCount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.entity.getStateSheetCount();
+        });
+    }
     getSheetData(sheetId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.entity.getSheet(sheetId);
@@ -111,6 +115,19 @@ export class CrSheet extends CrEntity {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.entity.getArchive(sheetId);
         });
+    }
+    saveSheet(values) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.entity.save(this.label, values);
+        });
+    }
+    action(id, flow, state, actionName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.entity.action(id, flow, state, actionName);
+        });
+    }
+    get statesCount() {
+        return this.entity.statesCount;
     }
 }
 //# sourceMappingURL=crSheet.js.map

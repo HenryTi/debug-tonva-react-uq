@@ -2,7 +2,7 @@ import * as React from 'react';
 import {observable, IObservableValue} from 'mobx';
 import * as _ from 'lodash';
 import { Entity } from './entity';
-import { Entities, Field } from './entities';
+import { Entities, Field, ArrFields } from './entities';
 import { isNumber } from 'util';
 
 export class IdBox {
@@ -83,7 +83,7 @@ export abstract class Tuid extends Entity {
         this.queue.splice(index, 1);
         this.useId(id);
     }
-    useId(id:number, defer?:boolean):void {
+    useId(id:number, defer?:boolean) {
         if (id === undefined || id === 0) return;
         if (isNumber(id) === false) return;
         //let key = String(id);
@@ -122,6 +122,7 @@ export abstract class Tuid extends Entity {
         }
         this.waitingIds.push(id);
         this.queue.push(id);
+        return;
     }
     async proxied(name:string, id:number):Promise<any> {
         let proxyTuid = this.entities.getTuid(name, undefined);
@@ -130,7 +131,7 @@ export abstract class Tuid extends Entity {
         this.cacheValue(proxied);
         return proxied;
     }
-    private cacheValue(val:any):boolean {
+    cacheValue(val:any):boolean {
         if (val === undefined) return false;
         let id = this.getIdFromObj(val);
         if (id === undefined) return false;
@@ -172,7 +173,30 @@ export abstract class Tuid extends Entity {
     }
     async load(id:number):Promise<any> {
         if (id === undefined || id === 0) return;
-        return await this.tvApi.tuidGet(this.name, id);
+        let values = await this.tvApi.tuidGet(this.name, id);
+        this.cacheTuidValues(values);
+        return values;
+    }
+    private cacheTuidValues(values:any) {
+        let {fields, arrs} = this.schema;
+        this.cacheFieldsInValue(values, fields);
+        if (arrs !== undefined) {
+            for (let arr of arrs as ArrFields[]) {
+                let {name, fields} = arr;
+                let arrValues = values[name];
+                if (arrValues === undefined) continue;
+                this.cacheFieldsInValue(arrValues, fields);
+            }
+        }
+    }
+    private cacheFieldsInValue(values:any, fields:Field[]) {
+        for (let f of fields as Field[]) {
+            let {name, _tuid} = f;
+            if (_tuid === undefined) continue;
+            let id = values[name];
+            _tuid.useId(id);
+            values[name] = _tuid.createID(id);
+        }
     }
     async save(id:number, props:any) {
         let params = _.clone(props);

@@ -12,13 +12,13 @@ export class VmActionMain extends VmEntity<Action, ActionUI> {
 
     private onSubmit = async () => {
         this.returns = await this.coordinator.submit(this.vmForm.values);
-        this.close();
-        this.open(this.resultPage);
+        this.closePage();
+        this.openPage(this.resultPage);
     }
 
     async showEntry(param?:any):Promise<void> {
         this.vmForm = this.createForm(this.onSubmit, param);
-        this.open(this.mainPage);
+        this.openPage(this.mainPage);
     }
 
     protected mainPage = () => {

@@ -237,6 +237,15 @@ export class Tuid extends Entity {
             return yield this.tvApi.tuidBindSlaves(this.name, slave, masterId, order, pageSize);
         });
     }
+    // cache放到Tuid里面之后，这个函数不再需要公开调用了
+    //private async ids(idArr:number[]) {
+    //    return await this.tvApi.tuidIds(this.name, idArr);
+    //}
+    showInfo(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.entities.usq.showTuid(this, id);
+        });
+    }
 }
 export class TuidMain extends Tuid {
     get Main() { return this; }

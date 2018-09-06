@@ -47,7 +47,7 @@ export class VmTuidListBase extends VmEntity {
                 this.ownerId = Number(param);
             // 初始查询, key是空的
             yield this.onSearch('');
-            this.open(this.view);
+            this.openPage(this.view);
         });
     }
     callOnSelected(item) {

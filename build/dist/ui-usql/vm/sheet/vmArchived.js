@@ -14,19 +14,17 @@ export class VmArchived extends VmView {
         super(...arguments);
         this.view = () => {
             return React.createElement(Page, { header: this.label + ':' + '-' + this.brief.no },
-                React.createElement(this.view, null));
+                React.createElement(this.sheetView, null));
         };
     }
-    //vmView: VmView;
     showEntry(inBrief) {
         return __awaiter(this, void 0, void 0, function* () {
             let { brief, data, flows } = yield this.coordinator.getArchived(inBrief.id);
             this.brief = brief;
             this.data = data;
             this.flows = flows;
-            //this.vmView = new VmView(this.coordinator, sheetData, this.brief.state, flows);
-            this.vmForm = this.createForm(this.data);
-            this.open(this.view);
+            this.vmForm = this.createForm(undefined, this.data);
+            this.openPage(this.view);
         });
     }
 }

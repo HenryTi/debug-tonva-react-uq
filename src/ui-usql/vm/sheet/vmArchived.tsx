@@ -14,21 +14,19 @@ export interface State {
 export class VmArchived extends VmView { // VmEntity<Sheet, SheetUI> {
     protected coordinator: CrSheet;
     brief: any;
-    //vmView: VmView;
 
     async showEntry(inBrief:any) {
         let {brief, data, flows} = await this.coordinator.getArchived(inBrief.id);
         this.brief = brief;
         this.data = data;
         this.flows = flows;
-        //this.vmView = new VmView(this.coordinator, sheetData, this.brief.state, flows);
-        this.vmForm = this.createForm(this.data);
-        this.open(this.view);
+        this.vmForm = this.createForm(undefined, this.data);
+        this.openPage(this.view);
     }
 
     protected view = () => {
         return <Page header={this.label + ':' + '-' + this.brief.no}>
-            <this.view />
+            <this.sheetView />
         </Page>;
     };
 }

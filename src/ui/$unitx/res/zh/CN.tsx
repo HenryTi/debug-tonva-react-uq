@@ -89,6 +89,9 @@ export default {
                     label: '职位',
                 }
             }
+        },
+        user: {
+            label: '用户'
         }
     }
 }

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { CrEntity, EntityUI, VmEntity, VM } from "../VM";
 import { TuidMain, Tuid, TuidDiv } from "../../entities";
 import { VmTuidMain } from './vmTuidMain';
@@ -8,6 +9,7 @@ import { VmEntityLink } from "../link";
 import { VmTuidList } from "./vmTuidList";
 import { entitiesRes } from '../../res';
 import { VmTuidInfo } from "./vmTuidInfo";
+import { TuidPagedItems } from "./pagedItems";
 
 export interface TuidUI extends EntityUI {
     CrTuidMain?: typeof CrTuidMain;
@@ -28,6 +30,15 @@ export abstract class CrTuid<T extends Tuid> extends CrEntity<T, TuidUI> {
     }
 
     get icon() {return entitiesRes['tuid'].icon}
+
+    pagedItems:TuidPagedItems;
+
+    async search(key:string) {
+        if (this.pagedItems === undefined) {
+            this.pagedItems = new TuidPagedItems(this.entity);
+        }
+        await this.pagedItems.first(key);
+    }
 }
 
 export class CrTuidMain extends CrTuid<TuidMain> {
@@ -78,6 +89,7 @@ export class CrTuidMain extends CrTuid<TuidMain> {
             case 'new': vm = this.VmTuidEdit; break;
             case 'list': vm = this.VmTuidList; break;
             case 'edit': await this.edit(value); return;
+            case 'item-changed': this.itemChanged(value); return;
         }
         await this.showVm(vm, value);
     }
@@ -86,6 +98,14 @@ export class CrTuidMain extends CrTuid<TuidMain> {
         let ret = await this.entity.load(id);
         let vm = this.VmTuidEdit;
         await this.showVm(vm, ret);
+    }
+
+    private itemChanged({id, values}:{id:number, values: any}) {
+        let items = this.pagedItems.items;
+        let item = items.find(v => v.id === id);
+        if (item !== undefined) {
+            _.merge(item, values);
+        }
     }
 }
 

@@ -11,12 +11,13 @@ import { ViewModel } from "../../viewModel";
 import { RuleRequired, RuleInt, RuleNum, RuleMin, RuleMax } from '../rule';
 //export type TypeControl = React.StatelessComponent<{vm: ViewModel, className:string}>;
 export class VmField extends ViewModel {
-    constructor(field, fieldUI, formValues, readOnly) {
+    constructor(field, fieldUI, formValues, formCompute, readOnly) {
         super();
         this.field = field;
         this.name = field.name;
         this.fieldUI = fieldUI || {};
         this.formValues = formValues;
+        this.formCompute = formCompute;
         this.formReadOnly = readOnly;
         this.buildRules();
     }
@@ -91,6 +92,12 @@ export class VmInputControl extends VmField {
             let defy = this.checkRules;
             if (defy.length > 0) {
                 this.error = defy[0];
+            }
+            if (this.formCompute !== undefined) {
+                let { values } = this.formValues;
+                for (let i in this.formCompute) {
+                    values[i] = this.formCompute[i].call(values);
+                }
             }
         };
         this.onChange = (evt) => {
