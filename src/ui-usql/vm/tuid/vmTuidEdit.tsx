@@ -4,7 +4,7 @@ import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page, nav } from 'tonva-tools';
 import { VmForm } from '../form';
-import { Vm, VmEntity } from '../VM';
+import { VmPage, VmEntity } from '../VM';
 import { CrTuidMain, TuidUI } from './crTuid';
 import { TuidMain, Tuid } from '../../entities';
 

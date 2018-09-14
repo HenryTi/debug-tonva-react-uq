@@ -89,10 +89,10 @@ export class Sheet extends Entity {
         //this.statesCount.splice(index, 1, stateCount);
     }
     async save(discription:string, data:any):Promise<number> {
-        //let {appId, apiId} = this.entities;
+        let {appId} = this.entities;
         let text = this.pack(data);
 
-        let ret = await this.tvApi.sheetSave(this.name, {/*app: appId, api: apiId, */discription: discription, data:text});
+        let ret = await this.tvApi.sheetSave(this.name, {app: appId, discription: discription, data:text});
         let {id, state} = ret;
         if (id > 0) this.changeStateCount(state, 1);
         return id;

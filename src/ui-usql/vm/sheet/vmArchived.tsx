@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Button} from 'reactstrap';
 import {List} from 'tonva-react-form';
 import {Page} from 'tonva-tools';
-import { VmView } from './vmView';
+import { VmSheetView } from './vmView';
 import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
 import { CrSheet, SheetUI } from './crSheet';
@@ -11,7 +11,7 @@ export interface State {
     flows: any;
     data: any;
 }
-export class VmArchived extends VmView { // VmEntity<Sheet, SheetUI> {
+export class VmArchived extends VmSheetView { // VmEntity<Sheet, SheetUI> {
     protected coordinator: CrSheet;
     brief: any;
 

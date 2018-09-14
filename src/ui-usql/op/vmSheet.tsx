@@ -2,7 +2,7 @@ import React from 'react';
 import { nav, Page } from 'tonva-tools';
 import { Muted, LMR, FA, List } from 'tonva-react-form';
 import { OpCoordinator } from './op';
-import { Vm } from '../vm/VM';
+import { VmPage } from '../vm/VM';
 import { StateTo, Sheet, Organization, Post, Team, Section, To } from './model';
 import { observer } from 'mobx-react';
 import { IObservableValue, IObservableArray, observable } from 'mobx';
@@ -24,7 +24,7 @@ interface SelectableSection {
     selected: IObservableValue<boolean>;
 }
 
-export class VmSheet extends Vm {
+export class VmSheet extends VmPage {
     protected coordinator: OpCoordinator;
     private sheet: Sheet;
     private states: StateTo[];

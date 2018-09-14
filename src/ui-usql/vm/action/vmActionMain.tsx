@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { VmForm } from '../form';
-import { Vm, VmEntity } from '../VM';
+import { VmPage, VmEntity } from '../VM';
 import { CrAction, ActionUI } from './crAction';
 import { Action } from '../../entities';
 

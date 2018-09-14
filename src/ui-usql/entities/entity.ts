@@ -26,11 +26,11 @@ export abstract class Entity {
 
     public face: any;           // 对应字段的label, placeHolder等等的中文，或者语言的翻译
 
-    protected get tvApi() {return this.entities.tvApi;}
+    protected get tvApi() {return this.entities.usqApi;}
 
     public async loadSchema():Promise<void> {
         if (this.schema !== undefined) return;
-        let schema = await this.entities.tvApi.schema(this.name);
+        let schema = await this.entities.usqApi.schema(this.name);
         this.setSchema(schema);
     }
 
@@ -113,8 +113,9 @@ export abstract class Entity {
     }
     
     private packRow(result:string[], fields:Field[], data:any) {
-        let ret = '';
         let len = fields.length;
+        if (len === 0) return;
+        let ret = '';
         ret += this.escape(data[fields[0].name]);
         for (let i=1;i<len;i++) {
             let f = fields[i];

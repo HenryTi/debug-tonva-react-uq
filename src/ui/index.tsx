@@ -3,6 +3,7 @@ import App from './App';
 //import DevApp_devappApi from './DevApp-devappApi';
 import $unitx from './$unitx';
 import devApp from './devApp';
+import {converUIKeyToLowercase} from '../ui-usql';
 
 const ui = {
     label: 'xxx yyy zzz',
@@ -15,6 +16,8 @@ const ui = {
     }
 };
 
+converUIKeyToLowercase(ui);
+/*
 (function converUIKeyToLowercase(obj: any) {
     for (let i in obj) {
         let v = obj[i];
@@ -31,5 +34,6 @@ const ui = {
       }
   }
 })(ui);
+*/
 
 export default ui;

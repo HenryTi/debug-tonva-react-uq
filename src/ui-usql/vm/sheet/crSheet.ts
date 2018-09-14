@@ -65,7 +65,8 @@ export class CrSheet extends CrEntity<Sheet, SheetUI> {
         await this.showVm(vm, value);
     }
 
-    async showSheet(sheetId:number) {
+    async startSheet(sheetId:number) {
+        super.beforeStart();
         this.onEvent('action', sheetId);
         //await this.run(new this.VmSheetAction(this));
         //let vmAction = (this.ui && this.ui.action) || VmSheetAction;

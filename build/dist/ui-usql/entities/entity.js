@@ -16,12 +16,12 @@ export class Entity {
         this.typeId = typeId;
         this.sys = this.name.indexOf('$') >= 0;
     }
-    get tvApi() { return this.entities.tvApi; }
+    get tvApi() { return this.entities.usqApi; }
     loadSchema() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.schema !== undefined)
                 return;
-            let schema = yield this.entities.tvApi.schema(this.name);
+            let schema = yield this.entities.usqApi.schema(this.name);
             this.setSchema(schema);
         });
     }
@@ -118,8 +118,10 @@ export class Entity {
         }
     }
     packRow(result, fields, data) {
-        let ret = '';
         let len = fields.length;
+        if (len === 0)
+            return;
+        let ret = '';
         ret += this.escape(data[fields[0].name]);
         for (let i = 1; i < len; i++) {
             let f = fields[i];

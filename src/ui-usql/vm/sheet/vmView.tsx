@@ -5,7 +5,9 @@ import { VmForm } from '../form';
 import { VmEntity } from '../VM';
 import { CrSheet, SheetUI } from './crSheet';
 
-export abstract class VmView extends VmEntity<Sheet, SheetUI> {
+const leftFlowStyle = {width: '8rem'};
+
+export abstract class VmSheetView extends VmEntity<Sheet, SheetUI> {
     vmForm: VmForm;
     data: any;
     state: string;
@@ -44,11 +46,18 @@ export abstract class VmView extends VmEntity<Sheet, SheetUI> {
             case '#': to = <><FA className="text-success" name="file-archive-o" /></>; break;
             default: to = <><FA className="text-muted" name="arrow-right" /> &nbsp; {state}</>; break;
         }
+        /*
         return <div className="row">
-            <div className="col-sm"><div className="pl-3 py-2">{action}</div></div>
+            <div className="col-sm"></div>
             <div className="col-sm"><div className="p-2">{to}</div></div>
             <div className="col-sm text-right"><div className="p-2"><Muted><EasyDate date={date} /></Muted></div></div>
         </div>;
+        */
+        return <LMR 
+            left={<div className="pl-3 py-2" style={leftFlowStyle}>{action}</div>}
+            right={<div className="p-2"><Muted><EasyDate date={date} /></Muted></div>}>
+            <div className="p-2">{to}</div>
+        </LMR>;
     }
 
     protected sheetView = () => {

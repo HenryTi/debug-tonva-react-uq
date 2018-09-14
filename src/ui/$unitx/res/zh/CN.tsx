@@ -81,6 +81,14 @@ export default {
         },
         person: {
             label: '员工',
+            fields: {
+                name: '姓名',
+                nick: '别名',
+                given: '名字',
+                sur: '姓',
+                gender: '性别',
+                user: '用户',
+            }
         },
         organization: {
             label: '组织结构',

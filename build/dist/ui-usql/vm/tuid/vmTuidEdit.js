@@ -53,6 +53,7 @@ export class VmTuidEdit extends VmEntity {
                     React.createElement("div", { className: 'mt-5' },
                         React.createElement(Button, { className: "mr-3", color: "primary", onClick: this.next }, "\u7EE7\u7EED\u5F55\u5165"),
                         React.createElement(Button, { color: "primary", outline: true, onClick: this.finish }, "\u4E0D\u7EE7\u7EED")))));
+            this.event('item-changed', { id: this.id, values: values });
             return;
         });
         //protected view = TuidNewPage;

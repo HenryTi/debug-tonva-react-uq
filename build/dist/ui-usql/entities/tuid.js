@@ -80,6 +80,7 @@ export class Tuid extends Entity {
             return;
         if (isNumber(id) === false)
             return;
+        debugger;
         //let key = String(id);
         if (this.cache.has(id) === true) {
             this.moveToHead(id);
@@ -114,6 +115,7 @@ export class Tuid extends Entity {
         }
         this.waitingIds.push(id);
         this.queue.push(id);
+        return;
     }
     proxied(name, id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -175,8 +177,33 @@ export class Tuid extends Entity {
         return __awaiter(this, void 0, void 0, function* () {
             if (id === undefined || id === 0)
                 return;
-            return yield this.tvApi.tuidGet(this.name, id);
+            let values = yield this.tvApi.tuidGet(this.name, id);
+            this.cacheTuidValues(values);
+            return values;
         });
+    }
+    cacheTuidValues(values) {
+        let { fields, arrs } = this.schema;
+        this.cacheFieldsInValue(values, fields);
+        if (arrs !== undefined) {
+            for (let arr of arrs) {
+                let { name, fields } = arr;
+                let arrValues = values[name];
+                if (arrValues === undefined)
+                    continue;
+                this.cacheFieldsInValue(arrValues, fields);
+            }
+        }
+    }
+    cacheFieldsInValue(values, fields) {
+        for (let f of fields) {
+            let { name, _tuid } = f;
+            if (_tuid === undefined)
+                continue;
+            let id = values[name];
+            _tuid.useId(id);
+            values[name] = _tuid.createID(id);
+        }
     }
     save(id, props) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -187,6 +214,23 @@ export class Tuid extends Entity {
     }
     search(key, pageStart, pageSize) {
         return __awaiter(this, void 0, void 0, function* () {
+            return this.searchArr(undefined, key, pageStart, pageSize);
+            /*
+            let name:string, arr:string;
+            if (this.owner !== undefined) {
+                name = this.owner.name;
+                arr = this.name;
+            }
+            else {
+                name = this.name;
+                arr = undefined;
+            }
+            let ret = await this.tvApi.tuidSearch(name, arr, undefined, key, pageStart, pageSize);
+            return ret;*/
+        });
+    }
+    searchArr(owner, key, pageStart, pageSize) {
+        return __awaiter(this, void 0, void 0, function* () {
             let name, arr;
             if (this.owner !== undefined) {
                 name = this.owner.name;
@@ -196,7 +240,7 @@ export class Tuid extends Entity {
                 name = this.name;
                 arr = undefined;
             }
-            let ret = yield this.tvApi.tuidSearch(name, arr, key, pageStart, pageSize);
+            let ret = yield this.tvApi.tuidSearch(name, arr, owner, key, pageStart, pageSize);
             return ret;
         });
     }

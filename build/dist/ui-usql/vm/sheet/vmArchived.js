@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { Page } from 'tonva-tools';
-import { VmView } from './vmView';
-export class VmArchived extends VmView {
+import { VmSheetView } from './vmView';
+export class VmArchived extends VmSheetView {
     constructor() {
         super(...arguments);
         this.view = () => {

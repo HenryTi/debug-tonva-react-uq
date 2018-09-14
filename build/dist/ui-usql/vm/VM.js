@@ -24,6 +24,9 @@ export class Coordinator {
             yield (new vm(this)).showEntry(param);
         });
     }
+    renderVm(vm, param) {
+        return (new vm(this)).render(param);
+    }
     event(type, value) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.onEvent(type, value);
@@ -56,10 +59,10 @@ export class Coordinator {
     }
     call(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 this._resolve_$ = resolve;
-                this.start(param);
-            });
+                yield this.start(param);
+            }));
         });
     }
     return(value) {
@@ -194,9 +197,22 @@ export class CrEntity extends CoordinatorUsq {
         return this.crUsq.crQuerySelect(queryName);
     }
 }
-export class Vm {
+export class VmView {
     constructor(coordinator) {
         this.coordinator = coordinator;
+    }
+    event(type, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            /*
+            if (this._resolve_$_ !== undefined) {
+                await this._resolve_$_({type:type, value:value});
+                return;
+            }*/
+            yield this.coordinator.event(type, value);
+        });
+    }
+    return(value) {
+        this.coordinator.return(value);
     }
     openPage(view, param) {
         this.coordinator.openPage(React.createElement(view, param));
@@ -219,21 +235,14 @@ export class Vm {
     regConfirmClose(confirmClose) {
         this.coordinator.regConfirmClose(confirmClose);
     }
-    event(type, value) {
-        return __awaiter(this, void 0, void 0, function* () {
-            /*
-            if (this._resolve_$_ !== undefined) {
-                await this._resolve_$_({type:type, value:value});
-                return;
-            }*/
-            yield this.coordinator.event(type, value);
-        });
-    }
-    return(value) {
-        this.coordinator.return(value);
-    }
 }
-export class VmEntity extends Vm {
+export class VmPage extends VmView {
+    constructor(coordinator) {
+        super(coordinator);
+    }
+    render(param) { return null; }
+}
+export class VmEntity extends VmPage {
     constructor(coordinator) {
         super(coordinator);
         this.entity = coordinator.entity;

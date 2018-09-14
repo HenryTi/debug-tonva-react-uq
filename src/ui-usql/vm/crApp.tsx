@@ -1,6 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { setXLang, Page, loadAppApis, nav, getUrlOrDebug, meInFrame} from 'tonva-tools';
+import { setXLang, Page, loadAppUsqs, nav, getUrlOrDebug, meInFrame} from 'tonva-tools';
 import { List, LMR, FA } from 'tonva-react-form';
 import {Entities} from '../entities';
 import res from '../res';
@@ -41,24 +41,27 @@ export class CrApp extends Coordinator {
     }
 
     crUsqCollection: {[api:string]: CrUsq} = {};
-    async loadApis(): Promise<void> {
+    async loadUsqs(): Promise<void> {
         let unit = meInFrame.unit;
-        let app = await loadAppApis(this.appOwner, this.appName);
-        let {id, apis} = app;
+        let app = await loadAppUsqs(this.appOwner, this.appName);
+        let {id, usqs} = app;
         this.id = id;
-        for (let appApi of apis) {
-            let {id:apiId, apiOwner, apiName, url, urlDebug, ws, access, token} = appApi;
-            let api = apiOwner + '/' + apiName;
-            let ui = this.ui && this.ui.usqs && this.ui.usqs[api];
-            let crUsq = this.newCrUsq(apiId, api, access, ui);
+        for (let appUsq of usqs) {
+            let {id:usqId, usqOwner, usqName, url, urlDebug, ws, access, token} = appUsq;
+            let usq = usqOwner + '/' + usqName;
+            let ui = this.ui && this.ui.usqs && this.ui.usqs[usq];
+            //let crUsq = this.newCrUsq(usqId, api, access, ui);
+            let crUsq = this.newCrUsq(usq, usqId, access, ui);
             await crUsq.loadSchema();
-            this.crUsqCollection[api] = crUsq;
+            this.crUsqCollection[usq] = crUsq;
         }
     }
 
-    protected newCrUsq(apiId:number, api:string, access:string, ui:any) {
+    //protected newCrUsq(usqId:number, usq:string, access:string, ui:any) {
+    protected newCrUsq(usq:string, usqId:number, access:string, ui:any) {
         // 这里是可以重载的，写自己的CrUsq
-        return new CrUsq(this, apiId, api, access, ui);
+        //return new CrUsq(this, usqId, usq, access, ui);
+        return new CrUsq(usq, this.id, usqId, access, ui);
     }
 
     protected caption: string; // = 'View Model 版的 Usql App';
@@ -78,10 +81,14 @@ export class CrApp extends Coordinator {
     async internalStart() {
         try {
             let hash = document.location.hash;
+            if (hash.startsWith('#tvdebug')) {
+                await this.showMainPage();
+                return;
+            }
             this.isProduction = hash.startsWith('#tv');
             let {unit} = meInFrame;
             if (this.isProduction === false && (unit===undefined || unit<=0)) {
-                let app = await loadAppApis(this.appOwner, this.appName);
+                let app = await loadAppUsqs(this.appOwner, this.appName);
                 let {id} = app;
                 this.id = id;
                 await this.loadAppUnits();
@@ -123,7 +130,7 @@ export class CrApp extends Coordinator {
     }
 
     private async showMainPage() {
-        await this.loadApis();
+        await this.loadUsqs();
 
         // #tvRwPBwMef-23-sheet-api-108
         let parts = document.location.hash.split('-');
@@ -131,12 +138,12 @@ export class CrApp extends Coordinator {
             let action = parts[2];
             // sheet_debug 表示centerUrl是debug方式的
             if (action === 'sheet' || action === 'sheet_debug') {
-                let apiId = Number(parts[3]);
+                let usqId = Number(parts[3]);
                 let sheetTypeId = Number(parts[4]);
                 let sheetId = Number(parts[5]);
-                let crUsq = this.getCrUsqFromId(apiId);
+                let crUsq = this.getCrUsqFromId(usqId);
                 if (crUsq === undefined) {
-                    alert('unknown apiId: ' + apiId);
+                    alert('unknown usqId: ' + usqId);
                     return;
                 }
                 this.clearPrevPages();
@@ -155,10 +162,10 @@ export class CrApp extends Coordinator {
         alert('call returned in vmApp: ' + ret);
     }
 
-    private getCrUsqFromId(apiId:number): CrUsq {
+    private getCrUsqFromId(usqId:number): CrUsq {
         for (let i in this.crUsqCollection) {
             let crUsq = this.crUsqCollection[i];
-            if (crUsq.id === apiId) return crUsq;
+            if (crUsq.id === usqId) return crUsq;
         }
         return;
     }

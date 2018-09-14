@@ -10,8 +10,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { Button } from 'reactstrap';
 import { Page } from 'tonva-tools';
-import { VmView } from './vmView';
-export class VmSheetAction extends VmView {
+import { VmSheetView } from './vmView';
+export class VmSheetAction extends VmSheetView {
     constructor() {
         super(...arguments);
         this.actionClick = (action) => __awaiter(this, void 0, void 0, function* () {

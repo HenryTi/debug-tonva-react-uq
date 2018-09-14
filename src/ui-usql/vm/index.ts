@@ -7,3 +7,4 @@ export * from './map';
 export * from './viewModel';
 export * from './form';
 export * from './VM';
+export * from './link';

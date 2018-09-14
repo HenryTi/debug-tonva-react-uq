@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Api, nav } from 'tonva-tools';
+import { UsqApi, nav } from 'tonva-tools';
 import { List, Muted } from 'tonva-react-form';
 import { Entities, TuidMain, Action, Sheet, Query, Book, Map, Entity, Tuid, Usq } from '../../entities';
 import { VmLink, VmEntityLink } from '../link';
@@ -11,7 +11,7 @@ import { QueryUI, CrQuery, CrQuerySelect } from '../query';
 import { CrTuidMain, TuidUI, CrTuidMainSelect, CrTuid, CrTuidInfo } from '../tuid';
 import { MapUI, CrMap } from '../map';
 import { CrApp } from '../crApp';
-import { CrEntity, EntityUI } from '../VM';
+import { CrEntity, EntityUI, Coordinator, CoordinatorUsq } from '../VM';
 import { JSONContent, PureJSONContent } from '../viewModel';
 import { VmUsq } from './vmUsq';
 
@@ -29,8 +29,7 @@ export interface UsqUI {
     res?: any;
 }
 
-export class CrUsq implements Usq {
-    crApp: CrApp;
+export class CrUsq extends Coordinator implements Usq {
     private access:string;
     private ui:any;
     private CrTuidMain: typeof CrTuidMain;
@@ -38,11 +37,10 @@ export class CrUsq implements Usq {
     private CrQuerySelect: typeof CrQuerySelect;
     private CrMap: typeof CrMap;
 
-    constructor(crApp:CrApp, apiId:number, api:string, access:string, ui:UsqUI) {
-        //super();
-        this.crApp = crApp;
-        this.api = api;
-        this.id = apiId;
+    constructor(usq:string, appId:number, usqId:number, access:string, ui:UsqUI) {
+        super();
+        this.usq = usq;
+        this.id = usqId;
         if (ui === undefined)
             this.ui = {};
         else {
@@ -63,37 +61,49 @@ export class CrUsq implements Usq {
         this.access = access;
 
         let token = undefined;
-        let apiOwner:string, apiName:string;
-        let p = api.split('/');
+        let usqOwner:string, usqName:string;
+        let p = usq.split('/');
         switch (p.length) {
             case 1:
-                apiOwner = '$$$';
-                apiName = p[0];
+                usqOwner = '$$$';
+                usqName = p[0];
                 break;
             case 2:
-                apiOwner = p[0];
-                apiName = p[1];
+                usqOwner = p[0];
+                usqName = p[1];
                 break;
             default:
-                console.log('api must be apiOwner/apiName format');
+                console.log('usq must be usqOwner/usqName format');
                 return;
         }
 
         let hash = document.location.hash;
         let baseUrl = hash===undefined || hash===''? 
             'debug/':'tv/';
-        let _api = new Api(baseUrl, apiOwner, apiName, true);
-        this.entities = new Entities(this, crApp.id, apiId, _api, access);
+
+        let acc: string[];
+        if (access === undefined || access === '*') {
+            acc = [];
+        }
+        else {
+            acc = access.split(';').map(v => v.trim()).filter(v => v.length > 0);
+        }
+        let usqApi = new UsqApi(baseUrl, usqOwner, usqName, acc, true);
+        this.entities = new Entities(this, usqApi, appId); //, crApp.id, usqId, usqApi);
     }
 
-    api: string;
+    protected async internalStart() {
+    }
+
+    usq: string;
     id: number;
     res: any;
     entities:Entities;
 
     async loadSchema() {
         try {
-        await this.entities.load();
+            await this.entities.load();
+            if (this.id === undefined) this.id = this.entities.usqId;
         }
         catch(err) {
             debugger;
@@ -151,8 +161,8 @@ export class CrUsq implements Usq {
             alert('sheetTypeId ' + sheetTypeId + ' is not exists!');
             return;
         }
-        let vmSheetMain = this.crSheet(sheet);
-        await vmSheetMain.showSheet(sheetId);
+        let crSheet = this.crSheet(sheet);
+        await crSheet.startSheet(sheetId);
     }
 
     crFromName(entityType:EntityType, entityName:string): CrEntity<Entity, EntityUI> {
@@ -200,7 +210,6 @@ export class CrUsq implements Usq {
         let {entity} = this.res;
         if (entity !== undefined) {
             res = entity[name];
-            //if (res !== undefined) debugger;
         }
         return {ui: ui || {}, res: res };
     }

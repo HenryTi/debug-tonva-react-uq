@@ -13,8 +13,12 @@ export abstract class Coordinator {
         nav.unregisterReceiveHandler(this.receiveHandlerId);
     }
 
-    protected async showVm(vm: new (coordinator: Coordinator)=>Vm, param?:any):Promise<void> {
+    protected async showVm(vm: new (coordinator: Coordinator)=>VmPage, param?:any):Promise<void> {
         await (new vm(this)).showEntry(param);
+    }
+
+    protected renderVm(vm: new (coordinator: Coordinator)=>VmView, param?:any) {
+        return (new vm(this)).render(param);
     }
 
     async event(type:string, value:any) {
@@ -216,34 +220,33 @@ export abstract class CrEntity<T extends Entity, UI extends EntityUI> extends Co
     }
 }
 
-export abstract class Vm {
-    //private _resolve_$_: (value?:any) => void;
+export abstract class VmView {
     protected coordinator: Coordinator;
 
     constructor(coordinator: Coordinator) {
         this.coordinator = coordinator;
     }
 
-    /*
-    async run(param?:any):Promise<void> {
-        //return new Promise<Result>((resolve, reject) => {
-            //this._resolve_$_ = resolve;
-            this.showEntry(param);
-        //});
+    abstract render(param?:any): JSX.Element;
+
+    protected async event(type:string, value?:any) {
+        /*
+        if (this._resolve_$_ !== undefined) {
+            await this._resolve_$_({type:type, value:value});
+            return;
+        }*/
+        await this.coordinator.event(type, value);
     }
-    */
-    /*
-    async show(param?:any) {
-        this.showEntry(param);
-    }*/
 
-    abstract showEntry(param?:any):Promise<void>;
+    protected return(value:any) {
+        this.coordinator.return(value);
+    }
 
-    protected openPage(view: React.StatelessComponent, param?:any) {
+    protected openPage(view: React.StatelessComponent<any>, param?:any) {
         this.coordinator.openPage(React.createElement(view, param));
     }
 
-    protected replacePage(view: React.StatelessComponent, param?:any) {
+    protected replacePage(view: React.StatelessComponent<any>, param?:any) {
         this.coordinator.replacePage(React.createElement(view, param));
     }
 
@@ -266,30 +269,21 @@ export abstract class Vm {
     protected regConfirmClose(confirmClose: ()=>Promise<boolean>) {
         this.coordinator.regConfirmClose(confirmClose);
     }
-
-    protected async event(type:string, value?:any) {
-        /*
-        if (this._resolve_$_ !== undefined) {
-            await this._resolve_$_({type:type, value:value});
-            return;
-        }*/
-        await this.coordinator.event(type, value);
-    }
-
-    protected return(value:any) {
-        this.coordinator.return(value);
-    }
-    /*
-    protected async cancel() {
-        nav.pop();
-        //if (this._resolve_$_ === undefined) return;
-        //await this._resolve_$_({type:undefined, value:undefined});
-    }*/
 }
 
-export type VM = new (coordinator: Coordinator)=>Vm;
+export abstract class VmPage extends VmView {
+    constructor(coordinator: Coordinator) {
+        super(coordinator);
+    }
 
-export abstract class VmEntity<T extends Entity, UI extends EntityUI> extends Vm {
+    abstract showEntry(param?:any):Promise<void>;
+
+    render(param?:any):JSX.Element {return null;}
+}
+
+export type VM = new (coordinator: Coordinator)=>VmPage;
+
+export abstract class VmEntity<T extends Entity, UI extends EntityUI> extends VmPage {
     protected coordinator: CrEntity<T, UI>;
     protected entity: T;
     protected ui: UI;

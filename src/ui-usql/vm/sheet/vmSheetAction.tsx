@@ -2,12 +2,12 @@ import React from 'react';
 import classNames from 'classnames';
 import { Button } from 'reactstrap';
 import { nav, Page } from 'tonva-tools';
-import { VmView } from './vmView';
+import { VmSheetView } from './vmView';
 import { VmEntity } from '../VM';
 import { Sheet } from '../../entities';
 import { CrSheet, SheetUI } from './crSheet';
 
-export class VmSheetAction extends VmView { //} VmEntity<Sheet, SheetUI> {
+export class VmSheetAction extends VmSheetView { //} VmEntity<Sheet, SheetUI> {
     protected coordinator: CrSheet;
     brief: any;
     //sheetData: any;

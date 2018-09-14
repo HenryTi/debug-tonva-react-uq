@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List, Muted, EasyDate, FA } from 'tonva-react-form';
 import { VmEntity } from '../VM';
-export class VmView extends VmEntity {
+export class VmSheetView extends VmEntity {
     constructor() {
         super(...arguments);
         /*

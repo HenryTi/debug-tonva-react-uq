@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 import { TuidMain, Entity } from '../../entities';
 import { Page } from 'tonva-tools';
 import { VmEntityLink } from '../link';
-import { Vm, VmEntity } from '../VM';
+import { VmPage, VmEntity } from '../VM';
 import { CrTuidMain, TuidUI } from './crTuid';
 
 export class VmTuidMain extends VmEntity<TuidMain, TuidUI> {

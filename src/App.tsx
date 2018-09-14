@@ -19,8 +19,8 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 };
 */
 
-//const tonvaApp = 'devapp/DevApp';
-const tonvaApp = '$$$/$unitx';
+const tonvaApp = 'devapp/DevApp';
+//const tonvaApp = '$$$/$unitx';
 /*
 const uiMappers: {[api:string]: EntitiesMapper} = {
     "DevApp/devappApi": pageMapper,

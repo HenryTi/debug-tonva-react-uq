@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import _ from 'lodash';
-import { setXLang, Page, loadAppApis, nav, meInFrame } from 'tonva-tools';
+import { setXLang, Page, loadAppUsqs, nav, meInFrame } from 'tonva-tools';
 import { List, LMR, FA } from 'tonva-react-form';
 import res from '../res';
 import { CrUsq } from './usq';
@@ -60,25 +60,28 @@ export class CrApp extends Coordinator {
             _.merge(this.res, ui.res);
         this.caption = this.res.caption || 'Tonva';
     }
-    loadApis() {
+    loadUsqs() {
         return __awaiter(this, void 0, void 0, function* () {
             let unit = meInFrame.unit;
-            let app = yield loadAppApis(this.appOwner, this.appName);
-            let { id, apis } = app;
+            let app = yield loadAppUsqs(this.appOwner, this.appName);
+            let { id, usqs } = app;
             this.id = id;
-            for (let appApi of apis) {
-                let { id: apiId, apiOwner, apiName, url, urlDebug, ws, access, token } = appApi;
-                let api = apiOwner + '/' + apiName;
-                let ui = this.ui && this.ui.usqs && this.ui.usqs[api];
-                let crUsq = this.newCrUsq(apiId, api, access, ui);
+            for (let appUsq of usqs) {
+                let { usqOwner, usqName, url, urlDebug, ws, access, token } = appUsq;
+                let usq = usqOwner + '/' + usqName;
+                let ui = this.ui && this.ui.usqs && this.ui.usqs[usq];
+                //let crUsq = this.newCrUsq(usqId, api, access, ui);
+                let crUsq = this.newCrUsq(usq, access, ui);
                 yield crUsq.loadSchema();
-                this.crUsqCollection[api] = crUsq;
+                this.crUsqCollection[usq] = crUsq;
             }
         });
     }
-    newCrUsq(apiId, api, access, ui) {
+    //protected newCrUsq(usqId:number, usq:string, access:string, ui:any) {
+    newCrUsq(usq, access, ui) {
         // 这里是可以重载的，写自己的CrUsq
-        return new CrUsq(this, apiId, api, access, ui);
+        //return new CrUsq(this, usqId, usq, access, ui);
+        return new CrUsq(usq, this.id, access, ui);
     }
     get crUsqArr() {
         let ret = [];
@@ -97,7 +100,7 @@ export class CrApp extends Coordinator {
                 this.isProduction = hash.startsWith('#tv');
                 let { unit } = meInFrame;
                 if (this.isProduction === false && (unit === undefined || unit <= 0)) {
-                    let app = yield loadAppApis(this.appOwner, this.appName);
+                    let app = yield loadAppUsqs(this.appOwner, this.appName);
                     let { id } = app;
                     this.id = id;
                     yield this.loadAppUnits();
@@ -136,7 +139,7 @@ export class CrApp extends Coordinator {
     }
     showMainPage() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.loadApis();
+            yield this.loadUsqs();
             // #tvRwPBwMef-23-sheet-api-108
             let parts = document.location.hash.split('-');
             if (parts.length > 2) {

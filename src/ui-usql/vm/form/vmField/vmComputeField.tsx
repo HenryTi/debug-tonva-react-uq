@@ -13,7 +13,7 @@ export class VmComputeField extends VmField {
         let value = this.formValues.values[this.field.name];
         return <div 
             className="form-control form-control-plaintext border border-info rounded bg-light cursor-pointer">
-            {value}
+            {value} &nbsp;
         </div>;
-    });    
+    });
 }

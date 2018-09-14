@@ -9,16 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import React from 'react';
 import { Page } from 'tonva-tools';
 import { Muted, LMR, FA, List } from 'tonva-react-form';
-import { Vm } from '../vm/VM';
+import { VmPage } from '../vm/VM';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-export class VmSheet extends Vm {
+export class VmSheet extends VmPage {
     constructor() {
         super(...arguments);
         this.sheetOpsChanged = false;
         this.stateTosView = observer(({ tosText }) => {
             let tos = tosText.get();
-            return React.createElement("div", { className: "bg-light py-1 px-2" }, tos === undefined ? React.createElement(Muted, null, "[\u65E0\u5C97\u4F4D]") :
+            return React.createElement("div", { className: "bg-light py-1 px-2" }, tos === undefined || tos.length === 0 ? React.createElement(Muted, null, "[\u65E0\u5C97\u4F4D]") :
                 tos.map((v, index) => {
                     return React.createElement("span", { key: v, className: "d-inline-block border bg-white rounded mr-2 my-1 py-1 px-2" }, v);
                 }));
@@ -348,10 +348,11 @@ export class VmSheet extends Vm {
                     });
                 }
             }
-            yield this.coordinator.saveSheetStatePosts(this.sheet.name, stateToName, toArr);
+            yield this.coordinator.saveSheetStatePosts(this.sheet, stateToName, toArr);
             let state = this.states.find(v => v.name === stateToName);
             state.tos = tos;
-            state.tosText.set(this.tosTexts(tos));
+            let tosTexts = this.tosTexts(tos);
+            state.tosText.set(tosTexts);
             this.closePage();
         });
     }

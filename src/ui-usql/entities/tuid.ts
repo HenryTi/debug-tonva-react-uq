@@ -7,7 +7,8 @@ import { isNumber } from 'util';
 
 export class IdBox {
     id: number;
-    content: (templet?:React.StatelessComponent)=>JSX.Element;
+    obj?: any;
+    content: (templet?:React.StatelessComponent<any>)=>JSX.Element;
 }
 
 const maxCacheSize = 1000;
@@ -36,7 +37,7 @@ export abstract class Tuid extends Entity {
             writable: false,
             enumerable: false,
         });
-        prototype.content = function(templet?:React.StatelessComponent) {
+        prototype.content = function(templet?:React.StatelessComponent<any>) {
             let t:Tuid = this._$tuid;
             let com = templet || t.entities.usq.getTuidContent(t);
             let val = this._$tuid.valueFromId(this.id);
@@ -86,7 +87,6 @@ export abstract class Tuid extends Entity {
     useId(id:number, defer?:boolean) {
         if (id === undefined || id === 0) return;
         if (isNumber(id) === false) return;
-        //let key = String(id);
         if (this.cache.has(id) === true) {
             this.moveToHead(id);
             return;
@@ -204,6 +204,8 @@ export abstract class Tuid extends Entity {
         return await this.tvApi.tuidSave(this.name, params);
     }
     async search(key:string, pageStart:string|number, pageSize:number):Promise<any> {
+        return this.searchArr(undefined, key, pageStart, pageSize);
+        /*
         let name:string, arr:string;
         if (this.owner !== undefined) {
             name = this.owner.name;
@@ -213,7 +215,20 @@ export abstract class Tuid extends Entity {
             name = this.name;
             arr = undefined;
         }
-        let ret = await this.tvApi.tuidSearch(name, arr, key, pageStart, pageSize);
+        let ret = await this.tvApi.tuidSearch(name, arr, undefined, key, pageStart, pageSize);
+        return ret;*/
+    }
+    async searchArr(owner:number, key:string, pageStart:string|number, pageSize:number):Promise<any> {
+        let name:string, arr:string;
+        if (this.owner !== undefined) {
+            name = this.owner.name;
+            arr = this.name;
+        }
+        else {
+            name = this.name;
+            arr = undefined;
+        }
+        let ret = await this.tvApi.tuidSearch(name, arr, owner, key, pageStart, pageSize);
         return ret;
     }
     async loadArr(arr:string, owner:number, id:number):Promise<any> {

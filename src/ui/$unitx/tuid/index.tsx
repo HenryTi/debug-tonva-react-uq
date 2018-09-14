@@ -17,7 +17,6 @@ export default {
     user: {
         content: (values) => {
             let {id, name, nick, assigned} = values;
-            let c:string;
             if (assigned !== undefined) {
                 return <>{assigned} - <Muted>{name}</Muted></>;
             }

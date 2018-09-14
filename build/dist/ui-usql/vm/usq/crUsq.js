@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Api } from 'tonva-tools';
+import { UsqApi } from 'tonva-tools';
 import { Entities } from '../../entities';
 import { VmEntityLink } from '../link';
 import { CrBook } from '../book';
@@ -15,15 +15,16 @@ import { CrAction } from '../action';
 import { CrQuery, CrQuerySelect } from '../query';
 import { CrTuidMain, CrTuidMainSelect, CrTuidInfo } from '../tuid';
 import { CrMap } from '../map';
+import { Coordinator } from '../VM';
 import { PureJSONContent } from '../viewModel';
 import { VmUsq } from './vmUsq';
-export class CrUsq {
-    constructor(crApp, apiId, api, access, ui) {
+export class CrUsq extends Coordinator {
+    constructor(usq, appId, access, ui) {
+        super();
         this.isSysVisible = false;
-        //super();
-        this.crApp = crApp;
-        this.api = api;
-        this.id = apiId;
+        //this.crApp = crApp;
+        this.usq = usq;
+        //this.id = usqId;
         if (ui === undefined)
             this.ui = {};
         else {
@@ -41,30 +42,47 @@ export class CrUsq {
         this.res = this.res || {};
         this.access = access;
         let token = undefined;
-        let apiOwner, apiName;
-        let p = api.split('/');
+        let usqOwner, usqName;
+        let p = usq.split('/');
         switch (p.length) {
             case 1:
-                apiOwner = '$$$';
-                apiName = p[0];
+                usqOwner = '$$$';
+                usqName = p[0];
                 break;
             case 2:
-                apiOwner = p[0];
-                apiName = p[1];
+                usqOwner = p[0];
+                usqName = p[1];
                 break;
             default:
-                console.log('api must be apiOwner/apiName format');
+                console.log('usq must be usqOwner/usqName format');
                 return;
         }
         let hash = document.location.hash;
         let baseUrl = hash === undefined || hash === '' ?
             'debug/' : 'tv/';
-        let _api = new Api(baseUrl, apiOwner, apiName, true);
-        this.entities = new Entities(this, crApp.id, apiId, _api, access);
+        let acc;
+        if (access === undefined || access === '*') {
+            acc = [];
+        }
+        else {
+            acc = access.split(';').map(v => v.trim()).filter(v => v.length > 0);
+        }
+        let usqApi = new UsqApi(baseUrl, usqOwner, usqName, acc, true);
+        this.entities = new Entities(this, usqApi, appId); //, crApp.id, usqId, usqApi);
+    }
+    internalStart() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
     }
     loadSchema() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.entities.load();
+            try {
+                yield this.entities.load();
+                this.id = this.entities.usqId;
+            }
+            catch (err) {
+                debugger;
+            }
             for (let i in this.ui) {
                 let g = this.ui[i];
                 if (g === undefined)
@@ -171,7 +189,6 @@ export class CrUsq {
         let { entity } = this.res;
         if (entity !== undefined) {
             res = entity[name];
-            //if (res !== undefined) debugger;
         }
         return { ui: ui || {}, res: res };
     }
