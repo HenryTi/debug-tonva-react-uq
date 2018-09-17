@@ -67,21 +67,21 @@ export class CrApp extends Coordinator {
             let { id, usqs } = app;
             this.id = id;
             for (let appUsq of usqs) {
-                let { usqOwner, usqName, url, urlDebug, ws, access, token } = appUsq;
+                let { id: usqId, usqOwner, usqName, url, urlDebug, ws, access, token } = appUsq;
                 let usq = usqOwner + '/' + usqName;
                 let ui = this.ui && this.ui.usqs && this.ui.usqs[usq];
                 //let crUsq = this.newCrUsq(usqId, api, access, ui);
-                let crUsq = this.newCrUsq(usq, access, ui);
+                let crUsq = this.newCrUsq(usq, usqId, access, ui);
                 yield crUsq.loadSchema();
                 this.crUsqCollection[usq] = crUsq;
             }
         });
     }
     //protected newCrUsq(usqId:number, usq:string, access:string, ui:any) {
-    newCrUsq(usq, access, ui) {
+    newCrUsq(usq, usqId, access, ui) {
         // 这里是可以重载的，写自己的CrUsq
         //return new CrUsq(this, usqId, usq, access, ui);
-        return new CrUsq(usq, this.id, access, ui);
+        return new CrUsq(usq, this.id, usqId, access, ui);
     }
     get crUsqArr() {
         let ret = [];
@@ -97,6 +97,10 @@ export class CrApp extends Coordinator {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let hash = document.location.hash;
+                if (hash.startsWith('#tvdebug')) {
+                    yield this.showMainPage();
+                    return;
+                }
                 this.isProduction = hash.startsWith('#tv');
                 let { unit } = meInFrame;
                 if (this.isProduction === false && (unit === undefined || unit <= 0)) {
@@ -146,12 +150,12 @@ export class CrApp extends Coordinator {
                 let action = parts[2];
                 // sheet_debug 表示centerUrl是debug方式的
                 if (action === 'sheet' || action === 'sheet_debug') {
-                    let apiId = Number(parts[3]);
+                    let usqId = Number(parts[3]);
                     let sheetTypeId = Number(parts[4]);
                     let sheetId = Number(parts[5]);
-                    let crUsq = this.getCrUsqFromId(apiId);
+                    let crUsq = this.getCrUsqFromId(usqId);
                     if (crUsq === undefined) {
-                        alert('unknown apiId: ' + apiId);
+                        alert('unknown usqId: ' + usqId);
                         return;
                     }
                     this.clearPrevPages();
@@ -164,10 +168,10 @@ export class CrApp extends Coordinator {
             nav.push(React.createElement(this.appPage, null));
         });
     }
-    getCrUsqFromId(apiId) {
+    getCrUsqFromId(usqId) {
         for (let i in this.crUsqCollection) {
             let crUsq = this.crUsqCollection[i];
-            if (crUsq.id === apiId)
+            if (crUsq.id === usqId)
                 return crUsq;
         }
         return;

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { List, Muted, EasyDate, FA } from 'tonva-react-form';
+import { List, Muted, LMR, EasyDate, FA } from 'tonva-react-form';
 import { VmEntity } from '../VM';
+const leftFlowStyle = { width: '8rem' };
 export class VmSheetView extends VmEntity {
     constructor() {
         super(...arguments);
@@ -45,15 +46,17 @@ export class VmSheetView extends VmEntity {
                         state);
                     break;
             }
-            return React.createElement("div", { className: "row" },
-                React.createElement("div", { className: "col-sm" },
-                    React.createElement("div", { className: "pl-3 py-2" }, action)),
-                React.createElement("div", { className: "col-sm" },
-                    React.createElement("div", { className: "p-2" }, to)),
-                React.createElement("div", { className: "col-sm text-right" },
-                    React.createElement("div", { className: "p-2" },
-                        React.createElement(Muted, null,
-                            React.createElement(EasyDate, { date: date })))));
+            /*
+            return <div className="row">
+                <div className="col-sm"></div>
+                <div className="col-sm"><div className="p-2">{to}</div></div>
+                <div className="col-sm text-right"><div className="p-2"><Muted><EasyDate date={date} /></Muted></div></div>
+            </div>;
+            */
+            return React.createElement(LMR, { left: React.createElement("div", { className: "pl-3 py-2", style: leftFlowStyle }, action), right: React.createElement("div", { className: "p-2" },
+                    React.createElement(Muted, null,
+                        React.createElement(EasyDate, { date: date }))) },
+                React.createElement("div", { className: "p-2" }, to));
         };
         this.sheetView = () => {
             let removed;

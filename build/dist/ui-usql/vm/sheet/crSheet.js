@@ -66,8 +66,10 @@ export class CrSheet extends CrEntity {
             yield this.showVm(vm, value);
         });
     }
-    showSheet(sheetId) {
+    startSheet(sheetId) {
+        const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
+            _super("beforeStart").call(this);
             this.onEvent('action', sheetId);
             //await this.run(new this.VmSheetAction(this));
             //let vmAction = (this.ui && this.ui.action) || VmSheetAction;

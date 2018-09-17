@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { UsqApi } from 'tonva-tools';
 import { Entities } from '../../entities';
-import { VmEntityLink } from '../link';
+import { CrEntityLink } from '../link';
 import { CrBook } from '../book';
 import { CrSheet } from '../sheet';
 import { CrAction } from '../action';
@@ -19,12 +19,11 @@ import { Coordinator } from '../VM';
 import { PureJSONContent } from '../viewModel';
 import { VmUsq } from './vmUsq';
 export class CrUsq extends Coordinator {
-    constructor(usq, appId, access, ui) {
+    constructor(usq, appId, usqId, access, ui) {
         super();
         this.isSysVisible = false;
-        //this.crApp = crApp;
         this.usq = usq;
-        //this.id = usqId;
+        this.id = usqId;
         if (ui === undefined)
             this.ui = {};
         else {
@@ -78,23 +77,24 @@ export class CrUsq extends Coordinator {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 yield this.entities.load();
-                this.id = this.entities.usqId;
+                if (this.id === undefined)
+                    this.id = this.entities.usqId;
+                for (let i in this.ui) {
+                    let g = this.ui[i];
+                    if (g === undefined)
+                        continue;
+                    let { caption, collection } = g;
+                    if (collection === undefined)
+                        continue;
+                    for (let j in collection) {
+                        if (this.entities[i](j) === undefined) {
+                            console.warn(i + ':' + '\'' + j + '\' is not usql entity');
+                        }
+                    }
+                }
             }
             catch (err) {
                 debugger;
-            }
-            for (let i in this.ui) {
-                let g = this.ui[i];
-                if (g === undefined)
-                    continue;
-                let { caption, collection } = g;
-                if (collection === undefined)
-                    continue;
-                for (let j in collection) {
-                    if (this.entities[i](j) === undefined) {
-                        console.warn(i + ':' + '\'' + j + '\' is not usql entity');
-                    }
-                }
             }
         });
     }
@@ -136,8 +136,8 @@ export class CrUsq extends Coordinator {
                 alert('sheetTypeId ' + sheetTypeId + ' is not exists!');
                 return;
             }
-            let vmSheetMain = this.crSheet(sheet);
-            yield vmSheetMain.showSheet(sheetId);
+            let crSheet = this.crSheet(sheet);
+            yield crSheet.startSheet(sheetId);
         });
     }
     crFromName(entityType, entityName) {
@@ -199,7 +199,7 @@ export class CrUsq extends Coordinator {
     }
     */
     vmLink(crEntity) {
-        return new VmEntityLink(crEntity);
+        return new CrEntityLink(crEntity);
     }
     get vmTuidLinks() {
         return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.vmLink(this.crTuidMain(v)));

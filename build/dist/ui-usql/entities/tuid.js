@@ -80,8 +80,6 @@ export class Tuid extends Entity {
             return;
         if (isNumber(id) === false)
             return;
-        debugger;
-        //let key = String(id);
         if (this.cache.has(id) === true) {
             this.moveToHead(id);
             return;
