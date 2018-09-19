@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Muted } from 'tonva-react-form';
 import { left0 } from 'tonva-tools';
 import { dictionary as x } from '../../res';
-import { VmMapMain, MapUI, Field, CrMap }  from '../../../../ui-usql'; 
+import { VMapMain, MapUI, Field, CMap }  from '../../../../ui-usql'; 
 
-class CrMapTeamPerson extends CrMap {
+class CrMapTeamPerson extends CMap {
     async searchOnKey(keyField:Field, param):Promise<number> {
         switch (keyField.name) {
             default: return await super.searchOnKey(keyField, param);
@@ -19,7 +19,7 @@ class CrMapTeamPerson extends CrMap {
     }
 }
 
-class VmMapTeamPerson extends VmMapMain {
+class VmMapTeamPerson extends VMapMain {
 }
 
 const ui:MapUI = {

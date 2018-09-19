@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { VmSheetView } from './vmView';
-export class VmArchived extends VmSheetView {
+export class VArchived extends VmSheetView {
     constructor() {
         super(...arguments);
         this.view = () => {
@@ -19,7 +19,7 @@ export class VmArchived extends VmSheetView {
     }
     showEntry(inBrief) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { brief, data, flows } = yield this.coordinator.getArchived(inBrief.id);
+            let { brief, data, flows } = yield this.controller.getArchived(inBrief.id);
             this.brief = brief;
             this.data = data;
             this.flows = flows;

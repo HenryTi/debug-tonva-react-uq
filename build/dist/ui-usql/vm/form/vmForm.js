@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import { observer } from "mobx-react";
 import { BandsBuilder } from './bandsBuilder';
 import { computed, observable } from 'mobx';
-export class VmForm {
+export class VForm {
     constructor(options, onSubmit) {
         this.vmFields = {};
         this.vmArrs = {};
@@ -166,5 +166,5 @@ export class VmForm {
 }
 __decorate([
     computed
-], VmForm.prototype, "isOk", null);
+], VForm.prototype, "isOk", null);
 //# sourceMappingURL=vmForm.js.map

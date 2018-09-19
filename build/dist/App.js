@@ -11,7 +11,7 @@ import { NavView } from 'tonva-tools';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import ui from './ui';
-import { CrApp } from './ui-usql/vm';
+import { CApp } from './ui-usql/controllers';
 /*
 const tonvaApp = '$$$/ui-usql-first';
 const uiMappers: {[api:string]: EntitiesMapper} = {
@@ -41,7 +41,7 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 class App extends React.Component {
     onLogined() {
         return __awaiter(this, void 0, void 0, function* () {
-            let crApp = new CrApp(tonvaApp, ui);
+            let crApp = new CApp(tonvaApp, ui);
             yield crApp.start();
         });
     }

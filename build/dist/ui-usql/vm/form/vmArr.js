@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { List, FA } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
 import { ViewModel, JSONContent } from '../viewModel';
-import { VmForm } from './vmForm';
+import { VForm } from './vmForm';
 import { observer } from 'mobx-react';
 export class VmArr extends ViewModel {
     constructor(ownerForm, arr, onEditRow) {
@@ -95,7 +95,7 @@ export class VmArr extends ViewModel {
         this.rowContent = JSONContent;
         this.readOnly = readOnly;
         if (this.onEditRow === undefined) {
-            this.vmForm = new VmForm({
+            this.vmForm = new VForm({
                 fields: fields,
                 arrs: undefined,
                 ui: arrUI,

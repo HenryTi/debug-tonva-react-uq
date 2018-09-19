@@ -7,17 +7,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import _ from 'lodash';
-import { CrEntity } from "../VM";
-import { VmTuidMain } from './vmTuidMain';
-import { VmTuidEdit } from './vmTuidEdit';
+import { CEntity } from "../VM";
+import { VTuidMain } from './vmTuidMain';
+import { VTuidEdit } from './vmTuidEdit';
 import { VmTuidSelect } from './vmTuidSelect';
-import { VmTuidList } from "./vmTuidList";
+import { VTuidList } from "./vmTuidList";
 import { entitiesRes } from '../../res';
 import { VmTuidInfo } from "./vmTuidInfo";
 import { TuidPagedItems } from "./pagedItems";
-export class CrTuid extends CrEntity {
-    constructor(crUsq, entity, ui, res) {
-        super(crUsq, entity, ui, res);
+export class CTuid extends CEntity {
+    constructor(cUsq, entity, ui, res) {
+        super(cUsq, entity, ui, res);
     }
     get icon() { return entitiesRes['tuid'].icon; }
     search(key) {
@@ -29,7 +29,7 @@ export class CrTuid extends CrEntity {
         });
     }
 }
-export class CrTuidMain extends CrTuid {
+export class CrTuidMain extends CTuid {
     constructor(crUsq, entity, ui, res) {
         super(crUsq, entity, ui, res);
         let tuid = this.entity;
@@ -59,12 +59,12 @@ export class CrTuidMain extends CrTuid {
         }
         return name;
     }
-    get VmTuidMain() { return VmTuidMain; }
-    get VmTuidEdit() { return VmTuidEdit; }
-    get VmTuidList() { return VmTuidList; }
+    get VTuidMain() { return VTuidMain; }
+    get VTuidEdit() { return VTuidEdit; }
+    get VTuidList() { return VTuidList; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmTuidMain);
+            yield this.showVPage(this.VTuidMain);
         });
     }
     onEvent(type, value) {
@@ -73,10 +73,10 @@ export class CrTuidMain extends CrTuid {
             switch (type) {
                 default: return;
                 case 'new':
-                    vm = this.VmTuidEdit;
+                    vm = this.VTuidEdit;
                     break;
                 case 'list':
-                    vm = this.VmTuidList;
+                    vm = this.VTuidList;
                     break;
                 case 'edit':
                     yield this.edit(value);
@@ -85,14 +85,14 @@ export class CrTuidMain extends CrTuid {
                     this.itemChanged(value);
                     return;
             }
-            yield this.showVm(vm, value);
+            yield this.showVPage(vm, value);
         });
     }
     edit(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let ret = yield this.entity.load(id);
-            let vm = this.VmTuidEdit;
-            yield this.showVm(vm, ret);
+            let vm = this.VTuidEdit;
+            yield this.showVPage(vm, ret);
         });
     }
     itemChanged({ id, values }) {
@@ -103,26 +103,26 @@ export class CrTuidMain extends CrTuid {
         }
     }
 }
-export class CrTuidMainSelect extends CrTuid {
+export class CrTuidMainSelect extends CTuid {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmTuidSelect, param);
+            yield this.showVPage(this.VmTuidSelect, param);
         });
     }
     get VmTuidSelect() { return VmTuidSelect; }
 }
-export class CrTuidDivSelect extends CrTuid {
+export class CrTuidDivSelect extends CTuid {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmTuidSelect, param);
+            yield this.showVPage(this.VmTuidSelect, param);
         });
     }
     get VmTuidSelect() { return VmTuidSelect; }
 }
-export class CrTuidInfo extends CrTuid {
+export class CrTuidInfo extends CTuid {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmTuidInfo, param);
+            yield this.showVPage(this.VmTuidInfo, param);
         });
     }
     get VmTuidInfo() { return VmTuidInfo; }

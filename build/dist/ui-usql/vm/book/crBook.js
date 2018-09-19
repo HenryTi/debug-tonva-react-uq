@@ -6,16 +6,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CrEntity } from "../VM";
-import { VmBookMain } from "./vmBookMain";
+import { CEntity } from "../VM";
+import { VBookMain } from "./vBookMain";
 import { entitiesRes } from '../../res';
-export class CrBook extends CrEntity {
+export class CrBook extends CEntity {
     get icon() { return entitiesRes['action'].icon; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmBookMain);
+            yield this.showVPage(this.VmBookMain);
         });
     }
-    get VmBookMain() { return VmBookMain; }
+    get VmBookMain() { return VBookMain; }
 }
 //# sourceMappingURL=crBook.js.map

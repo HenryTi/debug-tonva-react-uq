@@ -6,27 +6,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CrEntity } from "../VM";
-import { VmQueryMain } from "./vmQueryMain";
-import { VmQuerySelect } from "./vmQuerySelect";
+import { CEntity } from "../VM";
+import { VQueryMain } from "./vmQueryMain";
+import { VQuerySelect } from "./vmQuerySelect";
 import { entitiesRes } from '../../res';
-export class CrQueryBase extends CrEntity {
+export class CQueryBase extends CEntity {
     get icon() { return entitiesRes['query'].icon; }
 }
-export class CrQuery extends CrQueryBase {
+export class CQuery extends CQueryBase {
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmQueryMain);
+            yield this.showVPage(this.VmQueryMain);
         });
     }
-    get VmQueryMain() { return this.ui && this.ui.main || VmQueryMain; }
+    get VmQueryMain() { return this.ui && this.ui.main || VQueryMain; }
 }
-export class CrQuerySelect extends CrQueryBase {
+export class CQuerySelect extends CQueryBase {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmQuerySelect, param);
+            yield this.showVPage(this.VmQuerySelect, param);
         });
     }
-    get VmQuerySelect() { return VmQuerySelect; }
+    get VmQuerySelect() { return VQuerySelect; }
 }
 //# sourceMappingURL=crQuery.js.map

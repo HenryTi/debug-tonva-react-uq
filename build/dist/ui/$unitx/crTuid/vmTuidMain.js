@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { VmTuidMain } from "../../../ui-usql";
+import { VTuidMain } from "../../../ui-usql";
 import { Page } from 'tonva-tools';
 import { SearchBox, List, Muted } from 'tonva-react-form';
 import { Button } from 'reactstrap';
-export class MyVmTuidMain extends VmTuidMain {
+export class MyVmTuidMain extends VTuidMain {
     get view() {
-        let { label, proxyLinks } = this.coordinator;
+        let { label, proxyLinks } = this.controller;
         return () => React.createElement(Page, { header: label }, proxyLinks === undefined ?
             React.createElement(React.Fragment, null,
                 React.createElement(SearchBox, { className: "w-100", onSearch: this.onSearch, placeholder: '搜索' + label }),

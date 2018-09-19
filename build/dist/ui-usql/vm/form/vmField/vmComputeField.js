@@ -1,7 +1,7 @@
 import React from 'react';
-import { VmField } from './vmField';
+import { VField } from './vField';
 import { observer } from 'mobx-react';
-export class VmComputeField extends VmField {
+export class VmComputeField extends VField {
     constructor(field, fieldUI, formValues) {
         super(field, fieldUI, formValues, undefined, true);
         this.view = observer(() => {

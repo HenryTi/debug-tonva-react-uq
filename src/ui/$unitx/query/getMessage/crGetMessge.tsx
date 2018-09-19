@@ -2,13 +2,13 @@ import { observer } from "mobx-react";
 import React from "react";
 import { FA } from "tonva-react-form";
 import { Page } from "tonva-tools";
-import { CrQuery, VmQueryMain } from "../../../../ui-usql";
+import { CQuery, VQueryMain } from "../../../../ui-usql";
 
-export class CrGetMessage extends CrQuery {
+export class CrGetMessage extends CQuery {
     protected get VmQueryMain() {return VmMain}
 }
 
-export class VmMain extends VmQueryMain {
+export class VmMain extends VQueryMain {
     protected queryResult = observer((result:any) => {
         let ret0 = result.ret[0];
         let rightClose = <button

@@ -6,17 +6,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CrEntity } from "../VM";
-import { VmActionMain } from "./vmActionMain";
+import { CEntity } from "../VM";
+import { VActionMain } from "./vActionMain";
 import { entitiesRes } from '../../res';
-export class CrAction extends CrEntity {
+export class CrAction extends CEntity {
     get icon() { return entitiesRes['action'].icon; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmActionMain);
+            yield this.showVPage(this.VActionMain);
         });
     }
-    get VmActionMain() { return VmActionMain; }
+    get VActionMain() { return VActionMain; }
     submit(values) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.entity.submit(values);

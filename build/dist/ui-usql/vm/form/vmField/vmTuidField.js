@@ -8,14 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { VmField, RedMark } from "./vmField";
+import { VField, RedMark } from "./vField";
 const buttonStyle = {
     textAlign: 'left',
     paddingLeft: '0.75rem',
     paddingRight: '0.75rem',
     overflow: 'hidden'
 };
-export class VmTuidField extends VmField {
+export class VmTuidField extends VField {
     constructor(field, fieldUI, vmForm) {
         super(field, fieldUI, vmForm.formValues, vmForm.compute, vmForm.readOnly);
         this.onClick = () => __awaiter(this, void 0, void 0, function* () {

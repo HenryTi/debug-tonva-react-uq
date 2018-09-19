@@ -2,11 +2,11 @@ import { observer } from "mobx-react";
 import React from "react";
 import { FA } from "tonva-react-form";
 import { Page } from "tonva-tools";
-import { CrQuery, VmQueryMain } from "../../../../ui-usql";
-export class CrGetMessage extends CrQuery {
+import { CQuery, VQueryMain } from "../../../../ui-usql";
+export class CrGetMessage extends CQuery {
     get VmQueryMain() { return VmMain; }
 }
-export class VmMain extends VmQueryMain {
+export class VmMain extends VQueryMain {
     constructor() {
         super(...arguments);
         this.queryResult = observer((result) => {

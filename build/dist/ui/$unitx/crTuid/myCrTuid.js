@@ -6,10 +6,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CrTuidMain } from "../../../ui-usql";
+import { CTuidMain } from "../../../ui-usql";
 import { MyVmTuidMain } from "./vmTuidMain";
-export class MyCrTuid extends CrTuidMain {
-    get VmTuidMain() { return MyVmTuidMain; }
+export class MyCrTuid extends CTuidMain {
+    get VTuidMain() { return MyVmTuidMain; }
     buildCall(field, arr) {
         let { name, _tuid } = field;
         switch (arr) {

@@ -13,8 +13,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import _ from 'lodash';
-import { CrEntity } from "../VM";
-import { VmMapMain } from "./vmMain";
+import { CEntity } from "../VM";
+import { VMapMain } from "./vmMain";
 import { entitiesRes } from '../../res';
 import { observable } from "mobx";
 import { PureJSONContent } from '../viewModel';
@@ -31,7 +31,7 @@ export class MapItem {
 __decorate([
     observable
 ], MapItem.prototype, "children", void 0);
-export class CrMap extends CrEntity {
+export class CMap extends CEntity {
     constructor() {
         super(...arguments);
         this.addClick = (item) => __awaiter(this, void 0, void 0, function* () {
@@ -141,7 +141,7 @@ export class CrMap extends CrEntity {
                     item = newItem;
                 }
             }
-            yield this.showVm(this.VmMapMain);
+            yield this.showVPage(this.VmMapMain);
         });
     }
     createItem(parent, tuid, box, keyIndex, values) {
@@ -195,6 +195,6 @@ export class CrMap extends CrEntity {
             return _tuid.getIdFromObj(ret);
         });
     }
-    get VmMapMain() { return VmMapMain; }
+    get VmMapMain() { return VMapMain; }
 }
 //# sourceMappingURL=crMap.js.map

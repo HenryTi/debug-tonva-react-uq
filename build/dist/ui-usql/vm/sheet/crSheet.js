@@ -6,21 +6,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CrEntity } from "../VM";
+import { CEntity } from "../VM";
 import { entitiesRes } from '../../res';
 import { VmSheetMain } from "./vmMain";
-import { VmSheetNew } from "./vmNew";
-import { VmSheetEdit } from "./vmEdit";
-import { VmSheetAction } from "./vmSheetAction";
-import { VmSheetSchema } from "./vmSchema";
-import { VmArchives } from "./vmArchives";
-import { VmSheetList } from "./vmList";
-import { VmArchived } from "./vmArchived";
-export class CrSheet extends CrEntity {
+import { VSheetNew } from "./vmNew";
+import { VSheetEdit } from "./vmEdit";
+import { VSheetAction } from "./vmSheetAction";
+import { VSheetSchema } from "./vmSchema";
+import { VArchives } from "./vmArchives";
+import { VSheetList } from "./vmList";
+import { VArchived } from "./vmArchived";
+export class CSheet extends CEntity {
     get icon() { return entitiesRes['sheet'].icon; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVm(this.VmSheetMain);
+            yield this.showVPage(this.VmSheetMain);
         });
     }
     get VmSheetMain() {
@@ -32,38 +32,38 @@ export class CrSheet extends CrEntity {
             this.entity.onMessage(msg);
         });
     }
-    get VmSheetNew() { return VmSheetNew; }
-    get VmSheetEdit() { return VmSheetEdit; }
-    get VmSheetSchema() { return VmSheetSchema; }
-    get VmArchives() { return VmArchives; }
-    get VmArchived() { return VmArchived; }
-    get VmSheetList() { return VmSheetList; }
-    get VmSheetAction() { return VmSheetAction; }
+    get VSheetNew() { return VSheetNew; }
+    get VSheetEdit() { return VSheetEdit; }
+    get VSheetSchema() { return VSheetSchema; }
+    get VArchives() { return VArchives; }
+    get VArchived() { return VArchived; }
+    get VSheetList() { return VSheetList; }
+    get VSheetAction() { return VSheetAction; }
     onEvent(type, value) {
         return __awaiter(this, void 0, void 0, function* () {
             let vm;
             switch (type) {
                 default: return;
                 case 'new':
-                    vm = this.VmSheetNew;
+                    vm = this.VSheetNew;
                     break;
                 case 'schema':
-                    vm = this.VmSheetSchema;
+                    vm = this.VSheetSchema;
                     break;
                 case 'archives':
-                    vm = this.VmArchives;
+                    vm = this.VArchives;
                     break;
                 case 'state':
-                    vm = this.VmSheetList;
+                    vm = this.VSheetList;
                     break;
                 case 'action':
-                    vm = this.VmSheetAction;
+                    vm = this.VSheetAction;
                     break;
                 case 'archived':
-                    vm = this.VmArchived;
+                    vm = this.VArchived;
                     break;
             }
-            yield this.showVm(vm, value);
+            yield this.showVPage(vm, value);
         });
     }
     startSheet(sheetId) {

@@ -10,8 +10,8 @@ import * as React from 'react';
 import { Muted } from 'tonva-react-form';
 import { left0 } from 'tonva-tools';
 import { dictionary as x } from '../../res';
-import { VmMapMain, CrMap } from '../../../../ui-usql';
-class CrMapTeamPerson extends CrMap {
+import { VMapMain, CMap } from '../../../../ui-usql';
+class CrMapTeamPerson extends CMap {
     searchOnKey(keyField, param) {
         const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,7 +29,7 @@ class CrMapTeamPerson extends CrMap {
         });
     }
 }
-class VmMapTeamPerson extends VmMapMain {
+class VmMapTeamPerson extends VMapMain {
 }
 const ui = {
     CrMap: CrMapTeamPerson,

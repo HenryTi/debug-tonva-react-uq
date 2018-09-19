@@ -6,18 +6,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { UsqApi, Coordinator, UnitxApi, meInFrame } from 'tonva-tools';
+import { UsqApi, Controller, UnitxApi, meInFrame } from 'tonva-tools';
 import { Entities } from '../../entities';
-import { CrLink } from '../link';
+import { CLink } from '../link';
 import { CrBook } from '../book';
-import { CrSheet } from '../sheet';
+import { CSheet } from '../sheet';
 import { CrAction } from '../action';
-import { CrQuery, CrQuerySelect } from '../query';
+import { CQuery, CQuerySelect } from '../query';
 import { CrTuidMain, CrTuidMainSelect, CrTuidInfo } from '../tuid';
-import { CrMap } from '../map';
+import { CMap } from '../map';
 import { PureJSONContent } from '../viewModel';
 import { VmUsq } from './vmUsq';
-export class CrUsq extends Coordinator {
+export class CUsq extends Controller {
     constructor(usq, appId, usqId, access, ui) {
         super();
         this.isSysVisible = false;
@@ -206,7 +206,7 @@ export class CrUsq extends Coordinator {
     }
     */
     link(crEntity) {
-        return new CrLink(crEntity);
+        return new CLink(crEntity);
     }
     get tuidLinks() {
         return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.link(this.crTuidMain(v)));
@@ -236,7 +236,7 @@ export class CrUsq extends Coordinator {
     //}
     crSheet(sheet) {
         let { ui, res } = this.getUI(sheet);
-        return new CrSheet(this, sheet, ui, res);
+        return new CSheet(this, sheet, ui, res);
     }
     get sheetLinks() {
         return this.entities.sheetArr.filter(v => this.isVisible(v)).map(v => {
@@ -254,14 +254,14 @@ export class CrUsq extends Coordinator {
     }
     crQuery(query) {
         let { ui, res } = this.getUI(query);
-        return new (ui && ui.CrQuery || this.CrQuery || CrQuery)(this, query, ui, res);
+        return new (ui && ui.CrQuery || this.CrQuery || CQuery)(this, query, ui, res);
     }
     crQuerySelect(queryName) {
         let query = this.entities.query(queryName);
         if (query === undefined)
             return;
         let { ui, res } = this.getUI(query);
-        return new (ui && ui.CrQuerySelect || this.CrQuerySelect || CrQuerySelect)(this, query, ui, res);
+        return new (ui && ui.CrQuerySelect || this.CrQuerySelect || CQuerySelect)(this, query, ui, res);
     }
     get queryLinks() {
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
@@ -288,7 +288,7 @@ export class CrUsq extends Coordinator {
     }*/
     crMap(map) {
         let { ui, res } = this.getUI(map);
-        return new (ui && ui.CrMap || this.CrMap || CrMap)(this, map, ui, res);
+        return new (ui && ui.CrMap || this.CrMap || CMap)(this, map, ui, res);
     }
     get mapLinks() {
         return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
