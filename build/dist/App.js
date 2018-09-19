@@ -8,10 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { NavView } from 'tonva-tools';
-//import {pageMapper} from './pages';
-//import {pageMapper as 货主Mapper} from './货主';
-//import { EntitiesMapper } from './ui-usql';
-//import AppHome from './appHome';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import ui from './ui';
@@ -23,8 +19,9 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
     "$$$/货主": 货主Mapper,
 };
 */
-const tonvaApp = 'devapp/DevApp';
+//const tonvaApp = 'devapp/DevApp';
 //const tonvaApp = '$$$/$unitx';
+const tonvaApp = 'JKDev/jkOrder';
 /*
 const uiMappers: {[api:string]: EntitiesMapper} = {
     "DevApp/devappApi": pageMapper,

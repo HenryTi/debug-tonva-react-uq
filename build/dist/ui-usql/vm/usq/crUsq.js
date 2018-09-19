@@ -6,16 +6,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { UsqApi } from 'tonva-tools';
+import { UsqApi, Coordinator, UnitxApi, meInFrame } from 'tonva-tools';
 import { Entities } from '../../entities';
-import { CrEntityLink } from '../link';
+import { CrLink } from '../link';
 import { CrBook } from '../book';
 import { CrSheet } from '../sheet';
 import { CrAction } from '../action';
 import { CrQuery, CrQuerySelect } from '../query';
 import { CrTuidMain, CrTuidMainSelect, CrTuidInfo } from '../tuid';
 import { CrMap } from '../map';
-import { Coordinator } from '../VM';
 import { PureJSONContent } from '../viewModel';
 import { VmUsq } from './vmUsq';
 export class CrUsq extends Coordinator {
@@ -66,7 +65,15 @@ export class CrUsq extends Coordinator {
         else {
             acc = access.split(';').map(v => v.trim()).filter(v => v.length > 0);
         }
-        let usqApi = new UsqApi(baseUrl, usqOwner, usqName, acc, true);
+        let usqApi;
+        if (usq === '$$$/$unitx') {
+            // 这里假定，点击home link之后，已经设置unit了
+            // 调用 UnitxApi会自动搜索绑定 unitx service
+            usqApi = new UnitxApi(meInFrame.unit);
+        }
+        else {
+            usqApi = new UsqApi(baseUrl, usqOwner, usqName, acc, true);
+        }
         this.entities = new Entities(this, usqApi, appId); //, crApp.id, usqId, usqApi);
     }
     internalStart() {
@@ -174,8 +181,8 @@ export class CrUsq extends Coordinator {
                 return this.crMap(map);
         }
     }
-    vmLinkFromName(entityType, entityName) {
-        return this.vmLink(this.crFromName(entityType, entityName));
+    linkFromName(entityType, entityName) {
+        return this.link(this.crFromName(entityType, entityName));
     }
     getUI(t) {
         let ui, res;
@@ -198,11 +205,11 @@ export class CrUsq extends Coordinator {
         return this.res[type];
     }
     */
-    vmLink(crEntity) {
-        return new CrEntityLink(crEntity);
+    link(crEntity) {
+        return new CrLink(crEntity);
     }
-    get vmTuidLinks() {
-        return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.vmLink(this.crTuidMain(v)));
+    get tuidLinks() {
+        return this.entities.tuidArr.filter(v => this.isVisible(v)).map(v => this.link(this.crTuidMain(v)));
     }
     crTuidMain(tuid) {
         let { ui, res } = this.getUI(tuid);
@@ -231,18 +238,18 @@ export class CrUsq extends Coordinator {
         let { ui, res } = this.getUI(sheet);
         return new CrSheet(this, sheet, ui, res);
     }
-    get vmSheetLinks() {
+    get sheetLinks() {
         return this.entities.sheetArr.filter(v => this.isVisible(v)).map(v => {
-            return this.vmLink(this.crSheet(v));
+            return this.link(this.crSheet(v));
         });
     }
     crAction(action) {
         let { ui, res } = this.getUI(action);
         return new CrAction(this, action, ui, res);
     }
-    get vmActionLinks() {
+    get actionLinks() {
         return this.entities.actionArr.filter(v => this.isVisible(v)).map(v => {
-            return this.vmLink(this.crAction(v));
+            return this.link(this.crAction(v));
         });
     }
     crQuery(query) {
@@ -256,9 +263,9 @@ export class CrUsq extends Coordinator {
         let { ui, res } = this.getUI(query);
         return new (ui && ui.CrQuerySelect || this.CrQuerySelect || CrQuerySelect)(this, query, ui, res);
     }
-    get vmQueryLinks() {
+    get queryLinks() {
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
-            return this.vmLink(this.crQuery(v));
+            return this.link(this.crQuery(v));
         });
     }
     //get bookTypeCaption() { return this.getUITypeCaption('book') || '帐 - 仅供调试程序使用，普通用户不可见' }
@@ -269,9 +276,9 @@ export class CrUsq extends Coordinator {
         let { ui, res } = this.getUI(book);
         return new CrBook(this, book, ui, res);
     }
-    get vmBookLinks() {
+    get bookLinks() {
         return this.entities.bookArr.filter(v => this.isVisible(v)).map(v => {
-            return this.vmLink(this.crBook(v));
+            return this.link(this.crBook(v));
         });
     }
     /*
@@ -283,9 +290,9 @@ export class CrUsq extends Coordinator {
         let { ui, res } = this.getUI(map);
         return new (ui && ui.CrMap || this.CrMap || CrMap)(this, map, ui, res);
     }
-    get vmMapLinks() {
+    get mapLinks() {
         return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {
-            return this.vmLink(this.crMap(v));
+            return this.link(this.crMap(v));
         });
     }
     getTuidContent(tuid) {
