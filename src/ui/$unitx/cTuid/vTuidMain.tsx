@@ -4,7 +4,7 @@ import { Page } from 'tonva-tools';
 import { SearchBox, List, Muted } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 
-export class MyVmTuidMain extends VTuidMain {
+export class MyVTuidMain extends VTuidMain {
     protected get view() {
         let {label, proxyLinks} = this.controller;
         return () => <Page header={label}>

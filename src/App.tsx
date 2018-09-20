@@ -27,7 +27,7 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 const tonvaApp = '百灵威系统工程部/customer';
 const uiMappers: {[api:string]: EntitiesMapper} = {
     "百灵威系统工程部/usql-api-test": pageMapper,
-    "百灵威系统工程部/usql-api-test1": null, //pageMapper,
+    "百灵威系统工程部/usql-api-test1": null, //pageMapper,ser
     //"$$$/货主": 货主Mapper,
     //"$$$/货主": null,
 };
@@ -35,8 +35,8 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 
 class App extends React.Component {
     async onLogined() {
-        let crApp = new CApp(tonvaApp, ui);
-        await crApp.start();
+        let cApp = new CApp(tonvaApp, ui);
+        await cApp.start();
     }
     render() {
         return <NavView onLogined={this.onLogined} />;

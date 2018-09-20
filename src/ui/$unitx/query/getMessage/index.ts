@@ -1,9 +1,8 @@
 import { QueryUI } from "../../../../ui-usql";
-import { VmMain } from "./crGetMessge";
+import { VMain } from "./cGetMessge";
 
-//export * from './crGetMessge';
 const ui:QueryUI = {
-    main: VmMain,
+    main: VMain,
 }
 
 export default ui;

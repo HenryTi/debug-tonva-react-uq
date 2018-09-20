@@ -4,7 +4,7 @@ import { left0 } from 'tonva-tools';
 import { dictionary as x } from '../../res';
 import { VMapMain, MapUI, Field, CMap }  from '../../../../ui-usql'; 
 
-class CrMapTeamPerson extends CMap {
+class CMapTeamPerson extends CMap {
     async searchOnKey(keyField:Field, param):Promise<number> {
         switch (keyField.name) {
             default: return await super.searchOnKey(keyField, param);
@@ -13,19 +13,19 @@ class CrMapTeamPerson extends CMap {
     }
 
     private async searchOnPost(param: any):Promise<number> {
-        let querySelect = this.crQuerySelect('teamPosts');
+        let querySelect = this.cQuerySelect('teamPosts');
         let val = await querySelect.call(param);
         return val['post'].id;
     }
 }
 
-class VmMapTeamPerson extends VMapMain {
+class VMapTeamPerson extends VMapMain {
 }
 
 const ui:MapUI = {
-    CrMap: CrMapTeamPerson,
+    CMap: CMapTeamPerson,
     //label: '部门员工对照表',
-    //main: VmMapTeamPerson,
+    //main: VMapTeamPerson,
     keys: [
         {
             content: ({name, id}:any) => <><Muted>{x.team}</Muted> {name}</>,

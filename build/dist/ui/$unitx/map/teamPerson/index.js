@@ -11,7 +11,7 @@ import { Muted } from 'tonva-react-form';
 import { left0 } from 'tonva-tools';
 import { dictionary as x } from '../../res';
 import { VMapMain, CMap } from '../../../../ui-usql';
-class CrMapTeamPerson extends CMap {
+class CMapTeamPerson extends CMap {
     searchOnKey(keyField, param) {
         const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,18 +23,18 @@ class CrMapTeamPerson extends CMap {
     }
     searchOnPost(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            let querySelect = this.crQuerySelect('teamPosts');
+            let querySelect = this.cQuerySelect('teamPosts');
             let val = yield querySelect.call(param);
             return val['post'].id;
         });
     }
 }
-class VmMapTeamPerson extends VMapMain {
+class VMapTeamPerson extends VMapMain {
 }
 const ui = {
-    CrMap: CrMapTeamPerson,
+    CMap: CMapTeamPerson,
     //label: '部门员工对照表',
-    //main: VmMapTeamPerson,
+    //main: VMapTeamPerson,
     keys: [
         {
             content: ({ name, id }) => React.createElement(React.Fragment, null,

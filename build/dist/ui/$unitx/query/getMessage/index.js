@@ -1,7 +1,6 @@
-import { VmMain } from "./crGetMessge";
-//export * from './crGetMessge';
+import { VMain } from "./cGetMessge";
 const ui = {
-    main: VmMain,
+    main: VMain,
 };
 export default ui;
 //# sourceMappingURL=index.js.map

@@ -3,9 +3,9 @@ import sheet from './sheet';
 //import map from './map';
 //import query from './query';
 //import res from './res';
-//import { MyCrTuid } from './crTuid';
+//import { MyCTuid } from './cTuid';
 const usqUI = {
-    //CrTuidMain: MyCrTuid,
+    //CTuidMain: MyCTuid,
     tuid: tuid,
     sheet: sheet,
 };
