@@ -3,13 +3,13 @@ import { TuidUI } from '../../../ui-usql';
 
 export default {
     customer: {
-        content: (values) => {
+        inputContent: (values) => {
             let {id, name, discription} = values;
             return <>{discription || name || 'id ' + id + ' ...'}</>;
         }
     },
     article: {
-        content: (values) => {
+        inputContent: (values) => {
             let {id, name, discription, casNO} = values;
             if (casNO !== undefined)
                 return <>CAS:{casNO} - {discription || name}</>;

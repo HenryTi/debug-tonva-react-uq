@@ -257,6 +257,19 @@ export class Entities {
                 continue;
             f._tuid = this.getTuid(tuid, arr, url);
         }
+        for (let f of fields) {
+            let { owner } = f;
+            if (owner === undefined)
+                continue;
+            let ownerField = fields.find(v => v.name === owner);
+            if (ownerField === undefined)
+                throw `owner field ${owner} is undefined`;
+            f._ownerField = ownerField;
+            let { arr, url } = f;
+            f._tuid = this.getTuid(ownerField._tuid.name, arr, url);
+            if (f._tuid === undefined)
+                throw 'owner field ${owner} is not tuid';
+        }
     }
     buildArrFieldsTuid(arrFields) {
         if (arrFields === undefined)

@@ -13,7 +13,7 @@ import { CBook } from '../book';
 import { CSheet } from '../sheet';
 import { CAction } from '../action';
 import { CQuery, CQuerySelect } from '../query';
-import { CTuidMain, CTuidMainSelect, CTuidInfo } from '../tuid';
+import { CTuidMain, CTuidInfo, CTuidSelect } from '../tuid';
 import { CMap } from '../map';
 import { PureJSONContent } from '../viewModel';
 import { VUsq } from './vUsq';
@@ -121,8 +121,8 @@ export class CUsq extends Controller {
             return query;
         });
     }
-    getTuidNullCaption(tuid) {
-        let { tuidNullCaption, entity } = this.res;
+    getTuidPlaceHolder(tuid) {
+        let { tuidPlaceHolder, entity } = this.res;
         let { name } = tuid;
         let type;
         if (entity !== undefined) {
@@ -131,7 +131,11 @@ export class CUsq extends Controller {
                 type = en.label;
             }
         }
-        return (tuidNullCaption || 'Select ') + (type || name);
+        return (tuidPlaceHolder || 'Select');
+    }
+    getNone() {
+        let { none } = this.res;
+        return none || 'none';
     }
     isVisible(entity) {
         return entity.sys !== true || this.isSysVisible;
@@ -216,8 +220,8 @@ export class CUsq extends Controller {
         return new (ui && ui.CTuidMain || this.CTuidMain || CTuidMain)(this, tuid, ui, res);
     }
     cTuidSelect(tuid) {
-        let { ui, res } = this.getUI(tuid);
-        return new (ui && ui.CTuidSelect || CTuidMainSelect)(this, tuid, ui, res);
+        let { ui, res } = this.getUI(tuid.owner || tuid);
+        return new (ui && ui.CTuidSelect || CTuidSelect)(this, tuid, ui, res);
     }
     cTuidInfo(tuid) {
         let { ui, res } = this.getUI(tuid);
@@ -279,16 +283,17 @@ export class CUsq extends Controller {
         let { owner } = tuid;
         if (owner === undefined) {
             let { ui } = this.getUI(tuid);
-            return (ui && ui.content) || PureJSONContent;
+            return (ui && ui.inputContent) || PureJSONContent;
         }
         else {
             let { ui } = this.getUI(owner);
-            return (ui && ui.divs && ui.divs[tuid.name].content) || PureJSONContent;
+            return (ui && ui.divs && ui.divs[tuid.name].inputContent) || PureJSONContent;
         }
     }
     showTuid(tuid, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            let c = this.cTuidInfo(tuid);
+            let { owner } = tuid;
+            let c = this.cTuidInfo(owner || tuid);
             yield c.start(id);
         });
     }

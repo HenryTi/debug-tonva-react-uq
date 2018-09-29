@@ -1,13 +1,13 @@
 import * as React from 'react';
 export default {
     customer: {
-        content: (values) => {
+        inputContent: (values) => {
             let { id, name, discription } = values;
             return React.createElement(React.Fragment, null, discription || name || 'id ' + id + ' ...');
         }
     },
     article: {
-        content: (values) => {
+        inputContent: (values) => {
             let { id, name, discription, casNO } = values;
             if (casNO !== undefined)
                 return React.createElement(React.Fragment, null,

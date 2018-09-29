@@ -1,39 +1,21 @@
-import { isArray } from 'util';
-import App from './App';
-//import DevApp_devappApi from './DevApp-devappApi';
 import $unitx from './$unitx';
 import devApp from './devApp';
-import {converUIKeyToLowercase} from '../ui-usql';
+import jkOrder from './jkOrder';
+import {convertUIKeyToLowercase, AppUI} from '../ui-usql';
 
-const ui = {
-    label: 'xxx yyy zzz',
+const ui:AppUI = {
     //App: App,
     //"DevApp/devappApi": DevApp_devappApi,
     //res: res,
     usqs: {
         "$$$/$unitx": $unitx,
         "DevApp/devappApi": devApp,
+        "JKDev/jkOrder": jkOrder,
     }
 };
 
-converUIKeyToLowercase(ui);
-/*
-(function converUIKeyToLowercase(obj: any) {
-    for (let i in obj) {
-        let v = obj[i];
-        obj[i.toLowerCase()] = v;
-        if (typeof v === 'object') {
-          if (isArray(v) === true) {
-              for (let i of (v as any[])) {
-                  converUIKeyToLowercase(i);
-              }
-          }
-          else {
-              converUIKeyToLowercase(v);
-          }
-      }
-  }
-})(ui);
-*/
+convertUIKeyToLowercase(ui);
 
 export default ui;
+export { CMyApp } from './CApp';
+

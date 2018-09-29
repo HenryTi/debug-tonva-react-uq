@@ -4,7 +4,7 @@ import { CEntity, EntityUI } from "../VM";
 import { TuidMain, Tuid, TuidDiv } from "../../entities";
 import { VTuidMain } from './vTuidMain';
 import { VTuidEdit } from './vTuidEdit';
-import { VTuidMainSelect, VTuidDivSelect } from './vTuidSelect';
+import { VTuidSelect } from './vTuidSelect';
 import { CUsq } from "../usq/cUsq";
 import { CLink } from "../link";
 import { entitiesRes } from '../../res';
@@ -16,11 +16,13 @@ export interface TuidUI extends EntityUI {
     CTuidMain?: typeof CTuidMain;
     CTuidSelect?: typeof CTuidSelect;
     CTuidInfo?: typeof CTuidInfo;
-    content?: React.StatelessComponent<any>;
+    inputContent?: React.StatelessComponent<any>;
+    rowContent?: React.StatelessComponent<any>;
     divs?: {
         [div:string]: {
             CTuidSelect?: typeof CTuidSelect;
-            content?: React.StatelessComponent<any>;
+            inputContent?: React.StatelessComponent<any>;
+            rowContent?: React.StatelessComponent<any>;
         }
     }
 }
@@ -34,11 +36,16 @@ export abstract class CTuid<T extends Tuid> extends CEntity<T, TuidUI> {
 
     pagedItems:TuidPagedItems;
 
-    async search(key:string) {
+    async searchMain(key:string) {
         if (this.pagedItems === undefined) {
-            this.pagedItems = new TuidPagedItems(this.entity);
+            this.pagedItems = new TuidPagedItems(this.entity.owner || this.entity);
         }
-        await this.pagedItems.first(key);
+        if (key !== undefined) await this.pagedItems.first(key);
+    }
+
+    async getDivItems(ownerId:number):Promise<any[]> {
+        let ret = await this.entity.searchArr(ownerId, undefined, 0, 1000);
+        return ret;
     }
 }
 
@@ -118,10 +125,15 @@ export class CTuidDiv extends CTuid<TuidDiv> {
 
 export class CTuidSelect extends CTuid<Tuid> {
     protected async internalStart(param?: any):Promise<void> {
-        await this.showVPage(this.VTuidMainSelect, param);
+        await this.showVPage(this.VTuidSelect, param);
     }
-    protected get VTuidMainSelect():typeof VTuidMainSelect {return VTuidMainSelect}
-    protected get VTuidDivSelect():typeof VTuidDivSelect {return VTuidDivSelect}
+    protected async beforeStart() {
+        await super.beforeStart();
+        if (this.pagedItems !== undefined) this.pagedItems.reset();
+    }
+    protected get VTuidSelect():typeof VTuidSelect {return VTuidSelect}
+    //protected get VTuidMainSelect():typeof VTuidMainSelect {return VTuidMainSelect}
+    //protected get VTuidDivSelect():typeof VTuidDivSelect {return VTuidDivSelect}
 }
 /*
 export class CTuidMainSelect extends CTuidSelect<TuidMain> {
@@ -139,8 +151,9 @@ export class CTuidDivSelect extends CTuidSelect<TuidDiv> {
 }
 */
 export class CTuidInfo extends CTuid<Tuid> {
-    protected async internalStart(param?: any):Promise<void> {
-        await this.showVPage(this.VTuidInfo, param);
+    protected async internalStart(id: any):Promise<void> {
+        let data = await this.entity.load(id)
+        await this.showVPage(this.VTuidInfo, data);
     }
     protected get VTuidInfo():typeof VTuidInfo {return VTuidInfo}
 }

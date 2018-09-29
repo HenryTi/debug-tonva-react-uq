@@ -4,20 +4,21 @@ import { MyVTuidMain } from "./vTuidMain";
 export class MyCTuid extends CTuidMain {
     protected get VTuidMain():typeof VTuidMain {return MyVTuidMain}
 
-    protected buildCall(field:Field, arr:string):FieldCall {
-        let {name, _tuid} = field;
+    protected buildSelect(field:Field, arr:string):FieldCall {
+        let {name} = field;
         switch (arr) {
         case undefined:
             switch (name) {
             case 'fromUser':
-                return async (form:VForm, field:string, values:any):Promise<any> => {
-                    let cTuidSelect = this.cUsq.cTuidSelect(_tuid as TuidMain);
+                return async (form:VForm, field:Field, values:any):Promise<any> => {
+                    let {_tuid} = field;
+                    let cTuidSelect = this.cUsq.cTuidSelect(_tuid);
                     let ret = await cTuidSelect.call();
                     return ret.id;
                 };
             }
             break;
         }
-        return super.buildCall(field, arr);
+        return super.buildSelect(field, arr);
     }
 }

@@ -18,7 +18,7 @@ export default {
     usq: '$UNITX',
     tuid: '基础档案',
     map: '对照表',
-    tuidNullCaption: '选择',
+    tuidPlaceHolder: '选择',
     submit: '提交',
     arrNew: '新增',
     arrEdit: '保存',

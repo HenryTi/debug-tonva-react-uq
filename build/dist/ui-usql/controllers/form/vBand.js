@@ -6,9 +6,11 @@ export class VBand {
         this.label = label;
     }
     render() {
-        return React.createElement("div", { key: this.key, className: 'form-group row' },
-            React.createElement("label", { className: 'col-sm-2 col-form-label text-sm-right' }, this.label),
-            React.createElement("div", { className: "col-sm-10" }, this.renderContent()));
+        //text-sm-right
+        return React.createElement("div", { key: this.key, className: "px-3" },
+            React.createElement("div", { className: "form-group row" },
+                React.createElement("label", { className: "col-sm-2 col-form-label" }, this.label),
+                React.createElement("div", { className: "col-sm-10" }, this.renderContent())));
     }
     get key() { return this.label; }
     getVFields() { return; }
@@ -41,7 +43,7 @@ export class VArrBand extends VBand {
     get key() { return this.vArr.name; }
     getVArr() { return this.vArr; }
     render() {
-        return React.createElement("div", { key: this.key, className: "form-group row flex-column" }, this.vArr && this.vArr.render());
+        return React.createElement(React.Fragment, { key: this.key }, this.vArr && this.vArr.render());
     }
 }
 export class VFieldsBand extends VBand {
@@ -62,8 +64,9 @@ export class VSubmitBand extends VBand {
     }
     getVSubmit() { return this.vSubmit; }
     render() {
-        return React.createElement("div", { key: "$submit", className: "form-group row" },
-            React.createElement("div", { className: "offset-sm-2 col-sm-10" }, this.vSubmit.render()));
+        return React.createElement("div", { key: "$submit", className: "px-3" },
+            React.createElement("div", { className: "form-group row" },
+                React.createElement("div", { className: "offset-sm-2 col-sm-10" }, this.vSubmit.render())));
     }
 }
 //# sourceMappingURL=vBand.js.map

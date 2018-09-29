@@ -5,31 +5,26 @@ import { Page, PagedItems } from 'tonva-tools';
 import { TuidMain, Entity, Tuid, TuidDiv } from '../../entities';
 import { VEntity } from '../VM';
 import { TuidUI, CTuidMain, CTuidDiv } from './cTuid';
+import { JSONContent, RowContent } from '../viewModel';
 
 export abstract class VTuidMainListBase  extends VEntity<TuidMain, TuidUI, CTuidMain> {
-    //protected controller: CTuidMain;
-    //protected entity: TuidMain;
-    ppp: string;
-    ownerId: number;
-    param: any;
+    protected rowContent: (row:any) => JSX.Element;
+    protected ownerId: number;
 
     async showEntry(param?:any) {
-        //this.pagedItems = new TuidPagedItems(this.entity);
-        this.param = param;
+        this.rowContent = this.ui.rowContent || RowContent;
         if (this.entity.owner !== undefined) this.ownerId = Number(param);
         // 初始查询, key是空的
         //await this.onSearch('');
-        await this.controller.search('');
+        await this.controller.searchMain('');
         this.openPage(this.view);
     }
 
     onSearch = async (key:string) => {
-        await this.controller.search(key);
+        await this.controller.searchMain(key);
         //await this.pagedItems.first(key);
     }
-    renderRow = (item:any, index:number):JSX.Element => {
-        return <div className="px-3 py-2">{JSON.stringify(item)}</div>;
-    }
+    renderRow = (item:any, index:number):JSX.Element => <this.rowContent {...item} />;
 
     protected abstract onSelected(item:any): Promise<void>;
     private callOnSelected(item:any) {
@@ -42,7 +37,10 @@ export abstract class VTuidMainListBase  extends VEntity<TuidMain, TuidUI, CTuid
     clickRow = (item:any) => {
         this.callOnSelected(item);
     }
-
+    private rowKey = (item:any) => {
+        let {id} = item;
+        return id;
+    }
     protected view = observer(() => {
         let header = <SearchBox className="mx-1 w-100"
             initKey={''}
@@ -57,7 +55,7 @@ export abstract class VTuidMainListBase  extends VEntity<TuidMain, TuidUI, CTuid
             {ownerTop}
             <List
                 items={this.controller.pagedItems.items}
-                item={{render: this.renderRow, onClick: this.clickRow}}
+                item={{render: this.renderRow, onClick: this.clickRow, key:this.rowKey}}
                 before={'搜索'+this.label+'资料'} />
         </Page>;
     });
@@ -70,24 +68,19 @@ export class VTuidMainList extends VTuidMainListBase {
 }
 
 export abstract class VTuidDivListBase  extends VEntity<TuidDiv, TuidUI, CTuidDiv> {
-    //protected controller: CTuidMain;
-    //protected entity: TuidMain;
-    ppp: string;
-    ownerId: number;
-    param: any;
+    protected ownerId: number;
 
     async showEntry(param?:any) {
         //this.pagedItems = new TuidPagedItems(this.entity);
-        this.param = param;
         if (this.entity.owner !== undefined) this.ownerId = Number(param);
         // 初始查询, key是空的
         //await this.onSearch('');
-        await this.controller.search('');
+        await this.controller.searchMain('');
         this.openPage(this.view);
     }
 
     onSearch = async (key:string) => {
-        await this.controller.search(key);
+        await this.controller.searchMain(key);
         //await this.pagedItems.first(key);
     }
     renderRow = (item:any, index:number):JSX.Element => {

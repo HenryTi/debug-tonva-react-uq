@@ -2,8 +2,8 @@ import * as React from 'react';
 import {nav, NavView} from 'tonva-tools';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import ui from './ui';
-import {CApp} from './ui-usql/controllers';
+import ui, { CMyApp } from './ui';
+//import {CApp} from './ui-usql/controllers';
 
 /*
 const tonvaApp = '$$$/ui-usql-first';
@@ -35,7 +35,7 @@ const uiMappers: {[api:string]: EntitiesMapper} = {
 
 class App extends React.Component {
     async onLogined() {
-        let cApp = new CApp(tonvaApp, ui);
+        let cApp = new CMyApp(tonvaApp, ui);
         await cApp.start();
     }
     render() {

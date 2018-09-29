@@ -68,7 +68,7 @@ export class VTuidEdit extends VEntity {
         });
     }
     get editView() {
-        return () => React.createElement(Page, { header: (this.id === undefined ? '新增' : '编辑') + ' - ' + this.label }, this.vForm.render('mx-3 my-2'));
+        return () => React.createElement(Page, { header: (this.id === undefined ? '新增' : '编辑') + ' - ' + this.label }, this.vForm.render('py-3'));
     }
     resetForm() {
         this.vForm.reset();

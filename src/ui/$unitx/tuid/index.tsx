@@ -5,7 +5,7 @@ import { TuidUI } from '../../../ui-usql';
 const organization:TuidUI = {
     divs: {
         post: {
-            content: (values) => {
+            inputContent: (values) => {
                 let {id, title} = values;
                 return <>{title}</>
             }
@@ -15,7 +15,7 @@ const organization:TuidUI = {
 
 export default {
     user: {
-        content: (values) => {
+        inputContent: (values) => {
             let {id, name, nick, assigned} = values;
             if (assigned !== undefined) {
                 return <>{assigned} - <Muted>{name}</Muted></>;
@@ -28,7 +28,7 @@ export default {
         }
     },
     section: {
-        content: (values) => {
+        inputContent: (values) => {
             let {id, name} = values;
             return <>{name}</>;
         }

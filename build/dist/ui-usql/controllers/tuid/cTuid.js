@@ -11,21 +11,27 @@ import { CEntity } from "../VM";
 import { VTuidMain } from './vTuidMain';
 import { VTuidEdit } from './vTuidEdit';
 import { VTuidSelect } from './vTuidSelect';
-import { VTuidList } from "./vTuidList";
 import { entitiesRes } from '../../res';
 import { VTuidInfo } from "./vTuidInfo";
 import { TuidPagedItems } from "./pagedItems";
+import { VTuidMainList } from './vTuidList';
 export class CTuid extends CEntity {
     constructor(cUsq, entity, ui, res) {
         super(cUsq, entity, ui, res);
     }
     get icon() { return entitiesRes['tuid'].icon; }
-    search(key) {
+    searchMain(key) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.pagedItems === undefined) {
-                this.pagedItems = new TuidPagedItems(this.entity);
+                this.pagedItems = new TuidPagedItems(this.entity.owner || this.entity);
             }
             yield this.pagedItems.first(key);
+        });
+    }
+    getDivItems(ownerId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let ret = yield this.entity.searchArr(ownerId, undefined, 0, 1000);
+            return ret;
         });
     }
 }
@@ -61,7 +67,7 @@ export class CTuidMain extends CTuid {
     }
     get VTuidMain() { return VTuidMain; }
     get VTuidEdit() { return VTuidEdit; }
-    get VTuidList() { return VTuidList; }
+    get VTuidList() { return VTuidMainList; }
     internalStart() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.showVPage(this.VTuidMain);
@@ -105,7 +111,14 @@ export class CTuidMain extends CTuid {
         }
     }
 }
-export class CTuidMainSelect extends CTuid {
+export class CTuidDiv extends CTuid {
+    internalStart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            alert('tuid div: ' + this.entity.name);
+        });
+    }
+}
+export class CTuidSelect extends CTuid {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.showVPage(this.VTuidSelect, param);
@@ -113,18 +126,26 @@ export class CTuidMainSelect extends CTuid {
     }
     get VTuidSelect() { return VTuidSelect; }
 }
-export class CTuidDivSelect extends CTuid {
-    internalStart(param) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVPage(this.VTuidSelect, param);
-        });
+/*
+export class CTuidMainSelect extends CTuidSelect<TuidMain> {
+    protected async internalStart(param?: any):Promise<void> {
+        await this.showVPage(this.VTuidMainSelect, param);
     }
-    get VTuidSelect() { return VTuidSelect; }
+    protected get VTuidMainSelect():typeof VTuidMainSelect {return VTuidMainSelect}
 }
+
+export class CTuidDivSelect extends CTuidSelect<TuidDiv> {
+    protected async internalStart(param?: any):Promise<void> {
+        await this.showVPage(this.VTuidDivSelect, param);
+    }
+    protected get VTuidDivSelect():typeof VTuidDivSelect {return VTuidDivSelect}
+}
+*/
 export class CTuidInfo extends CTuid {
-    internalStart(param) {
+    internalStart(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.showVPage(this.VTuidInfo, param);
+            let data = yield this.entity.load(id);
+            yield this.showVPage(this.VTuidInfo, data);
         });
     }
     get VTuidInfo() { return VTuidInfo; }

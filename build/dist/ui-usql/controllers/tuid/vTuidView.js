@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page } from 'tonva-tools';
@@ -37,12 +36,11 @@ export class VTuidView extends VEntity {
                         React.createElement(Button, { color: "primary", outline: true, onClick: this.finish }, "\u4E0D\u7EE7\u7EED")))));
             return;
         });
-        this.view = observer(() => React.createElement(Page, { header: this.label }, this.vForm.render('mx-3 my-2')));
+        this.view = () => React.createElement(Page, { header: this.label }, this.vForm.render('py-3'));
     }
     showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            let data = yield this.entity.valueFromId(param);
-            this.vForm = this.createForm(undefined, data);
+            this.vForm = this.createForm(undefined, param);
             this.openPage(this.view);
         });
     }
