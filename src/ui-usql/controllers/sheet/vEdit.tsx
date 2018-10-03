@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { Page } from 'tonva-tools';
-import { Sheet } from '../../entities';
-import { VForm } from '../form';
-import { VEntity } from '../VM';
-import { SheetUI, CSheet } from './cSheet';
+import { VForm, FormMode } from '../form';
+import { VSheetView } from './vSheetView';
+import { SheetData } from './cSheet';
 
-export class VSheetEdit extends VEntity<Sheet, SheetUI, CSheet> {
-    vForm: VForm;
-
-    async showEntry(param?:any) {
-        this.vForm = this.createForm(this.onSubmit, param);
+export class VSheetEdit extends VSheetView { //VEntity<Sheet, SheetUI, CSheet> {
+    async showEntry(param: SheetData) {
+        this.vForm = this.createForm(this.onSubmit, param.data, FormMode.edit);
         this.openPage(this.view);
     }
 

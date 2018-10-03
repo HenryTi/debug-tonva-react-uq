@@ -38,7 +38,7 @@ export class CMyOrder extends CSheet {
     //label:string = '试验定制单据';
 
     async internalStart(param?:any) {
-        this.form = this.createForm(this.onSubmit, undefined, true);
+        this.form = this.createForm(this.onSubmit, undefined, undefined);
         let productsBand = this.form.getBand('products');
         productsBand.setAddRow(this.addRow);
         this.openPage(<this.step1SelectCustomer />);
@@ -101,7 +101,7 @@ export class CMyOrder extends CSheet {
     }
 
     private onSubmit = async () => {
-        let {values} = this.form;
+        let values = this.form.getValues();
         let ret = await this.saveSheet(values);
         alert('[' + this.label + '] 已保存: ' + JSON.stringify(ret));
         this.closePage();

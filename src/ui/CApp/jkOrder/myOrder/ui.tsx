@@ -14,13 +14,20 @@ export class VOrderNew extends VSheetNew {
 export const myOrderUI: SheetUI = {
     sheetNew: VOrderNew,
     form: {
-        compute: {
-            sumAmount: ():number => {
-                return 1;
-            },
-        },
-        arrs: {
+        items: {
+            customer: {editable: false},
+            sumAmount: (():number => {return 1;}),
             products: {
+                //type: 'arr',
+                items: {
+                    product: {editable: false},
+                    pack: {editable: false},
+                    price: {editable: false},
+                    amount: function(this:any):number {
+                        return (this.quantity === undefined || this.quantity === null? 0 : this.quantity) * 
+                            (this.price === undefined || this.price === null? 0 : this.price);
+                    }
+                },
                 rowContent: observer((values:any) => {
                     let { product, pack, price, quantity} = values;
                     return <div className="row px-3 py-2">
@@ -34,13 +41,7 @@ export const myOrderUI: SheetUI = {
                         <div className='col-2'>{quantity}</div>
                     </div>;
                 }),
-                compute: {
-                    amount: function(this:any):number {
-                        return (this.quantity === undefined || this.quantity === null? 0 : this.quantity) * 
-                            (this.price === undefined || this.price === null? 0 : this.price);
-                    }
-                }
             }
-        }
+        },
     }
 }

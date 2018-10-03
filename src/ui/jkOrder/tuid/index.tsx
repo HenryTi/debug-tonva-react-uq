@@ -57,7 +57,7 @@ const product:TuidUI = {
         }
     },
     form: {
-        arrs: {
+        items: {
             pack: {
                 rowContent: productPackRowContent,
             }

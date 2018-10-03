@@ -6,12 +6,11 @@ import { observer } from 'mobx-react';
 const orderUI:SheetUI = {
     sheetNew: VOrderNew,
     form: {
-        compute: {
+        items: {
+            customer: {editable: false},
             sumAmount: ():number => {
                 return 1;
             },
-        },
-        arrs: {
             products: {
                 rowContent: observer((values:any) => {
                     let { product, pack, price, quantity} = values;
@@ -26,14 +25,17 @@ const orderUI:SheetUI = {
                         <div className='col-2'>{quantity}</div>
                     </div>;
                 }),
-                compute: {
+                items: {
+                    product: {editable:false},
+                    pack: {editable:false},
+                    price: {editable:false},
                     amount: function(this:any):number {
                         return (this.quantity === undefined || this.quantity === null? 0 : this.quantity) * 
                             (this.price === undefined || this.price === null? 0 : this.price);
                     }
-                }
+                },
             }
-        }
+        },
     }
 };
 

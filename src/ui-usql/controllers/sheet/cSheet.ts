@@ -31,6 +31,12 @@ export interface SheetUI extends EntityUI {
     listRow?: (row:any) => JSX.Element;
 }
 
+export interface SheetData {
+    brief: any;
+    data: any;
+    flows: any[];
+}
+
 export class CSheet extends CEntity<Sheet, SheetUI> {
     get icon() {return entitiesRes['sheet'].icon}
 
@@ -62,8 +68,8 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
             case 'schema': c = this.VSheetSchema; break;
             case 'archives': c = this.VArchives; break;
             case 'state': c = this.VSheetList; break;
-            case 'action': c = this.VSheetAction; break;
-            case 'archived': c = this.VArchived; break;
+            case 'archived': await this.showArchived(value); return;
+            case 'action': await this.showAction(value); return;
         }
         await this.showVPage(c, value);
     }
@@ -71,6 +77,21 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
     async startSheet(sheetId:number) {
         super.beforeStart();
         this.onEvent('action', sheetId);
+    }
+
+    async showAction(sheetId:number) {
+        let sheetData:SheetData = await this.getSheetData(sheetId);
+        await this.showVPage(this.VSheetAction, sheetData);
+    }
+
+    async editSheet(sheetData:SheetData) {
+        //alert('修改单据：程序正在设计中');
+        await this.showVPage(this.VSheetEdit, sheetData);
+    }
+
+    async showArchived(inBrief:any) {
+        let sheetData = await this.getArchived(inBrief.id);
+        await this.showVPage(this.VArchived, sheetData);
     }
 
     private getStateUI(stateName:string) {
@@ -101,11 +122,11 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
         await this.entity.getStateSheetCount();
     }
 
-    async getSheetData(sheetId:number):Promise<any> {
+    async getSheetData(sheetId:number):Promise<SheetData> {
         return await this.entity.getSheet(sheetId);
     }
 
-    async getArchived(sheetId:number):Promise<{brief:any, data:any, flows:any[]}> {
+    async getArchived(sheetId:number):Promise<SheetData> {
         return await this.entity.getArchive(sheetId);
     }
 

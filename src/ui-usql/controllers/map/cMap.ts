@@ -5,7 +5,7 @@ import { Map, Tuid, IdBox, Field, TuidMain } from "../../entities";
 import { VMapMain } from "./vMain";
 import { entitiesRes } from '../../res';
 import { observable } from "mobx";
-import { PureJSONContent } from '../viewModel';
+import { PureJSONContent } from '../form/viewModel';
 import { VForm } from '../form';
 import { VInputValues } from './inputValues';
 

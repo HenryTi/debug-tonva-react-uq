@@ -5,7 +5,7 @@ import { Tuid } from '../../entities';
 import { CTuid, TuidUI } from './cTuid';
 import { SearchBox, List } from 'tonva-react-form';
 import React from 'react';
-import { RowContent } from '../viewModel';
+import { RowContent } from '../form/viewModel';
 import { observer } from 'mobx-react';
 
 export class VTuidSelect extends VEntity<Tuid, TuidUI, CTuid<Tuid>> {
