@@ -38,7 +38,7 @@ export abstract class CEntity<T extends Entity, UI extends EntityUI> extends Con
         await this.entity.loadSchema();
     }
 
-    createForm(onSubmit:(values:any)=>Promise<void>, values?:any, mode?:FormMode) {
+    createForm(onSubmit:()=>Promise<void>, values?:any, mode?:FormMode) {
         let options = this.buildFormOptions(mode);
         let ret = new VForm(options, onSubmit);
         ret.setValues(values);
@@ -155,7 +155,7 @@ export abstract class VEntity<T extends Entity, UI extends EntityUI, C extends C
     get label():string {return this.controller.label}
 
     //private _form_$: VForm;
-    protected createForm(onSubmit:(values:any)=>Promise<void>, values?:any, mode?:FormMode): VForm {
+    protected createForm(onSubmit:()=>Promise<void>, values?:any, mode?:FormMode): VForm {
         //if (this._form_$ !== undefined) return this._form_$;
         return this.controller.createForm(onSubmit, values, mode);
     }

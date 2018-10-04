@@ -25,7 +25,8 @@ export class CTuid extends CEntity {
             if (this.pagedItems === undefined) {
                 this.pagedItems = new TuidPagedItems(this.entity.owner || this.entity);
             }
-            yield this.pagedItems.first(key);
+            if (key !== undefined)
+                yield this.pagedItems.first(key);
         });
     }
     getDivItems(ownerId) {
@@ -122,6 +123,14 @@ export class CTuidSelect extends CTuid {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.showVPage(this.VTuidSelect, param);
+        });
+    }
+    beforeStart() {
+        const _super = name => super[name];
+        return __awaiter(this, void 0, void 0, function* () {
+            yield _super("beforeStart").call(this);
+            if (this.pagedItems !== undefined)
+                this.pagedItems.reset();
         });
     }
     get VTuidSelect() { return VTuidSelect; }

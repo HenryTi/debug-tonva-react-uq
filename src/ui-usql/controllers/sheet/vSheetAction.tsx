@@ -30,8 +30,8 @@ export class VSheetAction extends VSheetView {
 
     editClick = async () => {
         //alert('修改单据：程序正在设计中');
-        this.controller.editSheet(this.sheetData);
-        //this.openPage(this.controller.VSheetEdit)
+        let values = await this.controller.editSheet(this.sheetData);
+        this.vForm.setValues(values);
     }
 
     protected page = () => {

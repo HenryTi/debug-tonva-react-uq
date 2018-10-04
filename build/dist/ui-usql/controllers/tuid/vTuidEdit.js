@@ -14,16 +14,6 @@ import { VEntity } from '../VM';
 export class VTuidEdit extends VEntity {
     constructor() {
         super(...arguments);
-        /*
-        protected async beforeStart(param?:any) {
-            this.vmForm = this.createVmFieldsForm();
-            if (param !== undefined) {
-                this.id = param.id;
-                this.vmForm.values = param;
-            }
-            this.vmForm.onSubmit = this.onSubmit;
-        }
-        */
         this.next = () => __awaiter(this, void 0, void 0, function* () {
             this.vForm.reset();
             this.closePage();
@@ -33,7 +23,7 @@ export class VTuidEdit extends VEntity {
             this.event('edit-end');
         };
         this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
-            let { values } = this.vForm;
+            let values = this.vForm.getValues();
             let ret = yield this.controller.entity.save(this.id, values);
             let { id } = ret;
             if (id < 0) {

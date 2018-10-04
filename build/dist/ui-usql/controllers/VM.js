@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Controller, VPage } from 'tonva-tools';
-import { VForm } from './form';
+import { VForm, FormMode } from './form';
 export class ControllerUsq extends Controller {
     constructor(cUsq) {
         super();
@@ -18,9 +18,10 @@ export class CEntity extends ControllerUsq {
     constructor(cUsq, entity, ui, res) {
         super(cUsq);
         this.entity = entity;
-        this.ui = ui;
-        this.res = res;
-        this.label = (res && res.label) || entity.name;
+        let entityUI = cUsq.getUI(entity);
+        this.ui = ui || entityUI.ui;
+        this.res = res || entityUI.res;
+        this.label = (this.res && this.res.label) || entity.name;
     }
     beforeStart() {
         const _super = name => super[name];
@@ -29,12 +30,13 @@ export class CEntity extends ControllerUsq {
             yield this.entity.loadSchema();
         });
     }
-    createForm(onSubmit, values) {
-        let ret = new VForm(this.buildFormOptions(), onSubmit);
+    createForm(onSubmit, values, mode) {
+        let options = this.buildFormOptions(mode);
+        let ret = new VForm(options, onSubmit);
         ret.setValues(values);
         return ret;
     }
-    buildFormOptions() {
+    buildFormOptions(mode) {
         let { fields, arrFields } = this.entity;
         let none, submitCaption, arrNewCaption, arrEditCaption, arrTitleNewButton;
         if (this.res !== undefined) {
@@ -55,6 +57,8 @@ export class CEntity extends ControllerUsq {
             arrEditCaption = this.cUsq.res['arrEdit'] || 'Edit';
         if (arrTitleNewButton === undefined)
             arrTitleNewButton = this.cUsq.res['arrTitleNewButton'];
+        if (mode === undefined)
+            mode = FormMode.new;
         let ret = {
             fields: fields,
             arrs: arrFields,
@@ -66,6 +70,7 @@ export class CEntity extends ControllerUsq {
             arrNewCaption: arrNewCaption,
             arrEditCaption: arrEditCaption,
             arrTitleNewButton: arrTitleNewButton,
+            mode: mode,
         };
         return ret;
     }
@@ -101,7 +106,6 @@ export class CEntity extends ControllerUsq {
         }
     }
     buildSelect(field, arr) {
-        //let {_tuid} = field;
         return (form, field, values) => __awaiter(this, void 0, void 0, function* () {
             let { _tuid, _ownerField } = field;
             let cTuidSelect = this.cUsq.cTuidSelect(_tuid);
@@ -132,10 +136,10 @@ export class VEntity extends VPage {
         this.res = controller.res;
     }
     get label() { return this.controller.label; }
-    createForm(onSubmit, values) {
-        if (this._form_$ !== undefined)
-            return this._form_$;
-        return this.controller.createForm(onSubmit, values);
+    //private _form_$: VForm;
+    createForm(onSubmit, values, mode) {
+        //if (this._form_$ !== undefined) return this._form_$;
+        return this.controller.createForm(onSubmit, values, mode);
     }
 }
 //# sourceMappingURL=VM.js.map

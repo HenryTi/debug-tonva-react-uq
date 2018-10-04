@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { uid } from 'tonva-react-form';
 export class VBand {
     constructor(label) {
         this.view = () => React.createElement("div", null);
@@ -12,6 +11,7 @@ export class VBand {
                 React.createElement("label", { className: "col-sm-2 col-form-label" }, this.label),
                 React.createElement("div", { className: "col-sm-10" }, this.renderContent())));
     }
+    setAddRow(addRow) { }
     get key() { return this.label; }
     getVFields() { return; }
     getVArr() { return; }
@@ -40,6 +40,7 @@ export class VArrBand extends VBand {
         super(label);
         this.vArr = vArr;
     }
+    setAddRow(addRow) { this.vArr.setAddRow(addRow); }
     get key() { return this.vArr.name; }
     getVArr() { return this.vArr; }
     render() {
@@ -51,7 +52,7 @@ export class VFieldsBand extends VBand {
         super(label);
         this.vFields = vFields;
     }
-    get key() { return this.label || uid(); }
+    get key() { return this.vFields[0].name; }
     getVFields() { return this.vFields; }
     renderContent() {
         return React.createElement("div", { className: "form-control form-control-plaintext bg-white border border-info rounded " }, "fields");
@@ -62,6 +63,7 @@ export class VSubmitBand extends VBand {
         super(undefined);
         this.vSubmit = vSubmit;
     }
+    get key() { return '$submit'; }
     getVSubmit() { return this.vSubmit; }
     render() {
         return React.createElement("div", { key: "$submit", className: "px-3" },

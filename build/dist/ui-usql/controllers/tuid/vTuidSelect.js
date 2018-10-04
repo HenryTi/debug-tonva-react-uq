@@ -10,23 +10,16 @@ import { Page } from 'tonva-tools';
 import { VEntity } from '../VM';
 import { SearchBox, List } from 'tonva-react-form';
 import React from 'react';
-import { RowContent } from '../viewModel';
-/*
-export abstract class VTuidSelect   extends VTuidListBase {
-    protected async onSelected(item:any): Promise<void> {
-        this.closePage();
-        this.return(item);
-    }
-}
-*/
+import { RowContent } from '../form/viewModel';
+import { observer } from 'mobx-react';
 export class VTuidSelect extends VEntity {
     constructor() {
         super(...arguments);
-        this.mainView = () => {
+        this.mainView = observer(() => {
             let header = React.createElement(SearchBox, { className: "mx-1 w-100", initKey: '', onSearch: this.onSearchMain, placeholder: '搜索' + this.label });
-            return React.createElement(Page, { header: header },
+            return React.createElement(Page, { header: header, back: "close" },
                 React.createElement(List, { items: this.controller.pagedItems.items, item: { render: this.renderMainRow, onClick: this.clickMainRow }, before: '搜索' + this.label + '资料' }));
-        };
+        });
         this.onSearchMain = (key) => __awaiter(this, void 0, void 0, function* () {
             yield this.controller.searchMain(key);
             //await this.pagedItems.first(key);
@@ -53,15 +46,15 @@ export class VTuidSelect extends VEntity {
     showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
             if (param === undefined)
-                yield this.showMain();
+                yield this.showMain(param);
             else
                 yield this.showDiv(param);
         });
     }
-    showMain() {
+    showMain(param) {
         return __awaiter(this, void 0, void 0, function* () {
             this.mainRowContent = this.ui.rowContent || RowContent;
-            yield this.controller.searchMain('');
+            yield this.controller.searchMain(param);
             this.openPage(this.mainView);
         });
     }
@@ -79,29 +72,4 @@ export class VTuidSelect extends VEntity {
         });
     }
 }
-/*
-export class VTuidMainSelect extends VTuidMainListBase {
-    protected async onSelected(item:any): Promise<void> {
-        this.closePage();
-        this.return(item);
-    }
-}
-
-export class VTuidDivMainSelect  extends VTuidDivListBase {
-    protected async onSelected(item:any): Promise<void> {
-        alert('tuid div select');
-        this.closePage();
-        this.return(item);
-    }
-}
-
-export class VTuidDivSelect  extends VTuidDivListBase {
-    protected async onSelected(item:any): Promise<void> {
-        
-        alert('tuid div select');
-        this.closePage();
-        this.return(item);
-    }
-}
-*/ 
 //# sourceMappingURL=vTuidSelect.js.map

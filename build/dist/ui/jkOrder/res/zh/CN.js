@@ -8,6 +8,8 @@ export default {
         noStaff: '无员工',
         post: '职位',
         noPost: '无职位',
+        product: '产品',
+        pack: '包装',
         a: 'aaa',
         b: {
             s: 'sss',
@@ -93,6 +95,9 @@ export default {
                     }
                 },
             }
+        },
+        price: {
+            label: '产品价格表',
         },
         getMessage: {
             label: '获取Message',

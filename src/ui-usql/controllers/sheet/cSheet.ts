@@ -84,9 +84,10 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
         await this.showVPage(this.VSheetAction, sheetData);
     }
 
-    async editSheet(sheetData:SheetData) {
+    async editSheet(sheetData:SheetData):Promise<any> {
         //alert('修改单据：程序正在设计中');
-        await this.showVPage(this.VSheetEdit, sheetData);
+        let values = await this.vCall(this.VSheetEdit, sheetData);
+        return values;
     }
 
     async showArchived(inBrief:any) {

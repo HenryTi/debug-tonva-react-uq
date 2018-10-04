@@ -14,7 +14,8 @@ export class VActionMain extends VEntity<Action, ActionUI, CAction> {
         this.openPage(this.mainPage);
     }
 
-    private onSubmit = async (values:any) => {
+    private onSubmit = async () => {
+        let values = this.vForm.getValues();
         this.returns = await this.controller.submit(values);
         this.closePage();
         this.openPage(this.resultPage);

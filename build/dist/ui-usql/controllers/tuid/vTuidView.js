@@ -22,7 +22,8 @@ export class VTuidView extends VEntity {
             this.closePage(2);
         };
         this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
-            let ret = yield this.entity.save(this.id, this.vForm.values);
+            let values = this.vForm.getValues();
+            let ret = yield this.entity.save(this.id, values);
             if (ret) {
                 alert('这里还要判断返回值，先不处理了 \n' + JSON.stringify(ret));
             }
@@ -38,11 +39,18 @@ export class VTuidView extends VEntity {
         });
         this.view = () => React.createElement(Page, { header: this.label }, this.vForm.render('py-3'));
     }
+    buildForm(param) {
+        this.vForm = this.createForm(undefined, param);
+    }
     showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.vForm = this.createForm(undefined, param);
+            this.buildForm(param);
             this.openPage(this.view);
         });
+    }
+    render(param) {
+        this.buildForm(param);
+        return this.vForm.render();
     }
     loadId(id) {
         return __awaiter(this, void 0, void 0, function* () {

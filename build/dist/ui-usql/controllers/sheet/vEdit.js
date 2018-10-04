@@ -8,8 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as React from 'react';
 import { Page } from 'tonva-tools';
-import { VEntity } from '../VM';
-export class VSheetEdit extends VEntity {
+import { FormMode } from '../form';
+import { VSheetView } from './vSheetView';
+export class VSheetEdit extends VSheetView {
     constructor() {
         super(...arguments);
         this.onSubmit = (values) => {
@@ -20,7 +21,7 @@ export class VSheetEdit extends VEntity {
     }
     showEntry(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.vForm = this.createForm(this.onSubmit, param);
+            this.vForm = this.createForm(this.onSubmit, param.data, FormMode.edit);
             this.openPage(this.view);
         });
     }

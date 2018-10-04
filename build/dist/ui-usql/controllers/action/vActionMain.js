@@ -12,8 +12,8 @@ import { VEntity } from '../VM';
 export class VActionMain extends VEntity {
     constructor() {
         super(...arguments);
-        this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
-            this.returns = yield this.controller.submit(this.vForm.values);
+        this.onSubmit = (values) => __awaiter(this, void 0, void 0, function* () {
+            this.returns = yield this.controller.submit(values);
             this.closePage();
             this.openPage(this.resultPage);
         });

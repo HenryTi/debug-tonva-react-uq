@@ -10,8 +10,8 @@ import * as React from 'react';
 import _ from 'lodash';
 import { List, Muted } from 'tonva-react-form';
 import { Page, nav } from 'tonva-tools';
-import { ViewModel, JSONContent } from '../viewModel';
-import { VForm } from './vForm';
+import { ViewModel, JSONContent } from './viewModel';
+import { VForm, FormMode } from './vForm';
 export class VArr extends ViewModel {
     constructor(ownerForm, arr, onEditRow) {
         super();
@@ -21,7 +21,6 @@ export class VArr extends ViewModel {
         this.onSubmit = () => __awaiter(this, void 0, void 0, function* () {
             let { valueBoxs } = this.vForm;
             yield this.onRowChanged(valueBoxs);
-            //if (this.afterEditRow !== undefined) await this.afterEditRow(values);
         });
         this.onRowChanged = (rowValues) => __awaiter(this, void 0, void 0, function* () {
             if (this.rowValues === undefined) {
@@ -60,20 +59,22 @@ export class VArr extends ViewModel {
                 vSubmit.caption = this.editSubmitCaption;
                 vSubmit.className = 'btn btn-outline-success';
             }
+            this.vForm.mode = this.ownerForm.mode;
             yield this.showRow(rowValues);
         });
-        this.addRow = () => __awaiter(this, void 0, void 0, function* () {
+        this.internalAddRow = () => __awaiter(this, void 0, void 0, function* () {
             this.rowValues = undefined;
             let { vSubmit } = this.vForm;
             vSubmit.caption = this.newSubmitCaption;
             vSubmit.className = 'btn btn-outline-success';
-            yield this.showRow(undefined);
             this.vForm.reset();
+            this.vForm.mode = FormMode.new;
+            yield this.showRow(undefined);
         });
         this.view = () => {
             let button;
-            if (this.readOnly === false) {
-                button = React.createElement("button", { onClick: this.addRow, type: "button", className: "btn btn-link p-0" }, this.ownerForm.arrTitleNewButton);
+            if (this.addRow !== undefined || this.mode !== FormMode.readonly) {
+                button = React.createElement("button", { onClick: this.addRow || this.internalAddRow, type: "button", className: "btn btn-link p-0" }, this.ownerForm.arrTitleNewButton);
             }
             let header = this.header || React.createElement("div", { className: "px-3 bg-light small", style: { paddingTop: '1px', paddingBottom: '1px' } },
                 React.createElement("div", { className: "flex-fill align-self-center" }, this.label),
@@ -83,7 +84,7 @@ export class VArr extends ViewModel {
         this.ownerForm = ownerForm;
         let { name, fields } = arr;
         this.name = name;
-        let { ui, res, readOnly, inputs, formValues } = ownerForm;
+        let { ui, res, mode, inputs, values } = ownerForm;
         let arrsRes = res.arrs;
         let arrRes = arrsRes !== undefined ? arrsRes[name] : {};
         let { label, none, newSubmit, editSubmit } = arrRes;
@@ -91,9 +92,9 @@ export class VArr extends ViewModel {
         this.newSubmitCaption = newSubmit || ownerForm.arrNewCaption;
         this.editSubmitCaption = editSubmit || ownerForm.arrEditCaption;
         this.label = label || name;
-        let arrUI = (ui && ui.arrs && ui.arrs[name]) || {};
+        let arrUI = ((ui && ui.items[name]) || {});
         this.rowContent = arrUI.rowContent; // || JSONContent;
-        this.readOnly = readOnly;
+        this.mode = mode;
         if (this.onEditRow === undefined) {
             this.vForm = new VForm({
                 fields: fields,
@@ -106,16 +107,20 @@ export class VArr extends ViewModel {
                 arrNewCaption: undefined,
                 arrEditCaption: undefined,
                 arrTitleNewButton: undefined,
-            }, this.readOnly === true ? undefined : this.onSubmit);
+                mode: mode,
+            }, mode === FormMode.readonly ? undefined : this.onSubmit);
         }
         else {
             this.onEditRow = onEditRow;
         }
-        this.list = formValues.values[name];
+        this.list = values[name];
     }
     reset() {
         this.vForm.reset();
         this.list.clear();
+    }
+    setAddRow(addRow) {
+        this.addRow = addRow;
     }
 }
 //# sourceMappingURL=vArr.js.map

@@ -194,6 +194,7 @@ export class Tuid extends Entity {
             for (let tuidValue of tuids) {
                 if (this.cacheValue(tuidValue) === false)
                     continue;
+                this.cacheTuidFieldValues(tuidValue);
                 this.afterCacheId(tuidValue);
             }
         });
@@ -204,11 +205,11 @@ export class Tuid extends Entity {
                 return;
             let values = yield this.tvApi.tuidGet(this.name, id);
             this.cacheValue(values);
-            this.cacheTuidValues(values);
+            this.cacheTuidFieldValues(values);
             return values;
         });
     }
-    cacheTuidValues(values) {
+    cacheTuidFieldValues(values) {
         let { fields, arrs } = this.schema;
         this.cacheFieldsInValue(values, fields);
         if (arrs !== undefined) {

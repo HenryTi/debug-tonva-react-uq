@@ -15,7 +15,7 @@ import { CAction } from '../action';
 import { CQuery, CQuerySelect } from '../query';
 import { CTuidMain, CTuidInfo, CTuidSelect } from '../tuid';
 import { CMap } from '../map';
-import { PureJSONContent } from '../viewModel';
+import { PureJSONContent } from '../form/viewModel';
 import { VUsq } from './vUsq';
 export class CUsq extends Controller {
     constructor(usq, appId, usqId, access, ui) {
@@ -31,12 +31,15 @@ export class CUsq extends Controller {
                 this.res = ui.res.zh.CN;
             }
         }
-        if (ui !== undefined) {
-            this.CTuidMain = ui.CTuidMain;
-            this.CQuery = ui.CQuery;
-            this.CQuerySelect = ui.CQuerySelect;
-            this.CMap = ui.CMap;
-        }
+        this.CTuidMain = ui.CTuidMain || CTuidMain;
+        this.CTuidSelect = ui.CTuidSelect || CTuidSelect;
+        this.CTuidInfo = ui.CTuidInfo || CTuidInfo;
+        this.CQuery = ui.CQuery || CQuery;
+        this.CQuerySelect = ui.CQuerySelect || CQuerySelect;
+        this.CMap = ui.CMap || CMap;
+        this.CAction = ui.CAction || CAction;
+        this.CSheet = ui.CSheet || CSheet;
+        this.CBook = ui.CBook || CBook;
         this.res = this.res || {};
         this.access = access;
         let token = undefined;
@@ -203,12 +206,6 @@ export class CUsq extends Controller {
         }
         return { ui: ui || {}, res: res };
     }
-    /*
-    private getUITypeCaption(type:EntityType):any {
-        if (this.res === undefined) return;
-        return this.res[type];
-    }
-    */
     link(cEntity) {
         return new CLink(cEntity);
     }
@@ -217,19 +214,23 @@ export class CUsq extends Controller {
     }
     cTuidMain(tuid) {
         let { ui, res } = this.getUI(tuid);
-        return new (ui && ui.CTuidMain || this.CTuidMain || CTuidMain)(this, tuid, ui, res);
+        return new (ui && ui.CTuidMain || this.CTuidMain)(this, tuid, ui, res);
     }
     cTuidSelect(tuid) {
         let { ui, res } = this.getUI(tuid.owner || tuid);
-        return new (ui && ui.CTuidSelect || CTuidSelect)(this, tuid, ui, res);
+        return new (ui && ui.CTuidSelect || this.CTuidSelect)(this, tuid, ui, res);
     }
     cTuidInfo(tuid) {
         let { ui, res } = this.getUI(tuid);
-        return new (ui && ui.CTuidInfo || CTuidInfo)(this, tuid, ui, res);
+        return new (ui && ui.CTuidInfo || this.CTuidInfo)(this, tuid, ui, res);
     }
-    cSheet(sheet) {
+    cSheet(sheet, sheetUI, sheetRes) {
         let { ui, res } = this.getUI(sheet);
-        return new CSheet(this, sheet, ui, res);
+        if (sheetUI !== undefined)
+            ui = sheetUI;
+        if (sheetRes !== undefined)
+            res = sheetRes;
+        return new (ui && ui.CSheet || this.CSheet)(this, sheet, sheetUI, sheetRes);
     }
     get sheetLinks() {
         return this.entities.sheetArr.filter(v => this.isVisible(v)).map(v => {
@@ -238,7 +239,7 @@ export class CUsq extends Controller {
     }
     cAction(action) {
         let { ui, res } = this.getUI(action);
-        return new CAction(this, action, ui, res);
+        return new (ui && ui.CAction || this.CAction)(this, action, ui, res);
     }
     get actionLinks() {
         return this.entities.actionArr.filter(v => this.isVisible(v)).map(v => {
@@ -247,14 +248,14 @@ export class CUsq extends Controller {
     }
     cQuery(query) {
         let { ui, res } = this.getUI(query);
-        return new (ui && ui.CQuery || this.CQuery || CQuery)(this, query, ui, res);
+        return new (ui && ui.CQuery || this.CQuery)(this, query, ui, res);
     }
     cQuerySelect(queryName) {
         let query = this.entities.query(queryName);
         if (query === undefined)
             return;
         let { ui, res } = this.getUI(query);
-        return new (ui && ui.CQuerySelect || this.CQuerySelect || CQuerySelect)(this, query, ui, res);
+        return new (ui && ui.CQuerySelect || this.CQuerySelect)(this, query, ui, res);
     }
     get queryLinks() {
         return this.entities.queryArr.filter(v => this.isVisible(v)).map(v => {
@@ -263,7 +264,7 @@ export class CUsq extends Controller {
     }
     cBook(book) {
         let { ui, res } = this.getUI(book);
-        return new CBook(this, book, ui, res);
+        return new (ui && ui.CBook || this.CBook)(this, book, ui, res);
     }
     get bookLinks() {
         return this.entities.bookArr.filter(v => this.isVisible(v)).map(v => {
@@ -272,7 +273,7 @@ export class CUsq extends Controller {
     }
     cMap(map) {
         let { ui, res } = this.getUI(map);
-        return new (ui && ui.CMap || this.CMap || CMap)(this, map, ui, res);
+        return new (ui && ui.CMap || this.CMap)(this, map, ui, res);
     }
     get mapLinks() {
         return this.entities.mapArr.filter(v => this.isVisible(v)).map(v => {

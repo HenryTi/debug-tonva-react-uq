@@ -1,13 +1,11 @@
 const orderUI = {
     form: {
-        compute: {
+        items: {
             sumAmount: () => {
                 return 1;
             },
-        },
-        arrs: {
             articles: {
-                compute: {
+                items: {
                     amount: function () {
                         return (this.quantity === undefined || this.quantity === null ? 0 : this.quantity) *
                             (this.price === undefined || this.price === null ? 0 : this.price);

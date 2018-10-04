@@ -5,6 +5,7 @@ import { myOrderUI } from './ui';
 import { Page } from 'tonva-tools';
 import { dictionary as x } from './res';
 import { VProductPage } from './productPage';
+import { FA } from 'tonva-react-form';
 
 export interface PackRow {
     pack: number;
@@ -103,8 +104,9 @@ export class CMyOrder extends CSheet {
     private onSubmit = async () => {
         let values = this.form.getValues();
         let ret = await this.saveSheet(values);
-        alert('[' + this.label + '] 已保存: ' + JSON.stringify(ret));
-        this.closePage();
+        //alert('[' + this.label + '] 已保存: ' + JSON.stringify(ret));
+        this.ceasePage();
+        this.openPage(<this.finishedPage />);
     }
 
     private step1SelectCustomer = () => {
@@ -133,19 +135,23 @@ export class CMyOrder extends CSheet {
     }
 
     private orderPage = () => {
-        /*
-        let customerBand = this.form.getBand('customer');
-        let productsBand = this.form.getBand('products');
-        let submitBand = this.form.getBand('$submit');
-        let form = <div className="py-3">
-            {customerBand.render()}
-            {productsBand.render()}
-            {submitBand.render()}
-        </div>;
-        */
         return <Page header="订单详情">
             {this.form.render()}
         </Page>;
     };
+
+    private restart = async () => {
+        this.ceasePage();
+        await this.internalStart();
+    }
+    private finishedPage = () => {
+        return <Page header="订单已保存" back="close">
+            <div>
+                <div className="text-success"><FA name="check-o" /> 成功</div>
+                <button onClick={this.restart}>新订单</button>
+                <button onClick={()=>this.backPage()}>返回</button>
+            </div>
+        </Page>;
+    }
 }
 

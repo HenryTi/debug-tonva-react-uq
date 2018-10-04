@@ -18,17 +18,9 @@ export interface FieldInput {
     content: React.StatelessComponent<any>;
     placeHolder: string;
 }
-// [arr.field]: FieldCall;
 export interface FieldInputs {
     [fieldOrArr:string]: FieldInput | {[field:string]: FieldInput};
 }
-
-/*
-export interface FormValues {
-    values: any;
-    errors: any;
-}
-*/
 export enum FormMode {new, edit, readonly}
 
 export interface FormOptions {
@@ -50,9 +42,9 @@ export class VForm {
     protected arrs: ArrFields[];
     protected bands: VBand[];
     protected bandColl: {[key:string]: VBand};
-    protected onSubmit: (values:any)=>Promise<void>;
+    protected onSubmit: ()=>Promise<void>;
 
-    constructor(options: FormOptions, onSubmit: (values:any)=>Promise<void>) {
+    constructor(options: FormOptions, onSubmit: ()=>Promise<void>) {
         let {fields, arrs, ui, res, inputs, none, submitCaption, arrNewCaption, arrEditCaption, arrTitleNewButton, mode} = options;
         this.fields = fields;
         this.arrs = arrs;
@@ -74,7 +66,6 @@ export class VForm {
 
     ui: FormUI;
     res: any;
-    //formValues: FormValues;
     values: any;
     errors: any;
     formItems: FormItems;
@@ -131,7 +122,7 @@ export class VForm {
 
     async submit() {
         if (this.onSubmit === undefined) return;
-        await this.onSubmit(this.getValues());
+        await this.onSubmit();
     }
     
     getValues() {

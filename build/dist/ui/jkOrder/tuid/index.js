@@ -55,7 +55,7 @@ const product = {
         }
     },
     form: {
-        arrs: {
+        items: {
             pack: {
                 rowContent: productPackRowContent,
             }
