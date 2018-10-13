@@ -1,11 +1,8 @@
 import * as React from 'react';
-import { CSheet, SheetUI, CApp, CUsq, Sheet, Tuid, CTuidSelect, VTuidView, CTuidInfo, VForm, TuidMain, Map } from "../../../../ui-usql";
-import { observer } from 'mobx-react';
+import { CSheet, CUsq, Sheet, CTuidSelect, Map } from "../../../../ui-usql";
 import { myOrderUI } from './ui';
-import { Page } from 'tonva-tools';
-import { dictionary as x } from './res';
-import { VProductPage } from './productPage';
-import { FA } from 'tonva-react-form';
+import { Page, TypeVPage } from 'tonva-tools';
+import { VSheetNew } from './vNew';
 
 export interface PackRow {
     pack: number;
@@ -20,13 +17,6 @@ export interface ProductRow {
 }
 
 export class CMyOrder extends CSheet {
-    private customer: any;
-    private product: any;
-    private cCustomerSelect: CTuidSelect;
-    private cProductSelect: CTuidSelect;
-    private form: VForm;
-    private mapPrice: Map;
-
     constructor(cUsq:CUsq, sheet:Sheet) {
         super(cUsq, sheet, myOrderUI);
         this.mapPrice = cUsq.entities.map('price');
@@ -36,122 +26,15 @@ export class CMyOrder extends CSheet {
         this.cProductSelect = cUsq.cTuidSelect(product);
     }
 
-    //label:string = '试验定制单据';
+    cCustomerSelect: CTuidSelect;
+    cProductSelect: CTuidSelect;
+    mapPrice: Map;
+    vSheetNew: VSheetNew;
 
-    async internalStart(param?:any) {
-        this.form = this.createForm(this.onSubmit, undefined, undefined);
-        let productsBand = this.form.getBand('products');
-        productsBand.setAddRow(this.addRow);
-        this.openPage(<this.step1SelectCustomer />);
-    }
+    protected get VSheetMain(): TypeVPage<CSheet> {return VSheetNew}
+    protected get VSheetNew(): TypeVPage<CSheet> {return VSheetNew}
 
-    private addRow = async() => {
-        await this.selectProduct();
-    }
-
-    private step1Next = async () => {
-        this.ceasePage();
-        this.customer = await this.cCustomerSelect.call('');
-        this.openPage(<this.orderPage />);
-        this.openPage(<this.customerPage />);
-    }
-
-    private conformOrder = async () => {
-        this.ceasePage();
-        let {entity} = this.cCustomerSelect;
-        entity.useId(this.customer.id);
-        this.form.setValue('customer', entity.createID(this.customer.id));
-        await this.selectProduct();
-    }
-
-    private async getPrices(productId:number):Promise<any[]> {
-        await this.mapPrice.loadSchema();
-        let {queries} = this.mapPrice;
-        return queries.page.page({_product: productId}, 0, 1000);
-    }
-
-    addProductRows = async ({product, packRows}: ProductRow) => {
-        let {entity} = this.cProductSelect;
-        entity.useId(product);
-        let packEntity = (entity as TuidMain).divs['pack'];
-        let vArr = this.form.vArrs['products'];
-        let {list} = vArr;
-        for (let packRow of packRows) {
-            let {pack, price, quantity, amount} = packRow;
-            //packEntity.useId(pack);
-            list.push({
-                product: entity.createID(product),
-                pack: pack, //packEntity.createID(pack),
-                price: price,
-                quantity: quantity,
-                amount: amount,
-            });
-        }
-        this.product = undefined;
-        await this.selectProduct();
-    }
-
-    private selectProduct = async () => {
-        this.product = await this.cProductSelect.call();
-        let prices = await this.getPrices(this.product.id);
-        this.showVPage(VProductPage, {product:this.product, priceRows: prices});
-    }
-
-    private stopOrder = () => {
-        this.closePage();
-    }
-
-    private onSubmit = async () => {
-        let values = this.form.getValues();
-        let ret = await this.saveSheet(values);
-        //alert('[' + this.label + '] 已保存: ' + JSON.stringify(ret));
-        this.ceasePage();
-        this.openPage(<this.finishedPage />);
-    }
-
-    private step1SelectCustomer = () => {
-        return <Page header="新建订单">
-            <div className="p-3 d-flex align-items-center flex-column">
-                <div className="mb-3">第一步，请选择客户</div>
-                <div>{x.order.top}</div>
-            </div>
-            <div className="p-3 d-flex justify-content-center">
-                <button className="w-25 btn btn-primary btn-sm" onClick={this.step1Next}>开始</button>
-            </div>
-        </Page>;
-    }
-
-    private customerPage = () => {
-        return <Page header="确认客户">
-            <div className="p-3">
-                客户详情，信用，收货地址，收款信息，等等
-            </div>
-            {this.cCustomerSelect.createForm(undefined, this.customer).render()}
-            <div className="p-3 d-flex justify-content-center">
-                <button className="w-25 btn btn-primary btn-sm" onClick={this.conformOrder}>确认开单</button>
-                <button className="mx-3 btn btn-outline-secondary btn-sm" onClick={this.stopOrder}>拒绝</button>
-            </div>
-        </Page>;
-    }
-
-    private orderPage = () => {
-        return <Page header="订单详情">
-            {this.form.render()}
-        </Page>;
-    };
-
-    private restart = async () => {
-        this.ceasePage();
-        await this.internalStart();
-    }
-    private finishedPage = () => {
-        return <Page header="订单已保存" back="close">
-            <div>
-                <div className="text-success"><FA name="check-o" /> 成功</div>
-                <button onClick={this.restart}>新订单</button>
-                <button onClick={()=>this.backPage()}>返回</button>
-            </div>
-        </Page>;
+    addProductRows = async (pr: ProductRow) => {
+        this.vSheetNew.addProductRows(pr);
     }
 }
-

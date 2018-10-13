@@ -1,7 +1,7 @@
 import { IObservableArray } from "mobx";
-import { TypeVPage } from 'tonva-tools';
+import { TypeVPage, VPage } from 'tonva-tools';
 import { Sheet, StateCount } from "../../entities";
-import { CEntity, EntityUI } from "../VM";
+import { CEntity, EntityUI, VEntity } from "../VM";
 import { entitiesRes } from '../../res';
 import { VSheetMain } from "./vMain";
 import { VSheetNew } from "./vNew";
@@ -11,6 +11,7 @@ import { VSheetSchema } from "./vSchema";
 import { VArchives } from "./vArchives";
 import { VSheetList } from "./vList";
 import { VArchived } from "./vArchived";
+import { VSheetSaved } from "./vSaved";
 
 export interface SheetActionUI {
     label: string;
@@ -24,11 +25,13 @@ export interface StateUI {
 export interface SheetUI extends EntityUI {
     CSheet?: typeof CSheet;
     states?: {[name:string]: StateUI};
-    main?: typeof VSheetMain;
-    sheetNew?: typeof VSheetNew;
-    sheetEdit?: typeof VSheetEdit;
-    sheetAction?: typeof VSheetAction;
+    main?: TypeVPage<CSheet>;
+    sheetNew?: TypeVPage<CSheet>;
+    sheetSaved?: TypeVPage<CSheet>;
+    sheetEdit?: TypeVPage<CSheet>;
+    sheetAction?: TypeVPage<CSheet>;
     listRow?: (row:any) => JSX.Element;
+    sheetTitle?: (sheetValues:any) => string;      // 返回单据的描述
 }
 
 export interface SheetData {
@@ -44,22 +47,20 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
         await this.showVPage(this.VSheetMain);
     }
 
-    protected get VSheetMain():typeof VSheetMain {
-        return (this.ui&&this.ui.main) || VSheetMain;
-    }
-
     protected async onMessage(msg: any):Promise<void> {
         //这个必须接上，否则没有websocket push
         this.entity.onMessage(msg);
     }
 
-    protected get VSheetNew(): typeof VSheetNew {return this.ui.sheetNew || VSheetNew}
-    protected get VSheetEdit(): typeof VSheetEdit {return this.ui.sheetEdit || VSheetEdit}
-    protected get VSheetSchema(): typeof VSheetSchema {return VSheetSchema}
-    protected get VArchives(): typeof VArchives {return VArchives}
-    protected get VArchived(): typeof VArchived {return VArchived}
-    protected get VSheetList(): typeof VSheetList {return VSheetList}
-    protected get VSheetAction(): typeof VSheetAction {return this.ui.sheetAction || VSheetAction}
+    protected get VSheetMain():TypeVPage<CSheet> {return (this.ui&&this.ui.main) || VSheetMain}
+    protected get VSheetNew(): TypeVPage<CSheet> {return this.ui.sheetNew || VSheetNew}
+    protected get VSheetSaved(): TypeVPage<CSheet> {return this.ui.sheetSaved || VSheetSaved}
+    protected get VSheetEdit(): TypeVPage<CSheet> {return this.ui.sheetEdit || VSheetEdit}
+    protected get VSheetSchema(): TypeVPage<CSheet> {return VSheetSchema}
+    protected get VArchives(): TypeVPage<CSheet> {return VArchives}
+    protected get VArchived(): TypeVPage<CSheet> {return VArchived}
+    protected get VSheetList(): TypeVPage<CSheet> {return VSheetList}
+    protected get VSheetAction(): TypeVPage<CSheet> {return this.ui.sheetAction || VSheetAction}
     protected async onEvent(type:string, value:any) {
         let c: TypeVPage<CSheet>;
         switch (type) {
@@ -75,8 +76,8 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
     }
 
     async startSheet(sheetId:number) {
-        super.beforeStart();
-        this.onEvent('action', sheetId);
+        await super.beforeStart();
+        await this.onEvent('action', sheetId);
     }
 
     async showAction(sheetId:number) {
@@ -93,6 +94,19 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
     async showArchived(inBrief:any) {
         let sheetData = await this.getArchived(inBrief.id);
         await this.showVPage(this.VArchived, sheetData);
+    }
+
+    onSave = async (values:any, valuesWithBox:any):Promise<void> => {
+        //let values = this.vForm.getValues();
+        //let ret = await this.controller.saveSheet(values, this.vForm.values);
+        let ret = await this.saveSheet(values, valuesWithBox);
+        this.ceasePage();
+        //this.openPage(this.finishedPage);
+        await this.showSaved(ret);
+    }
+
+    async showSaved(sheetData:any) {
+        await this.showVPage(this.VSheetSaved, sheetData);
     }
 
     private getStateUI(stateName:string) {
@@ -131,8 +145,10 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
         return await this.entity.getArchive(sheetId);
     }
 
-    async saveSheet(values:any):Promise<number> {
-        return await this.entity.save(this.label, values);
+    async saveSheet(values:any, valuesWithBox:any):Promise<number> {
+        let {sheetTitle} = this.ui;
+        let disc = sheetTitle === undefined? this.label : sheetTitle(valuesWithBox);
+        return await this.entity.save(disc, values);
     }
 
     async action(id:number, flow:number, state:string, actionName:string):Promise<any> {

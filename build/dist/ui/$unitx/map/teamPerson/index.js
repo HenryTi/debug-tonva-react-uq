@@ -1,32 +1,19 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import * as React from 'react';
 import { Muted } from 'tonva-react-form';
 import { left0 } from 'tonva-tools';
 import { dictionary as x } from '../../res';
 import { VMapMain, CMap } from '../../../../ui-usql';
 class CMapTeamPerson extends CMap {
-    searchOnKey(keyField, param) {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            switch (keyField.name) {
-                default: return yield _super("searchOnKey").call(this, keyField, param);
-                case 'post': return yield this.searchOnPost(param);
-            }
-        });
+    async searchOnKey(keyField, param) {
+        switch (keyField.name) {
+            default: return await super.searchOnKey(keyField, param);
+            case 'post': return await this.searchOnPost(param);
+        }
     }
-    searchOnPost(param) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let querySelect = this.cQuerySelect('teamPosts');
-            let val = yield querySelect.call(param);
-            return val['post'].id;
-        });
+    async searchOnPost(param) {
+        let querySelect = this.cQuerySelect('teamPosts');
+        let val = await querySelect.call(param);
+        return val['post'].id;
     }
 }
 class VMapTeamPerson extends VMapMain {

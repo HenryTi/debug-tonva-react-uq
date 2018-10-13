@@ -1,11 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { Controller, VPage } from 'tonva-tools';
 import { VForm, FormMode } from './form';
 export class ControllerUsq extends Controller {
@@ -23,12 +15,9 @@ export class CEntity extends ControllerUsq {
         this.res = res || entityUI.res;
         this.label = (this.res && this.res.label) || entity.name;
     }
-    beforeStart() {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super("beforeStart").call(this);
-            yield this.entity.loadSchema();
-        });
+    async beforeStart() {
+        await super.beforeStart();
+        await this.entity.loadSchema();
     }
     createForm(onSubmit, values, mode) {
         let options = this.buildFormOptions(mode);
@@ -106,17 +95,19 @@ export class CEntity extends ControllerUsq {
         }
     }
     buildSelect(field, arr) {
-        return (form, field, values) => __awaiter(this, void 0, void 0, function* () {
+        return async (form, field, values) => {
             let { _tuid, _ownerField } = field;
             let cTuidSelect = this.cUsq.cTuidSelect(_tuid);
             let ownerValue = undefined;
             if (_ownerField !== undefined)
                 ownerValue = form.getValue(_ownerField.name);
-            let ret = yield cTuidSelect.call(ownerValue);
-            let id = ret.id;
+            let ret = await cTuidSelect.call(ownerValue);
+            if (ret === undefined)
+                return undefined;
+            let id = cTuidSelect.idFromItem(ret);
             _tuid.useId(id);
             return id;
-        });
+        };
     }
     buildContent(field, arr) {
         return;

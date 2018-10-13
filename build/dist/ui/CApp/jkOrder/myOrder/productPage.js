@@ -1,11 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import React from "react";
 import { VPage, Page } from "tonva-tools";
 import { List } from "tonva-react-form";
@@ -14,7 +6,7 @@ export class VProductPage extends VPage {
     constructor() {
         super(...arguments);
         this.inputs = {};
-        this.addProduct = () => __awaiter(this, void 0, void 0, function* () {
+        this.addProduct = async () => {
             this.ceasePage();
             let packRows = [];
             for (let priceRow of this.priceRows) {
@@ -30,11 +22,11 @@ export class VProductPage extends VPage {
                 };
                 packRows.push(packRow);
             }
-            yield this.controller.addProductRows({
+            await this.controller.addProductRows({
                 product: this.product.id,
                 packRows: packRows
             });
-        });
+        };
         this.refQuantity = (input, packId) => {
             this.inputs[packId] = input;
         };
@@ -61,12 +53,10 @@ export class VProductPage extends VPage {
         };
         //{this.cProductSelect.createForm(undefined, this.product).render()}
     }
-    showEntry({ product, priceRows }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.product = product;
-            this.priceRows = priceRows;
-            this.openPageElement(React.createElement(this.productPage, null));
-        });
+    async showEntry({ product, priceRows }) {
+        this.product = product;
+        this.priceRows = priceRows;
+        this.openPageElement(React.createElement(this.productPage, null));
     }
 }
 //# sourceMappingURL=productPage.js.map

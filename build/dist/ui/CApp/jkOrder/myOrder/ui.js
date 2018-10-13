@@ -13,6 +13,13 @@ export class VOrderNew extends VSheetNew {
 }
 export const myOrderUI = {
     sheetNew: VOrderNew,
+    sheetTitle: (valuesWithBox) => {
+        let order = x.order;
+        let title = order.title;
+        let { customer, amount } = valuesWithBox;
+        let p = { customer: customer.obj.discription, amount: amount || 99 };
+        return title(p);
+    },
     form: {
         items: {
             customer: { editable: false },

@@ -63,6 +63,7 @@ export default {
             label: '订单',
             arrNew: '新增',
             arrEdit: '保存',
+            title: _.template('订单 客户${customer} 金额${amount}元'),
             //arrTitleNewButton: <small>XXX新增</small>,
             fields: {
                 customer: '客户',

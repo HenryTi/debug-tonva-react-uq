@@ -3,6 +3,9 @@ import { VOrderNew } from './new';
 import { observer } from 'mobx-react';
 const orderUI = {
     sheetNew: VOrderNew,
+    sheetTitle: (values) => {
+        return '订单';
+    },
     form: {
         items: {
             customer: { editable: false },

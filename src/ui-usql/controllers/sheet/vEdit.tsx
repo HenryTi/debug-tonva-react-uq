@@ -14,7 +14,7 @@ export class VSheetEdit extends VSheetView { //VEntity<Sheet, SheetUI, CSheet> {
 
     onSubmit = async ():Promise<void> => {
         let values = this.vForm.getValues();
-        await this.controller.saveSheet(values);
+        await this.controller.saveSheet(values, this.vForm.values);
         this.closePage();
         this.return(this.vForm.values);
     }

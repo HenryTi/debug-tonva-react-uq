@@ -122,7 +122,8 @@ export abstract class CEntity<T extends Entity, UI extends EntityUI> extends Con
             let ownerValue:any = undefined;
             if (_ownerField !== undefined) ownerValue = form.getValue(_ownerField.name);
             let ret = await cTuidSelect.call(ownerValue);
-            let id = ret.id;
+            if (ret === undefined) return undefined;
+            let id = cTuidSelect.idFromItem(ret);
             _tuid.useId(id);
             return id;
         };

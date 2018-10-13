@@ -49,8 +49,9 @@ export class CUsq extends Controller implements Usq {
         super();
         this.usq = usq;
         this.id = usqId;
-        if (ui === undefined)
-            this.ui = {};
+        if (ui === undefined) {
+            ui = this.ui = {};
+        }
         else {
             this.ui = ui;
             if (ui.res !== undefined) {

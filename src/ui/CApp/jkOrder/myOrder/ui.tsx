@@ -1,4 +1,5 @@
 import React from "react";
+import _ from 'lodash';
 import { observer } from "mobx-react";
 import { SheetUI, VSheetNew } from "../../../../ui-usql";
 import { Page } from "tonva-tools";
@@ -13,6 +14,13 @@ export class VOrderNew extends VSheetNew {
 
 export const myOrderUI: SheetUI = {
     sheetNew: VOrderNew,
+    sheetTitle: (valuesWithBox:any):string => {
+        let order = x.order;
+        let title = order.title;
+        let {customer, amount} = valuesWithBox;
+        let p = {customer: customer.obj.discription, amount: amount||99};
+        return title(p);
+    },
     form: {
         items: {
             customer: {editable: false},

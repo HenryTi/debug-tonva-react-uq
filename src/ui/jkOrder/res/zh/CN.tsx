@@ -19,7 +19,17 @@ export default {
         c: ()=><span className="text-danger">ccc</span>,
 
         order: {
-            top: 'xxx-xxx-订单顶部说明'
+            //top: 'xxx-xxx-订单顶部说明'
+            top: ()=><>
+                <h6>订单步骤</h6>
+                <div>第一步：选定客户</div>
+                <div>
+                    第二步：颜色变化
+                    <span className="text-success">说明</span>
+                    <span className="text-danger">文字</span>，解释做单的过程
+                </div>
+            </>,
+            title: _.template('订单 ${customer} 金额${amount}元'),
         }
     },
     usq: '百灵威订单',
@@ -65,6 +75,7 @@ export default {
             label: '订单',
             arrNew: '新增',
             arrEdit: '保存',
+            title: _.template('订单 客户${customer} 金额${amount}元'),
             //arrTitleNewButton: <small>XXX新增</small>,
             fields: {
                 customer: '客户',
@@ -96,7 +107,14 @@ export default {
                         }
                     }
                 },
-
+                deliver: {
+                    label: '发货',
+                    actions: {
+                        finish: {
+                            label: '完成发货',
+                        }
+                    }
+                }
             }
         },
         price: {
