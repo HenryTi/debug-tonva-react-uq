@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { FA, List } from 'tonva-react-form';
 import { Sheet, VForm, VEntity, SheetUI, TuidMain, CSheet, CTuidSelect, Map } from '../../../../ui-usql';
-import { dictionary as x } from '../../res';
+//import { dictionary as x } from '../../res';
 //import { CMyOrder, ProductRow } from './index';
 //import { VProductPage } from './productPage';
 
@@ -131,10 +131,10 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
     private step1SelectCustomer = () => {
         return <Page header="新建订单">
             <div className="p-3 d-flex align-items-center flex-column">
-                {x.order.top()}
+                {(this.x.top as (()=>string|JSX.Element))()}
             </div>
             <div className="p-3 d-flex justify-content-center">
-                <button className="w-25 btn btn-primary btn-sm" onClick={this.step1Next}>开始</button>
+                <button className="w-25 btn btn-primary" onClick={this.step1Next}>开始</button>
             </div>
         </Page>;
     }
@@ -146,20 +146,19 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
             </div>
             {this.cCustomerSelect.createForm(undefined, this.customer).render()}
             <div className="p-3 d-flex justify-content-center">
-                <button className="w-25 btn btn-primary btn-sm" onClick={this.conformOrder}>确认开单</button>
-                <button className="mx-3 btn btn-outline-secondary btn-sm" onClick={this.stopOrder}>拒绝</button>
+                <button className="w-25 btn btn-primary" onClick={this.conformOrder}>确认开单</button>
+                <button className="mx-3 btn btn-outline-secondary" onClick={this.stopOrder}>拒绝</button>
             </div>
         </Page>;
     }
 
     private orderPage = ():JSX.Element => {
-        return <Page header="订单详情">
+        return <Page header={this.x.detail}>
             {this.vForm.render()}
         </Page>;
     };
 
     //======================= select Product =================================
-    //private product: any;
     private priceRows: any[];
     private inputs:{[packId:number]: HTMLInputElement} = {};
 
@@ -212,7 +211,7 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
             </div>
             <List items={this.priceRows} item={{render:this.renderPack}} />
             <div className="p-3 d-flex justify-content-center">
-                <button className="w-25 btn btn-primary btn-sm" onClick={this.addProduct}>加入订单</button>
+                <button className="w-25 btn btn-primary" onClick={this.addProduct}>加入订单</button>
             </div>
         </Page>;
     }

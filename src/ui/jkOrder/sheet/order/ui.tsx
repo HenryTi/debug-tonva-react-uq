@@ -2,21 +2,10 @@ import React from "react";
 import _ from 'lodash';
 import { observer } from "mobx-react";
 import { SheetUI, VSheetNew } from "../../../../ui-usql";
-//import { Page } from "tonva-tools";
-//import { dictionary as x } from './res';
-import { dictionary as x } from '../../res';
 
-/*
-export class VOrderNew extends VSheetNew {
-    protected view = () => <Page header={this.label}>
-        <div>{x.order.top}</div>
-        {this.vForm.render()}
-    </Page>;
-}
-*/
 export const myOrderUI: SheetUI = {
     sheetNew: VSheetNew,
-    sheetTitle: (valuesWithBox:any):string => {
+    sheetTitle: (valuesWithBox:any, x:any):string => {
         let order = x.order;
         let title = order.title;
         let {customer, amount} = valuesWithBox;

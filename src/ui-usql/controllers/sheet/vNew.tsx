@@ -29,17 +29,4 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
     protected view = () => <Page header={this.label}>
         {this.vForm.render()}
     </Page>;
-/*
-    private finishedPage = () => {
-        return <Page header="已保存" back="close">
-            <div className="p-3 d-flex flex-column align-items-center">
-                <div className="text-success"><FA name="check-circle-o" /> 成功</div>
-                <div className="p-3">
-                    <button className="btn btn-sm btn-primary" onClick={this.restart}>继续开单</button>
-                    <button className="ml-3 btn btn-sm btn-outline-info" onClick={()=>this.backPage()}>返回</button>
-                </div>
-            </div>
-        </Page>;
-    }
-*/
 }

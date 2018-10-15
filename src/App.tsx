@@ -9,7 +9,7 @@ const tonvaApp = 'JKDev/jkOrder';
 
 class App extends React.Component {
     async onLogined() {
-        await startApp(tonvaApp, ui);
+     await startApp(tonvaApp, ui);
     }
     render() {
         return <NavView onLogined={this.onLogined} />;

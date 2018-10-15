@@ -1,9 +1,7 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { setXLang, Page, loadAppUsqs, nav, getUrlOrDebug, meInFrame, Controller, TypeVPage, VPage} from 'tonva-tools';
+import { Page, loadAppUsqs, nav, meInFrame, Controller, TypeVPage, VPage, resLang} from 'tonva-tools';
 import { List, LMR, FA } from 'tonva-react-form';
-import {Entities} from '../entities';
-import res from '../res';
 import { CUsq, EntityType, UsqUI } from './usq';
 import { centerApi } from '../centerApi';
 
@@ -11,23 +9,19 @@ export interface AppUI {
     CUsq?: typeof CUsq;
     main?: TypeVPage<CApp>;
     usqs: {[usq:string]: UsqUI};
+    res?: any;
 }
 
 export class CApp extends Controller {
     private appOwner:string;
     private appName:string;
-    private isProduction:boolean;    
+    private isProduction:boolean;
     protected ui:AppUI;
-    protected res:any;
     id: number;
     appUnits:any[];
 
     constructor(tonvaApp:string, ui:AppUI) {
-        super();
-        this.init(tonvaApp, ui);
-    }
-    private init(tonvaApp:string, ui:any) {
-        setXLang('zh', 'CN');
+        super(resLang(ui.res, nav.language, nav.culture));
         let parts = tonvaApp.split('/');
         if (parts.length !== 2) {
             throw 'tonvaApp name must be / separated, owner/app';
@@ -35,10 +29,10 @@ export class CApp extends Controller {
         this.appOwner = parts[0];
         this.appName = parts[1];
         this.ui = ui;
-        this.res = _.clone(res);
-        if (ui !== undefined) _.merge(this.res, ui.res);
         this.caption = this.res.caption || 'Tonva';
     }
+
+    readonly caption: string; // = 'View Model 版的 Usql App';
 
     cUsqCollection: {[usq:string]: CUsq} = {};
     protected async loadUsqs(): Promise<void> {
@@ -50,17 +44,17 @@ export class CApp extends Controller {
             let {id:usqId, usqOwner, usqName, url, urlDebug, ws, access, token} = appUsq;
             let usq = usqOwner + '/' + usqName;
             let ui = this.ui && this.ui.usqs && this.ui.usqs[usq];
-            let cUsq = this.newCUsq(usq, usqId, access, ui);
+            let cUsq = this.newCUsq(usq, usqId, access, ui || {});
             await cUsq.loadSchema();
             this.cUsqCollection[usq] = cUsq;
         }
     }
 
     protected newCUsq(usq:string, usqId:number, access:string, ui:any) {
-        return new (this.ui.CUsq || CUsq)(usq, this.id, usqId, access, ui);
+        let cUsq = new (this.ui.CUsq || CUsq)(usq, this.id, usqId, access, ui);        
+        Object.setPrototypeOf(cUsq.x, this.x);
+        return cUsq;
     }
-
-    caption: string; // = 'View Model 版的 Usql App';
 
     get cUsqArr():CUsq[] {
         let ret:CUsq[] = [];

@@ -12,7 +12,7 @@ export class VMain extends VQueryMain {
     protected queryResult = observer((result:any) => {
         let ret0 = result.ret[0];
         let rightClose = <button
-            className="btn btn-outline-success btn-sm"
+            className="btn btn-outline-success"
             onClick={this.again}>
             <FA name="search" /> 再查询
         </button>;

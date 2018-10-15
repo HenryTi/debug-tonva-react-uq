@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Muted } from 'tonva-react-form';
 import { left0 } from 'tonva-tools';
-import { dictionary as x } from '../../res';
+//import { dictionary as x } from '../../res';
 import { VMapMain, MapUI, Field, CMap }  from '../../../../ui-usql'; 
 
 class CMapTeamPerson extends CMap {
@@ -28,15 +28,15 @@ const ui:MapUI = {
     //main: VMapTeamPerson,
     keys: [
         {
-            content: ({name, id}:any) => <><Muted>{x.team}</Muted> {name}</>,
-            none: ()=>x.noStaff,
+            content: ({name, id}:any, x) => <><Muted>{x.team}</Muted> {name}</>,
+            none: (x)=>x.noStaff,
         },
         {
-            content: ({name, id}:any) => <><Muted>{x.staff}</Muted> {name} &nbsp; <Muted>{x.no} {left0(id, 4)}</Muted></>,
-            none: ()=>x.noPost,
+            content: ({name, id}:any, x) => <><Muted>{x.staff}</Muted> {name} &nbsp; <Muted>{x.no} {left0(id, 4)}</Muted></>,
+            none: (x)=>x.noPost,
         },
         {
-            content: ({title, id}:any) => <><Muted>{x.post}</Muted> {title}</>,
+            content: ({x, title, id}:any) => <><Muted>{x.post}</Muted> {title}</>,
             none: undefined,
         },
     ]

@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 
 export default {
-    $: {
+    x: {
         no: '编号',
         team: '部门',
         staff: '员工',
@@ -72,6 +72,20 @@ export default {
             }
         },
         order: {
+            x: {
+                //top: 'xxx-xxx-订单顶部说明'
+                top: ()=><>
+                    <h6>订单步骤</h6>
+                    <div>第一步：选定客户</div>
+                    <div>
+                        第二步：颜色变化
+                        <span className="text-success">说明</span>
+                        <span className="text-danger">文字</span>，解释做单的过程
+                    </div>
+                </>,
+                title: _.template('订单 ${customer} 金额${amount}元'),
+                detail: '订单-详情',
+            },
             label: '订单',
             arrNew: '新增',
             arrEdit: '保存',

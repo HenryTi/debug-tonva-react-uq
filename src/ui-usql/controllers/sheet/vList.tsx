@@ -16,7 +16,7 @@ export class VSheetList extends VEntity<Sheet, SheetUI, CSheet> {
         this.row = this.ui.listRow || this.rowContent;
         this.stateName = item.state;
         this.stateLabel = this.controller.getStateLabel(this.stateName);
-        await this.entity.getStateSheets(this.stateName, 0, 30);
+        await this.controller.getStateSheets(this.stateName, 0, 30);
         this.openPage(this.view);
     }
 
@@ -37,7 +37,7 @@ export class VSheetList extends VEntity<Sheet, SheetUI, CSheet> {
     private renderRow = (row:any, index:number) => <this.row {...row} />
 
     protected view = () => {
-        let sheets = this.entity.stateSheets;
+        let sheets = this.controller.stateSheets;
         return <Page header={this.label + ' - ' + this.stateLabel}>
             <List items={sheets} item={{render:this.renderRow, onClick:this.rowClick}} />
         </Page>;

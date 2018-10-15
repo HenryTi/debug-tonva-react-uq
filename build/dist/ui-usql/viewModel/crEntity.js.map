@@ -1,1 +1,0 @@
-{"version":3,"file":"crEntity.js","sourceRoot":"","sources":["../../../../src/ui-usql/viewModel/crEntity.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,MAAM,eAAe,CAAC;AAI5C,MAAM,wBAAoD,SAAQ,WAAW;IAGzE,YAAY,KAAY,EAAE,MAAS;QAC/B,KAAK,CAAC,KAAK,CAAC,CAAC;QACb,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;IACzB,CAAC;CACJ;AAED,MAAM,eAAyB,SAAQ,iBAAyB;CAC/D"}

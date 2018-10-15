@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { SheetUI } from '../../../../ui-usql';
-//import { VOrderNew } from './new';
 import { VSheetNew } from './vNew';
 import { observer } from 'mobx-react';
-import { dictionary as x } from '../../res';
 
 const orderUI:SheetUI = {
     sheetNew: VSheetNew,
-    sheetTitle: (valuesWithBox:any):string => {
+    sheetTitle: (valuesWithBox:any, x:any):string => {
         let order = x.order;
         let title = order.title;
         let {customer, amount} = valuesWithBox;

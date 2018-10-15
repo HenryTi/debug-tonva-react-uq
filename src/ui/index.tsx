@@ -1,9 +1,10 @@
+import React from 'react';
+import { VPage, Page, meInFrame } from 'tonva-tools';
+import {AppUI, CApp} from '../ui-usql';
 import $unitx from './$unitx';
 import devApp from './devApp';
 import jkOrder from './jkOrder';
-import {AppUI, CApp} from '../ui-usql';
-import { VPage, Page, meInFrame } from 'tonva-tools';
-import React from 'react';
+import res from './res';
 
 class VAppMain extends VPage<CApp> {
     async showEntry(param?:any) {
@@ -22,7 +23,7 @@ class VAppMain extends VPage<CApp> {
 const ui:AppUI = {
     //App: App,
     //"DevApp/devappApi": DevApp_devappApi,
-    //res: res,
+    res: res,
     main: VAppMain,
     usqs: {
         "$$$/$unitx": $unitx,

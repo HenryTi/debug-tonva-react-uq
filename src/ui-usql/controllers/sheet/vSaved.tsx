@@ -16,13 +16,14 @@ export class VSheetSaved extends VSheet {
     }
 
     actionClick = async (action:any) => {
+        this.ceasePage();
         let {id, flow, state} = this.brief;
         let res = await this.controller.action(id, flow, state, action.name);
         this.openPage(this.acted);
     }
 
     private buttons = <>
-        <button className="btn btn-primary mr-3" onClick={this.restart}>继续开单</button>
+        <button className="btn btn-outline-primary mr-3" onClick={this.restart}>继续开单</button>
         <button className="btn btn-outline-info" onClick={()=>this.backPage()}>返回</button>
     </>;
 

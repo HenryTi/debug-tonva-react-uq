@@ -1,1 +1,0 @@
-{"version":3,"file":"vmSubmit.js","sourceRoot":"","sources":["../../../../../src/ui-usql/viewModel/form/vmSubmit.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAC/B,OAAO,EAAE,MAAM,EAAE,MAAM,YAAY,CAAC;AACpC,OAAO,EAAE,SAAS,EAAE,MAAM,cAAc,CAAC;AAEzC,MAAM,eAAgB,SAAQ,SAAS;IAAvC;;QACc,SAAI,GAAG,GAAG,EAAE,CAAC,oBAAC,MAAM,OAAU,CAAC;IAC7C,CAAC;CAAA"}
