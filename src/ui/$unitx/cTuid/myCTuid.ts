@@ -1,10 +1,10 @@
-import { CTuidMain, VTuidMain, Field, FieldCall, VForm, TuidMain } from "../../../ui-usql";
+import { CTuidMain, VTuidMain, Field, FieldCall, VForm, TuidMain, FieldTuidUI } from "../../../ui-usql";
 import { MyVTuidMain } from "./vTuidMain";
 
 export class MyCTuid extends CTuidMain {
     protected get VTuidMain():typeof VTuidMain {return MyVTuidMain}
 
-    protected buildSelect(field:Field, arr:string):FieldCall {
+    protected buildSelect(field:Field, arr:string, fieldTuidUI: FieldTuidUI):FieldCall {
         let {name} = field;
         switch (arr) {
         case undefined:
@@ -19,6 +19,6 @@ export class MyCTuid extends CTuidMain {
             }
             break;
         }
-        return super.buildSelect(field, arr);
+        return super.buildSelect(field, arr, fieldTuidUI);
     }
 }

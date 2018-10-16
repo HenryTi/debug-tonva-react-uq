@@ -9,7 +9,7 @@ export class IdBox {
     id: number;
     obj?: any;
     content: (templet?:(values?:any, x?:any)=>JSX.Element, x?:any)=>JSX.Element;
-    valueFromFieldName: (fieldName:string)=>IdBox;
+    valueFromFieldName: (fieldName:string)=>IdBox|any;
 }
 
 const maxCacheSize = 1000;
@@ -53,7 +53,7 @@ export abstract class Tuid extends Entity {
                 return this._$tuid.valueFromId(this.id);
             }
         });
-        prototype.valueFromFieldName = function(fieldName:string):IdBox {
+        prototype.valueFromFieldName = function(fieldName:string):IdBox|any {
             let t:Tuid = this._$tuid;
             return t.valueFromFieldName(fieldName, this.obj);
         };
@@ -89,7 +89,7 @@ export abstract class Tuid extends Entity {
         }
         return v;
     }
-    valueFromFieldName(fieldName:string, obj:any):IdBox {
+    valueFromFieldName(fieldName:string, obj:any):IdBox|any {
         if (obj === undefined) return;
         let f = this.fields.find(v => v.name === fieldName);
         if (f === undefined) return;

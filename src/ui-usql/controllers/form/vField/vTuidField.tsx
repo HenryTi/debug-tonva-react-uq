@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Field, Tuid } from '../../../entities';
 import { VField, RedMark } from "./vField";
-import { FieldEdit } from '../../formUI';
+import { FieldUI } from '../../formUI';
 import { VForm, FieldInput, FormMode } from '../vForm';
 import { FieldRes } from '../vBand';
 
@@ -18,7 +18,7 @@ export class VTuidField extends VField {
     protected input: FieldInput;
     protected tuid: Tuid;
 
-    constructor(vForm: VForm, field:Field, fieldUI: FieldEdit, fieldRes:FieldRes) {
+    constructor(vForm: VForm, field:Field, fieldUI: FieldUI, fieldRes:FieldRes) {
         super(vForm, field, fieldUI, fieldRes);
         this.tuid = field._tuid;
         this.vForm = vForm;

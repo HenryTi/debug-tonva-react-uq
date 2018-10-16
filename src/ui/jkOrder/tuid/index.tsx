@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TuidUI } from '../../../ui-usql';
 import { observer } from 'mobx-react';
 import { LMR, Muted } from 'tonva-react-form';
+import { FieldTuidUI } from 'src/ui-usql/controllers/formUI';
 
 const customer:TuidUI = {
     inputContent: (values) => {
@@ -18,16 +19,16 @@ const customer:TuidUI = {
 
 const productPackRowContent = observer((values) => {
     let {id, ratio, name, $owner} = values;
-    let content;
+    let content, rText = String(ratio);
     if ($owner !== undefined) {
         let packType = $owner.valueFromFieldName('packType');
         let packName = packType.name;
         if (packName) {
-            if (name) content = name + ' = ' + (ratio + packName);
-            else content = (ratio + packName);
+            if (name) content = name + ' = ' + (rText + packName);
+            else content = (rText + packName);
         }
     }
-    if (content === undefined) content = 'id' + id + ' ...';
+    if (content === undefined) content = (name? name + ' ' + rText : rText) + ' err: no $owner in values';
     return <div className="px-3 py-2">{content}</div>;
 });
 
@@ -58,6 +59,9 @@ const product:TuidUI = {
     },
     form: {
         items: {
+            packType: {
+                autoList: true,
+            } as FieldTuidUI,
             pack: {
                 rowContent: productPackRowContent,
             }

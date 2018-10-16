@@ -162,16 +162,15 @@ export class VForm {
             let v = values[name]
             ret[name] =  _tuid === undefined || typeof v === 'object' ? v : _tuid.createID(v);
         }
-        if (this.arrs !== undefined) {
-            for (let arr of this.arrs) {
-                let {name, fields, id, order} = arr;
-                let list = ret[name] = this.vArrs[name].list.slice();
-                for (let row of list) {
-                    for (let f of fields) {
-                        let {name:fn, _tuid} = f;
-                        let v = row[fn]
-                        row[fn] =  _tuid === undefined || typeof v === 'object' ? v : _tuid.createID(v);
-                    }
+        if (this.arrs === undefined) return ret;
+        for (let arr of this.arrs) {
+            let {name, fields, id, order} = arr;
+            let list = ret[name] = this.vArrs[name].list.slice();
+            for (let row of list) {
+                for (let f of fields) {
+                    let {name:fn, _tuid} = f;
+                    let v = row[fn]
+                    row[fn] =  _tuid === undefined || typeof v === 'object' ? v : _tuid.createID(v);
                 }
             }
         }
