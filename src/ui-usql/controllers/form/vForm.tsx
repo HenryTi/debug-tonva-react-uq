@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { VBand } from './vBand';
 import { BandsBuilder } from './bandsBuilder';
 import { Field, ArrFields } from '../../entities';
-import { computed, observable, IObservableObject } from 'mobx';
+import { computed, observable, IObservableObject, IObservableValue } from 'mobx';
 import { VArr } from './vArr';
 import { FormUI, FormUIBase, FormItems } from '../formUI';
 import { VField } from './vField';
@@ -160,7 +160,7 @@ export class VForm {
         for (let f of this.fields) {
             let {name, _tuid} = f;
             let v = values[name]
-            ret[name] =  _tuid === undefined || typeof v === 'object' ? v : _tuid.createID(v);
+            ret[name] =  _tuid === undefined || typeof v === 'object' ? v : _tuid.boxId(v);
         }
         if (this.arrs === undefined) return ret;
         for (let arr of this.arrs) {
@@ -170,7 +170,7 @@ export class VForm {
                 for (let f of fields) {
                     let {name:fn, _tuid} = f;
                     let v = row[fn]
-                    row[fn] =  _tuid === undefined || typeof v === 'object' ? v : _tuid.createID(v);
+                    row[fn] =  _tuid === undefined || typeof v === 'object' ? v : _tuid.boxId(v);
                 }
             }
         }
@@ -236,7 +236,11 @@ export class VForm {
     setError(fieldName:string, error:string) {this.errors[fieldName] = error}
 
     private buildFieldValues(fields: Field[]):any {
-        let v: {[p:string]: any} = {};
+        let v: {[p:string]: any} = {
+            valueFromFieldName: function(propName:string) {
+                return this[propName];
+            }
+        };
         for (let f of fields) {
             let fn = f.name;
             v[fn] = null;

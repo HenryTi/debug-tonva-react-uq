@@ -22,7 +22,7 @@ const productPackRowContent = observer((values) => {
     let content, rText = String(ratio);
     if ($owner !== undefined) {
         let packType = $owner.valueFromFieldName('packType');
-        let packName = packType.name;
+        let packName = packType.valueFromFieldName? packType.valueFromFieldName('name') : packType['name'];
         if (packName) {
             if (name) content = name + ' = ' + (rText + packName);
             else content = (rText + packName);

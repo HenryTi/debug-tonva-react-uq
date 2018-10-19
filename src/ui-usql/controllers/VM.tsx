@@ -127,7 +127,10 @@ export abstract class CEntity<T extends Entity, UI extends EntityUI> extends Con
             let cTuidSelect = this.cUsq.cTuidSelect(_tuid);
             let param:any = undefined;
             if (_ownerField !== undefined) param = form.getValue(_ownerField.name);
-            if (fieldUI && fieldUI.autoList === true) param = '';
+            if (fieldUI && fieldUI.autoList === true) {
+                console.log('select search set param=empty string');
+                param = '';
+            }
             let ret = await cTuidSelect.call(param);
             cTuidSelect.removeCeased(); // 清除已经废弃的顶部页面
             if (ret === undefined) return undefined;

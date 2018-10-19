@@ -6,8 +6,7 @@ import { observer } from 'mobx-react';
 const orderUI:SheetUI = {
     sheetNew: VSheetNew,
     sheetTitle: (valuesWithBox:any, x:any):string => {
-        let order = x.order;
-        let title = order.title;
+        let title = x.title;
         let {customer, amount} = valuesWithBox;
         let p = {customer: customer.obj.discription, amount: amount||99};
         return title(p);

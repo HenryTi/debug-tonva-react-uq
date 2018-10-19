@@ -9,7 +9,7 @@ const priceUI:MapUI = {
     keys: [
         {
             content: ({discription, id}:any, x:any) => <><Muted>{x.product}</Muted> &nbsp; {discription}</>,
-            none: (x:any)=>x.noStaff,
+            none: (x:any)=>x.none,
         },
         {
             content: (values:any, x:any) => {

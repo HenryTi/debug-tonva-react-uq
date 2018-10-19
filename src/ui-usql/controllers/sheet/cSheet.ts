@@ -49,26 +49,54 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
     }
 
     protected async onMessage(msg: any):Promise<void> {
-        //这个必须接上，否则没有websocket push
-        //this.entity.onMessage(msg);
-        //async onMessage(msg):Promise<void> {
-        let {$type, id, state, preState} = msg;
-        if ($type !== 'sheetAct') return;
-        // ??? 暂时不处理 //
-        // this.changeStateCount(state, 1); 这个通过接收 unitx发送的单据state消息来处理
-        this.changeStateCount(preState, -1);
-        if (this.curState === state) {
-            if (this.stateSheets.findIndex(v => v.id === id) < 0) {
-                this.stateSheets.push(msg);
-            }
-        }
-        else if (this.curState === preState) {
-            let index = this.stateSheets.findIndex(v => v.id === id);
-            if (index>=0) this.stateSheets.splice(index, 1);
-        }
-        //}
+        let {type, body, from, to, push} = msg;
+        if (type === 'sheet') this.onSheet(from, to, body);
     }
+    private onSheet(from:number, to:number[], sheetData:any) {
+        /*
+        app:69
+        date:"2018-10-18T21:59:15.000Z"
+        discription:"订单 北京大学 金额99元"
+        flow:0
+        id:95
+        name:"order"
+        no:"181018000010"
+        processing:0
+        sheet:8
+        state:"$"
+        to:"[10]"
+        user:10
+        usq:58
+        version:5
+        */
+        let me = this.user.id;
+        let {id, preState, state} = sheetData;
+        if (from === me) {
+            this.sheetActPreState(id, preState);
+        }
+        if (to.find(v=>v===me) !== undefined) {
+            this.sheetActState(id, state, sheetData);
+        }
+    }
+    private sheetActPreState(id:number, preState:string) {
+        this.changeStateCount(preState, -1);
+        if (this.curState === undefined || this.curState !== preState) return;
+        let index = this.stateSheets.findIndex(v => v.id === id);
+        if (index>=0) {
+            this.stateSheets.splice(index, 1);
+        }
+    }
+
+    private sheetActState(id:number, state:string, msg:any) {
+        this.changeStateCount(state, 1);
+        if (this.curState === undefined || this.curState !== state) return;
+        if (this.stateSheets.findIndex(v => v.id === id) < 0) {
+            this.stateSheets.push(msg);
+        }
+    }
+
     private changeStateCount(state:string, delta:number) {
+        if (state === undefined) return;
         let index = this.statesCount.findIndex(v => v.state === state);
         if (index < 0) return;
         let stateCount = this.statesCount[index];
@@ -173,8 +201,8 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
         let {sheetTitle} = this.ui;
         let disc = sheetTitle === undefined? this.label : sheetTitle(valuesWithBox, this.x);
         let ret = await this.entity.save(disc, values);
-        let {id, state} = ret;
-        if (id > 0) this.changeStateCount(state, 1);
+        //let {id, state} = ret;
+        //if (id > 0) this.changeStateCount(state, 1);
         return ret;
     }
 

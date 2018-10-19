@@ -73,7 +73,7 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
         this.ceasePage();
         let {entity} = this.cCustomerSelect;
         entity.useId(this.customer.id);
-        this.vForm.setValue('customer', entity.createID(this.customer.id));
+        this.vForm.setValue('customer', entity.boxId(this.customer.id));
         await this.selectProduct();
     }
 
@@ -94,7 +94,7 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
             let {pack, price, quantity, amount} = packRow;
             //packEntity.useId(pack);
             list.push({
-                product: entity.createID(product),
+                product: entity.boxId(product),
                 pack: pack, //packEntity.createID(pack),
                 price: price,
                 quantity: quantity,

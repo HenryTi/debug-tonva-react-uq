@@ -39,7 +39,7 @@ export class VTuidField extends VField {
             alert('call undefined');
             id = 0;
         }
-        this.setValue(id);
+        this.setValue(this.tuid.boxId(id));
     }
     protected view = observer(() => {
         let {placeHolder} = this.fieldRes;
@@ -56,7 +56,7 @@ export class VTuidField extends VField {
             content = this.value.content();
         }
         else {
-            let idBox = this.tuid.createID(this.value);
+            let idBox = this.tuid.boxId(this.value);
             content = idBox.content();
         }
         if (this.readonly === true)
