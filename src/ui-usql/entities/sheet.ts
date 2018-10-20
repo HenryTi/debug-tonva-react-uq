@@ -1,5 +1,6 @@
 import {observable, IObservableArray} from 'mobx';
 import {Entity} from './entity';
+import { PageItems } from 'tonva-tools';
 
 export interface SheetState {
     name: string;
@@ -108,6 +109,7 @@ export class Sheet extends Entity {
         let ret = await this.tvApi.stateSheets(this.name, {state:state, pageStart:pageStart, pageSize:pageSize});
         return ret;
     }
+    createPageStateItems<T>(): PageStateItems<T> {return new PageStateItems<T>(this);}
 
     async stateSheetCount():Promise<StateCount[]> {
         let ret:StateCount[] = await this.tvApi.stateSheetCount(this.name);
@@ -117,5 +119,21 @@ export class Sheet extends Entity {
             if (r !== undefined) count = r.count;
             return {state: n, count: count} 
         });
+    }
+}
+
+export class PageStateItems<T> extends PageItems<T> {
+    private sheet: Sheet;
+    constructor(sheet: Sheet) {
+        super(true);
+        this.sheet = sheet;
+        this.pageSize = 10;
+    }
+    protected async load(param:any, pageStart:any, pageSize:number):Promise<any[]> {
+        let ret = await this.sheet.getStateSheets(param, pageStart, pageSize);
+        return ret;
+    }
+    protected setPageStart(item:any) {
+        this.pageStart = item === undefined? 0 : item.id;
     }
 }

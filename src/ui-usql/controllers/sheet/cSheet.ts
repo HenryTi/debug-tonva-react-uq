@@ -1,5 +1,5 @@
 import { IObservableArray, observable } from "mobx";
-import { TypeVPage, VPage } from 'tonva-tools';
+import { TypeVPage, VPage, PageItems } from 'tonva-tools';
 import { Sheet, StateCount } from "../../entities";
 import { CEntity, EntityUI, VEntity } from "../VM";
 import { VSheetMain } from "./vMain";
@@ -42,9 +42,11 @@ export interface SheetData {
 export class CSheet extends CEntity<Sheet, SheetUI> {
     statesCount:IObservableArray<StateCount> = observable.array<StateCount>([], {deep:true});
     curState:string;
-    stateSheets:IObservableArray = observable.array<{id:number}>([], {deep:true});
+    //stateSheets:IObservableArray = observable.array<{id:number}>([], {deep:true});
+    pageStateItems: PageItems<any>;
 
     protected async internalStart() {
+        this.pageStateItems = this.entity.createPageStateItems();
         await this.showVPage(this.VSheetMain);
     }
 
@@ -71,6 +73,7 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
         */
         let me = this.user.id;
         let {id, preState, state} = sheetData;
+        console.log({$:'onSheet', from:from, to:to.join(','), id:id, preState:preState, state:state, me:me})
         if (from === me) {
             this.sheetActPreState(id, preState);
         }
@@ -81,23 +84,34 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
     private sheetActPreState(id:number, preState:string) {
         this.changeStateCount(preState, -1);
         if (this.curState === undefined || this.curState !== preState) return;
+        /*
         let index = this.stateSheets.findIndex(v => v.id === id);
         if (index>=0) {
             this.stateSheets.splice(index, 1);
+        }*/
+        let index = this.pageStateItems.items.findIndex(v => v.id === id);
+        if (index>=0) {
+            this.pageStateItems.items.splice(index, 1);
         }
     }
 
     private sheetActState(id:number, state:string, msg:any) {
         this.changeStateCount(state, 1);
         if (this.curState === undefined || this.curState !== state) return;
+        /*
         if (this.stateSheets.findIndex(v => v.id === id) < 0) {
             this.stateSheets.push(msg);
+        }
+        */
+        if (this.pageStateItems.items.findIndex(v => v.id === id) < 0) {
+            this.pageStateItems.items.push(msg);
         }
     }
 
     private changeStateCount(state:string, delta:number) {
         if (state === undefined) return;
         let index = this.statesCount.findIndex(v => v.state === state);
+        console.log({$:'changeState', state: state, delta: delta, index: index});
         if (index < 0) return;
         let stateCount = this.statesCount[index];
         stateCount.count += delta;
@@ -120,9 +134,14 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
             case 'new': c = this.VSheetNew; break;
             case 'schema': c = this.VSheetSchema; break;
             case 'archives': c = this.VArchives; break;
-            case 'state': c = this.VSheetList; break;
-            case 'archived': await this.showArchived(value); return;
-            case 'action': await this.showAction(value); return;
+            case 'state':
+                this.curState = value.state;
+                c = this.VSheetList;
+                break;
+            case 'archived':
+                await this.showArchived(value); return;
+            case 'action':
+                await this.showAction(value); return;
         }
         await this.showVPage(c, value);
     }
@@ -210,10 +229,13 @@ export class CSheet extends CEntity<Sheet, SheetUI> {
         return await this.entity.action(id, flow, state, actionName);
     }
 
+    /*
     async getStateSheets(state:string, pageStart:number, pageSize:number):Promise<void> {
         this.curState = state;
-        this.stateSheets.clear();
+        //this.stateSheets.clear();
+        this.pageStateItems.items.clear();
         let ret = await this.entity.getStateSheets(state, pageStart, pageSize);
-        this.stateSheets.spliceWithArray(0, 0, ret);
-    }
+        //this.stateSheets.spliceWithArray(0, 0, ret);
+        this.pageStateItems.items.spliceWithArray(0, 0, ret);
+    }*/
 }
