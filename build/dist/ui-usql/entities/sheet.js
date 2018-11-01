@@ -105,9 +105,10 @@ export class PageStateItems extends PageItems {
     constructor(sheet) {
         super(true);
         this.sheet = sheet;
+        this.pageSize = 10;
     }
-    async load() {
-        let ret = await this.sheet.getStateSheets(this.param, this.pageStart, this.pageSize);
+    async load(param, pageStart, pageSize) {
+        let ret = await this.sheet.getStateSheets(param, pageStart, pageSize);
         return ret;
     }
     setPageStart(item) {

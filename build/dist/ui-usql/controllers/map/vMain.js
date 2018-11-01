@@ -4,7 +4,6 @@ import className from 'classnames';
 import { List, LMR, FA } from 'tonva-react-form';
 import { Page } from 'tonva-tools';
 import { VEntity } from '../VM';
-import { PureJSONContent } from '../form/viewModel';
 export class VMapMain extends VEntity {
     constructor() {
         super(...arguments);
@@ -36,7 +35,8 @@ export class VMapMain extends VEntity {
             if (isLeaf === true) {
                 content = undefined; //<div className="ml-5">leaf</div>;
                 if (values) {
-                    valuesView = (valuesContent || PureJSONContent)(values, this.x);
+                    valuesView = null; // 现在不显示values content了
+                    //valuesView = (valuesContent || PureJSONContent)(values, this.x);
                 }
             }
             else {

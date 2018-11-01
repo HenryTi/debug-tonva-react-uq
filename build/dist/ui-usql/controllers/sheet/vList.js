@@ -12,6 +12,7 @@ export class VSheetList extends VEntity {
         };
         this.onScrollBottom = () => {
             console.log('onScrollBottom');
+            this.controller.pageStateItems.more();
         };
         this.rowContent = (row) => {
             let { id, no, discription, date, processing } = row;
@@ -30,14 +31,15 @@ export class VSheetList extends VEntity {
             //let sheets = this.controller.stateSheets;
             let { pageStateItems } = this.controller;
             return React.createElement(Page, { header: this.label + ' - ' + this.stateLabel, onScrollBottom: this.onScrollBottom },
-                React.createElement(List, { items: undefined, item: { render: this.renderRow, onClick: this.rowClick } }));
+                React.createElement(List, { items: pageStateItems, item: { render: this.renderRow, onClick: this.rowClick } }));
         };
     }
     async showEntry(item) {
         this.row = this.ui.listRow || this.rowContent;
         this.stateName = item.state;
         this.stateLabel = this.controller.getStateLabel(this.stateName);
-        await this.controller.getStateSheets(this.stateName, 0, 10);
+        //await this.controller.getStateSheets(this.stateName, 0, 10);
+        await this.controller.pageStateItems.first(this.stateName);
         this.openPage(this.view);
     }
 }

@@ -9,14 +9,24 @@ import { CTuidMain, CTuidInfo, CTuidSelect } from '../tuid';
 import { CMap } from '../map';
 import { PureJSONContent } from '../form/viewModel';
 import { VUsq } from './vUsq';
+function lowerPropertyName(entities) {
+    if (entities === undefined)
+        return;
+    for (let i in entities)
+        entities[i.toLowerCase()] = entities[i];
+}
 export class CUsq extends Controller {
     constructor(usq, appId, usqId, access, ui) {
         super(resLang(ui.res, nav.language, nav.culture));
         this.isSysVisible = false;
         this.usq = usq;
         this.id = usqId;
+        // 每一个ui都转换成小写的key的版本
+        lowerPropertyName(ui.tuid);
+        lowerPropertyName(ui.sheet);
+        lowerPropertyName(ui.map);
+        lowerPropertyName(ui.query);
         this.ui = ui;
-        this.access = access;
         this.CTuidMain = ui.CTuidMain || CTuidMain;
         this.CTuidSelect = ui.CTuidSelect || CTuidSelect;
         this.CTuidInfo = ui.CTuidInfo || CTuidInfo;
@@ -65,9 +75,12 @@ export class CUsq extends Controller {
     }
     async internalStart() {
     }
+    async loadEntites() {
+        await this.entities.loadAccess();
+    }
     async loadSchema() {
         try {
-            await this.entities.load();
+            await this.loadEntites();
             if (this.id === undefined)
                 this.id = this.entities.usqId;
             for (let i in this.ui) {

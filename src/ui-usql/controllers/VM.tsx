@@ -94,7 +94,7 @@ export abstract class CEntity<T extends Entity, UI extends EntityUI> extends Con
         if (arrFields !== undefined) {
             for (let arr of arrFields) {
                 let {name, fields} = arr;
-                let {items} = formUI;
+                let items = formUI && formUI.items;
                 this.buildFieldsInputs(ret, fields, name, items && items[name] as FormUI);
             }
         }

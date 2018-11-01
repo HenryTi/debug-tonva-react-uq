@@ -21,6 +21,15 @@ export class CSheet extends CEntity {
             //this.openPage(this.finishedPage);
             await this.showSaved(ret);
         };
+        /*
+        async getStateSheets(state:string, pageStart:number, pageSize:number):Promise<void> {
+            this.curState = state;
+            //this.stateSheets.clear();
+            this.pageStateItems.items.clear();
+            let ret = await this.entity.getStateSheets(state, pageStart, pageSize);
+            //this.stateSheets.spliceWithArray(0, 0, ret);
+            this.pageStateItems.items.spliceWithArray(0, 0, ret);
+        }*/
     }
     async internalStart() {
         this.pageStateItems = this.entity.createPageStateItems();
@@ -120,6 +129,7 @@ export class CSheet extends CEntity {
                 c = this.VArchives;
                 break;
             case 'state':
+                this.curState = value.state;
                 c = this.VSheetList;
                 break;
             case 'archived':
@@ -196,14 +206,6 @@ export class CSheet extends CEntity {
     }
     async action(id, flow, state, actionName) {
         return await this.entity.action(id, flow, state, actionName);
-    }
-    async getStateSheets(state, pageStart, pageSize) {
-        this.curState = state;
-        //this.stateSheets.clear();
-        this.pageStateItems.items.clear();
-        let ret = await this.entity.getStateSheets(state, pageStart, pageSize);
-        //this.stateSheets.spliceWithArray(0, 0, ret);
-        this.pageStateItems.items.spliceWithArray(0, 0, ret);
     }
 }
 //# sourceMappingURL=cSheet.js.map

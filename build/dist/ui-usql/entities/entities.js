@@ -6,9 +6,6 @@ import { Query } from './query';
 import { Book } from './book';
 import { History } from './history';
 import { Map } from './map';
-// api: apiOwner/apiName
-// access: acc1; acc2
-//const entitiesCollection: {[api:string]: Entities} = {};
 export class Entities {
     constructor(usq, usqApi, appId) {
         this.tuids = {};
@@ -50,9 +47,16 @@ export class Entities {
                 return sheet;
         }
     }
-    async load() {
+    async loadAccess() {
         let accesses = await this.usqApi.loadAccess();
-        let { access, tuids } = accesses;
+        this.buildEntities(accesses);
+    }
+    async loadEntities() {
+        let accesses = await this.usqApi.loadEntities();
+        this.buildEntities(accesses);
+    }
+    buildEntities(entities) {
+        let { access, tuids } = entities;
         this.buildTuids(tuids);
         this.buildAccess(access);
     }

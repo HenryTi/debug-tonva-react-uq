@@ -75,7 +75,7 @@ export class CEntity extends ControllerUsq {
         if (arrFields !== undefined) {
             for (let arr of arrFields) {
                 let { name, fields } = arr;
-                let { items } = formUI;
+                let items = formUI && formUI.items;
                 this.buildFieldsInputs(ret, fields, name, items && items[name]);
             }
         }
