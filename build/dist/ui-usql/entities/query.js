@@ -7,10 +7,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { observable } from 'mobx';
 import { Entity } from './entity';
 export class Query extends Entity {
-    constructor() {
-        super(...arguments);
-        this.queryApiName = 'page';
-    }
     get typeName() { return 'query'; }
     setSchema(schema) {
         super.setSchema(schema);
@@ -44,7 +40,7 @@ export class Query extends Entity {
             }
         }
         await this.loadSchema();
-        let res = await this.tvApi.queryPage(this.queryApiName, this.name, pageStart, this.pageSize + 1, this.params);
+        let res = await this.tvApi.page(this.name, pageStart, this.pageSize + 1, this.params);
         let data = await this.unpackReturns(res);
         this.list = observable.array([], { deep: false });
         let page = data['$page'];
@@ -65,7 +61,7 @@ export class Query extends Entity {
     }
     async page(params, pageStart, pageSize) {
         await this.loadSchema();
-        let res = await this.tvApi.queryPage(this.queryApiName, this.name, pageStart, pageSize + 1, params);
+        let res = await this.tvApi.page(this.name, pageStart, pageSize + 1, params);
         let data = await this.unpackReturns(res);
         return data.$page; // as any[];
     }
