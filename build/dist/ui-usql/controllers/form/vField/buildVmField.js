@@ -1,6 +1,6 @@
 import { VIntField, VDecField, VStringField, VTextField, VDateTimeField } from './vField';
 export function buildVField(form, field, fieldUI, fieldRes) {
-    let vField;
+    var vField;
     switch (field.type) {
         default: return;
         case 'tinyint':
@@ -9,7 +9,7 @@ export function buildVField(form, field, fieldUI, fieldRes) {
             vField = VIntField;
             break;
         case 'bigint':
-            let { _tuid } = field;
+            var _tuid = field._tuid;
             if (_tuid !== undefined)
                 return;
             vField = VIntField;

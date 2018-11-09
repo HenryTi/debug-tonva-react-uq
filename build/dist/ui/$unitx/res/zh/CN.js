@@ -11,9 +11,9 @@ export default {
         a: 'aaa',
         b: {
             s: 'sss',
-            d: () => React.createElement("span", { className: "text-success" }, "ddd"),
+            d: function () { return React.createElement("span", { className: "text-success" }, "ddd"); },
         },
-        c: () => React.createElement("span", { className: "text-danger" }, "ccc"),
+        c: function () { return React.createElement("span", { className: "text-danger" }, "ccc"); },
     },
     usq: '$UNITX',
     tuid: '基础档案',

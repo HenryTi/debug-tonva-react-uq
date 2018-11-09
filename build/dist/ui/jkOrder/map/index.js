@@ -1,33 +1,36 @@
 import * as React from 'react';
 import { Muted } from 'tonva-react-form';
-const priceUI = {
+var priceUI = {
     //CMap: CMapTeamPerson,
     //label: '部门员工对照表',
     //main: VMapTeamPerson,
     keys: [
         {
-            content: ({ discription, id }, x) => React.createElement(React.Fragment, null,
-                React.createElement(Muted, null, x.product),
-                " \u00A0 ",
-                discription),
-            none: (x) => x.none,
+            content: function (_a, x) {
+                var discription = _a.discription, id = _a.id;
+                return React.createElement(React.Fragment, null,
+                    React.createElement(Muted, null, x.product),
+                    " \u00A0 ",
+                    discription);
+            },
+            none: function (x) { return x.none; },
         },
         {
-            content: (values, x) => {
-                let { name, id, discription, $owner } = values;
+            content: function (values, x) {
+                var name = values.name, id = values.id, discription = values.discription, $owner = values.$owner;
                 return React.createElement(React.Fragment, null,
                     React.createElement(Muted, null, x.pack),
                     " \u00A0 ");
             },
-            valuesContent: (values, x) => {
-                let { pack, retail } = values;
+            valuesContent: function (values, x) {
+                var pack = values.pack, retail = values.retail;
                 return React.createElement("div", { className: "px-3 py-1" },
                     React.createElement("div", { className: "d-inline-block w-25" }, pack.content()),
                     " ",
                     retail,
                     " \u5143");
             },
-            none: (x) => x.noPost,
+            none: function (x) { return x.noPost; },
         },
     ]
 };

@@ -201,8 +201,17 @@ class VAppMain extends VPage<CApp> {
 
     protected appPage = () => {
         let {caption, cUsqArr} = this.controller;
+        let content;
+        if (cUsqArr.length === 0) {
+            content = <div className="text-danger">
+                <FA name="" /> 此APP没有绑定任何的USQ
+            </div>;
+        }
+        else {
+            content = cUsqArr.map((v,i) => <div key={i}>{v.render()}</div>);
+        }
         return <Page header={caption} logout={()=>{meInFrame.unit = undefined}}>
-            {cUsqArr.map((v,i) => <div key={i}>{v.render()}</div>)}
+            {content}
         </Page>;
     };
 }

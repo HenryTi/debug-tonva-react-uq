@@ -3,7 +3,7 @@ import map from './map';
 import query from './query';
 import res from './res';
 import { MyCTuid } from './cTuid';
-const usqUI = {
+var usqUI = {
     CTuidMain: MyCTuid,
     tuid: tuid,
     map: map,

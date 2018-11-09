@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { VSheetNew } from './vNew';
 import { observer } from 'mobx-react';
-const orderUI = {
+var orderUI = {
     sheetNew: VSheetNew,
-    sheetTitle: (valuesWithBox, x) => {
-        let title = x.title;
-        let { customer, amount } = valuesWithBox;
-        let p = { customer: customer.obj.discription, amount: amount || 99 };
+    sheetTitle: function (valuesWithBox, x) {
+        var title = x.title;
+        var customer = valuesWithBox.customer, amount = valuesWithBox.amount;
+        var p = { customer: customer.obj.discription, amount: amount || 99 };
         return title(p);
     },
     form: {
         items: {
             customer: { editable: false },
-            sumAmount: () => {
+            sumAmount: function () {
                 return 1;
             },
             products: {
-                rowContent: observer((values) => {
-                    let { product, pack, price, quantity } = values;
+                rowContent: observer(function (values) {
+                    var product = values.product, pack = values.pack, price = values.price, quantity = values.quantity;
                     return React.createElement("div", { className: "row px-3 py-2" },
                         React.createElement("div", { className: "col-8" },
                             React.createElement("div", { className: "text-primary" }, product.content()),

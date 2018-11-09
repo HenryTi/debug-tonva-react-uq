@@ -4,7 +4,7 @@ import sheet from './sheet';
 import map from './map';
 //import query from './query';
 //import { MyCTuid } from './cTuid';
-const usqUI = {
+var usqUI = {
     //CTuidMain: MyCTuid,
     tuid: tuid,
     sheet: sheet,

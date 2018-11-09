@@ -1,5 +1,5 @@
 import CN from './zh/CN';
-const res = {
+var res = {
     zh: {
         CN: CN
     }
