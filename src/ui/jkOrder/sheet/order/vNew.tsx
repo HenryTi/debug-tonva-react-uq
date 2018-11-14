@@ -121,7 +121,7 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
         let valuesWithBox = this.form.values;
         //let ret = await this.saveSheet(values, this.form.values);
         await this.controller.onSave(values, valuesWithBox)
-        //alert('[' + this.label + '] 已保存: ' + JSON.stringify(ret));
+        //alert('[' + this.label + '] 已保存: ' + jsonStringify(ret));
         this.ceasePage();
         //this.openPage(<this.finishedPage />);
         //await this.showSaved(ret);
