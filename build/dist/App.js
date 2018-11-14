@@ -49,7 +49,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './App.css';
 import ui from './ui';
 import { startApp } from './ui-usql';
-var tonvaApp = 'JKDev/jkOrder';
+//const tonvaApp = 'JKDev/jkOrder';
+var tonvaApp = '百灵威系统工程部/cart';
 var App = /** @class */ (function (_super) {
     __extends(App, _super);
     function App() {

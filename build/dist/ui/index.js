@@ -49,15 +49,25 @@ import $unitx from './$unitx';
 import devApp from './devApp';
 import jkOrder from './jkOrder';
 import res from './res';
+import { FA } from 'tonva-react-form';
 var VAppMain = /** @class */ (function (_super) {
     __extends(VAppMain, _super);
     function VAppMain() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.appPage = function () {
             var _a = _this.controller, caption = _a.caption, cUsqArr = _a.cUsqArr;
+            var content;
+            if (cUsqArr.length === 0) {
+                content = React.createElement("div", { className: "p-3 text-info" },
+                    React.createElement(FA, { name: "minus-circle", className: "text-danger", size: "lg" }),
+                    " \u00A0 \u6B64APP\u6CA1\u6709\u7ED1\u5B9A\u4EFB\u4F55\u7684USQ");
+            }
+            else {
+                content = cUsqArr.map(function (v, i) { return React.createElement("div", { key: i }, v.render()); });
+            }
             return React.createElement(Page, { header: caption, logout: function () { meInFrame.unit = undefined; } },
                 React.createElement("div", { className: "p-3" }, "\u81EA\u5B9A\u4E49\u7A0B\u5E8F\u754C\u9762\u4E86\u3002\u663E\u793A\u8FD9\u4E00\u6BB5\uFF0C\u81EA\u5B9A\u4E49\u8D77\u4F5C\u7528\u4E86\u3002\u53EF\u4EE5\u5728\u8FD9\u91CC\u653E\u7F6E\u4EFB\u4F55\u5185\u5BB9"),
-                cUsqArr.map(function (v, i) { return React.createElement("div", { key: i }, v.render()); }));
+                content);
         };
         return _this;
     }

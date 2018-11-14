@@ -175,7 +175,8 @@ var CUsq = /** @class */ (function (_super) {
                         return [3 /*break*/, 3];
                     case 2:
                         err_1 = _a.sent();
-                        debugger;
+                        console.error(err_1);
+                        this.error = err_1;
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }

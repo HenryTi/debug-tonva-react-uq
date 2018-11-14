@@ -18,7 +18,7 @@ var VUsq = /** @class */ (function (_super) {
         var _this = _super.call(this, cUsq) || this;
         _this.isSysVisible = false;
         _this.view = function () {
-            var _a = _this.controller, res = _a.res, usq = _a.usq;
+            var _a = _this.controller, res = _a.res, usq = _a.usq, error = _a.error;
             var linkItem = {
                 render: function (cLink, index) { return cLink.render(); },
                 onClick: undefined,
@@ -64,13 +64,22 @@ var VUsq = /** @class */ (function (_super) {
                     items: _this.pendingLinks
                 }
             ];
-            return React.createElement(React.Fragment, null,
-                React.createElement("div", { className: "px-3 py-1 small" }, res.usq || usq),
-                lists.map(function (_a, index) {
+            var content;
+            if (error !== undefined) {
+                content = React.createElement("div", { className: "p-3 text-danger" },
+                    "\u8FDE\u63A5\u9519\u8BEF: ",
+                    error);
+            }
+            else {
+                content = lists.map(function (_a, index) {
                     var cn = _a.cn, header = _a.header, items = _a.items;
                     return items.length > 0 && React.createElement(List, { key: index, className: cn, header: React.createElement("div", { className: "px-3 py-1 bg-light" },
                             React.createElement(Muted, null, header)), items: items, item: linkItem });
-                }));
+                });
+            }
+            return React.createElement(React.Fragment, null,
+                React.createElement("div", { className: "px-3 py-1 small" }, res.usq || usq),
+                content);
         };
         var _a = cUsq.entities, tuidArr = _a.tuidArr, mapArr = _a.mapArr, sheetArr = _a.sheetArr, actionArr = _a.actionArr, queryArr = _a.queryArr, bookArr = _a.bookArr, historyArr = _a.historyArr, pendingArr = _a.pendingArr;
         _this.tuidLinks = tuidArr.filter(function (v) { return _this.isVisible(v); }).map(function (v) { return new CLink(_this.controller.cTuidMain(v)); });

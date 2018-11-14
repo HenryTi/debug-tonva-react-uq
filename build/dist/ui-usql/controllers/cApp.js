@@ -45,7 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import * as React from 'react';
 import { Page, loadAppUsqs, nav, meInFrame, Controller, VPage, resLang } from 'tonva-tools';
-import { List, LMR } from 'tonva-react-form';
+import { List, LMR, FA } from 'tonva-react-form';
 import { CUsq } from './usq';
 import { centerApi } from '../centerApi';
 var CApp = /** @class */ (function (_super) {
@@ -154,66 +154,61 @@ var CApp = /** @class */ (function (_super) {
     });
     CApp.prototype.internalStart = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var hash, unit, app, id, _a, err_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var hash, unit, app, id, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        _b.trys.push([0, 13, , 14]);
+                        _a.trys.push([0, 7, , 8]);
                         hash = document.location.hash;
                         if (!hash.startsWith('#tvdebug')) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.showMainPage()];
                     case 1:
-                        _b.sent();
+                        _a.sent();
                         return [2 /*return*/];
                     case 2:
                         this.isProduction = hash.startsWith('#tv');
                         unit = meInFrame.unit;
-                        if (!(this.isProduction === false && (unit === undefined || unit <= 0))) return [3 /*break*/, 11];
+                        if (!(this.isProduction === false && (unit === undefined || unit <= 0))) return [3 /*break*/, 5];
                         return [4 /*yield*/, loadAppUsqs(this.appOwner, this.appName)];
                     case 3:
-                        app = _b.sent();
+                        app = _a.sent();
                         id = app.id;
                         this.id = id;
                         return [4 /*yield*/, this.loadAppUnits()];
                     case 4:
-                        _b.sent();
-                        _a = this.appUnits.length;
-                        switch (_a) {
-                            case 0: return [3 /*break*/, 5];
-                            case 1: return [3 /*break*/, 7];
+                        _a.sent();
+                        switch (this.appUnits.length) {
+                            case 0:
+                                //alert('当前登录的用户不支持当前的APP');
+                                //await nav.logout();
+                                this.showUnsupport();
+                                return [2 /*return*/];
+                            case 1:
+                                unit = this.appUnits[0].id;
+                                if (unit === undefined || unit < 0) {
+                                    //alert('当前unit不支持app操作，请重新登录');
+                                    //await nav.logout();
+                                    this.showUnsupport();
+                                    return [2 /*return*/];
+                                }
+                                meInFrame.unit = unit;
+                                break;
+                            default:
+                                nav.clear();
+                                nav.push(React.createElement(this.selectUnitPage, null));
+                                return [2 /*return*/];
                         }
-                        return [3 /*break*/, 10];
-                    case 5:
-                        alert('当前登录的用户不支持当前的APP');
-                        return [4 /*yield*/, nav.logout()];
+                        _a.label = 5;
+                    case 5: return [4 /*yield*/, this.showMainPage()];
                     case 6:
-                        _b.sent();
-                        return [2 /*return*/];
+                        _a.sent();
+                        return [3 /*break*/, 8];
                     case 7:
-                        unit = this.appUnits[0].id;
-                        if (!(unit === undefined || unit < 0)) return [3 /*break*/, 9];
-                        alert('当前unit不支持app操作，请重新登录');
-                        return [4 /*yield*/, nav.logout()];
-                    case 8:
-                        _b.sent();
-                        return [2 /*return*/];
-                    case 9:
-                        meInFrame.unit = unit;
-                        return [3 /*break*/, 11];
-                    case 10:
-                        nav.clear();
-                        nav.push(React.createElement(this.selectUnitPage, null));
-                        return [2 /*return*/];
-                    case 11: return [4 /*yield*/, this.showMainPage()];
-                    case 12:
-                        _b.sent();
-                        return [3 /*break*/, 14];
-                    case 13:
-                        err_1 = _b.sent();
+                        err_1 = _a.sent();
                         nav.push(React.createElement(Page, { header: "App start error!" },
                             React.createElement("pre", null, typeof err_1 === 'string' ? err_1 : err_1.message)));
-                        return [3 /*break*/, 14];
-                    case 14: return [2 /*return*/];
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/];
                 }
             });
         });
@@ -222,6 +217,21 @@ var CApp = /** @class */ (function (_super) {
     // 如果非独立app，则不删
     CApp.prototype.clearPrevPages = function () {
         nav.clear();
+    };
+    CApp.prototype.showUnsupport = function () {
+        this.clearPrevPages();
+        this.openPage(React.createElement(Page, { header: "APP\u65E0\u6CD5\u8FD0\u884C", logout: true },
+            React.createElement("div", { className: "m-3 text-danger container" },
+                React.createElement("div", { className: "form-group row" },
+                    React.createElement("div", { className: "col-2" },
+                        React.createElement(FA, { name: "exclamation-triangle" })),
+                    React.createElement("div", { className: "col" }, "\u7528\u6237\u4E0D\u652F\u6301APP")),
+                React.createElement("div", { className: "form-group row" },
+                    React.createElement("div", { className: "col-2" }, "\u7528\u6237: "),
+                    React.createElement("div", { className: "col" }, "" + nav.user.name)),
+                React.createElement("div", { className: "form-group row" },
+                    React.createElement("div", { className: "col-2" }, "App:"),
+                    React.createElement("div", { className: "col" }, this.appOwner + "/" + this.appName)))));
     };
     CApp.prototype.showMainPage = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -293,7 +303,16 @@ var VAppMain = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.appPage = function () {
             var _a = _this.controller, caption = _a.caption, cUsqArr = _a.cUsqArr;
-            return React.createElement(Page, { header: caption, logout: function () { meInFrame.unit = undefined; } }, cUsqArr.map(function (v, i) { return React.createElement("div", { key: i }, v.render()); }));
+            var content;
+            if (cUsqArr.length === 0) {
+                content = React.createElement("div", { className: "text-danger" },
+                    React.createElement(FA, { name: "" }),
+                    " \u6B64APP\u6CA1\u6709\u7ED1\u5B9A\u4EFB\u4F55\u7684USQ");
+            }
+            else {
+                content = cUsqArr.map(function (v, i) { return React.createElement("div", { key: i }, v.render()); });
+            }
+            return React.createElement(Page, { header: caption, logout: function () { meInFrame.unit = undefined; } }, content);
         };
         return _this;
     }
