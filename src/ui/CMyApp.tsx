@@ -4,8 +4,9 @@ import { VPage, Page } from "tonva-tools";
 
 export class CMyApp extends CApp {
     async start(param?:any) {
-        let cProduct = new CProduct(undefined, undefined);
-        await cProduct.start();
+        await super.start(param);
+        //let cProduct = new CProduct(undefined, undefined);
+        //await cProduct.start();
     }
 }
 
