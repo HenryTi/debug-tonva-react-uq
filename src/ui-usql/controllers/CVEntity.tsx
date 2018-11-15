@@ -6,14 +6,7 @@ import { VForm, FieldInputs, FieldCall, FormOptions, FormMode } from './form';
 import { CQuerySelect } from './query';
 import { FormUI, FieldTuidUI } from './formUI';
 import { entityIcons } from './icons';
-
-export abstract class ControllerUsq extends Controller{
-    constructor(cUsq: CUsq, res:any) {
-        super(res);
-        this.cUsq = cUsq;
-    }
-    cUsq: CUsq;
-}
+import { ControllerUsq } from './ControllerUsq';
 
 export interface EntityUI {
     form?: FormUI;
