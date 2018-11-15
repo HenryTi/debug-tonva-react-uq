@@ -44,7 +44,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { observable } from "mobx";
-import { CEntity } from "../VM";
+import { CEntity } from "../CVEntity";
 import { VSheetMain } from "./vMain";
 import { VSheetNew } from "./vNew";
 import { VSheetEdit } from "./vEdit";

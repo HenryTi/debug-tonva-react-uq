@@ -1,3 +1,4 @@
 import React from 'react';
-export var DefaultRow = function (values) { return React.createElement("div", { className: "px-3 py-2" }, JSON.stringify(values)); };
+import { jsonStringify } from '../../tools';
+export var DefaultRow = function (values) { return React.createElement("div", { className: "px-3 py-2" }, jsonStringify(values)); };
 //# sourceMappingURL=defaultRow.js.map

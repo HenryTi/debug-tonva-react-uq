@@ -52,7 +52,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { Page } from 'tonva-tools';
-import { VEntity } from '../VM';
+import { VEntity } from '../CVEntity';
 import { SearchBox, List } from 'tonva-react-form';
 import React from 'react';
 import { RowContent } from '../form/viewModel';

@@ -45,7 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import * as React from 'react';
 import { Page } from 'tonva-tools';
-import { VEntity } from '../VM';
+import { VEntity } from '../CVEntity';
 var VSheetSchema = /** @class */ (function (_super) {
     __extends(VSheetSchema, _super);
     function VSheetSchema() {

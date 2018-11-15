@@ -4,8 +4,11 @@ import {AppUI, CApp} from '../ui-usql';
 import $unitx from './$unitx';
 import devApp from './devApp';
 import jkOrder from './jkOrder';
+import cart from './cart';
 import res from './res';
 import { FA } from 'tonva-react-form';
+import CardText from 'reactstrap/lib/CardText';
+import { CMyApp } from './CMyApp';
 
 class VAppMain extends VPage<CApp> {
     async showEntry(param?:any) {
@@ -31,6 +34,7 @@ class VAppMain extends VPage<CApp> {
 }
 
 const ui:AppUI = {
+    CApp: CMyApp,
     //App: App,
     //"DevApp/devappApi": DevApp_devappApi,
     res: res,
@@ -39,6 +43,7 @@ const ui:AppUI = {
         "$$$/$unitx": $unitx,
         "DevApp/devappApi": devApp,
         "JKDev/jkOrder": jkOrder,
+        "百灵威系统工程部/cart": cart,
     }
 };
 

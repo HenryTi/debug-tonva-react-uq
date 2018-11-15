@@ -64,7 +64,7 @@ export function startApp(appName, ui) {
             switch (_a.label) {
                 case 0:
                     convertUIKeyToLowercase(ui);
-                    cApp = new CApp(appName, ui || { usqs: {} });
+                    cApp = new (ui && ui.CApp || CApp)(appName, ui || { usqs: {} });
                     return [4 /*yield*/, cApp.start()];
                 case 1:
                     _a.sent();

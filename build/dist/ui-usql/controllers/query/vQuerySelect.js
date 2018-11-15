@@ -54,7 +54,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import * as React from 'react';
 import { SearchBox, List } from 'tonva-react-form';
 import { Page, PageItems } from 'tonva-tools';
-import { VEntity } from '../VM';
+import { VEntity } from '../CVEntity';
 import { DefaultRow } from './defaultRow';
 var VQuerySelect = /** @class */ (function (_super) {
     __extends(VQuerySelect, _super);

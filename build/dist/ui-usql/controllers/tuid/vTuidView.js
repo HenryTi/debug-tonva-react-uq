@@ -47,7 +47,8 @@ import * as React from 'react';
 import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page } from 'tonva-tools';
-import { VEntity } from '../VM';
+import { jsonStringify } from '../../tools';
+import { VEntity } from '../CVEntity';
 var VTuidView = /** @class */ (function (_super) {
     __extends(VTuidView, _super);
     function VTuidView() {
@@ -73,7 +74,7 @@ var VTuidView = /** @class */ (function (_super) {
                     case 1:
                         ret = _a.sent();
                         if (ret) {
-                            alert('这里还要判断返回值，先不处理了 \n' + JSON.stringify(ret));
+                            alert('这里还要判断返回值，先不处理了 \n' + jsonStringify(ret));
                         }
                         this.openPage(function () { return React.createElement(Page, { header: _this.label + '提交成功', back: "none" },
                             React.createElement("div", { className: 'm-3' },

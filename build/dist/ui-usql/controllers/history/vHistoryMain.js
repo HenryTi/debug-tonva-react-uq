@@ -45,7 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import * as React from 'react';
 import { Page } from 'tonva-tools';
-import { VEntity } from '../VM';
+import { VEntity } from '../CVEntity';
 var VHistoryMain = /** @class */ (function (_super) {
     __extends(VHistoryMain, _super);
     function VHistoryMain() {

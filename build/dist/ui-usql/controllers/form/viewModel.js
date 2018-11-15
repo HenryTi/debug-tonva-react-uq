@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { jsonStringify } from '../../tools';
 var ViewModel = /** @class */ (function () {
     function ViewModel() {
     }
@@ -13,7 +14,7 @@ var ViewModel = /** @class */ (function () {
 export { ViewModel };
 export var PureJSONContent = function (values, x) { return React.createElement(React.Fragment, null,
     "content: ",
-    JSON.stringify(values)); };
+    jsonStringify(values)); };
 export var JSONContent = observer(PureJSONContent);
-export var RowContent = function (values) { return React.createElement("div", { className: "px-3 py-2" }, JSON.stringify(values)); };
+export var RowContent = function (values) { return React.createElement("div", { className: "px-3 py-2" }, jsonStringify(values)); };
 //# sourceMappingURL=viewModel.js.map

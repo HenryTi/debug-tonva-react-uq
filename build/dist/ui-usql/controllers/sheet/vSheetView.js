@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import * as React from 'react';
 import { List, Muted, LMR, EasyDate, FA } from 'tonva-react-form';
-import { VEntity } from '../VM';
+import { VEntity } from '../CVEntity';
 var leftFlowStyle = { width: '8rem' };
 var VSheetView = /** @class */ (function (_super) {
     __extends(VSheetView, _super);

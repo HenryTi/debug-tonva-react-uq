@@ -44,7 +44,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import * as React from 'react';
-import { VEntity } from "../VM";
+import { VEntity } from "../CVEntity";
 import { Page } from "tonva-tools";
 var VInputValues = /** @class */ (function (_super) {
     __extends(VInputValues, _super);

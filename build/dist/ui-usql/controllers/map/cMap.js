@@ -44,7 +44,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import _ from 'lodash';
-import { CEntity } from "../VM";
+import { CEntity } from "../CVEntity";
 import { VMapMain } from "./vMain";
 import { observable } from "mobx";
 import { PureJSONContent } from '../form/viewModel';

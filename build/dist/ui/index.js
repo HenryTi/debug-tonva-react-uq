@@ -48,8 +48,10 @@ import { VPage, Page, meInFrame } from 'tonva-tools';
 import $unitx from './$unitx';
 import devApp from './devApp';
 import jkOrder from './jkOrder';
+import cart from './cart';
 import res from './res';
 import { FA } from 'tonva-react-form';
+import { CMyApp } from './CMyApp';
 var VAppMain = /** @class */ (function (_super) {
     __extends(VAppMain, _super);
     function VAppMain() {
@@ -82,6 +84,7 @@ var VAppMain = /** @class */ (function (_super) {
     return VAppMain;
 }(VPage));
 var ui = {
+    CApp: CMyApp,
     //App: App,
     //"DevApp/devappApi": DevApp_devappApi,
     res: res,
@@ -90,6 +93,7 @@ var ui = {
         "$$$/$unitx": $unitx,
         "DevApp/devappApi": devApp,
         "JKDev/jkOrder": jkOrder,
+        "百灵威系统工程部/cart": cart,
     }
 };
 //convertUIKeyToLowercase(ui);

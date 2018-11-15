@@ -54,7 +54,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { List, Muted, LMR, EasyDate } from 'tonva-react-form';
-import { VEntity } from '../VM';
+import { VEntity } from '../CVEntity';
 var VSheetList = /** @class */ (function (_super) {
     __extends(VSheetList, _super);
     function VSheetList() {

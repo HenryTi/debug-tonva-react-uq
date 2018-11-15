@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { List, LMR, EasyDate, Muted } from 'tonva-react-form';
-import { VEntity } from '../VM';
+import { VEntity } from '../CVEntity';
 var VArchives = /** @class */ (function (_super) {
     __extends(VArchives, _super);
     function VArchives() {

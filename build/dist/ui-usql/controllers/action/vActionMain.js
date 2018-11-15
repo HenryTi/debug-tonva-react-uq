@@ -45,7 +45,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import * as React from 'react';
 import { Page } from 'tonva-tools';
-import { VEntity } from '../VM';
+import { jsonStringify } from '../../tools';
+import { VEntity } from '../CVEntity';
 var VActionMain = /** @class */ (function (_super) {
     __extends(VActionMain, _super);
     function VActionMain() {
@@ -74,7 +75,7 @@ var VActionMain = /** @class */ (function (_super) {
             var label = _this.controller.label;
             return React.createElement(Page, { header: label, back: "close" },
                 "\u5B8C\u6210\uFF01",
-                React.createElement("pre", null, JSON.stringify(_this.returns, undefined, ' ')));
+                React.createElement("pre", null, jsonStringify(_this.returns)));
         };
         return _this;
     }
