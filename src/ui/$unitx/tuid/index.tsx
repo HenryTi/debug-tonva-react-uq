@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Muted } from 'tonva-react-form';
-import { TuidUI } from '../../../ui-usql';
+import { TuidUI } from 'tonva-react-usql';
 
 const organization:TuidUI = {
     divs: {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TuidUI } from '../../../ui-usql';
+import { TuidUI } from 'tonva-react-usql';
 
 export default {
     customer: {

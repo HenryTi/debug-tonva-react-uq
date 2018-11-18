@@ -1,5 +1,5 @@
 import React from 'react';
-import { QueryUI, PureJSONContent } from "../../../ui-usql";
+import { QueryUI, PureJSONContent } from "tonva-react-usql";
 import { observer } from 'mobx-react';
 
 const ui:QueryUI = {

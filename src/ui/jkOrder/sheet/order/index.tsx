@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SheetUI } from '../../../../ui-usql';
+import { SheetUI } from 'tonva-react-usql';
 import { VSheetNew } from './vNew';
 import { observer } from 'mobx-react';
 

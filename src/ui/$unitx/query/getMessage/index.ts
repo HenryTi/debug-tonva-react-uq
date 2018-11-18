@@ -1,4 +1,4 @@
-import { QueryUI } from "../../../../ui-usql";
+import { QueryUI } from "tonva-react-usql";
 import { VMain } from "./cGetMessge";
 
 const ui:QueryUI = {

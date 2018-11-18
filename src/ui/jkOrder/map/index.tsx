@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MapUI } from "../../../ui-usql";
+import { MapUI } from "tonva-react-usql";
 import { Muted } from 'tonva-react-form';
 
 const priceUI:MapUI = {

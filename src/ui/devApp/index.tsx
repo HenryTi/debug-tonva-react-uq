@@ -1,4 +1,4 @@
-import { UsqUI } from '../../ui-usql';
+import { UsqUI } from 'tonva-react-usql';
 import tuid from './tuid';
 import sheet from './sheet';
 //import map from './map';

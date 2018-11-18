@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { TuidUI } from '../../../ui-usql';
+import { TuidUI } from 'tonva-react-usql';
 import { observer } from 'mobx-react';
 import { LMR, Muted } from 'tonva-react-form';
-import { FieldTuidUI } from '../../../ui-usql/controllers/formUI';
+import { FieldTuidUI } from 'tonva-react-usql/controllers/formUI';
 
 const customer:TuidUI = {
     inputContent: (values) => {

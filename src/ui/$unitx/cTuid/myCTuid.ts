@@ -1,4 +1,4 @@
-import { CTuidMain, VTuidMain, Field, FieldCall, VForm, TuidMain, FieldTuidUI } from "../../../ui-usql";
+import { CTuidMain, VTuidMain, Field, FieldCall, VForm, TuidMain, FieldTuidUI } from "tonva-react-usql";
 import { MyVTuidMain } from "./vTuidMain";
 
 export class MyCTuid extends CTuidMain {

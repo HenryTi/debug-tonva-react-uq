@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { FA, List } from 'tonva-react-form';
-import { Sheet, VForm, VEntity, SheetUI, TuidMain, CSheet, CTuidSelect, Map } from '../../../../ui-usql';
-//import { dictionary as x } from '../../res';
-//import { CMyOrder, ProductRow } from './index';
-//import { VProductPage } from './productPage';
+import { Sheet, VForm, VEntity, SheetUI, TuidMain, CSheet, CTuidSelect, Map } from 'tonva-react-usql';
 
 interface PackRow {
     pack: number;
@@ -25,7 +22,6 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
     private cCustomerSelect: CTuidSelect;
     private cProductSelect: CTuidSelect;
     private mapPrice: Map;
-    //private vSheetNew: VSheetNew;
 
     async showEntry(param?:any) {
         //this.controller.vSheetNew = this;
@@ -78,9 +74,7 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
     }
 
     private async getPrices(productId:number):Promise<any[]> {
-        await this.mapPrice.loadSchema();
-        let {queries} = this.mapPrice;
-        let ret = await queries.page.page({_product: productId}, 0, 1000);
+        let ret = await this.mapPrice.page({_product: productId}, 0, 1000);
         return ret;
     }
 

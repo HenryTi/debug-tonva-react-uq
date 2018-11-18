@@ -1,6 +1,6 @@
 import React from 'react';
 import { VPage, Page, meInFrame } from 'tonva-tools';
-import {AppUI, CApp} from '../ui-usql';
+import {AppUI, CApp} from 'tonva-react-usql';
 import $unitx from './$unitx';
 import devApp from './devApp';
 import jkOrder from './jkOrder';
