@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CApp, ControllerUsq } from "src/ui-usql";
+import { CApp, ControllerUsq } from "tonva-react-usql";
 import { VPage, Page } from "tonva-tools";
 
 export class CMyApp extends CApp {
