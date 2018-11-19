@@ -1,7 +1,7 @@
-var orderUI = {
+const orderUI = {
     form: {
         items: {
-            sumAmount: function () {
+            sumAmount: () => {
                 return 1;
             },
             articles: {

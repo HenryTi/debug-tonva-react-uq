@@ -3,56 +3,52 @@ import { VSubmit } from "./vSubmit";
 import { buildVField, VComputeField } from "./vField";
 import { VArr } from "./vArr";
 import { VTuidField } from "./vField/vTuidField";
-var BandsBuilder = /** @class */ (function () {
-    function BandsBuilder(vForm, options, onSubmit) {
+export class BandsBuilder {
+    constructor(vForm, options, onSubmit) {
         this.vForm = vForm;
         this.onSubmit = onSubmit;
-        var fields = options.fields, arrs = options.arrs, ui = options.ui, res = options.res;
+        let { fields, arrs, ui, res } = options;
         this.fields = fields;
         this.arrs = arrs;
         if (ui !== undefined) {
-            var items = ui.items, layout = ui.layout;
+            let { items, layout } = ui;
             this.formItems = items;
             this.layout = layout;
         }
         this.res = res;
     }
-    BandsBuilder.prototype.build = function () {
+    build() {
         //return this.bandUIs === undefined? this.bandsOnFly() : this.bandsFromUI();
         return this.layout === undefined ? this.bandsOnFly() : this.bandsFromLayout();
-    };
-    BandsBuilder.prototype.resFromName = function (name, res) {
+    }
+    resFromName(name, res) {
         if (res === undefined)
             return;
-        var fields = res.fields;
+        let { fields } = res;
         if (fields === undefined)
             return;
         return fields[name] || name;
-    };
-    BandsBuilder.prototype.bandsOnFly = function () {
-        var bands = [];
+    }
+    bandsOnFly() {
+        let bands = [];
         this.bandsFromFields(bands, this.fields, this.res);
         if (this.arrs !== undefined) {
-            for (var _i = 0, _a = this.arrs; _i < _a.length; _i++) {
-                var arr = _a[_i];
+            for (let arr of this.arrs)
                 bands.push(this.bandFromArr(arr));
-            }
         }
         if (this.onSubmit !== undefined) {
             bands.push(new VSubmitBand(new VSubmit(this.vForm)));
         }
         return bands;
-    };
-    BandsBuilder.prototype.bandsFromFields = function (bands, fields, res) {
+    }
+    bandsFromFields(bands, fields, res) {
         if (fields === undefined)
             return;
-        for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
-            var field = fields_1[_i];
+        for (let field of fields)
             bands.push(this.bandFromField(field, res));
-        }
-    };
-    BandsBuilder.prototype.bandsFromLayout = function () {
-        var bands = [];
+    }
+    bandsFromLayout() {
+        let bands = [];
         /*
         for (let bandUI of this.bandUIs)  {
             let band = this.bandFromUI(bandUI);
@@ -60,7 +56,7 @@ var BandsBuilder = /** @class */ (function () {
         }
         */
         return bands;
-    };
+    }
     /*
     private bandFromUI(bandUI:BandUI):VBand {
         let {band} = bandUI;
@@ -106,11 +102,11 @@ var BandsBuilder = /** @class */ (function () {
             return new VTuidField(field, fieldUI, fieldRes, this.vForm);
         }
     */
-    BandsBuilder.prototype.bandFromField = function (field, res) {
-        var name = field.name;
-        var fieldRes;
-        var rfn = this.resFromName(name, res);
-        var label;
+    bandFromField(field, res) {
+        let { name } = field;
+        let fieldRes;
+        let rfn = this.resFromName(name, res);
+        let label;
         if (typeof rfn === 'object') {
             label = rfn.label;
             fieldRes = rfn;
@@ -119,8 +115,8 @@ var BandsBuilder = /** @class */ (function () {
             label = rfn;
             fieldRes = undefined;
         }
-        var vField;
-        var formItem;
+        let vField;
+        let formItem;
         if (this.formItems !== undefined)
             formItem = this.formItems[name];
         //let vField = this.vFieldFromField(field, fieldRes as FieldRes, formItem);
@@ -135,16 +131,14 @@ var BandsBuilder = /** @class */ (function () {
             vField = new VTuidField(this.vForm, field, formItem, fieldRes);
         }
         return new VFieldBand(label || name, vField);
-    };
-    BandsBuilder.prototype.bandFromArr = function (arr) {
-        var name = arr.name, fields = arr.fields;
+    }
+    bandFromArr(arr) {
+        let { name, fields } = arr;
         //let row = JSONContent;
         //let bands:VBand[] = [];
         //this.bandsFromFields(bands, fields, res);
-        var vArr = new VArr(this.vForm, arr); // name, res && res.label || name, row, bands);
+        let vArr = new VArr(this.vForm, arr); // name, res && res.label || name, row, bands);
         return new VArrBand(name, vArr);
-    };
-    return BandsBuilder;
-}());
-export { BandsBuilder };
+    }
+}
 //# sourceMappingURL=bandsBuilder.js.map

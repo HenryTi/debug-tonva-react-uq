@@ -1,48 +1,68 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import { Entity } from './entity';
-var Map = /** @class */ (function (_super) {
-    __extends(Map, _super);
-    function Map() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.actions = {};
-        _this.queries = {};
-        return _this;
-    }
-    Object.defineProperty(Map.prototype, "typeName", {
-        get: function () { return 'map'; },
-        enumerable: true,
-        configurable: true
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-    Map.prototype.setSchema = function (schema) {
-        _super.prototype.setSchema.call(this, schema);
-        var actions = schema.actions, queries = schema.queries, keys = schema.keys;
+};
+import { Entity } from './entity';
+export class Map extends Entity {
+    constructor() {
+        super(...arguments);
+        this.actions = {};
+        this.queries = {};
+    }
+    get typeName() { return 'map'; }
+    setSchema(schema) {
+        super.setSchema(schema);
+        let { actions, queries, keys } = schema;
         this.entities.buildFieldTuid(this.keys = keys);
         //let t = this.schemaStringify();
-        for (var i in actions) {
-            var schema_1 = actions[i];
-            var name_1 = schema_1.name;
-            var action = this.entities.newAction(name_1, undefined);
-            action.setSchema(schema_1);
+        for (let i in actions) {
+            let schema = actions[i];
+            let { name } = schema;
+            let action = this.entities.newAction(name, undefined);
+            action.setSchema(schema);
             this.actions[i] = action;
         }
-        for (var i in queries) {
-            var schema_2 = queries[i];
-            var name_2 = schema_2.name;
-            var query = this.entities.newQuery(name_2, undefined);
-            query.setSchema(schema_2);
+        for (let i in queries) {
+            let schema = queries[i];
+            let { name } = schema;
+            let query = this.entities.newQuery(name, undefined);
+            query.setSchema(schema);
             this.queries[i] = query;
         }
-    };
-    return Map;
-}(Entity));
-export { Map };
+    }
+    add(param) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadSchema();
+            return yield this.actions.add.submit(param);
+        });
+    }
+    del(param) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadSchema();
+            return yield this.actions.del.submit(param);
+        });
+    }
+    all() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadSchema();
+            return yield this.queries.all.query({});
+        });
+    }
+    page(param, pageStart, pageSize) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadSchema();
+            return yield this.queries.page.page(param, pageStart, pageSize);
+        });
+    }
+    query(param) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadSchema();
+            return yield this.queries.query.query(param);
+        });
+    }
+}
 //# sourceMappingURL=map.js.map

@@ -1,13 +1,3 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,107 +12,76 @@ import { FA } from 'tonva-react-form';
 import { ViewModel } from "../viewModel";
 import { FormMode } from '../vForm';
 import { RuleRequired, RuleInt, RuleNum, RuleMin, RuleMax } from '../rule';
-var VField = /** @class */ (function (_super) {
-    __extends(VField, _super);
-    function VField(form, field, fieldUI, fieldRes) {
-        var _this = _super.call(this) || this;
-        _this.form = form;
-        _this.field = field;
-        _this.name = field.name;
-        _this.fieldUI = fieldUI || {};
-        _this.fieldRes = fieldRes || {};
-        _this.init();
-        return _this;
+export class VField extends ViewModel {
+    constructor(form, field, fieldUI, fieldRes) {
+        super();
+        this.form = form;
+        this.field = field;
+        this.name = field.name;
+        this.fieldUI = fieldUI || {};
+        this.fieldRes = fieldRes || {};
+        this.init();
     }
-    VField.prototype.init = function () {
+    init() {
         this.buildRules();
-    };
-    VField.prototype.buildRules = function () {
+    }
+    buildRules() {
         this.rules = [];
-        var required = this.fieldUI.required;
+        let { required } = this.fieldUI;
         if (required === true || this.field !== undefined && this.field.null === false) {
             this.rules.push(new RuleRequired);
         }
-    };
-    Object.defineProperty(VField.prototype, "checkRules", {
-        get: function () {
-            var defy = [];
-            for (var _i = 0, _a = this.rules; _i < _a.length; _i++) {
-                var r = _a[_i];
-                r.check(defy, this.value);
-            }
-            return defy;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(VField.prototype, "isOk", {
-        get: function () {
-            if (this.rules.length === 0)
-                return true;
-            var defy = this.checkRules;
-            return defy.length === 0;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(VField.prototype, "value", {
-        get: function () { return this.form.values[this.name]; },
-        enumerable: true,
-        configurable: true
-    });
-    VField.prototype.setValue = function (v) {
+    }
+    get checkRules() {
+        let defy = [];
+        for (let r of this.rules)
+            r.check(defy, this.value);
+        return defy;
+    }
+    get isOk() {
+        if (this.rules.length === 0)
+            return true;
+        let defy = this.checkRules;
+        return defy.length === 0;
+    }
+    get value() { return this.form.values[this.name]; }
+    setValue(v) {
         this.form.values[this.name] = v;
-    };
-    Object.defineProperty(VField.prototype, "error", {
-        get: function () { return this.form.errors[this.name]; },
-        set: function (err) { this.form.errors[this.name] = err; },
-        enumerable: true,
-        configurable: true
-    });
-    VField.prototype.parse = function (str) { return str; };
-    Object.defineProperty(VField.prototype, "readonly", {
-        get: function () {
-            var mode = this.form.mode;
-            return mode === FormMode.readonly ||
-                mode === FormMode.edit && this.fieldUI.editable === false;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    __decorate([
-        computed
-    ], VField.prototype, "checkRules", null);
-    __decorate([
-        computed
-    ], VField.prototype, "isOk", null);
-    __decorate([
-        computed
-    ], VField.prototype, "value", null);
-    return VField;
-}(ViewModel));
-export { VField };
-var VUnknownField = /** @class */ (function (_super) {
-    __extends(VUnknownField, _super);
-    function VUnknownField() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.view = function () {
+    }
+    get error() { return this.form.errors[this.name]; }
+    set error(err) { this.form.errors[this.name] = err; }
+    parse(str) { return str; }
+    get readonly() {
+        let { mode } = this.form;
+        return mode === FormMode.readonly ||
+            mode === FormMode.edit && this.fieldUI.editable === false;
+    }
+}
+__decorate([
+    computed
+], VField.prototype, "checkRules", null);
+__decorate([
+    computed
+], VField.prototype, "isOk", null);
+__decorate([
+    computed
+], VField.prototype, "value", null);
+export class VUnknownField extends VField {
+    constructor() {
+        super(...arguments);
+        this.view = () => {
             //let {name, type} = this.fieldUI;
-            var type = '', name = '';
+            let type = '', name = '';
             return React.createElement("input", { type: "text", className: "form-control form-control-plaintext border border-info rounded bg-light", placeholder: 'unkown control: ' + type + '-' + name });
         };
-        return _this;
     }
-    return VUnknownField;
-}(VField));
-export { VUnknownField };
-var VInputControl = /** @class */ (function (_super) {
-    __extends(VInputControl, _super);
-    function VInputControl() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.renderError = function (className) {
-            var errors = _this.form.errors;
-            var error = errors[_this.name];
+}
+export class VInputControl extends VField {
+    constructor() {
+        super(...arguments);
+        this.renderError = (className) => {
+            let { errors } = this.form;
+            let error = errors[this.name];
             if (error === undefined)
                 return;
             return React.createElement("div", { className: className },
@@ -130,44 +89,44 @@ var VInputControl = /** @class */ (function (_super) {
                 " ",
                 error);
         };
-        _this.ref = function (input) {
-            _this.input = input;
-            _this.setInputValue();
+        this.ref = (input) => {
+            this.input = input;
+            this.setInputValue();
         };
-        _this.onFocus = function () {
-            _this.error = undefined;
+        this.onFocus = () => {
+            this.error = undefined;
         };
-        _this.onBlur = function () {
-            var defy = _this.checkRules;
+        this.onBlur = () => {
+            let defy = this.checkRules;
             if (defy.length > 0) {
-                _this.error = defy[0];
+                this.error = defy[0];
             }
-            _this.form.computeFields();
+            this.form.computeFields();
         };
-        _this.onChange = function (evt) {
-            var v = _this.parse(evt.currentTarget.value);
+        this.onChange = (evt) => {
+            let v = this.parse(evt.currentTarget.value);
             if (v === null) {
                 return;
             }
-            _this.setValue(v);
+            this.setValue(v);
         };
-        _this.view = observer(function () {
-            var required = _this.fieldUI.required;
-            var _a = _this.fieldRes, placeHolder = _a.placeHolder, suffix = _a.suffix;
-            var ctrlCN = ['form-control', 'form-control-input'];
-            var errCN = 'text-danger small mt-1 mx-2';
-            var redDot;
-            var input;
-            if (_this.readonly === true) {
-                input = React.createElement("input", { className: classNames(ctrlCN, 'bg-light'), ref: _this.ref, type: _this.inputType, readOnly: true });
+        this.view = observer(() => {
+            let { required } = this.fieldUI;
+            let { placeHolder, suffix } = this.fieldRes;
+            let ctrlCN = ['form-control', 'form-control-input'];
+            let errCN = 'text-danger small mt-1 mx-2';
+            let redDot;
+            let input;
+            if (this.readonly === true) {
+                input = React.createElement("input", { className: classNames(ctrlCN, 'bg-light'), ref: this.ref, type: this.inputType, readOnly: true });
             }
             else {
-                input = React.createElement("input", { className: classNames(ctrlCN), ref: _this.ref, type: _this.inputType, onFocus: _this.onFocus, onBlur: _this.onBlur, onChange: _this.onChange, placeholder: placeHolder, readOnly: false, maxLength: _this.maxLength, onKeyPress: _this.onKeyPress });
-                if (required === true || _this.field.null === false) {
+                input = React.createElement("input", { className: classNames(ctrlCN), ref: this.ref, type: this.inputType, onFocus: this.onFocus, onBlur: this.onBlur, onChange: this.onChange, placeholder: placeHolder, readOnly: false, maxLength: this.maxLength, onKeyPress: this.onKeyPress });
+                if (required === true || this.field.null === false) {
                     redDot = React.createElement(RedMark, null);
                 }
             }
-            var inputGroup;
+            let inputGroup;
             if (suffix === undefined)
                 inputGroup = input;
             else
@@ -178,67 +137,51 @@ var VInputControl = /** @class */ (function (_super) {
             return React.createElement(React.Fragment, null,
                 redDot,
                 inputGroup,
-                _this.renderError(errCN));
+                this.renderError(errCN));
         });
-        return _this;
     }
-    Object.defineProperty(VInputControl.prototype, "maxLength", {
-        get: function () { return; },
-        enumerable: true,
-        configurable: true
-    });
+    get maxLength() { return; }
     /*
     get value() {
         return super.value;
     }*/
-    VInputControl.prototype.setValue = function (v) {
-        _super.prototype.setValue.call(this, v);
+    setValue(v) {
+        super.setValue(v);
         this.setInputValue();
-    };
-    VInputControl.prototype.setInputValue = function () {
+    }
+    setInputValue() {
         if (!this.input)
             return;
-        var v = this.value;
+        let v = this.value;
         this.input.value = v === null || v === undefined ? '' : v;
-    };
-    return VInputControl;
-}(VField));
-export { VInputControl };
-export var RedMark = function () { return React.createElement("b", { style: { color: 'red', position: 'absolute', left: '0.1em', top: '0.5em' } }, "*"); };
-var VStringField = /** @class */ (function (_super) {
-    __extends(VStringField, _super);
-    function VStringField() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.inputType = 'text';
-        return _this;
     }
-    Object.defineProperty(VStringField.prototype, "maxLength", {
-        get: function () { return this.field.size; },
-        enumerable: true,
-        configurable: true
-    });
-    return VStringField;
-}(VInputControl));
-export { VStringField };
-var KeyCode_Neg = 45;
-var KeyCode_Dot = 46;
-var VNumberControl = /** @class */ (function (_super) {
-    __extends(VNumberControl, _super);
-    function VNumberControl() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.inputType = 'number';
-        _this.onKeyPress = function (event) {
-            var ch = event.charCode;
+}
+export const RedMark = () => React.createElement("b", { style: { color: 'red', position: 'absolute', left: '0.1em', top: '0.5em' } }, "*");
+export class VStringField extends VInputControl {
+    constructor() {
+        super(...arguments);
+        this.inputType = 'text';
+    }
+    get maxLength() { return this.field.size; }
+}
+const KeyCode_Neg = 45;
+const KeyCode_Dot = 46;
+export class VNumberControl extends VInputControl {
+    constructor() {
+        super(...arguments);
+        this.inputType = 'number';
+        this.onKeyPress = (event) => {
+            let ch = event.charCode;
             if (ch === 8 || ch === 0 || ch === 13 || ch >= 48 && ch <= 57)
                 return;
-            if (_this.extraChars !== undefined) {
-                if (_this.extraChars.indexOf(ch) >= 0) {
+            if (this.extraChars !== undefined) {
+                if (this.extraChars.indexOf(ch) >= 0) {
                     switch (ch) {
                         case KeyCode_Dot:
-                            _this.onKeyDot();
+                            this.onKeyDot();
                             break;
                         case KeyCode_Neg:
-                            _this.onKeyNeg();
+                            this.onKeyNeg();
                             event.preventDefault();
                             break;
                     }
@@ -247,13 +190,12 @@ var VNumberControl = /** @class */ (function (_super) {
             }
             event.preventDefault();
         };
-        return _this;
     }
-    VNumberControl.prototype.init = function () {
-        _super.prototype.init.call(this);
+    init() {
+        super.init();
         this.extraChars = [];
         if (this.fieldUI !== undefined) {
-            var _a = this.fieldUI, min = _a.min, max = _a.max;
+            let { min, max } = this.fieldUI;
             if (min !== undefined) {
                 //this.rules.push((v:number) => {if (v === undefined) return; if (v<min) return ErrMin + min; return true;});
                 if (min < 0)
@@ -275,87 +217,61 @@ var VNumberControl = /** @class */ (function (_super) {
                 this.extraChars.push(KeyCode_Dot);
                 break;
         }
-    };
-    VNumberControl.prototype.buildRules = function () {
-        _super.prototype.buildRules.call(this);
+    }
+    buildRules() {
+        super.buildRules();
         this.rules.push(new RuleNum);
-        var _a = this.fieldUI, min = _a.min, max = _a.max;
+        let { min, max } = this.fieldUI;
         if (min !== undefined)
             this.rules.push(new RuleMin(min));
         if (max !== undefined)
             this.rules.push(new RuleMax(max));
-    };
-    VNumberControl.prototype.parse = function (text) {
+    }
+    parse(text) {
         try {
             if (text.trim().length === 0)
                 return undefined;
-            var ret = Number(text);
+            let ret = Number(text);
             return (ret === NaN) ? null : ret;
         }
         catch (_a) {
             return null;
         }
-    };
-    VNumberControl.prototype.setInputValue = function () {
+    }
+    setInputValue() {
         if (!this.input)
             return;
-        var v = this.value;
+        let v = this.value;
         if (this.parse(this.input.value) == v)
             return;
         this.input.value = v === null || v === undefined ? '' : v;
-    };
-    VNumberControl.prototype.onKeyDot = function () {
-        var v = this.input.value;
-        var p = v.indexOf('.');
+    }
+    onKeyDot() {
+        let v = this.input.value;
+        let p = v.indexOf('.');
         if (p >= 0)
             this.input.value = v.replace('.', '');
-    };
-    VNumberControl.prototype.onKeyNeg = function () {
-        var v = this.input.value;
-        var p = v.indexOf('-');
+    }
+    onKeyNeg() {
+        let v = this.input.value;
+        let p = v.indexOf('-');
         if (p >= 0)
             v = v.replace('-', '');
         else
             v = '-' + v;
         this.input.value = v;
-    };
-    return VNumberControl;
-}(VInputControl));
-export { VNumberControl };
-var VIntField = /** @class */ (function (_super) {
-    __extends(VIntField, _super);
-    function VIntField() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
-    VIntField.prototype.buildRules = function () {
-        _super.prototype.buildRules.call(this);
+}
+export class VIntField extends VNumberControl {
+    buildRules() {
+        super.buildRules();
         this.rules.push(new RuleInt);
-    };
-    return VIntField;
-}(VNumberControl));
-export { VIntField };
-var VDecField = /** @class */ (function (_super) {
-    __extends(VDecField, _super);
-    function VDecField() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
-    return VDecField;
-}(VNumberControl));
-export { VDecField };
-var VTextField = /** @class */ (function (_super) {
-    __extends(VTextField, _super);
-    function VTextField() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return VTextField;
-}(VStringField));
-export { VTextField };
-var VDateTimeField = /** @class */ (function (_super) {
-    __extends(VDateTimeField, _super);
-    function VDateTimeField() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return VDateTimeField;
-}(VStringField));
-export { VDateTimeField };
+}
+export class VDecField extends VNumberControl {
+}
+export class VTextField extends VStringField {
+}
+export class VDateTimeField extends VStringField {
+}
 //# sourceMappingURL=vField.js.map

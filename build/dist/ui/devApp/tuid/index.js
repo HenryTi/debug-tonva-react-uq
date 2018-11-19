@@ -1,14 +1,14 @@
 import * as React from 'react';
 export default {
     customer: {
-        inputContent: function (values) {
-            var id = values.id, name = values.name, discription = values.discription;
+        inputContent: (values) => {
+            let { id, name, discription } = values;
             return React.createElement(React.Fragment, null, discription || name || 'id ' + id + ' ...');
         }
     },
     article: {
-        inputContent: function (values) {
-            var id = values.id, name = values.name, discription = values.discription, casNO = values.casNO;
+        inputContent: (values) => {
+            let { id, name, discription, casNO } = values;
             if (casNO !== undefined)
                 return React.createElement(React.Fragment, null,
                     "CAS:",

@@ -7,10 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { CApp } from './controllers';
-export * from './entities';
-export * from './controllers';
-export * from './centerApi';
+import { CApp } from "./CApp";
 function convertUIKeyToLowercase(obj) {
     for (let i in obj) {
         let v = obj[i];
@@ -36,4 +33,4 @@ export function startApp(appName, ui) {
         yield cApp.start();
     });
 }
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=startApp.js.map

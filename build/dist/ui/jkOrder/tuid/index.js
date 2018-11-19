@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { LMR, Muted } from 'tonva-react-form';
-var customer = {
-    inputContent: function (values) {
-        var id = values.id, discription = values.discription;
+const customer = {
+    inputContent: (values) => {
+        let { id, discription } = values;
         return React.createElement(React.Fragment, null, discription || 'id ' + id + ' ...');
     },
-    rowContent: function (row) {
-        var discription = row.discription;
-        var right = React.createElement(Muted, null);
+    rowContent: (row) => {
+        let { discription } = row;
+        let right = React.createElement(Muted, null);
         return React.createElement(LMR, { className: "px-3 py-2", left: discription, right: right });
     },
 };
-var productPackRowContent = observer(function (values) {
-    var id = values.id, ratio = values.ratio, name = values.name, $owner = values.$owner;
-    var content, rText = String(ratio);
+const productPackRowContent = observer((values) => {
+    let { id, ratio, name, $owner } = values;
+    let content, rText = String(ratio);
     if ($owner !== undefined) {
-        var packType_1 = $owner.valueFromFieldName('packType');
-        var packName = packType_1.valueFromFieldName ? packType_1.valueFromFieldName('name') : packType_1['name'];
+        let packType = $owner.valueFromFieldName('packType');
+        let packName = packType.valueFromFieldName ? packType.valueFromFieldName('name') : packType['name'];
         if (packName) {
             if (name)
                 content = name + ' = ' + (rText + packName);
@@ -29,14 +29,14 @@ var productPackRowContent = observer(function (values) {
         content = (name ? name + ' ' + rText : rText) + ' err: no $owner in values';
     return React.createElement("div", { className: "px-3 py-2" }, content);
 });
-var product = {
-    inputContent: function (values) {
-        var id = values.id, discription = values.discription;
+const product = {
+    inputContent: (values) => {
+        let { id, discription } = values;
         return React.createElement(React.Fragment, null, discription || 'id ' + id + ' ...');
     },
-    rowContent: observer(function (row) {
-        var discription = row.discription, packType = row.packType;
-        var right;
+    rowContent: observer((row) => {
+        let { discription, packType } = row;
+        let right;
         if (packType && packType.content) {
             right = React.createElement(Muted, null, packType.content());
         }
@@ -44,11 +44,11 @@ var product = {
     }),
     divs: {
         pack: {
-            inputContent: observer(function (values) {
-                var id = values.id, ratio = values.ratio, name = values.name, $owner = values.$owner;
+            inputContent: observer((values) => {
+                let { id, ratio, name, $owner } = values;
                 if ($owner === undefined)
                     return React.createElement(React.Fragment, null, name || ratio || 'id' + id + ' ...');
-                var packType = $owner.valueFromFieldName('packType');
+                let packType = $owner.valueFromFieldName('packType');
                 return React.createElement(React.Fragment, null, name || (ratio + (packType && packType.name)) || 'id' + id + ' ...');
             }),
             rowContent: productPackRowContent,
@@ -65,14 +65,14 @@ var product = {
         }
     }
 };
-var packType = {
-    inputContent: function (values) {
-        var id = values.id, name = values.name, discription = values.discription;
+const packType = {
+    inputContent: (values) => {
+        let { id, name, discription } = values;
         return React.createElement(React.Fragment, null, discription || name || 'id ' + id + ' ...');
     },
-    rowContent: function (row) {
-        var name = row.name, discription = row.discription;
-        var right = React.createElement(Muted, null, discription);
+    rowContent: (row) => {
+        let { name, discription } = row;
+        let right = React.createElement(Muted, null, discription);
         return React.createElement(LMR, { className: "px-3 py-2", left: name, right: right });
     },
 };

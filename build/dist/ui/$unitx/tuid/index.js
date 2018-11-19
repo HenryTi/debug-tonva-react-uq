@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Muted } from 'tonva-react-form';
-var organization = {
+const organization = {
     divs: {
         post: {
-            inputContent: function (values) {
-                var id = values.id, title = values.title;
+            inputContent: (values) => {
+                let { id, title } = values;
                 return React.createElement(React.Fragment, null, title);
             }
         }
@@ -12,8 +12,8 @@ var organization = {
 };
 export default {
     user: {
-        inputContent: function (values) {
-            var id = values.id, name = values.name, nick = values.nick, assigned = values.assigned;
+        inputContent: (values) => {
+            let { id, name, nick, assigned } = values;
             if (assigned !== undefined) {
                 return React.createElement(React.Fragment, null,
                     assigned,
@@ -32,8 +32,8 @@ export default {
         }
     },
     section: {
-        inputContent: function (values) {
-            var id = values.id, name = values.name;
+        inputContent: (values) => {
+            let { id, name } = values;
             return React.createElement(React.Fragment, null, name);
         }
     },

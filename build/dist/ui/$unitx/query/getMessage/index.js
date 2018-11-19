@@ -1,5 +1,5 @@
 import { VMain } from "./cGetMessge";
-var ui = {
+const ui = {
     main: VMain,
 };
 export default ui;

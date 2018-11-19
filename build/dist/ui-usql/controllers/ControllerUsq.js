@@ -1,22 +1,8 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 import { Controller } from "tonva-tools";
-var ControllerUsq = /** @class */ (function (_super) {
-    __extends(ControllerUsq, _super);
-    function ControllerUsq(cUsq, res) {
-        var _this = _super.call(this, res) || this;
-        _this.cUsq = cUsq;
-        return _this;
+export class ControllerUsq extends Controller {
+    constructor(cUsq, res) {
+        super(res);
+        this.cUsq = cUsq;
     }
-    return ControllerUsq;
-}(Controller));
-export { ControllerUsq };
+}
 //# sourceMappingURL=ControllerUsq.js.map

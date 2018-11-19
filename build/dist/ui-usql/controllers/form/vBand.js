@@ -1,122 +1,74 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 import * as React from 'react';
-var VBand = /** @class */ (function () {
-    function VBand(label) {
-        this.view = function () { return React.createElement("div", null); };
+export class VBand {
+    constructor(label) {
+        this.view = () => React.createElement("div", null);
         this.label = label;
     }
-    VBand.prototype.render = function () {
+    render() {
         //text-sm-right
         return React.createElement("div", { key: this.key, className: "px-3" },
             React.createElement("div", { className: "form-group row" },
                 React.createElement("label", { className: "col-sm-2 col-form-label" }, this.label),
                 React.createElement("div", { className: "col-sm-10" }, this.renderContent())));
-    };
-    VBand.prototype.setAddRow = function (addRow) { };
-    Object.defineProperty(VBand.prototype, "key", {
-        get: function () { return this.label; },
-        enumerable: true,
-        configurable: true
-    });
-    VBand.prototype.getVFields = function () { return; };
-    VBand.prototype.getVArr = function () { return; };
-    VBand.prototype.getVSubmit = function () { return; };
-    VBand.prototype.renderContent = function () {
-        return React.createElement("div", { className: "form-control form-control-plaintext bg-white border border-info rounded " }, "content");
-    };
-    return VBand;
-}());
-export { VBand };
-var VFieldBand = /** @class */ (function (_super) {
-    __extends(VFieldBand, _super);
-    function VFieldBand(label, vField) {
-        var _this = _super.call(this, label) || this;
-        _this.vField = vField;
-        return _this;
     }
-    Object.defineProperty(VFieldBand.prototype, "key", {
-        get: function () { return this.vField.name; },
-        enumerable: true,
-        configurable: true
-    });
-    VFieldBand.prototype.getVFields = function () { return [this.vField]; };
-    VFieldBand.prototype.renderContent = function () {
+    setAddRow(addRow) { }
+    get key() { return this.label; }
+    getVFields() { return; }
+    getVArr() { return; }
+    getVSubmit() { return; }
+    renderContent() {
+        return React.createElement("div", { className: "form-control form-control-plaintext bg-white border border-info rounded " }, "content");
+    }
+}
+export class VFieldBand extends VBand {
+    constructor(label, vField) {
+        super(label);
+        this.vField = vField;
+    }
+    get key() { return this.vField.name; }
+    getVFields() { return [this.vField]; }
+    renderContent() {
         return this.vField.render();
         /*
         <div className="form-control form-control-plaintext bg-white border border-info rounded ">
             {this.vField.render()}
         </div>;*/
-    };
-    return VFieldBand;
-}(VBand));
-export { VFieldBand };
-var VArrBand = /** @class */ (function (_super) {
-    __extends(VArrBand, _super);
-    function VArrBand(label, vArr) {
-        var _this = _super.call(this, label) || this;
-        _this.vArr = vArr;
-        return _this;
     }
-    VArrBand.prototype.setAddRow = function (addRow) { this.vArr.setAddRow(addRow); };
-    Object.defineProperty(VArrBand.prototype, "key", {
-        get: function () { return this.vArr.name; },
-        enumerable: true,
-        configurable: true
-    });
-    VArrBand.prototype.getVArr = function () { return this.vArr; };
-    VArrBand.prototype.render = function () {
+}
+export class VArrBand extends VBand {
+    constructor(label, vArr) {
+        super(label);
+        this.vArr = vArr;
+    }
+    setAddRow(addRow) { this.vArr.setAddRow(addRow); }
+    get key() { return this.vArr.name; }
+    getVArr() { return this.vArr; }
+    render() {
         return React.createElement(React.Fragment, { key: this.key }, this.vArr && this.vArr.render());
-    };
-    return VArrBand;
-}(VBand));
-export { VArrBand };
-var VFieldsBand = /** @class */ (function (_super) {
-    __extends(VFieldsBand, _super);
-    function VFieldsBand(label, vFields) {
-        var _this = _super.call(this, label) || this;
-        _this.vFields = vFields;
-        return _this;
     }
-    Object.defineProperty(VFieldsBand.prototype, "key", {
-        get: function () { return this.vFields[0].name; },
-        enumerable: true,
-        configurable: true
-    });
-    VFieldsBand.prototype.getVFields = function () { return this.vFields; };
-    VFieldsBand.prototype.renderContent = function () {
+}
+export class VFieldsBand extends VBand {
+    constructor(label, vFields) {
+        super(label);
+        this.vFields = vFields;
+    }
+    get key() { return this.vFields[0].name; }
+    getVFields() { return this.vFields; }
+    renderContent() {
         return React.createElement("div", { className: "form-control form-control-plaintext bg-white border border-info rounded " }, "fields");
-    };
-    return VFieldsBand;
-}(VBand));
-export { VFieldsBand };
-var VSubmitBand = /** @class */ (function (_super) {
-    __extends(VSubmitBand, _super);
-    function VSubmitBand(vSubmit) {
-        var _this = _super.call(this, undefined) || this;
-        _this.vSubmit = vSubmit;
-        return _this;
     }
-    Object.defineProperty(VSubmitBand.prototype, "key", {
-        get: function () { return '$submit'; },
-        enumerable: true,
-        configurable: true
-    });
-    VSubmitBand.prototype.getVSubmit = function () { return this.vSubmit; };
-    VSubmitBand.prototype.render = function () {
+}
+export class VSubmitBand extends VBand {
+    constructor(vSubmit) {
+        super(undefined);
+        this.vSubmit = vSubmit;
+    }
+    get key() { return '$submit'; }
+    getVSubmit() { return this.vSubmit; }
+    render() {
         return React.createElement("div", { key: "$submit", className: "px-3" },
             React.createElement("div", { className: "form-group row" },
                 React.createElement("div", { className: "offset-sm-2 col-sm-10" }, this.vSubmit.render())));
-    };
-    return VSubmitBand;
-}(VBand));
-export { VSubmitBand };
+    }
+}
 //# sourceMappingURL=vBand.js.map

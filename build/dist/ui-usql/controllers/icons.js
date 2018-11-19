@@ -9,7 +9,7 @@ export interface EntityRes {
     icon: JSX.Element;
 }
 */
-export var entityIcons = {
+export const entityIcons = {
     tuid: icon('text-info', 'list-alt'),
     action: icon('text-info', 'hand-o-right'),
     map: icon('text-muted', 'list-ul'),

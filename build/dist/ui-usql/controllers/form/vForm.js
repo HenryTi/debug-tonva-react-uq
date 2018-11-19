@@ -12,33 +12,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 import * as React from 'react';
 import { observer } from "mobx-react";
 import { BandsBuilder } from './bandsBuilder';
@@ -50,20 +23,18 @@ export var FormMode;
     FormMode[FormMode["edit"] = 1] = "edit";
     FormMode[FormMode["readonly"] = 2] = "readonly";
 })(FormMode || (FormMode = {}));
-var VForm = /** @class */ (function () {
-    function VForm(options, onSubmit) {
-        var _this = this;
+export class VForm {
+    constructor(options, onSubmit) {
         this.vFields = {};
         this.vArrs = {};
-        this.onFormSubmit = function (event) {
+        this.onFormSubmit = (event) => {
             event.preventDefault();
             return false;
         };
-        this.view = observer(function (_a) {
-            var className = _a.className;
-            return React.createElement("form", { className: className, onSubmit: _this.onFormSubmit }, _this.bands.map(function (v) { return v.render(); }));
+        this.view = observer(({ className }) => {
+            return React.createElement("form", { className: className, onSubmit: this.onFormSubmit }, this.bands.map(v => v.render()));
         });
-        var fields = options.fields, arrs = options.arrs, ui = options.ui, res = options.res, inputs = options.inputs, none = options.none, submitCaption = options.submitCaption, arrNewCaption = options.arrNewCaption, arrEditCaption = options.arrEditCaption, arrTitleNewButton = options.arrTitleNewButton, mode = options.mode;
+        let { fields, arrs, ui, res, inputs, none, submitCaption, arrNewCaption, arrEditCaption, arrTitleNewButton, mode } = options;
         this.fields = fields;
         this.arrs = arrs;
         this.ui = ui;
@@ -86,82 +57,67 @@ var VForm = /** @class */ (function () {
         this.buildBands(options, onSubmit);
         this.onSubmit = onSubmit;
     }
-    VForm.prototype.buildBands = function (options, onSubmit) {
+    buildBands(options, onSubmit) {
         this.bandColl = {};
-        var bandsBuilder = new BandsBuilder(this, options, onSubmit);
+        let bandsBuilder = new BandsBuilder(this, options, onSubmit);
         this.bands = bandsBuilder.build();
-        for (var _i = 0, _a = this.bands; _i < _a.length; _i++) {
-            var band = _a[_i];
+        for (let band of this.bands) {
             this.bandColl[band.key] = band;
-            var vFields = band.getVFields();
+            let vFields = band.getVFields();
             if (vFields !== undefined)
-                for (var _b = 0, vFields_1 = vFields; _b < vFields_1.length; _b++) {
-                    var f = vFields_1[_b];
+                for (let f of vFields)
                     this.vFields[f.name] = f;
-                }
-            var vArr = band.getVArr();
+            let vArr = band.getVArr();
             if (vArr !== undefined)
                 this.vArrs[vArr.name] = vArr;
-            var vSubmit = band.getVSubmit();
+            let vSubmit = band.getVSubmit();
             if (vSubmit !== undefined)
                 this.vSubmit = vSubmit;
         }
-    };
-    VForm.prototype.getBand = function (name) {
+    }
+    getBand(name) {
         return this.bandColl[name];
-    };
-    VForm.prototype.computeFields = function () {
+    }
+    computeFields() {
         if (this.formItems === undefined)
             return;
-        var values = this.values;
-        for (var i in this.formItems) {
-            var item = this.formItems[i];
+        let values = this.values;
+        for (let i in this.formItems) {
+            let item = this.formItems[i];
             if (typeof item !== 'function')
                 continue;
             values[i] = item.call(values);
         }
-    };
-    VForm.prototype.submit = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (this.onSubmit === undefined)
-                            return [2 /*return*/];
-                        return [4 /*yield*/, this.onSubmit()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
+    }
+    submit() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.onSubmit === undefined)
+                return;
+            yield this.onSubmit();
         });
-    };
-    VForm.prototype.getValues = function () {
-        var ret = {};
-        var values = this.values;
-        for (var _i = 0, _a = this.fields; _i < _a.length; _i++) {
-            var f = _a[_i];
-            var name_1 = f.name;
-            var v = values[name_1];
-            ret[name_1] = v !== null && typeof v === 'object' ? v.id : v;
+    }
+    getValues() {
+        let ret = {};
+        let values = this.values;
+        for (let f of this.fields) {
+            let { name } = f;
+            let v = values[name];
+            ret[name] = v !== null && typeof v === 'object' ? v.id : v;
         }
         if (this.arrs !== undefined) {
-            for (var _b = 0, _c = this.arrs; _b < _c.length; _b++) {
-                var arr = _c[_b];
-                var name_2 = arr.name, fields = arr.fields, id = arr.id, order = arr.order;
-                var list = ret[name_2] = [];
-                var rows = this.vArrs[name_2].list;
-                for (var _d = 0, rows_1 = rows; _d < rows_1.length; _d++) {
-                    var row = rows_1[_d];
-                    var item = {};
+            for (let arr of this.arrs) {
+                let { name, fields, id, order } = arr;
+                let list = ret[name] = [];
+                let rows = this.vArrs[name].list;
+                for (let row of rows) {
+                    let item = {};
                     if (id !== undefined)
                         item[id] = row[id];
                     if (order !== undefined)
                         item[order] = row[order];
-                    for (var _e = 0, fields_1 = fields; _e < fields_1.length; _e++) {
-                        var f = fields_1[_e];
-                        var fn = f.name;
-                        var v = row[fn];
+                    for (let f of fields) {
+                        let { name: fn } = f;
+                        let v = row[fn];
                         item[fn] = v !== null && typeof v === 'object' ? v.id : v;
                     }
                     list.push(item);
@@ -169,137 +125,118 @@ var VForm = /** @class */ (function () {
             }
         }
         return ret;
-    };
-    Object.defineProperty(VForm.prototype, "valueBoxs", {
-        get: function () {
-            var ret = {};
-            var values = this.values;
-            for (var _i = 0, _a = this.fields; _i < _a.length; _i++) {
-                var f = _a[_i];
-                var name_3 = f.name, _tuid = f._tuid;
-                var v = values[name_3];
-                ret[name_3] = _tuid === undefined || typeof v === 'object' ? v : _tuid.boxId(v);
-            }
-            if (this.arrs === undefined)
-                return ret;
-            for (var _b = 0, _c = this.arrs; _b < _c.length; _b++) {
-                var arr = _c[_b];
-                var name_4 = arr.name, fields = arr.fields, id = arr.id, order = arr.order;
-                var list = ret[name_4] = this.vArrs[name_4].list.slice();
-                for (var _d = 0, list_1 = list; _d < list_1.length; _d++) {
-                    var row = list_1[_d];
-                    for (var _e = 0, fields_2 = fields; _e < fields_2.length; _e++) {
-                        var f = fields_2[_e];
-                        var fn = f.name, _tuid = f._tuid;
-                        var v = row[fn];
-                        row[fn] = _tuid === undefined || typeof v === 'object' ? v : _tuid.boxId(v);
-                    }
+    }
+    get valueBoxs() {
+        let ret = {};
+        let values = this.values;
+        for (let f of this.fields) {
+            let { name, _tuid } = f;
+            let v = values[name];
+            ret[name] = _tuid === undefined || typeof v === 'object' ? v : _tuid.boxId(v);
+        }
+        if (this.arrs === undefined)
+            return ret;
+        for (let arr of this.arrs) {
+            let { name, fields, id, order } = arr;
+            let list = ret[name] = this.vArrs[name].list.slice();
+            for (let row of list) {
+                for (let f of fields) {
+                    let { name: fn, _tuid } = f;
+                    let v = row[fn];
+                    row[fn] = _tuid === undefined || typeof v === 'object' ? v : _tuid.boxId(v);
                 }
             }
-            return ret;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    VForm.prototype.setValues = function (initValues) {
+        }
+        return ret;
+    }
+    setValues(initValues) {
         if (initValues === undefined) {
             this.reset();
             return;
         }
-        var values = this.values;
-        var errors = this.errors;
-        for (var _i = 0, _a = this.fields; _i < _a.length; _i++) {
-            var f = _a[_i];
-            var fn = f.name;
+        let values = this.values;
+        let errors = this.errors;
+        for (let f of this.fields) {
+            let fn = f.name;
             errors[fn] = undefined;
-            var v = initValues[fn];
+            let v = initValues[fn];
             values[fn] = v;
         }
         // 还要设置arrs的values
-        for (var i in this.vArrs) {
-            var list = initValues[i];
+        for (let i in this.vArrs) {
+            let list = initValues[i];
             if (list === undefined)
                 continue;
-            var arrList = values[i];
+            let arrList = values[i];
             arrList.clear();
-            arrList.push.apply(arrList, list);
+            arrList.push(...list);
         }
-    };
-    Object.defineProperty(VForm.prototype, "isOk", {
-        get: function () {
-            for (var i in this.vFields) {
-                if (this.vFields[i].isOk === false)
-                    return false;
-            }
-            return true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    VForm.prototype.reset = function () {
-        var values = this.values;
-        var errors = this.errors;
-        for (var _i = 0, _a = this.fields; _i < _a.length; _i++) {
-            var f = _a[_i];
-            var fn = f.name;
+    }
+    get isOk() {
+        for (let i in this.vFields) {
+            if (this.vFields[i].isOk === false)
+                return false;
+        }
+        return true;
+    }
+    reset() {
+        let values = this.values;
+        let errors = this.errors;
+        for (let f of this.fields) {
+            let fn = f.name;
             //if (this.compute !== undefined && this.compute[fn] !== undefined) continue;
             values[fn] = null;
             errors[fn] = undefined;
         }
-        for (var i in this.vFields) {
-            var ctrl = this.vFields[i];
-            var cn = ctrl.name;
+        for (let i in this.vFields) {
+            let ctrl = this.vFields[i];
+            let cn = ctrl.name;
             if (cn === undefined)
                 continue;
             //if (this.compute !== undefined && this.compute[cn] !== undefined) continue;
             ctrl.setValue(null);
         }
-        for (var i in this.vArrs) {
-            var vArr = this.vArrs[i];
+        for (let i in this.vArrs) {
+            let vArr = this.vArrs[i];
             vArr.reset();
         }
-    };
-    VForm.prototype.getValue = function (fieldName) {
+    }
+    getValue(fieldName) {
         return this.values[fieldName];
-    };
-    VForm.prototype.setValue = function (fieldName, value) { this.values[fieldName] = value; };
-    VForm.prototype.setError = function (fieldName, error) { this.errors[fieldName] = error; };
-    VForm.prototype.buildFieldValues = function (fields) {
-        var v = {
+    }
+    setValue(fieldName, value) { this.values[fieldName] = value; }
+    setError(fieldName, error) { this.errors[fieldName] = error; }
+    buildFieldValues(fields) {
+        let v = {
             valueFromFieldName: function (propName) {
                 return this[propName];
             }
         };
-        for (var _i = 0, fields_3 = fields; _i < fields_3.length; _i++) {
-            var f = fields_3[_i];
-            var fn = f.name;
+        for (let f of fields) {
+            let fn = f.name;
             v[fn] = null;
         }
         return v;
-    };
-    VForm.prototype.buildObservableValues = function () {
-        var v = this.buildFieldValues(this.fields);
+    }
+    buildObservableValues() {
+        let v = this.buildFieldValues(this.fields);
         if (this.arrs !== undefined) {
-            for (var _i = 0, _a = this.arrs; _i < _a.length; _i++) {
-                var arr = _a[_i];
+            for (let arr of this.arrs) {
                 v[arr.name] = observable.array([], { deep: true });
             }
         }
-        var ret = observable(v);
+        let ret = observable(v);
         return ret;
-    };
-    VForm.prototype.buildFormValues = function () {
+    }
+    buildFormValues() {
         this.values = this.buildObservableValues();
         this.errors = observable(this.buildFieldValues(this.fields));
-    };
-    VForm.prototype.render = function (className) {
-        if (className === void 0) { className = "py-3"; }
+    }
+    render(className = "py-3") {
         return React.createElement(this.view, { className: className });
-    };
-    __decorate([
-        computed
-    ], VForm.prototype, "isOk", null);
-    return VForm;
-}());
-export { VForm };
+    }
+}
+__decorate([
+    computed
+], VForm.prototype, "isOk", null);
 //# sourceMappingURL=vForm.js.map
