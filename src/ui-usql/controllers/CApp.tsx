@@ -81,27 +81,17 @@ export class CApp extends Controller {
 
     protected async beforeStart():Promise<boolean> {
         if (await super.beforeStart() === false) return false;
-        let retErrors = await this.loadUsqs();
-        if (retErrors !== undefined) {
-            this.openPage(<Page header="ERROR">
-                <div className="m-3">
-                    <div>Load Usqs 发生错误：</div>
-                    {retErrors.map((r, i) => <div key={i}>{r}</div>)}
-                </div>
-            </Page>);
-            return false;
-        }
-        return true;
-    }
 
-    protected async internalStart() {
         try {
             let hash = document.location.hash;
             if (hash.startsWith('#tvdebug')) {
-                await this.showMainPage();
-                return;
+                this.isProduction = false;
+                //await this.showMainPage();
+                //return;
             }
-            this.isProduction = hash.startsWith('#tv');
+            else {
+                this.isProduction = hash.startsWith('#tv');
+            }
             let {unit} = meInFrame;
             if (this.isProduction === false && (unit===undefined || unit<=0)) {
                 let app = await loadAppUsqs(this.appOwner, this.appName);
@@ -110,35 +100,47 @@ export class CApp extends Controller {
                 await this.loadAppUnits();
                 switch (this.appUnits.length) {
                     case 0:
-                        //alert('当前登录的用户不支持当前的APP');
-                        //await nav.logout();
                         this.showUnsupport();
-                        return;
+                        return false;
                     case 1:
                         unit = this.appUnits[0].id;
                         if (unit === undefined || unit < 0) {
-                            //alert('当前unit不支持app操作，请重新登录');
-                            //await nav.logout();
                             this.showUnsupport();
-                            return;
+                            return false;
                         }
                         meInFrame.unit = unit;
                         break;
                     default: 
                         nav.clear();
                         nav.push(<this.selectUnitPage />)
-                        return;
+                        return false;
                 }
             }
-            await this.showMainPage();
+
+            let retErrors = await this.loadUsqs();
+            if (retErrors !== undefined) {
+                this.openPage(<Page header="ERROR">
+                    <div className="m-3">
+                        <div>Load Usqs 发生错误：</div>
+                        {retErrors.map((r, i) => <div key={i}>{r}</div>)}
+                    </div>
+                </Page>);
+                return false;
+            }
+            return true;
         }
-        catch(err) {
+        catch (err) {
             nav.push(<Page header="App start error!">
                 <pre>
                     {typeof err === 'string'? err : err.message}
                 </pre>
             </Page>);
+            return false;
         }
+    }
+
+    protected async internalStart() {
+        await this.showMainPage();
     }
 
     // 如果是独立app，删去显示app之前的页面。
@@ -187,13 +189,11 @@ export class CApp extends Controller {
                     return;
                 }
                 this.clearPrevPages();
-                //nav.replace(<Page header="Sheet">API: {apiId} 编号：{sheetId}</Page>);
                 await cUsq.navSheet(sheetTypeId, sheetId);
                 return;
             }
         }
         this.clearPrevPages();
-        //nav.push(<this.appPage />);
         this.showVPage(this.VAppMain);
     }
 

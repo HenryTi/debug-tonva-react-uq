@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { FA, List } from 'tonva-react-form';
-import { Sheet, VForm, VEntity, SheetUI, TuidMain, CSheet, CTuidSelect, Map } from 'tonva-react-usql';
+import { tv, Sheet, VForm, VEntity, SheetUI, TuidMain, CSheet, CTuidSelect, Map } from 'tonva-react-usql';
 
 interface PackRow {
     pack: number;
@@ -183,7 +183,7 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
         let {pack, retail} = packRow;
         return <div className="px-3 py-1 d-flex">
             <div className="row py-1 align-items-center flex-fill">
-                <div className="col-sm-6">{pack.content()}</div>
+                <div className="col-sm-6">{tv(pack)}</div>
                 <div className="col-sm-6">
                     <div className="row align-items-center">
                         <div className="col-6 text-sm-right"><span className="text-danger">{retail}</span> 元</div>

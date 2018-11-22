@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { LMR, Muted } from 'tonva-react-form';
-import { TuidUI, FieldTuidUI } from 'tonva-react-usql';
+import { tv, TuidUI, FieldTuidUI } from 'tonva-react-usql';
 
 const customer:TuidUI = {
     inputContent: (values) => {
@@ -14,7 +14,6 @@ const customer:TuidUI = {
         return <LMR className="px-3 py-2" left={discription} right={right}/>
     },
 };
-
 
 const productPackRowContent = observer((values) => {
     let {id, ratio, name, $owner} = values;
@@ -40,7 +39,7 @@ const product:TuidUI = {
         let {discription, packType} = row;
         let right;
         if (packType && packType.content) {
-            right = <Muted>{packType.content()}</Muted>;
+            right = <Muted>{tv(packType)}</Muted>;
         }
         return <LMR className="px-3 py-2" left={discription} right={right}/>
     }),

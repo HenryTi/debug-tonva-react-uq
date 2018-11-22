@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MapUI } from "tonva-react-usql";
+import { MapUI, tv } from "tonva-react-usql";
 import { Muted } from 'tonva-react-form';
 
 const priceUI:MapUI = {
@@ -18,7 +18,7 @@ const priceUI:MapUI = {
             },
             valuesContent: (values:any, x:any) => {
                 let {pack, retail} = values;
-                return <div className="px-3 py-1"><div className="d-inline-block w-25">{pack.content()}</div> {retail} 元</div>;
+                return <div className="px-0 py-1"><div className="d-inline-block w-25">{tv(pack)}</div> {retail} 元</div>;
             },
             none: (x:any)=>x.noPost,
         },

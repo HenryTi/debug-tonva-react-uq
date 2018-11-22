@@ -14,7 +14,7 @@ export class BoxId {
 
 const maxCacheSize = 1000;
 export abstract class Tuid extends Entity {
-    private idBoxer: ()=>void;
+    private BoxId: ()=>void;
     get typeName(): string { return 'tuid';}
     private queue: number[] = [];               // 每次使用，都排到队头
     private waitingIds: number[] = [];          // 等待loading的
@@ -31,22 +31,27 @@ export abstract class Tuid extends Entity {
     abstract get Main();
 
     private buildIdBoxer() {
-        this.idBoxer = function():void {};
-        let prototype = this.idBoxer.prototype;
+        this.BoxId = function():void {};
+        let prototype = this.BoxId.prototype;
         Object.defineProperty(prototype, '_$tuid', {
             value: this,
             writable: false,
             enumerable: false,
         });
+        /*
         prototype.content = function(templet?:(values?:any, x?:any)=>JSX.Element, x?:any) {
             let t:Tuid = this._$tuid;
-            let com = templet || t.entities.usq.getTuidContent(t);
+            let com = templet || this._$com;
+            if (com === undefined) {
+                com = this._$com = t.entities.usq.getTuidContent(t);
+            }
             let val = t.valueFromId(this.id);
             if (typeof val === 'number') val = {id: val};
             if (templet !== undefined) return templet(val, x);
             //return com(val, x);
             return React.createElement(com, val);
         }
+        */
         Object.defineProperty(prototype, 'obj', {
             enumerable: false,
             get: function() {
@@ -61,11 +66,14 @@ export abstract class Tuid extends Entity {
         prototype.toJSON = function() {return this.id}
     }
     boxId(id:number):BoxId {
-        let ret:BoxId = new this.idBoxer();
+        this.useId(id);
+        let ret:BoxId = new this.BoxId();
         ret.id = id;
         return ret;
     }
-
+    getTuidContent() {
+        return this.entities.usq.getTuidContent(this);
+    }
     getIdFromObj(item:any):number {
         return item[this.idName];
     }
@@ -208,10 +216,12 @@ export abstract class Tuid extends Entity {
     async load(id:number):Promise<any> {
         if (id === undefined || id === 0) return;
         let values = await this.tvApi.tuidGet(this.name, id);
+        values._$tuid = this;
         this.cacheValue(values);
         this.cacheTuidFieldValues(values);
         return values;
     }
+    protected getDiv(divName:string):TuidDiv {return;}
     private cacheTuidFieldValues(values:any) {
         let {fields, arrs} = this.schema;
         this.cacheFieldsInValue(values, fields);
@@ -220,7 +230,9 @@ export abstract class Tuid extends Entity {
                 let {name, fields} = arr;
                 let arrValues = values[name];
                 if (arrValues === undefined) continue;
+                let tuidDiv = this.getDiv(name);
                 for (let row of arrValues) {
+                    row._$tuid = tuidDiv;
                     row.$owner = this.boxId(row.owner); 
                     this.cacheFieldsInValue(row, fields);
                 }
@@ -232,7 +244,7 @@ export abstract class Tuid extends Entity {
             let {name, _tuid} = f;
             if (_tuid === undefined) continue;
             let id = values[name];
-            _tuid.useId(id);
+            //_tuid.useId(id);
             values[name] = _tuid.boxId(id);
         }
     }
@@ -309,7 +321,7 @@ export class TuidMain extends Tuid {
             }
         }
     }
-
+    protected getDiv(divName:string):TuidDiv {return this.divs[divName];}
     async cacheIds():Promise<void> {
         await super.cacheIds();
         if (this.divs === undefined) return;

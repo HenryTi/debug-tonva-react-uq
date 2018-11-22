@@ -3,6 +3,7 @@ import React from "react";
 import { FA } from "tonva-react-form";
 import { Page } from "tonva-tools";
 import { CQuery, VQueryMain } from "tonva-react-usql";
+import { tv } from "ui-usql";
 
 export class CGetMessage extends CQuery {
     protected get VQueryMain() {return VMain}
@@ -18,7 +19,7 @@ export class VMain extends VQueryMain {
         </button>;
         return <Page header={this.label} right={rightClose}>
             重载的CGetMessage <br/>
-            {ret0.fromUser.content()}
+            {tv(ret0.fromUser)/*ret0.fromUser.content()*/}
             <pre>{JSON.stringify(ret0, undefined, '\t')}</pre>
         </Page>;
     })

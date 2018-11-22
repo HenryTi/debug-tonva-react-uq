@@ -1,4 +1,4 @@
-import { Entities, Field, ArrFields } from './entities';
+import { Entities, Field, ArrFields, FieldMap } from './entities';
 import { TuidMain, Tuid } from './tuid';
 
 const tab = '\t';
@@ -28,6 +28,29 @@ export abstract class Entity {
 
     protected get tvApi() {return this.entities.usqApi;}
 
+    private fieldMaps: {[arr:string]: FieldMap} = {};
+    fieldMap(arr?:string): FieldMap {
+        if (arr === undefined) arr = '$';
+        let ret = this.fieldMaps[arr];
+        if (ret === undefined) {
+            let fields:Field[];
+            if (arr === '$') fields = this.fields;
+            else if (this.arrFields !== undefined) {
+                let arrFields = this.arrFields.find(v => v.name === arr);
+                if (arrFields !== undefined) fields = arrFields.fields;
+            }
+            else if (this.returns !== undefined) {
+                let arrFields = this.returns.find(v => v.name === arr);
+                if (arrFields !== undefined) fields = arrFields.fields;
+            }
+            if (fields === undefined) return {};
+            ret = {};
+            for (let f of fields) ret[f.name] = f;
+            this.fieldMaps[arr] = ret;
+        }
+        return ret;
+    }
+
     public async loadSchema():Promise<void> {
         if (this.schema !== undefined) return;
         let schema = await this.entities.usqApi.schema(this.name);
@@ -55,14 +78,14 @@ export abstract class Entity {
         }, 4);
     }
 
-    getTuid(field:Field):Tuid {
+    tuidFromField(field:Field):Tuid {
         let {_tuid, tuid} = field;
         if (tuid === undefined) return;
         if (_tuid !== undefined) return _tuid;
         return field._tuid = this.entities.getTuid(tuid, undefined);
     }
 
-    getTuidFromName(fieldName:string, arrName?:string):Tuid {
+    tuidFromName(fieldName:string, arrName?:string):Tuid {
         if (this.schema === undefined) return;
         let {fields, arrs} = this.schema;
         let entities = this.entities;
@@ -94,10 +117,14 @@ export abstract class Entity {
         return ret.join('');
     }
     
-    private escape(d:any):any {
+    private escape(row:any, field:Field):any {
+        let d = row[field.name];
         switch (typeof d) {
             default: return d;
-            case 'object': return d.id;
+            case 'object':
+                let tuid = field._tuid;
+                if (tuid === undefined) return d.id;
+                return tuid.getIdFromObj(d);
             case 'string':
                 let len = d.length;
                 let r = '', p = 0;
@@ -117,10 +144,10 @@ export abstract class Entity {
         let len = fields.length;
         if (len === 0) return;
         let ret = '';
-        ret += this.escape(data[fields[0].name]);
+        ret += this.escape(data, fields[0]);
         for (let i=1;i<len;i++) {
             let f = fields[i];
-            ret += tab + this.escape(data[f.name]);
+            ret += tab + this.escape(data, f);
         }
         result.push(ret + ln);
     }
