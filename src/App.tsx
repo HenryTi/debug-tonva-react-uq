@@ -11,27 +11,12 @@ const tonvaApp = 'JKDev/jkOrder';
 //const tonvaApp = '百灵威系统工程部/cart';
 
 class App extends React.Component {
-    text = observable.box('kkk');
-
     async onLogined() {
         await startApp(tonvaApp, ui);
     }
-
-    private onClick = () => {
-        this.text.set('bbb');
-        alert('click');
-    }
     render() {
-        //return <div onClick={this.onClick}>{tv(this)} /></div>;
         return <NavView onLogined={this.onLogined} />;
     }
 }
-/*
-const Tv = observer(({p}:{p:App}) => {
-    let {text} = p;
-    return <div>{text.get()}</div>;
-});
 
-const tv = (p:App) => <Tv p={p} />
-*/
 export default App;

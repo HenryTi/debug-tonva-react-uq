@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import { FA } from 'tonva-react-form';
 import { Button } from 'reactstrap';
 import { Page } from 'tonva-tools';
@@ -53,6 +52,11 @@ export class VTuidEdit extends VEntity<Tuid, TuidUI, CTuidMain> {
                     this.vForm.setError(u, '不能重复');
                 }
             }
+            return;
+        }
+        if (this.controller.isCalling) {
+            this.returnCall(id);
+            this.closePage();
             return;
         }
         this.openPageElement(<Page header={this.label + '提交成功'} back="none">

@@ -13,6 +13,9 @@ import { VTuidMainList } from './vTuidList';
 
 export interface TuidUI extends EntityUI {
     CTuidMain?: typeof CTuidMain;
+    CTuidEdit?: typeof CTuidEdit;
+    CTuidList?: typeof CTuidList;
+
     CTuidSelect?: typeof CTuidSelect;
     CTuidInfo?: typeof CTuidInfo;
     inputContent?: React.StatelessComponent<any>;
@@ -86,7 +89,7 @@ export class CTuidMain extends CTuid<TuidMain> {
     protected get VTuidEdit():typeof VTuidEdit {return VTuidEdit}
     protected get VTuidList():typeof VTuidMainList {return VTuidMainList}
 
-    protected async internalStart():Promise<void> {
+    protected async internalStart(param?:any):Promise<void> {
         await this.showVPage(this.VTuidMain);
     }
 
@@ -103,9 +106,12 @@ export class CTuidMain extends CTuid<TuidMain> {
     }
 
     protected async edit(id:number) {
-        let ret = await this.entity.load(id);
+        let values:any = undefined;
+        if (id !== undefined) {
+            values = await this.entity.load(id);
+        }
         let v = this.VTuidEdit;
-        await this.showVPage(v, ret);
+        await this.showVPage(v, values);
     }
 
     private itemChanged({id, values}:{id:number, values: any}) {
@@ -117,6 +123,19 @@ export class CTuidMain extends CTuid<TuidMain> {
         }
     }
 }
+
+export class CTuidEdit extends CTuidMain {
+    protected async internalStart(id:number):Promise<void> {
+        await this.edit(id);
+    }
+}
+
+export class CTuidList extends CTuidMain {
+    protected async internalStart(id:number):Promise<void> {
+        await this.showVPage(this.VTuidList);
+    }
+}
+
 export class CTuidDiv extends CTuid<TuidDiv> {
     protected async internalStart():Promise<void> {
         alert('tuid div: ' + this.entity.name);

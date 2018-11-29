@@ -7,7 +7,7 @@ import { CBook, BookUI } from '../book';
 import { CSheet, SheetUI } from '../sheet';
 import { ActionUI, CAction } from '../action';
 import { QueryUI, CQuery, CQuerySelect } from '../query';
-import { CTuidMain, TuidUI, CTuid, CTuidInfo, CTuidSelect } from '../tuid';
+import { CTuidMain, TuidUI, CTuid, CTuidInfo, CTuidSelect, CTuidEdit, CTuidList } from '../tuid';
 import { MapUI, CMap } from '../map';
 import { CEntity, EntityUI } from '../CVEntity';
 import { PureJSONContent } from '../form/viewModel';
@@ -19,6 +19,8 @@ export type EntityType = 'sheet' | 'action' | 'tuid' | 'query' | 'book' | 'map' 
 
 export interface UsqUI {
     CTuidMain?: typeof CTuidMain;
+    CTuidEdit?: typeof CTuidEdit;
+    CTuidList?: typeof CTuidList;
     CTuidSelect?: typeof CTuidSelect;
     CTuidInfo?: typeof CTuidInfo;
     CQuery?: typeof CQuery;
@@ -48,6 +50,8 @@ function lowerPropertyName(entities: {[name:string]: EntityUI}) {
 export class CUsq extends Controller implements Usq {
     private ui:any;
     private CTuidMain: typeof CTuidMain;
+    private CTuidEdit: typeof CTuidEdit;
+    private CTuidList: typeof CTuidList;
     private CTuidSelect: typeof CTuidSelect;
     private CTuidInfo: typeof CTuidInfo;
     private CQuery: typeof CQuery;
@@ -74,6 +78,8 @@ export class CUsq extends Controller implements Usq {
         lowerPropertyName(ui.pending);
         this.ui = ui;
         this.CTuidMain = ui.CTuidMain || CTuidMain;
+        this.CTuidEdit = ui.CTuidEdit || CTuidEdit;
+        this.CTuidList = ui.CTuidList || CTuidList;
         this.CTuidSelect = ui.CTuidSelect || CTuidSelect;
         this.CTuidInfo = ui.CTuidInfo || CTuidInfo;
         this.CQuery = ui.CQuery || CQuery;
@@ -334,6 +340,14 @@ export class CUsq extends Controller implements Usq {
     cTuidMain(tuid:TuidMain):CTuidMain {
         let {ui, res} = this.getUI<TuidMain, TuidUI>(tuid);
         return new (ui && ui.CTuidMain || this.CTuidMain)(this, tuid, ui, res);
+    }
+    cTuidEdit(tuid:TuidMain):CTuidEdit {
+        let {ui, res} = this.getUI<TuidMain, TuidUI>(tuid);
+        return new (ui && ui.CTuidEdit || this.CTuidEdit)(this, tuid, ui, res);
+    }
+    cTuidList(tuid:TuidMain):CTuidList {
+        let {ui, res} = this.getUI<TuidMain, TuidUI>(tuid);
+        return new (ui && ui.CTuidList || this.CTuidList)(this, tuid, ui, res);
     }
     cTuidSelect(tuid:Tuid):CTuidSelect {
         let {ui, res} = this.getUI<Tuid, TuidUI>(tuid.owner || tuid);
