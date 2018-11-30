@@ -26,10 +26,10 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
     async showEntry(param?:any) {
         //this.controller.vSheetNew = this;
         let cUsq = this.controller.cUsq;
-        this.mapPrice = cUsq.entities.map('price');
-        let customer = cUsq.entities.tuid('customer');
+        this.mapPrice = cUsq.map('price');
+        let customer = cUsq.tuid('customer');
         this.cCustomerSelect = cUsq.cTuidSelect(customer);
-        let product = cUsq.entities.tuid('product');
+        let product = cUsq.tuid('product');
         this.cProductSelect = cUsq.cTuidSelect(product);
 
         this.vForm = this.createForm(this.onSubmit, param);
@@ -74,7 +74,7 @@ export class VSheetNew extends VEntity<Sheet, SheetUI, CSheet> {
     }
 
     private async getPrices(productId:number):Promise<any[]> {
-        let ret = await this.mapPrice.page({_product: productId}, 0, 1000);
+        let ret = await this.mapPrice.table({product: productId});
         return ret;
     }
 

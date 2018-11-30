@@ -154,10 +154,10 @@ export class VSheetNew extends VEntity {
         return __awaiter(this, void 0, void 0, function* () {
             //this.controller.vSheetNew = this;
             let cUsq = this.controller.cUsq;
-            this.mapPrice = cUsq.entities.map('price');
-            let customer = cUsq.entities.tuid('customer');
+            this.mapPrice = cUsq.map('price');
+            let customer = cUsq.tuid('customer');
             this.cCustomerSelect = cUsq.cTuidSelect(customer);
-            let product = cUsq.entities.tuid('product');
+            let product = cUsq.tuid('product');
             this.cProductSelect = cUsq.cTuidSelect(product);
             this.vForm = this.createForm(this.onSubmit, param);
             let productsBand = this.vForm.getBand('products');
@@ -167,7 +167,7 @@ export class VSheetNew extends VEntity {
     }
     getPrices(productId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let ret = yield this.mapPrice.page({ _product: productId }, 0, 1000);
+            let ret = yield this.mapPrice.query({ product: productId });
             return ret;
         });
     }
