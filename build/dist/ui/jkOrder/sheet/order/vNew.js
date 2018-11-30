@@ -167,7 +167,7 @@ export class VSheetNew extends VEntity {
     }
     getPrices(productId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let ret = yield this.mapPrice.query({ product: productId });
+            let ret = yield this.mapPrice.table({ product: productId });
             return ret;
         });
     }

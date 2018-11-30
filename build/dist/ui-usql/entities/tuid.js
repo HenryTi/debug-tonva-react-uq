@@ -75,6 +75,7 @@ export class Tuid extends Entity {
         let { id, unique } = schema;
         this.idName = id;
         this.unique = unique;
+        this.schemaFrom = this.schema.from;
     }
     moveToHead(id) {
         let index = this.queue.findIndex(v => v === id);
@@ -371,24 +372,26 @@ export class TuidMain extends Tuid {
     }
     cUsqFrom() {
         return __awaiter(this, void 0, void 0, function* () {
-            let from = this.schema.from;
-            if (from === undefined)
+            if (this.schemaFrom === undefined)
                 return this.entities.cUsq;
-            let { owner, usq } = from;
-            //let usqName = owner+'/'+usq;
-            let cUsq = yield this.entities.cUsq.cApp.getImportUsq(owner, usq);
-            if (cUsq === undefined) {
+            let { owner, usq } = this.schemaFrom;
+            let cUsq = yield this.entities.cUsq;
+            let cApp = cUsq.cApp;
+            if (cApp === undefined)
+                return cUsq;
+            let cUsqFrm = yield cApp.getImportUsq(owner, usq);
+            if (cUsqFrm === undefined) {
                 console.error(`${owner}/${usq} 不存在`);
                 debugger;
-                return this.entities.cUsq;
+                return cUsq;
             }
-            let retErrors = yield cUsq.loadSchema();
+            let retErrors = yield cUsqFrm.loadSchema();
             if (retErrors !== undefined) {
                 console.error('cUsq.loadSchema: ' + retErrors);
                 debugger;
-                return this.entities.cUsq;
+                return cUsq;
             }
-            return cUsq;
+            return cUsqFrm;
         });
     }
     getApiFrom() {

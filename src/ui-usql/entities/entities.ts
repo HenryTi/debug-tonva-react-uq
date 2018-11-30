@@ -8,7 +8,7 @@ import {History} from './history';
 import { UsqApi } from 'tonva-tools';
 import { Map } from './map';
 import { Pending } from './pending';
-import { CUsq } from 'ui-usql/controllers';
+import { CUsq } from '../controllers';
 
 /*
 export interface Usq {

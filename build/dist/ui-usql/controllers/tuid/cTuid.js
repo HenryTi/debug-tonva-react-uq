@@ -98,6 +98,7 @@ export class CTuidMain extends CTuid {
     get VTuidList() { return VTuidMainList; }
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.isFrom = this.entity.schemaFrom !== undefined;
             yield this.showVPage(this.VTuidMain);
         });
     }
@@ -117,6 +118,10 @@ export class CTuidMain extends CTuid {
                     return;
                 case 'item-changed':
                     this.itemChanged(value);
+                    return;
+                case 'info':
+                    let cTuidInfo = new CTuidInfo(this.cUsq, this.entity, this.ui, this.res);
+                    yield cTuidInfo.start(value);
                     return;
             }
             yield this.showVPage(v, value);
