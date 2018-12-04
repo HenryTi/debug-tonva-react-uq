@@ -115,7 +115,7 @@ export class CUsq extends Controller /* implements Usq*/ {
             'debug/':'tv/';
 
         let acc: string[];
-        if (access === undefined || access === '*') {
+        if (access === null || access === undefined || access === '*') {
             acc = [];
         }
         else {
@@ -167,9 +167,9 @@ export class CUsq extends Controller /* implements Usq*/ {
         }
         catch(err) {
             console.error(err);
-            this.error = err;
+            return this.error = err;
             //debugger;
-            return err.message;
+            //return err.message;
         }
     }
 
