@@ -11,9 +11,11 @@ import { CApp, ControllerUsq } from "tonva-react-usql";
 import { VPage, Page } from "tonva-tools";
 export class CMyApp extends CApp {
     start(param) {
-        const _super = name => super[name];
+        const _super = Object.create(null, {
+            start: { get: () => super.start }
+        });
         return __awaiter(this, void 0, void 0, function* () {
-            yield _super("start").call(this, param);
+            yield _super.start.call(this, param);
             //let cProduct = new CProduct(undefined, undefined);
             //await cProduct.start();
         });

@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { UsqApi, Controller, UnitxApi, meInFrame, resLang, nav } from 'tonva-tools';
+import { UsqApi, Controller, UnitxApi, meInFrame, resLang } from 'tonva-tools';
 import { Entities } from '../../entities';
 import { CLink } from '../link';
 import { CBook } from '../book';
@@ -27,7 +27,7 @@ function lowerPropertyName(entities) {
 }
 export class CUsq extends Controller /* implements Usq*/ {
     constructor(cApp, usq, appId, usqId, access, ui) {
-        super(resLang(ui.res, nav.language, nav.culture));
+        super(resLang(ui.res));
         this.isSysVisible = false;
         this.cApp = cApp;
         this.usq = usq;
@@ -75,7 +75,7 @@ export class CUsq extends Controller /* implements Usq*/ {
         let baseUrl = hash === undefined || hash === '' ?
             'debug/' : 'tv/';
         let acc;
-        if (access === undefined || access === '*') {
+        if (access === null || access === undefined || access === '*') {
             acc = [];
         }
         else {
@@ -124,9 +124,9 @@ export class CUsq extends Controller /* implements Usq*/ {
             }
             catch (err) {
                 console.error(err);
-                this.error = err;
+                return this.error = err;
                 //debugger;
-                return err.message;
+                //return err.message;
             }
         });
     }

@@ -13,10 +13,12 @@ import { left0 } from 'tonva-tools';
 import { VMapMain, CMap } from 'tonva-react-usql';
 class CMapTeamPerson extends CMap {
     searchOnKey(keyField, param) {
-        const _super = name => super[name];
+        const _super = Object.create(null, {
+            searchOnKey: { get: () => super.searchOnKey }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             switch (keyField.name) {
-                default: return yield _super("searchOnKey").call(this, keyField, param);
+                default: return yield _super.searchOnKey.call(this, keyField, param);
                 case 'post': return yield this.searchOnPost(param);
             }
         });

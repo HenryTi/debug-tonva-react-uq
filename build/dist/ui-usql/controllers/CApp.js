@@ -13,7 +13,7 @@ import { CUsq } from './usq';
 import { centerApi } from '../centerApi';
 export class CApp extends Controller {
     constructor(tonvaApp, ui) {
-        super(resLang(ui.res, nav.language, nav.culture));
+        super(resLang(ui.res));
         this.cImportUsqs = {};
         this.cUsqCollection = {};
         this.renderRow = (item, index) => {
@@ -47,6 +47,14 @@ export class CApp extends Controller {
         this.appName = parts[1];
         this.ui = ui;
         this.caption = this.res.caption || 'Tonva';
+    }
+    startDebug() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let appName = this.appOwner + '/' + this.appName;
+            let cApp = new CApp(appName, { usqs: {} });
+            let keepNavBackButton = true;
+            yield cApp.start(keepNavBackButton);
+        });
     }
     loadUsqs() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -107,9 +115,11 @@ export class CApp extends Controller {
     }
     get VAppMain() { return (this.ui && this.ui.main) || VAppMain; }
     beforeStart() {
-        const _super = name => super[name];
+        const _super = Object.create(null, {
+            beforeStart: { get: () => super.beforeStart }
+        });
         return __awaiter(this, void 0, void 0, function* () {
-            if ((yield _super("beforeStart").call(this)) === false)
+            if ((yield _super.beforeStart.call(this)) === false)
                 return false;
             try {
                 let hash = document.location.hash;
@@ -162,8 +172,11 @@ export class CApp extends Controller {
             }
         });
     }
-    internalStart() {
+    internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (param !== true) {
+                this.clearPrevPages();
+            }
             yield this.showMainPage();
         });
     }
@@ -208,7 +221,6 @@ export class CApp extends Controller {
                     return;
                 }
             }
-            this.clearPrevPages();
             this.showVPage(this.VAppMain);
         });
     }

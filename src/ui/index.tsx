@@ -7,7 +7,6 @@ import jkOrder from './jkOrder';
 import cart from './cart';
 import res from './res';
 import { FA } from 'tonva-react-form';
-import CardText from 'reactstrap/lib/CardText';
 import { CMyApp } from './CMyApp';
 
 class VAppMain extends VPage<CApp> {

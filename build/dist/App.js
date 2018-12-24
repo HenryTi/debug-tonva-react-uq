@@ -15,13 +15,40 @@ import { startApp } from './ui-usql';
 const tonvaApp = 'JKDev/jkOrder';
 //const tonvaApp = '百灵威系统工程部/cart';
 class App extends React.Component {
+    constructor() {
+        super(...arguments);
+        this.click = () => __awaiter(this, void 0, void 0, function* () {
+            //let url = 'http://101.200.46.56/joint/27/jk-usq';
+            let url = 'http://localhost:3017/joint-usq-jk';
+            let data = [
+                { moniker: 'product', queue: 0, data: undefined },
+                { moniker: 'product', queue: undefined, data: {
+                        no: 1002,
+                        discription: 'a product test1',
+                        packType: 23
+                    } }
+            ];
+            let ret = yield fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                body: JSON.stringify(data)
+            });
+            let text = yield ret.text();
+            alert(text);
+        });
+    }
     onLogined() {
         return __awaiter(this, void 0, void 0, function* () {
             yield startApp(tonvaApp, ui);
         });
     }
     render() {
-        return React.createElement(NavView, { onLogined: this.onLogined });
+        React.createElement(React.Fragment, {}, React.createElement(NavView, { onLogined: this.onLogined }), React.createElement("button", { onClick: this.click }, "test"));
+        return React.createElement(React.Fragment, null,
+            React.createElement(NavView, { onLogined: this.onLogined }),
+            React.createElement("button", { onClick: this.click }, "test"));
     }
 }
 export default App;

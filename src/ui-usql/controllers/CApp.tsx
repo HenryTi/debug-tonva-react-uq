@@ -23,7 +23,7 @@ export class CApp extends Controller {
     appUnits:any[];
 
     constructor(tonvaApp:string, ui:AppUI) {
-        super(resLang(ui.res, nav.language, nav.culture));
+        super(resLang(ui.res));
         let parts = tonvaApp.split('/');
         if (parts.length !== 2) {
             throw 'tonvaApp name must be / separated, owner/app';
@@ -36,6 +36,13 @@ export class CApp extends Controller {
     
     readonly caption: string; // = 'View Model 版的 Usql App';    
     cUsqCollection: {[usq:string]: CUsq} = {};
+
+    async startDebug() {
+        let appName = this.appOwner + '/' + this.appName;
+        let cApp = new CApp(appName, {usqs:{}} );
+        let keepNavBackButton = true;
+        await cApp.start(keepNavBackButton);    
+    }
 
     protected async loadUsqs(): Promise<string[]> {
         let retErrors:string[] = [];
@@ -155,7 +162,10 @@ export class CApp extends Controller {
         }
     }
 
-    protected async internalStart() {
+    protected async internalStart(param:any) {
+        if (param !== true) {
+            this.clearPrevPages();
+        }
         await this.showMainPage();
     }
 
@@ -209,7 +219,6 @@ export class CApp extends Controller {
                 return;
             }
         }
-        this.clearPrevPages();
         this.showVPage(this.VAppMain);
     }
 
