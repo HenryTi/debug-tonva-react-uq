@@ -153,12 +153,12 @@ export class VSheetNew extends VEntity {
     open(param) {
         return __awaiter(this, void 0, void 0, function* () {
             //this.controller.vSheetNew = this;
-            let cUsq = this.controller.cUsq;
-            this.mapPrice = cUsq.map('price');
-            let customer = cUsq.tuid('customer');
-            this.cCustomerSelect = cUsq.cTuidSelect(customer);
-            let product = cUsq.tuid('product');
-            this.cProductSelect = cUsq.cTuidSelect(product);
+            let cUq = this.controller.cUq;
+            this.mapPrice = cUq.map('price');
+            let customer = cUq.tuid('customer');
+            this.cCustomerSelect = cUq.cTuidSelect(customer);
+            let product = cUq.tuid('product');
+            this.cProductSelect = cUq.cTuidSelect(product);
             this.vForm = this.createForm(this.onSubmit, param);
             let productsBand = this.vForm.getBand('products');
             productsBand.setAddRow(this.addRow);

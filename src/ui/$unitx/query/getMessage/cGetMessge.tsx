@@ -3,7 +3,7 @@ import React from "react";
 import { FA } from "tonva-react-form";
 import { Page } from "tonva-tools";
 import { CQuery, VQueryMain } from "tonva-react-uq";
-import { tv } from "ui-uq";
+import { tv } from 'tonva-react-uq';
 
 export class CGetMessage extends CQuery {
     protected get VQueryMain() {return VMain}

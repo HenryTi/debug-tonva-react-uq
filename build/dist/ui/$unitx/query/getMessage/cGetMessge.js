@@ -2,8 +2,8 @@ import { observer } from "mobx-react";
 import React from "react";
 import { FA } from "tonva-react-form";
 import { Page } from "tonva-tools";
-import { CQuery, VQueryMain } from "tonva-react-usql";
-import { tv } from "ui-usql";
+import { CQuery, VQueryMain } from "tonva-react-uq";
+import { tv } from 'tonva-react-uq';
 export class CGetMessage extends CQuery {
     get VQueryMain() { return VMain; }
 }

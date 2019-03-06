@@ -3,7 +3,7 @@ import { Muted } from 'tonva-react-form';
 const organization = {
     divs: {
         post: {
-            inputContent: (values) => {
+            content: (values) => {
                 let { id, title } = values;
                 return React.createElement(React.Fragment, null, title);
             }
@@ -12,7 +12,7 @@ const organization = {
 };
 export default {
     user: {
-        inputContent: (values) => {
+        content: (values) => {
             let { id, name, nick, assigned } = values;
             if (assigned !== undefined) {
                 return React.createElement(React.Fragment, null,
@@ -32,7 +32,7 @@ export default {
         }
     },
     section: {
-        inputContent: (values) => {
+        content: (values) => {
             let { id, name } = values;
             return React.createElement(React.Fragment, null, name);
         }

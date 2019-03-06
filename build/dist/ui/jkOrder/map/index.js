@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { tv } from "tonva-react-usql";
+import { tv } from "tonva-react-uq";
 import { Muted } from 'tonva-react-form';
 const priceUI = {
     //CMap: CMapTeamPerson,

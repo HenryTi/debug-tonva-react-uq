@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { VTuidMain } from "tonva-react-usql";
+import { VTuidMain } from "tonva-react-uq";
 import { Page } from 'tonva-tools';
 import { SearchBox, List, Muted } from 'tonva-react-form';
 import { Button } from 'reactstrap';

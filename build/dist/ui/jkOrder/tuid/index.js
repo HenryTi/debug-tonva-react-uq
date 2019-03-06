@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { LMR, Muted } from 'tonva-react-form';
 import { tv } from 'tonva-react-uq';
 const customer = {
-    inputContent: (values) => {
+    content: (values) => {
         let { id, discription } = values;
         return React.createElement(React.Fragment, null, discription || 'id ' + id + ' ...');
     },
@@ -33,7 +33,7 @@ const productPackRowContent = observer((values) => {
     return React.createElement("div", { className: "px-3 py-2" }, content);
 });
 const product = {
-    inputContent: (values) => {
+    content: (values) => {
         let { id, discription } = values;
         return React.createElement(React.Fragment, null, discription || 'id ' + id + ' ...');
     },
@@ -47,7 +47,7 @@ const product = {
     }),
     divs: {
         pack: {
-            inputContent: observer((values) => {
+            content: observer((values) => {
                 let { id, ratio, name, $owner } = values;
                 if ($owner === undefined)
                     return React.createElement(React.Fragment, null, name || ratio || 'id' + id + ' ...');
@@ -69,7 +69,7 @@ const product = {
     }
 };
 const packType = {
-    inputContent: (values) => {
+    content: (values) => {
         let { id, name, discription } = values;
         return React.createElement(React.Fragment, null, discription || name || 'id ' + id + ' ...');
     },

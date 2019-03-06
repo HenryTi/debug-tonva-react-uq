@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CTuidMain } from "tonva-react-usql";
+import { CTuidMain } from "tonva-react-uq";
 import { MyVTuidMain } from "./vTuidMain";
 export class MyCTuid extends CTuidMain {
     get VTuidMain() { return MyVTuidMain; }
@@ -18,7 +18,7 @@ export class MyCTuid extends CTuidMain {
                     case 'fromUser':
                         return (form, field, values) => __awaiter(this, void 0, void 0, function* () {
                             let { _tuid } = field;
-                            let cTuidSelect = this.cUsq.cTuidSelect(_tuid);
+                            let cTuidSelect = this.cUq.cTuidSelect(_tuid);
                             let ret = yield cTuidSelect.call();
                             return ret.id;
                         });

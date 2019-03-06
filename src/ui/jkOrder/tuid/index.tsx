@@ -4,7 +4,7 @@ import { LMR, Muted } from 'tonva-react-form';
 import { tv, TuidUI, FieldTuidUI } from 'tonva-react-uq';
 
 const customer:TuidUI = {
-    inputContent: (values) => {
+    content: (values) => {
         let {id, discription} = values;
         return <>{discription || 'id ' + id + ' ...'}</>;
     },
@@ -33,7 +33,7 @@ const productPackRowContent = observer((values) => {
 });
 
 const product:TuidUI = {
-    inputContent: (values) => {
+    content: (values) => {
         let {id, discription} = values;
         return <>{discription || 'id ' + id + ' ...'}</>;
     },
@@ -47,7 +47,7 @@ const product:TuidUI = {
     }),
     divs: {
         pack: {
-            inputContent: observer((values) => {
+            content: observer((values) => {
                 let {id, ratio, name, $owner} = values;
                 if ($owner === undefined)
                     return <>{name || ratio || 'id' + id + ' ...'}</>;
@@ -70,7 +70,7 @@ const product:TuidUI = {
 };
 
 const packType:TuidUI = {
-    inputContent: (values) => {
+    content: (values) => {
         let {id, name, discription} = values;
         return <>{discription || name || 'id ' + id + ' ...'}</>;
     },

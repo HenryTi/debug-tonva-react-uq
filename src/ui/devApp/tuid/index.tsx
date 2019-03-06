@@ -3,13 +3,13 @@ import { TuidUI } from 'tonva-react-uq';
 
 export default {
     customer: {
-        inputContent: (values) => {
+        content: (values) => {
             let {id, name, discription} = values;
             return <>{discription || name || 'id ' + id + ' ...'}</>;
         }
     },
     article: {
-        inputContent: (values) => {
+        content: (values) => {
             let {id, name, discription, casNO} = values;
             if (casNO !== undefined)
                 return <>CAS:{casNO} - {discription || name}</>;

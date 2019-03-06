@@ -5,7 +5,7 @@ import { TuidUI } from 'tonva-react-uq';
 const organization:TuidUI = {
     divs: {
         post: {
-            inputContent: (values) => {
+            content: (values) => {
                 let {id, title} = values;
                 return <>{title}</>
             }
@@ -15,7 +15,7 @@ const organization:TuidUI = {
 
 export default {
     user: {
-        inputContent: (values) => {
+        content: (values) => {
             let {id, name, nick, assigned} = values;
             if (assigned !== undefined) {
                 return <>{assigned} - <Muted>{name}</Muted></>;
@@ -28,7 +28,7 @@ export default {
         }
     },
     section: {
-        inputContent: (values) => {
+        content: (values) => {
             let {id, name} = values;
             return <>{name}</>;
         }

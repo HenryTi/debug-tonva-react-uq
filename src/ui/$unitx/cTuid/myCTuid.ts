@@ -12,7 +12,7 @@ export class MyCTuid extends CTuidMain {
             case 'fromUser':
                 return async (form:VForm, field:Field, values:any):Promise<any> => {
                     let {_tuid} = field;
-                    let cTuidSelect = this.cUsq.cTuidSelect(_tuid);
+                    let cTuidSelect = this.cUq.cTuidSelect(_tuid);
                     let ret = await cTuidSelect.call();
                     return ret.id;
                 };

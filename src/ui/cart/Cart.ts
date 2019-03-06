@@ -1,5 +1,5 @@
 import { observable, computed } from 'mobx';
-import { BoxId, Tuid, tv } from "ui-usql";
+import { BoxId, Tuid, tv } from 'tonva-react-uq';
 
 class PackItem {
     pack: BoxId;

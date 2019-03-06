@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as React from 'react';
-import { CApp, ControllerUsq } from "tonva-react-usql";
+import { CApp, ControllerUq } from "tonva-react-uq";
 import { VPage, Page } from "tonva-tools";
 export class CMyApp extends CApp {
     start(param) {
@@ -21,7 +21,7 @@ export class CMyApp extends CApp {
         });
     }
 }
-class CProduct extends ControllerUsq {
+class CProduct extends ControllerUq {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
             this.openVPage(VProduct, param);
