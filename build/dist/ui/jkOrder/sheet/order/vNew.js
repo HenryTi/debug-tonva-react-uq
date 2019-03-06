@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import * as React from 'react';
 import { Page } from 'tonva-tools';
 import { List } from 'tonva-react-form';
-import { tv, VEntity } from 'tonva-react-usql';
+import { tv, VEntity } from 'tonva-react-uq';
 export class VSheetNew extends VEntity {
     constructor() {
         super(...arguments);
@@ -68,7 +68,7 @@ export class VSheetNew extends VEntity {
         this.selectProduct = () => __awaiter(this, void 0, void 0, function* () {
             this.product = yield this.cProductSelect.call();
             this.priceRows = yield this.getPrices(this.product.id);
-            //this.showVPage(VProductPage, {product:this.product, priceRows: prices});
+            //this.openVPage(VProductPage, {product:this.product, priceRows: prices});
             this.openPage(this.productPage);
         });
         this.stopOrder = () => {
@@ -150,7 +150,7 @@ export class VSheetNew extends VEntity {
                     React.createElement("button", { className: "w-25 btn btn-primary", onClick: this.addProduct }, "\u52A0\u5165\u8BA2\u5355")));
         };
     }
-    showEntry(param) {
+    open(param) {
         return __awaiter(this, void 0, void 0, function* () {
             //this.controller.vSheetNew = this;
             let cUsq = this.controller.cUsq;

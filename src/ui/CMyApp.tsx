@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CApp, ControllerUsq } from "tonva-react-usql";
+import { CApp, ControllerUsq } from "tonva-react-uq";
 import { VPage, Page } from "tonva-tools";
 
 export class CMyApp extends CApp {
@@ -12,12 +12,12 @@ export class CMyApp extends CApp {
 
 class CProduct extends ControllerUsq {
     protected async internalStart(param?: any): Promise<void> {
-        this.showVPage(VProduct, param);
+        this.openVPage(VProduct, param);
     }
 }
 
 class VProduct extends VPage<CProduct> {
-    async showEntry(param?:any) {
+    async open(param?:any) {
         this.openPageElement(<Page>
             ddd
         </Page>);

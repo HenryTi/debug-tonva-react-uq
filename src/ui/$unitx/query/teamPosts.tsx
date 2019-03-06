@@ -1,5 +1,5 @@
 import React from 'react';
-import { QueryUI, tv } from "tonva-react-usql";
+import { QueryUI, tv } from "tonva-react-uq";
 import { observer } from 'mobx-react';
 
 const ui:QueryUI = {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { VPage, Page, meInFrame } from 'tonva-tools';
-import {AppUI, CApp} from 'tonva-react-usql';
+import {AppUI, CApp} from 'tonva-react-uq';
 import $unitx from './$unitx';
 import devApp from './devApp';
 import jkOrder from './jkOrder';
@@ -10,12 +10,12 @@ import { FA } from 'tonva-react-form';
 import { CMyApp } from './CMyApp';
 
 class VAppMain extends VPage<CApp> {
-    async showEntry(param?:any) {
+    async open(param?:any) {
         this.openPage(this.appPage);
     }
 
     protected appPage = () => {
-        let {caption, cUsqArr} = this.controller;
+        let {caption, cUqArr: cUsqArr} = this.controller;
         let content;
         if (cUsqArr.length === 0) {
             content = <div className="p-3 text-info">
@@ -38,7 +38,7 @@ const ui:AppUI = {
     //"DevApp/devappApi": DevApp_devappApi,
     res: res,
     main: VAppMain,
-    usqs: {
+    uqs: {
         "$$$/$unitx": $unitx,
         "DevApp/devappApi": devApp,
         "JKDev/jkOrder": jkOrder,

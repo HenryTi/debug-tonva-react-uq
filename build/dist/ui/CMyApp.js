@@ -24,12 +24,12 @@ export class CMyApp extends CApp {
 class CProduct extends ControllerUsq {
     internalStart(param) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.showVPage(VProduct, param);
+            this.openVPage(VProduct, param);
         });
     }
 }
 class VProduct extends VPage {
-    showEntry(param) {
+    open(param) {
         return __awaiter(this, void 0, void 0, function* () {
             this.openPageElement(React.createElement(Page, null, "ddd"));
         });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { tv } from 'tonva-react-usql';
+import { tv } from 'tonva-react-uq';
 import { VSheetNew } from './vNew';
 import { observer } from 'mobx-react';
 const orderUI = {

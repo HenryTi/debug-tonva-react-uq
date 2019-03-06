@@ -19,7 +19,7 @@ class VAppMain extends VPage {
     constructor() {
         super(...arguments);
         this.appPage = () => {
-            let { caption, cUsqArr } = this.controller;
+            let { caption, cUqArr: cUsqArr } = this.controller;
             let content;
             if (cUsqArr.length === 0) {
                 content = React.createElement("div", { className: "p-3 text-info" },
@@ -34,7 +34,7 @@ class VAppMain extends VPage {
                 content);
         };
     }
-    showEntry(param) {
+    open(param) {
         return __awaiter(this, void 0, void 0, function* () {
             this.openPage(this.appPage);
         });
@@ -46,7 +46,7 @@ const ui = {
     //"DevApp/devappApi": DevApp_devappApi,
     res: res,
     main: VAppMain,
-    usqs: {
+    uqs: {
         "$$$/$unitx": $unitx,
         "DevApp/devappApi": devApp,
         "JKDev/jkOrder": jkOrder,

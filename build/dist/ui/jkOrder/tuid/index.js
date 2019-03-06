@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { LMR, Muted } from 'tonva-react-form';
-import { tv } from 'tonva-react-usql';
+import { tv } from 'tonva-react-uq';
 const customer = {
     inputContent: (values) => {
         let { id, discription } = values;

@@ -10,7 +10,7 @@ import * as React from 'react';
 import { Muted } from 'tonva-react-form';
 import { left0 } from 'tonva-tools';
 //import { dictionary as x } from '../../res';
-import { VMapMain, CMap } from 'tonva-react-usql';
+import { VMapMain, CMap } from 'tonva-react-uq';
 class CMapTeamPerson extends CMap {
     searchOnKey(keyField, param) {
         const _super = Object.create(null, {
