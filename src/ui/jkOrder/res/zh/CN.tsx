@@ -120,6 +120,9 @@ export default {
         },
         price: {
             label: '产品价格表',
+            x: {
+                none: '[无包装]',
+            }
         },
         getMessage: {
             label: '获取Message',

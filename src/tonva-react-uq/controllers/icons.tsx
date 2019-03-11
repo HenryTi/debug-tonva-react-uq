@@ -2,7 +2,7 @@ import React from 'react';
 import { FA } from "tonva-react-form";
 
 function icon(className:string, name:string) {
-    return <FA className={className} name={name} fixWidth={true} size="lg" />;
+    return <FA className={className} name={name} fixWidth={true} />;
 }
 /*
 export interface EntityRes {

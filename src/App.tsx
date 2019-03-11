@@ -18,8 +18,8 @@ class App extends React.Component {
             React.createElement("button", {onClick: this.click}, "test"));
         return <>
             <NavView onLogined={this.onLogined} />
-            <button onClick={this.click}>test</button>
         </>;
+        //<button onClick={this.click}>test</button>
     }
 
     click = async () => {

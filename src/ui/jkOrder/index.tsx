@@ -6,7 +6,7 @@ import map from './map';
 //import query from './query';
 //import { MyCTuid } from './cTuid';
 
-const usqUI:UqUI = {
+const uqUI:UqUI = {
     //CTuidMain: MyCTuid,
     tuid: tuid,
     sheet: sheet,
@@ -15,4 +15,19 @@ const usqUI:UqUI = {
     res: res,
 }
 
-export default usqUI;
+export const aa_bbJkOrder:UqUI = {
+    tuid: {
+        customer: tuid.customer,
+        product: tuid.product,
+        //packType: tuid.packType,
+    }
+}
+
+const uqUIs = uqUI;
+/*
+{
+    $: uqUI,
+    "aa-bb": aa_BB_UsqUI,
+}
+*/
+export default uqUIs;
