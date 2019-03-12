@@ -5,12 +5,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './App.css';
 import ui from './ui';
 
-const tonvaApp = 'JKDev/jkOrder';
+//const tonvaApp = 'JKDev/jkOrder';
 //const tonvaApp = '百灵威系统工程部/cart';
+//const tonvaA
 
 class App extends React.Component {
     async onLogined() {
-        await startApp(tonvaApp, ui);
+        await startApp(ui);
     }
     render() {
         React.createElement(React.Fragment, {}, 

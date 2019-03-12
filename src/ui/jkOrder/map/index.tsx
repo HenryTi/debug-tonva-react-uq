@@ -28,3 +28,9 @@ const priceUI:MapUI = {
 export default {
     price: priceUI,
 };
+
+export class A extends React.Component {
+    render() {
+        return <div>dd</div>;
+    }
+}

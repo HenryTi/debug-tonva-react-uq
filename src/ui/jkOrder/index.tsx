@@ -1,11 +1,24 @@
+//import * as React from 'react';
+//import Loadable from 'react-loadable';
 import { UqUI } from 'tonva-react-uq';
 import res from './res';
 import tuid from './tuid';
 import sheet from './sheet';
 import map from './map';
-//import query from './query';
-//import { MyCTuid } from './cTuid';
 
+/*
+function Loading() {
+    return <div>Loading...</div>;
+}
+
+const m = Loadable({
+    loader: () => import('./map'), 
+    loading: Loading,
+    render(loaded, props) {
+        return <loaded.A />
+    }
+});
+*/
 const uqUI:UqUI = {
     //CTuidMain: MyCTuid,
     tuid: tuid,

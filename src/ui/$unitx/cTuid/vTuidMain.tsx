@@ -2,7 +2,6 @@ import * as React from 'react';
 import { VTuidMain } from "tonva-react-uq";
 import { Page } from 'tonva-tools';
 import { SearchBox, List, Muted } from 'tonva-react-form';
-import { Button } from 'reactstrap';
 
 export class MyVTuidMain extends VTuidMain {
     protected get view() {
@@ -13,8 +12,8 @@ export class MyVTuidMain extends VTuidMain {
                 <SearchBox className="w-100" onSearch={this.onSearch} placeholder={'搜索'+label} />
                 改写的TuidMain
                 <div className='my-3'>
-                    <Button className="ml-3" color="primary" onClick={this.onNew}>新增</Button>
-                    <Button className="ml-3" color="primary" onClick={this.onList}>列表</Button>
+                    <button className="ml-3 btn btn-primary" onClick={this.onNew}>新增</button>
+                    <button className="ml-3 btn btn-primary" onClick={this.onList}>列表</button>
                 </div>
             </> :
             <List className="my-2"
