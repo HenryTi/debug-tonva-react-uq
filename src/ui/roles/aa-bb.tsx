@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { VPage, Page, meInFrame, nav } from 'tonva-tools';
+import { VPage, Page, nav } from 'tonva-tools';
 import { CApp, RoleAppUI } from 'tonva-react-uq';
 import { FA } from 'tonva-react-form';
 import { aa_bbJkOrder } from "../jkOrder";
@@ -20,7 +20,7 @@ class VAaBbAppMain extends VPage<CApp> {
         else {
             content = cUsqArr.map((v,i) => <div key={i}>{v.render()}</div>);
         }
-        return <Page header={caption} logout={async ()=>{meInFrame.unit = undefined}}>
+        return <Page header={caption} logout={true}>
             <div className="p-3">AaBb程序界面。显示这一段，自定义起作用了。可以在这里放置任何内容</div>
             <div className="p-3">hashParam: {nav.hashParam}</div>
             {content}

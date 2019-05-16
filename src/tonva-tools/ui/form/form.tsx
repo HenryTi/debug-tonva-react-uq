@@ -142,8 +142,10 @@ export class Form extends React.Component<FormProps> {
             }
             arr.push(r);
         }
-        //data[name] = observable(arr);
-        data[name] = arr;
+        // 如果没有observable，行删除标志点击不管用
+        // 不知道这里为什么要去掉observable。有可能会有别的问题
+        data[name] = observable(arr);
+        //data[name] = arr;
         return;
     }
 
@@ -211,7 +213,7 @@ export class Form extends React.Component<FormProps> {
     }
 
     protected DefaultContainer = (content:JSX.Element): JSX.Element => {
-        return <form className={classNames(this.props.className)}>
+        return <form className={classNames(this.props.className)} onSubmit={e=>e.preventDefault()}>
             {content}
         </form>;
     }
@@ -248,7 +250,6 @@ export class Form extends React.Component<FormProps> {
         </div>;
     }
     RowContainer = (content:JSX.Element): JSX.Element => {
-        //return <div className="row">{content}</div>;
         let cn = classNames({
             'py-3': true
         });

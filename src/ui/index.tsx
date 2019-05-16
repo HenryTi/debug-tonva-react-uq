@@ -1,5 +1,5 @@
 import React from 'react';
-import { VPage, Page, meInFrame, nav } from 'tonva-tools';
+import { VPage, Page, nav } from 'tonva-tools';
 import { FA } from 'tonva-react-form';
 import {AppUI, CApp} from 'tonva-react-uq';
 import $unitx from './$unitx';
@@ -8,6 +8,7 @@ import jkOrder, { aa_bbJkOrder } from './jkOrder';
 import cart from './cart';
 import res from './res';
 import { CMyApp } from './CMyApp';
+import { testPage } from './test';
 
 class VAppMain extends VPage<CApp> {
     async open(param?:any) {
@@ -25,8 +26,9 @@ class VAppMain extends VPage<CApp> {
         else {
             content = cUsqArr.map((v,i) => <div key={i}>{v.render()}</div>);
         }
-        return <Page header={caption} logout={async ()=>{meInFrame.unit = undefined}}>
+        return <Page header={caption} logout={true}>
             <div className="p-3">自定义程序界面了。显示这一段，自定义起作用了。可以在这里放置任何内容</div>
+            <div><button onClick={()=>this.openPage(testPage)}>test</button></div>
             <div className="p-3">hashParam: {nav.hashParam}</div>
             {content}
         </Page>;
@@ -41,8 +43,8 @@ let uqs = {
 }
 
 const ui:AppUI = {
-    //appName: 'JKDev/jkOrder',
-    appName: 'bruce/SCMBase',
+    appName: 'BizDev/许可证',
+    //appName: 'bruce/SCMBase',
     CApp: CMyApp,
     res: res,
     main: VAppMain,
@@ -53,9 +55,5 @@ const ui:AppUI = {
     }
 };
 
-
-//convertUIKeyToLowercase(ui);
-
 export default ui;
-//export { CMyApp } from './CApp';
 

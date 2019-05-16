@@ -84,7 +84,7 @@ export const ArrComponent = observer((
                     row.$isSelected = checked;
                     let {$source} = row;
                     if ($source !== undefined) $source.$isSelected = checked;
-                    rowContext.removeErrors();
+                    rowContext.clearErrors();
                 }
                 selectCheck = <div className="form-row-checkbox">
                     <input type="checkbox" onClick={onClick} defaultChecked={row.$isSelected} />
@@ -103,7 +103,7 @@ export const ArrComponent = observer((
                         let p = data.indexOf(row);
                         if (p>=0) data.splice(p, 1);
                     }
-                    rowContext.removeErrors();
+                    rowContext.clearErrors();
                 }
                 deleteIcon = <div className="form-row-edit text-info" onClick={onDelClick}>
                     <i className={classNames('fa', icon, 'fa-fw')} />
@@ -111,7 +111,9 @@ export const ArrComponent = observer((
             }
             let editContainer = selectable===true || deletable===true?
                 (content:any) => <fieldset disabled={isDeleted}><div className={classNames('d-flex', {'deleted':isDeleted, 'row-selected':row.$isSelected})}>
-                    {selectCheck}<div className="flex-grow-1">{content}</div>{deleteIcon}
+                    {selectCheck}
+                    <div className={selectable===true && deletable===true? "form-row-content":"form-row-content-1"}>{content}</div>
+                    {deleteIcon}
                 </div></fieldset>
                 :
                 (content:any) => content;

@@ -6,5 +6,5 @@ export default {
         no: '编号',
         team: '部门',
     },
-    caption: '*百灵威订单*',
+    caption: 'Biz许可证管理',
 }
